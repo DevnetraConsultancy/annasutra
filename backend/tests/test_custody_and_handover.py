@@ -15,7 +15,11 @@ from apps.organisations.models import Organisation, PartnerLink
 from apps.custody.models import Handover
 from apps.alerts.models import Alert, ScanLog
 from apps.publicview.models import PublicView
-from apps.ledger.services.hash_chain import verify_lot_hash_chain
+from apps.ledger.services.hash_chain import (
+    canonical_json_bytes,
+    compute_event_hash,
+    verify_lot_hash_chain,
+)
 from apps.ledger.services.anchor_service import run_daily_anchoring
 
 
@@ -80,6 +84,10 @@ def create_sample_lot(farmer_user, serial="TOM261010ABCD", qty=500.0):
         lot=lot,
         qty_in_kg=Decimal(str(qty)),
     )
+    payload = {"label_serial": serial, "net_qty_kg": qty}
+    payload_bytes = canonical_json_bytes(payload)
+    event_hash = compute_event_hash(None, "HARVEST_CREATE", 1, payload_bytes)
+
     TraceEvent.objects.create(
         event_id=uuid.uuid4(),
         lot=lot,
@@ -90,11 +98,14 @@ def create_sample_lot(farmer_user, serial="TOM261010ABCD", qty=500.0):
         user=farmer_user,
         qty_kg=Decimal(str(qty)),
         qty_basis="MEASURED",
-        payload={"label_serial": serial, "net_qty_kg": qty},
-        event_hash=b"initial_harvest_hash_0000000001",
+        payload=payload,
+        event_hash=event_hash,
     )
-    lot.head_hash = b"initial_harvest_hash_0000000001"
+    lot.head_hash = event_hash
     lot.save(update_fields=["head_hash"])
+
+    from apps.publicview.services import refresh_public_view
+    refresh_public_view(lot)
     return lot
 
 
