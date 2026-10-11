@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 
 from apps.lots.models import Lot
 from apps.inventory.models import LotBalance
@@ -20,11 +20,11 @@ class Command(BaseCommand):
         # 1. Lots by state
         lot_counts = Lot.objects.aggregate(
             total=Count("lot_id"),
-            in_custody=Count("lot_id", filter=Lot.objects.filter(state="IN_CUSTODY")),
-            in_transit=Count("lot_id", filter=Lot.objects.filter(state="IN_TRANSIT")),
-            closed=Count("lot_id", filter=Lot.objects.filter(state="CLOSED")),
-            recalled=Count("lot_id", filter=Lot.objects.filter(state="RECALLED")),
-            disputed=Count("lot_id", filter=Lot.objects.filter(state="DISPUTED")),
+            in_custody=Count("lot_id", filter=Q(state="IN_CUSTODY")),
+            in_transit=Count("lot_id", filter=Q(state="IN_TRANSIT")),
+            closed=Count("lot_id", filter=Q(state="CLOSED")),
+            recalled=Count("lot_id", filter=Q(state="RECALLED")),
+            disputed=Count("lot_id", filter=Q(state="DISPUTED")),
         )
 
         self.stdout.write(f"Total Lots: {lot_counts['total']}")
@@ -50,12 +50,12 @@ class Command(BaseCommand):
         # 3. Handover Quality & Discrepancies
         handovers = Handover.objects.aggregate(
             total=Count("handover_id"),
-            accepted=Count("handover_id", filter=Handover.objects.filter(state="ACCEPTED")),
+            accepted=Count("handover_id", filter=Q(state="ACCEPTED")),
             with_discrepancy=Count(
-                "handover_id", filter=Handover.objects.filter(state="ACCEPTED_WITH_DISCREPANCY")
+                "handover_id", filter=Q(state="ACCEPTED_WITH_DISCREPANCY")
             ),
-            disputed=Count("handover_id", filter=Handover.objects.filter(state="DISPUTED")),
-            expired=Count("handover_id", filter=Handover.objects.filter(state="EXPIRED")),
+            disputed=Count("handover_id", filter=Q(state="DISPUTED")),
+            expired=Count("handover_id", filter=Q(state="EXPIRED")),
         )
         self.stdout.write("\nHandover Operations:")
         self.stdout.write(f" - Total Handovers: {handovers['total']}")

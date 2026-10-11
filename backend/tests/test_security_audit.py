@@ -59,7 +59,7 @@ def test_otp_request_rate_limiting(api_client):
     # Make rapid requests
     responses = []
     for _ in range(5):
-        r = api_client.post("/v1/auth/request-otp", {"phone": phone}, format="json")
+        r = api_client.post("/v1/auth/otp/request", {"phone": phone}, format="json")
         responses.append(r.status_code)
 
     # At least one request beyond the limit must be throttled with 429
@@ -69,6 +69,9 @@ def test_otp_request_rate_limiting(api_client):
 @pytest.mark.django_db
 def test_zero_pii_in_public_view_and_logs(api_client):
     """Ensures public views and logs never leak phone numbers, names, or GPS coordinates."""
+    from django.utils import timezone
+    from apps.lots.models import Lot, Product
+
     org = Organisation.objects.create(
         name="Confidential Farmer Org",
         org_type="FARMER",
@@ -81,16 +84,21 @@ def test_zero_pii_in_public_view_and_logs(api_client):
         status="ACTIVE",
     )
 
+    product, _ = Product.objects.get_or_create(name="Organic Tomato", variety="Himsona")
+    lot = Lot.objects.create(
+        public_code="TEST-PII-SAFE",
+        product=product,
+        created_by_org=org,
+        custodian_org=org,
+        lot_kind="HARVEST",
+        state="IN_CUSTODY",
+        head_seq=1,
+    )
+
     # Seed public view
     PublicView.objects.create(
-        public_code="TEST-PII-SAFE",
-        product_name="Organic Tomato",
-        variety="Himsona",
-        farmer_org_name=org.name,
-        harvest_date="2026-10-10",
-        total_kg=Decimal("100.000"),
-        journey_nodes=[],
-        certifications=[],
+        lot=lot,
+        public_code=lot.public_code,
         payload={
             "public_code": "TEST-PII-SAFE",
             "product_name": "Organic Tomato",
@@ -102,6 +110,7 @@ def test_zero_pii_in_public_view_and_logs(api_client):
             "certifications": [],
             "open_recall": False,
         },
+        refreshed_at=timezone.now(),
     )
 
     resp = api_client.get("/v1/public/lots/TEST-PII-SAFE")
