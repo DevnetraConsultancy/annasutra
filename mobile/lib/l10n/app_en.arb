@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "appTitle": "AnnaSutra",
+  "incoming": "Incoming",
+  "myStock": "My Stock",
+  "waiting": "Waiting for Others",
+  "scanQr": "Scan QR",
+  "createBatch": "Create Batch",
+  "syncStatus": "Sync Status",
+  "synced": "Synced",
+  "offline": "Offline - Queued",
+  "disclaimer": "This record is based on information entered by supply-chain participants. It does not prove the contents of this package."
+}

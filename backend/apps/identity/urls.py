@@ -1,0 +1,24 @@
+from django.urls import path
+from .views import (
+    OtpRequestView,
+    OtpVerifyView,
+    RefreshTokenView,
+    PasskeyRegisterOptionsView,
+    PasskeyRegisterVerifyView,
+    PasskeyLoginOptionsView,
+    PasskeyLoginVerifyView,
+    DeviceListCreateView,
+    DeviceDetailView,
+)
+
+urlpatterns = [
+    path("otp/request", OtpRequestView.as_view(), name="auth_otp_request"),
+    path("otp/verify", OtpVerifyView.as_view(), name="auth_otp_verify"),
+    path("refresh", RefreshTokenView.as_view(), name="auth_refresh"),
+    path("passkeys/register/options", PasskeyRegisterOptionsView.as_view(), name="auth_passkeys_register_options"),
+    path("passkeys/register/verify", PasskeyRegisterVerifyView.as_view(), name="auth_passkeys_register_verify"),
+    path("passkeys/login/options", PasskeyLoginOptionsView.as_view(), name="auth_passkeys_login_options"),
+    path("passkeys/login/verify", PasskeyLoginVerifyView.as_view(), name="auth_passkeys_login_verify"),
+    path("devices", DeviceListCreateView.as_view(), name="auth_devices"),
+    path("devices/<uuid:device_id>", DeviceDetailView.as_view(), name="auth_device_detail"),
+]
