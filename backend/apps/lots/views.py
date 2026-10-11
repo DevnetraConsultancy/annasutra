@@ -5,13 +5,14 @@ import json
 import uuid
 
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import exceptions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from apps.identity.authentication import IsVerifiedOrg
 from apps.inventory.models import LotBalance
-from apps.labels.models import QrLabel
+from apps.labels.models import QrBlock, QrLabel
 from apps.ledger.models import TraceEvent
 from .models import Lot, Product
 
@@ -99,12 +100,21 @@ class LotListCreateView(APIView):
             qr_label = QrLabel.objects.select_for_update().filter(serial=label_serial).first()
             if not qr_label:
                 # If label doesn't exist, create an auto-issued one for this org if allowed
-                from apps.labels.models import QrBlock
-                block = QrBlock.objects.create(block_id=uuid.uuid4(), issued_to_org=user_org, count=1)
-                qr_label = QrLabel.objects.create(serial=label_serial, block=block, state="ISSUED")
+                block = QrBlock.objects.create(
+                    block_id=uuid.uuid4(),
+                    issued_to_org=user_org,
+                    issued_by=request.user,
+                    count=1,
+                )
+                qr_label = QrLabel.objects.create(
+                    serial=label_serial,
+                    block=block,
+                    issued_to_org=user_org,
+                    status="ISSUED",
+                )
 
             # Check if label serial is already bound to another lot
-            if qr_label.lot_id or qr_label.state == "BOUND":
+            if qr_label.lot_id or qr_label.status == "BOUND":
                 return Response(
                     {
                         "type": "urn:problem:label-already-used",
@@ -139,8 +149,9 @@ class LotListCreateView(APIView):
 
             # 5. Bind QR Label
             qr_label.lot = lot
-            qr_label.state = "BOUND"
-            qr_label.save(update_fields=["lot", "state"])
+            qr_label.status = "BOUND"
+            qr_label.bound_at = timezone.now()
+            qr_label.save(update_fields=["lot", "status", "bound_at"])
 
             # 6. Initialize LotBalance
             balance = LotBalance.objects.create(

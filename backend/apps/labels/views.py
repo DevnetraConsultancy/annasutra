@@ -54,13 +54,15 @@ class LabelBlockView(APIView):
             block = QrBlock.objects.create(
                 block_id=uuid.uuid4(),
                 issued_to_org=user_org,
+                issued_by=request.user,
                 count=count,
             )
             labels_to_create = [
                 QrLabel(
                     serial=s,
                     block=block,
-                    state="ISSUED",
+                    issued_to_org=user_org,
+                    status="ISSUED",
                 )
                 for s in serial_list
             ]

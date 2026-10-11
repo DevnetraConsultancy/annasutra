@@ -32,11 +32,13 @@ def problem_exception_handler(exc: Exception, context: dict[str, Any]) -> Respon
         response["Content-Type"] = "application/problem+json"
     else:
         # Unhandled server errors (500)
+        import logging
+        logging.getLogger("annasutra.exceptions").exception("Unhandled server exception: %s", exc)
         problem_data = {
             "type": "https://api.example.in/errors/500",
             "title": "Internal Server Error",
             "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-            "detail": "An unexpected server error occurred.",
+            "detail": f"An unexpected server error occurred: {str(exc)}",
             "code": "INTERNAL_SERVER_ERROR",
         }
         response = Response(

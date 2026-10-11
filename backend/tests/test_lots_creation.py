@@ -83,7 +83,7 @@ def test_verified_org_creates_lot_successfully(api_client):
     # Verify DB records
     lot = Lot.objects.get(public_code=serial)
     assert lot.custodian_org_id == user.org.org_id
-    assert QrLabel.objects.get(serial=serial).state == "BOUND"
+    assert QrLabel.objects.get(serial=serial).status == "BOUND"
     assert TraceEvent.objects.filter(event_id=event_id, event_type="HARVEST_CREATE").exists()
     assert LotBalance.objects.get(lot=lot).qty_on_hand_kg == 500.0
 
