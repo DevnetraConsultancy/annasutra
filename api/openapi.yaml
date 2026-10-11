@@ -1,0 +1,2510 @@
+openapi: 3.0.3
+info:
+  title: AnnaSutra API
+  version: 1.0.0-draft
+  description: Contract for the mobile app and public page. The server is the authority. Every write carries an Idempotency-Key
+    and a client-made event_id. Do not add endpoints or fields without human approval.
+servers:
+- url: https://api.example.in
+  description: Replace with the real domain
+paths:
+  /v1/auth/otp/request:
+    post:
+      operationId: requestOtp
+      summary: Send an SMS code
+      tags:
+      - auth
+      responses:
+        '202':
+          description: OK
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequest'
+      security: []
+  /v1/auth/otp/verify:
+    post:
+      operationId: verifyOtp
+      summary: Verify code, register device key
+      tags:
+      - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpVerify'
+      security: []
+  /v1/auth/refresh:
+    post:
+      operationId: refreshToken
+      summary: Rotate tokens
+      tags:
+      - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      security: []
+  /v1/auth/passkeys/register/options:
+    post:
+      operationId: passkeyRegisterOptions
+      summary: Start passkey registration
+      tags:
+      - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebAuthnOptions'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      security:
+      - bearerAuth: []
+  /v1/auth/passkeys/register/verify:
+    post:
+      operationId: passkeyRegisterVerify
+      summary: Finish passkey registration
+      tags:
+      - auth
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebAuthnResult'
+      security:
+      - bearerAuth: []
+  /v1/auth/passkeys/login/options:
+    post:
+      operationId: passkeyLoginOptions
+      summary: Start passkey login
+      tags:
+      - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebAuthnOptions'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      security: []
+  /v1/auth/passkeys/login/verify:
+    post:
+      operationId: passkeyLoginVerify
+      summary: Finish passkey login
+      tags:
+      - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebAuthnResult'
+      security: []
+  /v1/auth/devices:
+    post:
+      operationId: registerDevice
+      summary: Register a device signing key
+      tags:
+      - auth
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+      security:
+      - bearerAuth: []
+    get:
+      operationId: listDevices
+      summary: List my devices
+      tags:
+      - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      security:
+      - bearerAuth: []
+  /v1/auth/devices/{device_id}:
+    delete:
+      operationId: revokeDevice
+      summary: Revoke a device
+      tags:
+      - auth
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: device_id
+        in: path
+        required: true
+        schema: &id001
+          type: string
+      security:
+      - bearerAuth: []
+  /v1/organisations:
+    post:
+      operationId: registerOrganisation
+      summary: Register a business or farmer (assisted or self)
+      tags:
+      - organisations
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Org'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRegister'
+      security:
+      - bearerAuth: []
+  /v1/partners:
+    get:
+      operationId: listPartners
+      summary: List trusted partners
+      tags:
+      - partners
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      security:
+      - bearerAuth: []
+  /v1/partners/invitations:
+    post:
+      operationId: invitePartner
+      summary: Invite a verified business
+      tags:
+      - partners
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerInvite'
+      security:
+      - bearerAuth: []
+  /v1/partners/invitations/{org_id}/accept:
+    post:
+      operationId: acceptPartner
+      summary: Accept a partner invitation
+      tags:
+      - partners
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: org_id
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      security:
+      - bearerAuth: []
+  /v1/labels/blocks:
+    post:
+      operationId: requestLabelBlock
+      summary: Download a block of unused QR serials
+      tags:
+      - labels
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelBlock'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabelBlockRequest'
+      security:
+      - bearerAuth: []
+  /v1/lots:
+    post:
+      operationId: createLot
+      summary: Create a batch and bind a QR serial
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotCreate'
+      security:
+      - bearerAuth: []
+    get:
+      operationId: listLots
+      summary: List lots my organisation holds or touched
+      tags:
+      - lots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotList'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}:
+    get:
+      operationId: getLot
+      summary: Get a lot (scoped to caller)
+      tags:
+      - lots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/events:
+    get:
+      operationId: listLotEvents
+      summary: Event history for a lot
+      tags:
+      - lots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventList'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/inspections:
+    post:
+      operationId: addInspection
+      summary: Record an inspection
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inspection'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/dispatch:
+    post:
+      operationId: dispatchLot
+      summary: Dispatch to the next receiver
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Handover'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dispatch'
+      security:
+      - bearerAuth: []
+  /v1/handovers/{handover_id}/receive:
+    post:
+      operationId: receiveHandover
+      summary: Receive (accept)
+      tags:
+      - handovers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Handover'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: handover_id
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receive'
+      security:
+      - bearerAuth: []
+  /v1/handovers/{handover_id}/dispute:
+    post:
+      operationId: disputeHandover
+      summary: Dispute quantities
+      tags:
+      - handovers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Handover'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: handover_id
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+      security:
+      - bearerAuth: []
+  /v1/handovers/{handover_id}/resolve:
+    post:
+      operationId: resolveHandover
+      summary: Agree a final quantity
+      tags:
+      - handovers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Handover'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: handover_id
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resolve'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/split:
+    post:
+      operationId: splitLot
+      summary: Split into child lots
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotList'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Split'
+      security:
+      - bearerAuth: []
+  /v1/lots/merge:
+    post:
+      operationId: mergeLots
+      summary: Merge lots into a new lot
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Merge'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/sort:
+    post:
+      operationId: sortLot
+      summary: Sort or grade into outputs
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotList'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sort'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/repack:
+    post:
+      operationId: repackLot
+      summary: Repack containers, same lot
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Repack'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/waste:
+    post:
+      operationId: recordWaste
+      summary: Record waste or spoilage
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Waste'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/sales:
+    post:
+      operationId: recordSale
+      summary: Record retail sales (kg)
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sale'
+      security:
+      - bearerAuth: []
+  /v1/events/{event_id}/corrections:
+    post:
+      operationId: correctEvent
+      summary: Append a correction event
+      tags:
+      - events
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Correction'
+      security:
+      - bearerAuth: []
+  /v1/lots/{code}/label-reissue:
+    post:
+      operationId: reissueLabel
+      summary: Void old serial, bind a new one
+      tags:
+      - lots
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabelReissue'
+      security:
+      - bearerAuth: []
+  /v1/evidence/uploads:
+    post:
+      operationId: requestEvidenceUpload
+      summary: Get a signed upload URL
+      tags:
+      - evidence
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceUpload'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceUploadRequest'
+      security:
+      - bearerAuth: []
+  /v1/sync/events:
+    post:
+      operationId: syncEvents
+      summary: Submit queued events in a batch
+      tags:
+      - sync
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResult'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncBatch'
+      security:
+      - bearerAuth: []
+  /v1/recalls:
+    post:
+      operationId: openRecall
+      summary: Open a recall
+      tags:
+      - recalls
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recall'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecallOpen'
+      security:
+      - bearerAuth: []
+  /v1/recalls/{recall_id}/trace:
+    get:
+      operationId: traceRecall
+      summary: Forward-trace report
+      tags:
+      - recalls
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecallTrace'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: recall_id
+        in: path
+        required: true
+        schema: *id001
+      security:
+      - bearerAuth: []
+  /v1/public/lots/{code}:
+    get:
+      operationId: getPublicLot
+      summary: Consumer-visible summary (no login)
+      tags:
+      - public
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicLot'
+        '400':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Not allowed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict with current state
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema: *id001
+      security: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: &id002
+        type: string
+        format: uuid
+      description: Same key returns the same result; sending twice stores once.
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
+    Cursor:
+      name: cursor
+      in: query
+      schema: *id001
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type: *id001
+        title: *id001
+        status:
+          type: integer
+        detail: *id001
+        code: *id001
+      required:
+      - title
+      - status
+      - code
+    OtpRequest:
+      type: object
+      properties:
+        phone: *id001
+        language: *id001
+      required:
+      - phone
+    OtpVerify:
+      type: object
+      properties:
+        phone: *id001
+        code: *id001
+        device_public_key: *id001
+        device_label: *id001
+      required:
+      - phone
+      - code
+    TokenPair:
+      type: object
+      properties:
+        access_token: *id001
+        refresh_token: *id001
+        expires_in:
+          type: integer
+        org_verification: *id001
+      required:
+      - access_token
+      - refresh_token
+    RefreshRequest:
+      type: object
+      properties:
+        refresh_token: *id001
+      required:
+      - refresh_token
+    WebAuthnOptions:
+      type: object
+      properties:
+        options:
+          type: object
+    WebAuthnResult:
+      type: object
+      properties:
+        credential:
+          type: object
+      required:
+      - credential
+    DeviceRegister:
+      type: object
+      properties:
+        public_key: *id001
+        key_alg: *id001
+        label: *id001
+      required:
+      - public_key
+    Device:
+      type: object
+      properties:
+        device_id: *id002
+        label: *id001
+        created_at: &id003
+          type: string
+          format: date-time
+        revoked_at: *id003
+    OrgRegister:
+      type: object
+      properties:
+        name: *id001
+        org_type:
+          type: string
+          enum:
+          - FARMER
+          - AGGREGATOR
+          - WHOLESALER
+          - DISTRIBUTOR
+          - RETAILER
+        fssai_no: *id001
+        consent_notice_version: *id001
+        consent_language: *id001
+      required:
+      - name
+      - org_type
+      - consent_notice_version
+    Org:
+      type: object
+      properties:
+        org_id: *id002
+        name: *id001
+        org_type: *id001
+        verification: *id001
+    PartnerInvite:
+      type: object
+      properties:
+        to_org_id: *id002
+      required:
+      - to_org_id
+    Partner:
+      type: object
+      properties:
+        org_id: *id002
+        name: *id001
+        status: *id001
+    LabelBlockRequest:
+      type: object
+      properties:
+        count:
+          type: integer
+          minimum: 1
+          maximum: 500
+      required:
+      - count
+    LabelBlock:
+      type: object
+      properties:
+        block_id: *id002
+        serials:
+          type: array
+          items: *id001
+    EventBase:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        facility_id: *id002
+        on_behalf_of_org_id: *id002
+        device_signature: *id001
+        evidence_ids:
+          type: array
+          items: *id002
+      required:
+      - event_id
+      - event_time
+    LotCreate:
+      type: object
+      properties:
+        event_id: *id002
+        label_serial: *id001
+        plot_id: *id002
+        product:
+          type: object
+          properties:
+            name: *id001
+            variety: *id001
+          required:
+          - name
+        harvest_date:
+          type: string
+          format: date
+        net_qty_kg: &id004
+          type: number
+        qty_basis:
+          type: string
+          enum:
+          - MEASURED
+          - ESTIMATED
+          - DECLARED
+        gross_kg: *id004
+        tare_kg: *id004
+        crates:
+          type: integer
+        event_time: *id003
+        device_signature: *id001
+      required:
+      - event_id
+      - label_serial
+      - product
+      - net_qty_kg
+      - event_time
+    Lot:
+      type: object
+      properties:
+        lot_id: *id002
+        public_code: *id001
+        state: *id001
+        custodian_org: *id002
+        pending_receiver_org: *id002
+        on_hand_kg: *id004
+        lot_seq:
+          type: integer
+    LotList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lot'
+        next_cursor: *id001
+    Inspection:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        grade: *id001
+        defect_pct: *id004
+        temperature_c: *id004
+        notes: *id001
+        evidence_ids:
+          type: array
+          items: *id002
+      required:
+      - event_id
+      - event_time
+    Dispatch:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        to_org_id: *id002
+        qty_kg: *id004
+        vehicle_no: *id001
+        destination: *id001
+        crates:
+          type: integer
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - to_org_id
+      - qty_kg
+      - device_signature
+    Handover:
+      type: object
+      properties:
+        handover_id: *id002
+        lot_code: *id001
+        state: *id001
+        declared_qty_kg: *id004
+        received_qty_kg: *id004
+        expires_at: *id003
+    Receive:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        matches:
+          type: boolean
+        received_qty_kg: *id004
+        rejected_qty_kg: *id004
+        gross_kg: *id004
+        tare_kg: *id004
+        condition: *id001
+        crates_counted:
+          type: integer
+        evidence_ids:
+          type: array
+          items: *id002
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - device_signature
+    Dispute:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        reason: *id001
+        claimed_qty_kg: *id004
+        evidence_ids:
+          type: array
+          items: *id002
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - reason
+      - device_signature
+    Resolve:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        agreed_qty_kg: *id004
+        note: *id001
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - agreed_qty_kg
+      - device_signature
+    Split:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        children:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              label_serial: *id001
+              qty_kg: *id004
+            required:
+            - label_serial
+            - qty_kg
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - children
+    Merge:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        input_lot_codes:
+          type: array
+          minItems: 2
+          items: *id001
+        label_serial: *id001
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - input_lot_codes
+      - label_serial
+    Sort:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        outputs:
+          type: array
+          items:
+            type: object
+            properties:
+              grade: *id001
+              qty_kg: *id004
+              label_serial: *id001
+            required:
+            - grade
+            - qty_kg
+        rejected_kg: *id004
+        waste_kg: *id004
+      required:
+      - event_id
+      - event_time
+      - outputs
+    Repack:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        crates:
+          type: integer
+        note: *id001
+      required:
+      - event_id
+      - event_time
+    Waste:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        qty_kg: *id004
+        reason_code: *id001
+        evidence_ids:
+          type: array
+          items: *id002
+      required:
+      - event_id
+      - event_time
+      - qty_kg
+      - reason_code
+    Sale:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        qty_kg: *id004
+      required:
+      - event_id
+      - event_time
+      - qty_kg
+    Correction:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        reason: *id001
+        new_values:
+          type: object
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - reason
+      - new_values
+      - device_signature
+    LabelReissue:
+      type: object
+      properties:
+        event_id: *id002
+        event_time: *id003
+        new_serial: *id001
+        reason: *id001
+        device_signature: *id001
+      required:
+      - event_id
+      - event_time
+      - new_serial
+      - reason
+      - device_signature
+    EventResult:
+      type: object
+      properties:
+        event_id: *id002
+        status:
+          type: string
+          enum:
+          - ACCEPTED
+          - REJECTED
+          - CONFLICT
+        lot_seq:
+          type: integer
+        reason_code: *id001
+        message: *id001
+      required:
+      - event_id
+      - status
+    SyncBatch:
+      type: object
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            properties:
+              path: *id001
+              method: *id001
+              body:
+                type: object
+            required:
+            - path
+            - body
+      required:
+      - items
+    SyncResult:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventResult'
+    EventList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+        next_cursor: *id001
+    EvidenceUploadRequest:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - PHOTO
+          - SCALE_PHOTO
+          - LAB_CERT
+          - DOC
+        sha256: *id001
+        content_type: *id001
+        size_bytes:
+          type: integer
+      required:
+      - kind
+      - sha256
+      - content_type
+    EvidenceUpload:
+      type: object
+      properties:
+        evidence_id: *id002
+        upload_url: *id001
+        expires_at: *id003
+    PublicLot:
+      type: object
+      properties:
+        code: *id001
+        product: *id001
+        harvest_date:
+          type: string
+          format: date
+        region: *id001
+        stages_confirmed:
+          type: integer
+        quality_checks:
+          type: integer
+        certificates:
+          type: array
+          items: *id001
+        scan_count:
+          type: integer
+        gaps_flagged:
+          type: boolean
+        disclaimer: *id001
+    RecallOpen:
+      type: object
+      properties:
+        lot_code: *id001
+        reason: *id001
+      required:
+      - lot_code
+      - reason
+    Recall:
+      type: object
+      properties:
+        recall_id: *id002
+        status: *id001
+        root_lot: *id001
+    RecallTrace:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              lot_code: *id001
+              custodian: *id001
+              state: *id001
+              on_hand_kg: *id004
+              sold_kg: *id004
