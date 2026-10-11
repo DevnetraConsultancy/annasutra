@@ -29,7 +29,7 @@ def setup_lot_with_events(db):
         state="IN_CUSTODY",
         head_seq=1,
     )
-    balance = LotBalance.objects.create(lot=lot, qty_in_kg=Decimal("100.000"))
+    LotBalance.objects.create(lot=lot, qty_in_kg=Decimal("100.000"))
 
     payload = {"label_serial": "DRILL-TOMATO-100", "net_qty_kg": 100.0}
     event_hash = compute_event_hash(None, "HARVEST_CREATE", 1, canonical_json_bytes(payload))

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:annasutra_mobile/features/auth/presentation/dpdp_consent_dialog.dart';
-import 'package:annasutra_mobile/l10n/app_localizations.dart';
 
 void main() {
   Widget buildTestableWidget(Widget child, {Locale locale = const Locale('en')}) {
     return MaterialApp(
       locale: locale,
       localizationsDelegates: const [
-        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

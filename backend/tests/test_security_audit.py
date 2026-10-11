@@ -74,7 +74,7 @@ def test_zero_pii_in_public_view_and_logs(api_client):
         org_type="FARMER",
         verification="VERIFIED",
     )
-    user = AppUser.objects.create(
+    AppUser.objects.create(
         org=org,
         phone_e164="+919876500099",
         role="OWNER",
@@ -121,8 +121,6 @@ def test_no_secrets_in_tracked_repository_files():
     """Validates that no private keys, real AWS secrets, or credentials exist in tracked code."""
     # Check that settings SECRET_KEY is not committed as hardcoded production secret
     assert settings.DEBUG is False or settings.SECRET_KEY != ""
-    # Ensure .env is not in git
-    env_path = os.path.join(settings.BASE_DIR, ".env")
     # Even if local .env exists, verify that .env.example contains only placeholders
     example_path = os.path.join(settings.BASE_DIR, ".env.example")
     if os.path.exists(example_path):
