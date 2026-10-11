@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "config.middleware.SecurityHeadersMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -130,6 +131,62 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "120/minute",
+        "user": "600/minute",
+        "otp": "5/day",
+        "public_scan": "60/minute",
+    },
     "EXCEPTION_HANDLER": "config.exceptions.problem_exception_handler",
     "UNAUTHENTICATED_USER": None,
+}
+
+# Base security defaults
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# CERT-In direction: 180-day ICT logging retention configuration
+LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "audit": {
+            "format": "%(asctime)s [%(levelname)s] [CERT-IN-AUDIT] %(name)s: %(message)s",
+            "datefmt": "%Y-%m-%dT%H:%M:%S%z",
+        },
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+        },
+        "audit_file": {
+            "class": "logging.FileHandler",
+            "filename": str(LOGS_DIR / "audit.log"),
+            "formatter": "audit",
+        },
+    },
+    "loggers": {
+        "annasutra.audit": {
+            "handlers": ["console", "audit_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "annasutra.security": {
+            "handlers": ["console", "audit_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
 }
