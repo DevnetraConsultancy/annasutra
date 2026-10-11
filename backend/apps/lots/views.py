@@ -157,10 +157,6 @@ class LotListCreateView(APIView):
             balance = LotBalance.objects.create(
                 lot=lot,
                 qty_in_kg=net_qty,
-                qty_on_hand_kg=net_qty,
-                qty_out_transferred_kg=0.0,
-                qty_out_waste_kg=0.0,
-                qty_out_sold_kg=0.0,
             )
 
             # 7. Record immutable TraceEvent
