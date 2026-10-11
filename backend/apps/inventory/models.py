@@ -13,3 +13,15 @@ class LotBalance(models.Model):
 
     class Meta:
         db_table = "lot_balance"
+
+    @property
+    def qty_on_hand_kg(self):
+        return (
+            self.qty_in_kg
+            - (self.qty_out_transferred_kg or 0)
+            - (self.qty_split_out_kg or 0)
+            - (self.qty_rejected_kg or 0)
+            - (self.qty_waste_kg or 0)
+            - (self.qty_sold_kg or 0)
+            - (self.qty_variance_kg or 0)
+        )

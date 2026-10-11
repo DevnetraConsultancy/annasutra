@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../features/auth/presentation/login_screen.dart';
+import '../features/auth/presentation/org_registration_screen.dart';
 import '../features/home/presentation/home_screen.dart';
+import '../features/lots/presentation/batch_create_screen.dart';
 
 GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
   return GoRouter(
@@ -10,6 +13,21 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/',
         name: 'home',
         builder: (context, state) => HomeScreen(onLocaleChanged: onLocaleChanged),
+      ),
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register-org',
+        name: 'register-org',
+        builder: (context, state) => const OrgRegistrationScreen(),
+      ),
+      GoRoute(
+        path: '/create-batch',
+        name: 'create-batch',
+        builder: (context, state) => const BatchCreateScreen(),
       ),
     ],
   );

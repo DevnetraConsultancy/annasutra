@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:annasutra_mobile/features/home/presentation/home_screen.dart';
 
 void main() {
   testWidgets('HomeScreen renders tabs, action buttons, and disclaimer notice', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: HomeScreen(),
+      const ProviderScope(
+        child: MaterialApp(
+          home: HomeScreen(),
+        ),
       ),
     );
 

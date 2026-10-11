@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../auth/presentation/controllers/auth_controller.dart';
+import '../../auth/domain/auth_state.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   final void Function(Locale locale)? onLocaleChanged;
 
   const HomeScreen({super.key, this.onLocaleChanged});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -26,11 +30,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final AuthState authState = ref.watch(authControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('AnnaSutra / অন্নসূত্র / अन्नसूत्र'),
         actions: [
+          // Account / Login action icon
+          IconButton(
+            icon: Icon(
+              authState.isAuthenticated ? Icons.account_circle : Icons.login,
+              size: 28,
+            ),
+            tooltip: authState.isAuthenticated ? 'Account' : 'Login',
+            onPressed: () {
+              if (authState.isAuthenticated) {
+                _showAccountDialog(context);
+              } else {
+                context.push('/login');
+              }
+            },
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.language, size: 28),
             tooltip: 'Language / ভাষা / भाषा',
@@ -70,6 +90,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
       body: Column(
         children: [
+          // Unverified organisation banner
+          if (authState.isAuthenticated && authState.orgVerification == 'PENDING')
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              color: Colors.amber.shade100,
+              child: Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.amber.shade900, size: 22),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Organisation Pending Verification: Batch operations are disabled until approved.',
+                      style: TextStyle(
+                        color: Colors.amber.shade900,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           // Sync status header bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -119,9 +161,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Create Batch triggered')),
-                      );
+                      context.push('/create-batch');
                     },
                     icon: const Icon(Icons.add_box, size: 24),
                     label: const Text('Create Batch'),
@@ -140,6 +180,29 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               style: TextStyle(fontSize: 12, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAccountDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('User Account'),
+        content: const Text('Logged in. Authenticated with hardware-backed key.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(authControllerProvider.notifier).logout();
+            },
+            child: const Text('Log Out', style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
           ),
         ],
       ),

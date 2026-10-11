@@ -1,0 +1,63 @@
+"""DRF Authentication and Permission classes for AnnaSutra JWT auth."""
+
+from rest_framework import authentication, exceptions, permissions
+
+from .models import AppUser
+from .services.token import TokenService
+
+
+class JWTAuthentication(authentication.BaseAuthentication):
+    """Authenticates requests carrying a Bearer JWT access token."""
+
+    def authenticate(self, request):
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return None
+
+        parts = auth_header.split()
+        if len(parts) != 2 or parts[0].lower() != "bearer":
+            return None
+
+        raw_token = parts[1]
+        try:
+            payload = TokenService.decode_token(raw_token, expected_type="access")
+        except Exception as e:
+            raise exceptions.AuthenticationFailed(f"Invalid or expired token: {str(e)}")
+
+        user_id = payload.get("sub")
+        try:
+            user = AppUser.objects.select_related("org").get(user_id=user_id)
+        except AppUser.DoesNotExist:
+            raise exceptions.AuthenticationFailed("User not found.")
+
+        if user.status != "ACTIVE":
+            raise exceptions.AuthenticationFailed("User account is not active.")
+
+        # Attach token payload to user instance for easy access in views
+        user.token_payload = payload
+        return (user, raw_token)
+
+
+class IsVerifiedOrg(permissions.BasePermission):
+    """Allows access only to users belonging to an organization verified by platform admin."""
+
+    message = "Your organization must be verified by the platform before performing supply chain operations."
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if not getattr(request.user, "org_id", None):
+            return False
+        return request.user.org and request.user.org.verification == "VERIFIED"
+
+
+class IsRole(permissions.BasePermission):
+    """Allows access only if user has one of the required roles."""
+
+    def __init__(self, *allowed_roles):
+        self.allowed_roles = allowed_roles
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        return request.user.role in self.allowed_roles
