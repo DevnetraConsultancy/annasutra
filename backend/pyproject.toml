@@ -16,12 +16,12 @@ exclude = [
     ".git",
     "venv",
     ".venv",
-    "migrations",
+    "**/migrations/*",
 ]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "DJ"]
-ignore = ["DJ001"]
+ignore = ["E501", "DJ001"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"

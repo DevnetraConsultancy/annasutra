@@ -1,8 +1,10 @@
 """Tests verifying database constraints and triggers from db/schema.sql."""
-import pytest
+
 import uuid
-from django.db import connection, IntegrityError, InternalError
+
+from django.db import IntegrityError, InternalError, connection
 from django.utils import timezone
+import pytest
 
 
 @pytest.mark.django_db(transaction=True)

@@ -1,16 +1,18 @@
 """Contract tests validating Django URLs and responses against api/openapi.yaml."""
+
 from pathlib import Path
-import yaml
-import pytest
-from django.urls import resolve, Resolver404
+
+from django.urls import Resolver404, resolve
 from openapi_spec_validator import validate_spec
+import pytest
+import yaml
 
 
 @pytest.fixture(scope="module")
 def openapi_spec():
     root = Path(__file__).resolve().parent.parent.parent
     spec_path = root / "api" / "openapi.yaml"
-    with open(spec_path, "r", encoding="utf-8") as f:
+    with open(spec_path, encoding="utf-8") as f:
         spec = yaml.safe_load(f)
     # Validate OpenAPI 3.0.3 schema
     validate_spec(spec)

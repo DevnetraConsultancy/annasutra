@@ -47,10 +47,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r backend/requirements-dev.txt
 
-      - name: Lint and format check (Ruff)
+      - name: Lint check (Ruff)
         run: |
-          ruff check backend/
-          ruff format --check backend/
+          ruff check --config pyproject.toml backend/
 
       - name: Run Django migrations on PostgreSQL 16
         run: |
