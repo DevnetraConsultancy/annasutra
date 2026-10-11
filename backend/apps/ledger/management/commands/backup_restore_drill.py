@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from apps.lots.models import Lot, LotBalance
+from apps.lots.models import Lot
+from apps.inventory.models import LotBalance
 from apps.ledger.models import TraceEvent
 from apps.ledger.services.hash_chain import canonical_json_bytes, compute_event_hash
 

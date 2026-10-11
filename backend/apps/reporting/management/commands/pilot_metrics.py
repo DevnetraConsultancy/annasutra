@@ -4,7 +4,8 @@ from decimal import Decimal
 from django.core.management.base import BaseCommand
 from django.db.models import Sum, Count
 
-from apps.lots.models import Lot, LotBalance
+from apps.lots.models import Lot
+from apps.inventory.models import LotBalance
 from apps.custody.models import Handover
 from apps.alerts.models import Alert, ScanLog
 from apps.ledger.models import HashAnchor

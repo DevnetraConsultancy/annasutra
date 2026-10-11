@@ -8,8 +8,8 @@ from django.core.management import call_command
 from django.utils import timezone
 
 from apps.organisations.models import Organisation
-from apps.identity.models import AppUser
-from apps.lots.models import Lot, LotBalance, Product
+from apps.lots.models import Lot, Product
+from apps.inventory.models import LotBalance
 from apps.ledger.models import TraceEvent
 from apps.ledger.services.hash_chain import canonical_json_bytes, compute_event_hash
 
