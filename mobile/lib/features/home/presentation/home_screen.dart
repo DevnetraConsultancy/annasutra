@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../auth/domain/auth_state.dart';
+import '../../auth/presentation/dpdp_consent_dialog.dart';
 import '../../sync/sync_service.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -73,6 +74,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 child: Text('বাংলা (Bengali)', style: TextStyle(fontSize: 16)),
               ),
             ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.shield_outlined, size: 26),
+            tooltip: 'Data Protection & Privacy / গোপনীয়তা / गोपनीयता',
+            onPressed: () => DpdpConsentDialog.show(context),
           ),
           const SizedBox(width: 8),
         ],

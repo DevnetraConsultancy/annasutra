@@ -8,12 +8,15 @@ from rest_framework.permissions import AllowAny
 
 from apps.publicview.models import PublicView
 from apps.alerts.models import ScanLog
+from rest_framework.throttling import ScopedRateThrottle, AnonRateThrottle
 
 
 class PublicLotDetailView(APIView):
     """Consumer-visible JSON summary selecting exclusively from the public_view table."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, ScopedRateThrottle]
+    throttle_scope = "public_scan"
 
     def get(self, request, code):
         public_view = PublicView.objects.filter(public_code=code).first()

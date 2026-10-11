@@ -85,5 +85,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dpdpNoticeTitle": "Data Protection & Privacy Notice",
+  "dpdpNoticeBody": "In compliance with the Digital Personal Data Protection Act 2023, AnnaSutra collects only essential data (mobile number and device key) solely for agricultural custody verification and fraud prevention. You have the right to access, correct, or erase your information.",
+  "dpdpGrievanceContact": "Grievance Redressal Officer: grievance@annasutra.in",
+  "acceptAndContinue": "I Agree & Continue",
+  "privacyPolicy": "Privacy Policy"
 }
