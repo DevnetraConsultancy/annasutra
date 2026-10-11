@@ -2,12 +2,12 @@
 
 import uuid
 
-from django.db import IntegrityError, InternalError, connection
+from django.db import IntegrityError, InternalError, connection, transaction
 from django.utils import timezone
 import pytest
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 def test_trace_event_append_only_trigger():
     """Verify trace_event prevents UPDATE and DELETE via forbid_change trigger."""
     with connection.cursor() as cursor:
@@ -45,16 +45,18 @@ def test_trace_event_append_only_trigger():
 
         # Attempt UPDATE -> must fail with exception from trigger
         with pytest.raises((IntegrityError, InternalError, Exception)) as exc_info:
-            cursor.execute("UPDATE trace_event SET event_type = 'MUTATED' WHERE event_id = %s", [event_id])
+            with transaction.atomic():
+                cursor.execute("UPDATE trace_event SET event_type = 'MUTATED' WHERE event_id = %s", [event_id])
         assert "append-only" in str(exc_info.value).lower()
 
         # Attempt DELETE -> must fail with exception from trigger
         with pytest.raises((IntegrityError, InternalError, Exception)) as exc_info:
-            cursor.execute("DELETE FROM trace_event WHERE event_id = %s", [event_id])
+            with transaction.atomic():
+                cursor.execute("DELETE FROM trace_event WHERE event_id = %s", [event_id])
         assert "append-only" in str(exc_info.value).lower()
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 def test_one_open_handover_constraint():
     """Verify partial unique index permits only one open PENDING handover per lot."""
     with connection.cursor() as cursor:
@@ -83,14 +85,15 @@ def test_one_open_handover_constraint():
         # Second PENDING handover on same lot must violate one_open_handover
         ho2 = str(uuid.uuid4())
         with pytest.raises(IntegrityError):
-            cursor.execute(
-                "INSERT INTO handover (handover_id, lot_id, from_org, to_org, declared_qty_kg, state, expires_at) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                [ho2, lot_id, org_a, org_b, 50.0, "PENDING", timezone.now()],
-            )
+            with transaction.atomic():
+                cursor.execute(
+                    "INSERT INTO handover (handover_id, lot_id, from_org, to_org, declared_qty_kg, state, expires_at) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    [ho2, lot_id, org_a, org_b, 50.0, "PENDING", timezone.now()],
+                )
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 def test_on_hand_nonnegative_constraint():
     """Verify check constraint on lot_balance prevents negative on-hand quantities."""
     with connection.cursor() as cursor:
@@ -111,4 +114,5 @@ def test_on_hand_nonnegative_constraint():
 
         # Attempt to transfer 150 kg out (outputs > inputs + 0.001) -> must fail CHECK
         with pytest.raises(IntegrityError):
-            cursor.execute("UPDATE lot_balance SET qty_out_transferred_kg = 150.0 WHERE lot_id = %s", [lot_id])
+            with transaction.atomic():
+                cursor.execute("UPDATE lot_balance SET qty_out_transferred_kg = 150.0 WHERE lot_id = %s", [lot_id])

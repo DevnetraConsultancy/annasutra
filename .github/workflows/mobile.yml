@@ -34,7 +34,9 @@ jobs:
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
       - name: Scaffold platform targets
-        run: flutter create . --platforms web,android --org in.example.annasutra
+        run: |
+          flutter create . --platforms web,android --org in.example.annasutra
+          rm -f test/widget_test.dart
 
       - name: Install dependencies
         run: flutter pub get
