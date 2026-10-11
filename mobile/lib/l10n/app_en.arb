@@ -3,11 +3,41 @@
   "appTitle": "AnnaSutra",
   "incoming": "Incoming",
   "myStock": "My Stock",
-  "waiting": "Waiting for Others",
+  "waiting": "Waiting",
   "scanQr": "Scan QR",
   "createBatch": "Create Batch",
   "syncStatus": "Sync Status",
   "synced": "Synced",
   "offline": "Offline - Queued",
-  "disclaimer": "This record is based on information entered by supply-chain participants. It does not prove the contents of this package."
+  "disclaimer": "This record is based on information entered by supply-chain participants. It does not prove the contents of this package.",
+  "loginTitle": "Login to AnnaSutra",
+  "phoneNumber": "Phone Number",
+  "phoneHint": "+91 98765 43210",
+  "requestOtp": "Send OTP",
+  "otpCode": "6-Digit Code",
+  "verifyOtp": "Verify Code",
+  "resendOtp": "Resend Code",
+  "resendIn": "Resend in {seconds}s",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "orgRegistrationTitle": "Register Business or Farm",
+  "orgName": "Organisation / Farm Name",
+  "orgType": "Organisation Type",
+  "fssaiNumber": "FSSAI License No. (Optional)",
+  "dpdpConsent": "I consent to store my business contact and supply chain events on AnnaSutra in accordance with DPDP Act 2023.",
+  "register": "Register Organisation",
+  "batchCreationTitle": "Create Harvest Batch",
+  "labelSerial": "QR Label Serial",
+  "productName": "Produce Name",
+  "productVariety": "Variety",
+  "harvestDate": "Harvest Date",
+  "netQuantityKg": "Net Quantity (kg)",
+  "cratesCount": "Crates / Bags Count",
+  "submitBatch": "Sign & Submit Batch",
+  "unverifiedWarning": "Organisation pending verification. Actions disabled until approved by platform admin."
 }
