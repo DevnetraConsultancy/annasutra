@@ -97,6 +97,24 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Cache configuration for OTP rate limiting and challenge storage
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "annasutra-local-cache",
+    }
+}
+
+# WebAuthn relying party configuration
+WEBAUTHN_RP_ID = env("WEBAUTHN_RP_ID", default="localhost")
+WEBAUTHN_RP_NAME = env("WEBAUTHN_RP_NAME", default="AnnaSutra")
+WEBAUTHN_ORIGIN = env("WEBAUTHN_ORIGIN", default="http://localhost:8000")
+
+# JWT configuration
+JWT_SECRET_KEY = env("JWT_SECRET_KEY", default=SECRET_KEY)
+JWT_ACCESS_EXPIRY_SECONDS = 900  # 15 minutes
+JWT_REFRESH_EXPIRY_SECONDS = 2592000  # 30 days
+
 # Django REST Framework configuration
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
@@ -106,6 +124,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "apps.identity.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [

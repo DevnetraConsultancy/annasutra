@@ -26,6 +26,14 @@ class AppUser(models.Model):
     class Meta:
         db_table = "app_user"
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
 
 class Device(models.Model):
     device_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
