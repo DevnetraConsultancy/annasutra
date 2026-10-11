@@ -48,7 +48,7 @@ class Lot(models.Model):
 
 
 class LotEdge(models.Model):
-    parent_lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="child_edges", db_column="parent_lot")
+    parent_lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="child_edges", db_column="parent_lot", primary_key=True)
     child_lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="parent_edges", db_column="child_lot")
     qty_kg = models.DecimalField(max_digits=12, decimal_places=3)
     event_id = models.UUIDField()

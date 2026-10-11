@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from django.urls import Resolver404, resolve
-from openapi_spec_validator import validate_spec
+from openapi_spec_validator import validate
 import pytest
 import yaml
 
@@ -15,7 +15,7 @@ def openapi_spec():
     with open(spec_path, encoding="utf-8") as f:
         spec = yaml.safe_load(f)
     # Validate OpenAPI 3.0.3 schema
-    validate_spec(spec)
+    validate(spec)
     return spec
 
 

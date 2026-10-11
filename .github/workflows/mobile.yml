@@ -33,6 +33,9 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
+      - name: Scaffold platform targets
+        run: flutter create . --platforms web,android --org in.example.annasutra
+
       - name: Install dependencies
         run: flutter pub get
 

@@ -74,7 +74,7 @@ class PartnerLink(models.Model):
         ("REVOKED", "Revoked"),
     ]
 
-    org_a = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="partner_links_a", db_column="org_a")
+    org_a = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="partner_links_a", db_column="org_a", primary_key=True)
     org_b = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="partner_links_b", db_column="org_b")
     status = models.TextField(choices=STATUS_CHOICES)
     invited_by = models.ForeignKey("identity.AppUser", null=True, blank=True, on_delete=models.SET_NULL, related_name="partner_invitations", db_column="invited_by")
