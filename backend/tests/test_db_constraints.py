@@ -60,7 +60,6 @@ def test_one_open_handover_constraint():
     with connection.cursor() as cursor:
         org_a = str(uuid.uuid4())
         org_b = str(uuid.uuid4())
-        user_id = str(uuid.uuid4())
         product_id = str(uuid.uuid4())
         lot_id = str(uuid.uuid4())
 

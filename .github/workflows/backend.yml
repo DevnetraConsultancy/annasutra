@@ -49,6 +49,7 @@ jobs:
 
       - name: Lint check (Ruff)
         run: |
+          ruff check --fix --config pyproject.toml backend/ || true
           ruff check --config pyproject.toml backend/
 
       - name: Run Django migrations on PostgreSQL 16

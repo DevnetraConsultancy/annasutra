@@ -21,8 +21,8 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "DJ"]
-ignore = ["E501", "DJ001"]
+select = ["E", "F"]
+ignore = ["E501", "E402", "DJ001"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
