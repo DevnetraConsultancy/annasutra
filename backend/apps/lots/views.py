@@ -269,7 +269,9 @@ class LotInspectionView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"event_id": request.data.get("event_id", str(uuid.uuid4()))}, status=status.HTTP_201_CREATED)
+        from apps.quality.services.quality_service import record_inspection
+        result = record_inspection(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotDispatchView(APIView):
@@ -295,46 +297,60 @@ class LotSplitView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"new_lots": []}, status=status.HTTP_201_CREATED)
+        from .services.genealogy_service import split_lot
+        result = split_lot(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotMergeView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request):
-        return Response({"merged_lot": {}}, status=status.HTTP_201_CREATED)
+        from .services.genealogy_service import merge_lots
+        result = merge_lots(request.user, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotSortView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"sorted_lots": []}, status=status.HTTP_201_CREATED)
+        from .services.genealogy_service import sort_lot
+        result = sort_lot(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotRepackView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"repacked_lots": []}, status=status.HTTP_201_CREATED)
+        from .services.genealogy_service import repack_lot
+        result = repack_lot(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotWasteView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"event_id": str(uuid.uuid4())}, status=status.HTTP_201_CREATED)
+        from .services.genealogy_service import record_waste
+        result = record_waste(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotSaleView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"event_id": str(uuid.uuid4())}, status=status.HTTP_201_CREATED)
+        from .services.genealogy_service import record_sale
+        result = record_sale(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class LotLabelReissueView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"event_id": str(uuid.uuid4())}, status=status.HTTP_201_CREATED)
+        from apps.ledger.services.correction_service import reissue_label
+        result = reissue_label(request.user, code, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)

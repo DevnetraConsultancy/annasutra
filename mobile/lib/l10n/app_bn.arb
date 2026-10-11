@@ -60,5 +60,30 @@
         "type": "int"
       }
     }
+  },
+  "splitLot": "লট ভাগ করুন (Split)",
+  "splitBatchTitle": "লটকে উপ-ব্যাচে ভাগ করুন",
+  "childSerial": "উপ-লট লেবেল ক্রমিক",
+  "childQty": "উপ-লট পরিমাণ (কেজি)",
+  "addChild": "নতুন উপ-লট যোগ করুন",
+  "recordWaste": "বর্জ্য / ক্ষতি নথিভুক্ত করুন",
+  "wasteReason": "ক্ষতির কারণ",
+  "wasteQtyKg": "বর্জ্য পরিমাণ (কেজি)",
+  "recordSale": "খুচরা বিক্রি নথিভুক্ত করুন",
+  "saleQtyKg": "বিক্রির পরিমাণ (কেজি)",
+  "inspectLot": "গুণমান পরীক্ষা করুন",
+  "grade": "গুণমান গ্রেড",
+  "defectPct": "ত্রুটির শতাংশ (%)",
+  "temperatureC": "তাপমাত্রা (°C)",
+  "notes": "পরীক্ষার নোট",
+  "uploadPhoto": "ছবির প্রমাণ আপলোড করুন",
+  "recalledWarning": "সতর্কতা: এই লটটির সক্রিয় প্রত্যাহার (RECALL) বিজ্ঞপ্তি রয়েছে। এটি বিতরণ করবেন না।",
+  "remainingKg": "অবশিষ্ট: {qty} কেজি",
+  "@remainingKg": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
   }
 }

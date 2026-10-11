@@ -19,16 +19,9 @@ class EventCorrectionView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, event_id):
-        return Response(
-            {
-                "event_id": request.data.get("event_id", str(uuid.uuid4())),
-                "status": "ACCEPTED",
-                "lot_seq": 5,
-                "reason_code": request.data.get("reason", "CORRECTION"),
-                "message": "Correction appended successfully.",
-            },
-            status=status.HTTP_201_CREATED,
-        )
+        from .services.correction_service import correct_event
+        result = correct_event(request.user, event_id, request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class SyncBatchView(APIView):
@@ -37,6 +30,17 @@ class SyncBatchView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request):
+        from apps.lots.services.genealogy_service import (
+            split_lot,
+            merge_lots,
+            sort_lot,
+            repack_lot,
+            record_waste,
+            record_sale,
+        )
+        from apps.quality.services.quality_service import record_inspection
+        from apps.ledger.services.correction_service import correct_event, reissue_label
+
         items = request.data.get("items", [])
         if len(items) > 100:
             raise exceptions.ValidationError(
@@ -187,6 +191,157 @@ class SyncBatchView(APIView):
                         )
                     continue
 
+                # 6. Split route: /v1/lots/{code}/split
+                split_match = re.search(r"^/v1/lots/([^/]+)/split$", path)
+                if split_match:
+                    lot_code = split_match.group(1)
+                    split_lot(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Split completed.",
+                        }
+                    )
+                    continue
+
+                # 7. Merge route: /v1/lots/merge
+                if path in ["/v1/lots/merge", "/v1/lots/merge/"]:
+                    merge_lots(request.user, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Merge completed.",
+                        }
+                    )
+                    continue
+
+                # 8. Sort route: /v1/lots/{code}/sort
+                sort_match = re.search(r"^/v1/lots/([^/]+)/sort$", path)
+                if sort_match:
+                    lot_code = sort_match.group(1)
+                    sort_lot(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Sort completed.",
+                        }
+                    )
+                    continue
+
+                # 9. Repack route: /v1/lots/{code}/repack
+                repack_match = re.search(r"^/v1/lots/([^/]+)/repack$", path)
+                if repack_match:
+                    lot_code = repack_match.group(1)
+                    repack_lot(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Repack recorded.",
+                        }
+                    )
+                    continue
+
+                # 10. Waste route: /v1/lots/{code}/waste
+                waste_match = re.search(r"^/v1/lots/([^/]+)/waste$", path)
+                if waste_match:
+                    lot_code = waste_match.group(1)
+                    record_waste(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Waste recorded.",
+                        }
+                    )
+                    continue
+
+                # 11. Sales route: /v1/lots/{code}/sales
+                sales_match = re.search(r"^/v1/lots/([^/]+)/sales$", path)
+                if sales_match:
+                    lot_code = sales_match.group(1)
+                    record_sale(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Sale recorded.",
+                        }
+                    )
+                    continue
+
+                # 12. Inspection route: /v1/lots/{code}/inspections
+                inspect_match = re.search(r"^/v1/lots/([^/]+)/inspections$", path)
+                if inspect_match:
+                    lot_code = inspect_match.group(1)
+                    record_inspection(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Inspection recorded.",
+                        }
+                    )
+                    continue
+
+                # 13. Label reissue route: /v1/lots/{code}/label-reissue
+                reissue_match = re.search(r"^/v1/lots/([^/]+)/label-reissue$", path)
+                if reissue_match:
+                    lot_code = reissue_match.group(1)
+                    reissue_label(request.user, lot_code, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Label reissued.",
+                        }
+                    )
+                    continue
+
+                # 14. Correction route: /v1/events/{event_id}/corrections
+                corr_match = re.search(r"^/v1/events/([^/]+)/corrections$", path)
+                if corr_match:
+                    target_event_id = corr_match.group(1)
+                    correct_event(request.user, target_event_id, body)
+                    event = TraceEvent.objects.get(event_id=event_uuid)
+                    results.append(
+                        {
+                            "event_id": str(event_uuid),
+                            "status": "ACCEPTED",
+                            "lot_seq": event.lot_seq,
+                            "reason_code": None,
+                            "message": "Correction appended.",
+                        }
+                    )
+                    continue
+
                 # Unknown route
                 results.append(
                     {
@@ -212,6 +367,9 @@ class SyncBatchView(APIView):
                     "HANDOVER_NOT_PENDING",
                     "HANDOVER_EXPIRED",
                     "LABEL_ALREADY_USED",
+                    "CYCLIC_GENEALOGY",
+                    "MASS_BALANCE_VIOLATION",
+                    "INSUFFICIENT_STOCK",
                 ]
                 item_status = "CONFLICT" if code in conflict_codes or exc.status_code == 409 else "REJECTED"
 

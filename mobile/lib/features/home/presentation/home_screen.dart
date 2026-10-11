@@ -270,6 +270,75 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                                 foregroundColor: Colors.white,
                               ),
                             ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/split?code=7K3Q9XMD4T2B&qty=500.0');
+                                  },
+                                  icon: const Icon(Icons.call_split, size: 16),
+                                  label: Text(l10n.splitLot),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/inspection?code=7K3Q9XMD4T2B');
+                                  },
+                                  icon: const Icon(Icons.verified, size: 16),
+                                  label: Text(l10n.inspectLot),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/waste?code=7K3Q9XMD4T2B&qty=500.0');
+                                  },
+                                  icon: const Icon(Icons.delete_outline, size: 16),
+                                  label: Text(l10n.recordWaste),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/sale?code=7K3Q9XMD4T2B&qty=500.0');
+                                  },
+                                  icon: const Icon(Icons.point_of_sale, size: 16),
+                                  label: Text(l10n.recordSale),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Card(
+                      color: Colors.red.shade50,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.red.shade400, width: 1.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.warning, color: Colors.red, size: 28),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'RECALL ALERT: LOT-RECALL-001',
+                                    style: TextStyle(color: Colors.red.shade900, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    l10n.recalledWarning,
+                                    style: TextStyle(color: Colors.red.shade800, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
