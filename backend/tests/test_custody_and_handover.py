@@ -383,6 +383,7 @@ def test_public_view_zero_pii_leak(api_client):
 def test_daily_anchor_merkle_root():
     farmer = create_user_and_org("+919999999991", "Anchor Test Org")
     lot = create_sample_lot(farmer, serial="7K3Q9XMD4T2G", qty=200.0)
+    assert lot.lot_id is not None
 
     root_hash, verified_count, corrupted_count = run_daily_anchoring()
     assert verified_count >= 1

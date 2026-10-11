@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -84,9 +84,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
         rejectedQty = double.tryParse(_rejectedController.text.trim()) ?? 0.0;
       }
 
-      final payloadToSign = utf8.encode('RECEIVE:$eventId:${widget.handoverId}:$receivedQty:$rejectedQty');
-      final signatureBytes = await signer.sign(payloadToSign);
-      final signatureBase64 = base64Encode(signatureBytes);
+      final payloadToSign = Uint8List.fromList(utf8.encode('RECEIVE:$eventId:${widget.handoverId}:$receivedQty:$rejectedQty'));
+      final signatureBase64 = await signer.sign(payloadToSign);
 
       final body = {
         'event_id': eventId,

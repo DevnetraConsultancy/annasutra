@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,9 +49,8 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
       final toOrgId = _toOrgController.text.trim();
 
       // Sign event payload with hardware device key
-      final payloadToSign = utf8.encode('DISPATCH:$eventId:${widget.lotCode}:$qtyKg:$toOrgId');
-      final signatureBytes = await signer.sign(payloadToSign);
-      final signatureBase64 = base64Encode(signatureBytes);
+      final payloadToSign = Uint8List.fromList(utf8.encode('DISPATCH:$eventId:${widget.lotCode}:$qtyKg:$toOrgId'));
+      final signatureBase64 = await signer.sign(payloadToSign);
 
       final body = {
         'event_id': eventId,

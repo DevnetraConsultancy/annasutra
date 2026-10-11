@@ -161,7 +161,6 @@ class SyncBatchView(APIView):
                 # 5. Create lot route: /v1/lots
                 if path in ["/v1/lots", "/v1/lots/"]:
                     from apps.lots.views import LotListCreateView
-                    fake_request = request._request
                     view = LotListCreateView()
                     view.request = request
                     response = view.post(request)

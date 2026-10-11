@@ -65,7 +65,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
         }).toList(),
       };
 
-      final response = await _dio.post('/v1/sync/events', data: batchPayload);
+      final response = await _dio.post<dynamic>('/v1/sync/events', data: batchPayload);
 
       if (response.statusCode == 200) {
         // Successful sync batch execution
