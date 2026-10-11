@@ -24,7 +24,8 @@ from apps.inventory.models import LotBalance
 from apps.labels.models import QrBlock, QrLabel
 from apps.ledger.models import TraceEvent
 from apps.lots.models import Lot, Product
-from apps.organisations.models import AppUser, Organisation
+from apps.identity.models import AppUser
+from apps.organisations.models import Organisation
 from apps.quality.models import Inspection
 from apps.reporting.models import Recall
 from apps.ledger.admin import TraceEventAdmin
