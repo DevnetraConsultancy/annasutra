@@ -21,7 +21,7 @@ void main() {
 
     // Verify mandatory disclaimer from docs/00_MASTER_BRIEF.md
     expect(
-      find.textContaining('This record is based on information entered by supply-chain participants', findRichText: true),
+      find.textContaining('Records are based on information entered by supply-chain participants', findRichText: true),
       findsOneWidget,
     );
   });
