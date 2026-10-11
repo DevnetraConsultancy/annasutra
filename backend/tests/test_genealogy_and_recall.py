@@ -358,7 +358,9 @@ def test_inspection_and_evidence_upload(api_client, test_setup):
 
     # 3. Third-party rejection: farmer is not custodian or pending receiver of this lot
     api_client.force_authenticate(user=farmer_user)
-    unauth_resp = api_client.post(f"/v1/lots/{lot.public_code}/inspections", insp_payload, format="json")
+    unauth_payload = dict(insp_payload)
+    unauth_payload["event_id"] = str(uuid.uuid4())
+    unauth_resp = api_client.post(f"/v1/lots/{lot.public_code}/inspections", unauth_payload, format="json")
     assert unauth_resp.status_code == 403
 
 

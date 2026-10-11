@@ -378,8 +378,9 @@ def merge_lots(user, data: dict) -> dict:
 
         merged_lot_id = uuid.uuid4()
         total_merged_qty = Decimal("0")
+        parent_balances = {}
 
-        # 1. Deduct inputs and create lot_edges
+        # 1. Validate parent balances and compute total quantity
         for p in parent_lots:
             _check_genealogy_cycle(p.lot_id, merged_lot_id)
             bal = LotBalance.objects.select_for_update().filter(lot=p).first()
@@ -387,8 +388,36 @@ def merge_lots(user, data: dict) -> dict:
                 raise exceptions.ValidationError(
                     {"detail": f"Lot {p.public_code} has zero on-hand quantity.", "code": "INSUFFICIENT_STOCK"}
                 )
+            parent_balances[p.lot_id] = bal
+            total_merged_qty += bal.qty_on_hand_kg
+
+        # 2. Create merged lot first so child_lot FK in lot_edge is satisfied
+        merged_lot = Lot.objects.create(
+            lot_id=merged_lot_id,
+            public_code=output_serial,
+            product=parent_lots[0].product,
+            origin_plot=None,
+            created_by_org=user_org,
+            lot_kind="MERGED",
+            state="IN_CUSTODY",
+            custodian_org=user_org,
+            head_seq=1,
+        )
+
+        qr_label.lot = merged_lot
+        qr_label.status = "BOUND"
+        qr_label.bound_at = timezone.now()
+        qr_label.save(update_fields=["lot", "status", "bound_at"])
+
+        merged_balance = LotBalance.objects.create(
+            lot=merged_lot,
+            qty_in_kg=total_merged_qty,
+        )
+
+        # 3. Deduct parent balances, record parent MERGE events, and insert lot_edges
+        for p in parent_lots:
+            bal = parent_balances[p.lot_id]
             input_qty = bal.qty_on_hand_kg
-            total_merged_qty += input_qty
 
             bal.qty_split_out_kg += input_qty
             bal.save(update_fields=["qty_split_out_kg"])
@@ -425,29 +454,7 @@ def merge_lots(user, data: dict) -> dict:
                     [p.lot_id, merged_lot_id, input_qty, event_id],
                 )
 
-        # 2. Create merged lot
-        merged_lot = Lot.objects.create(
-            lot_id=merged_lot_id,
-            public_code=output_serial,
-            product=parent_lots[0].product,
-            origin_plot=None,
-            created_by_org=user_org,
-            lot_kind="MERGED",
-            state="IN_CUSTODY",
-            custodian_org=user_org,
-            head_seq=1,
-        )
-
-        qr_label.lot = merged_lot
-        qr_label.status = "BOUND"
-        qr_label.bound_at = timezone.now()
-        qr_label.save(update_fields=["lot", "status", "bound_at"])
-
-        merged_balance = LotBalance.objects.create(
-            lot=merged_lot,
-            qty_in_kg=total_merged_qty,
-        )
-
+        # 4. Record merged lot trace event
         m_payload = {
             "input_lot_codes": input_codes,
             "total_merged_qty_kg": str(total_merged_qty),
