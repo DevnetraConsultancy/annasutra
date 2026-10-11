@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnnaSutra - Batch Not Found</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f9fbf9;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 16px;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e0e0e0;
+      padding: 32px 20px;
+    }
+    h1 {
+      color: #d32f2f;
+      font-size: 22px;
+      margin-top: 0;
+    }
+    p {
+      color: #555;
+      font-size: 15px;
+    }
+    .disclaimer-box {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 8px;
+      padding: 16px;
+      color: #795548;
+      font-size: 13px;
+      margin-top: 24px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Batch Not Found / ব্যাচ পাওয়া যায়নি</h1>
+      <p>The code <strong>{{ code }}</strong> does not match any registered produce record in the AnnaSutra ledger.</p>
+      <p style="font-size: 13px; color: #777;">Please verify that you scanned an authentic AnnaSutra label or contact the retailer.</p>
+
+      <div class="disclaimer-box">
+        <strong>Notice / বিজ্ঞপ্তি:</strong>
+        <p style="margin: 4px 0 0 0;">
+          AnnaSutra records are based on verified supply-chain participants. Unregistered codes cannot be verified.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../auth/domain/auth_state.dart';
+import '../../sync/sync_service.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final void Function(Locale locale)? onLocaleChanged;
@@ -31,6 +32,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final AuthState authState = ref.watch(authControllerProvider);
+    final SyncState syncState = ref.watch(syncControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -112,19 +114,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 ],
               ),
             ),
-          // Sync status header bar
+          // Sync status header bar with live outbox counter and manual sync button
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.green.shade50,
+            color: syncState.pendingCount > 0 ? Colors.amber.shade50 : Colors.green.shade50,
             child: Row(
               children: [
-                Icon(Icons.cloud_done, color: Colors.green.shade800, size: 20),
+                Icon(
+                  syncState.pendingCount > 0 ? Icons.cloud_queue : Icons.cloud_done,
+                  color: syncState.pendingCount > 0 ? Colors.amber.shade900 : Colors.green.shade800,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  'Sync Status: All events synced',
-                  style: TextStyle(
-                    color: Colors.green.shade900,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    syncState.pendingCount > 0
+                        ? 'Offline Queue: ${syncState.pendingCount} events waiting to sync'
+                        : 'Sync Status: All events synced',
+                    style: TextStyle(
+                      color: syncState.pendingCount > 0 ? Colors.amber.shade900 : Colors.green.shade900,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: syncState.isSyncing
+                      ? null
+                      : () => ref.read(syncControllerProvider.notifier).syncNow(),
+                  icon: syncState.isSyncing
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.sync, size: 16),
+                  label: Text(
+                    syncState.isSyncing ? 'Syncing...' : 'Sync Now',
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -135,9 +162,148 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildListEmptyState('No incoming batches pending receipt.'),
-                _buildListEmptyState('No batches currently held in stock.'),
-                _buildListEmptyState('No handovers waiting for counterparties.'),
+                // Incoming Tab
+                ListView(
+                  padding: const EdgeInsets.all(16.0),
+                  children: [
+                    Card(
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'BATCH: 7K3Q9XMD4T2B',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    'In Transit',
+                                    style: TextStyle(
+                                      color: Colors.blue.shade900,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            const Text('Tomato (hybrid) • Declared: 500.0 kg'),
+                            const Text('From: Bardhaman Farmer Coop'),
+                            const SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
+                              },
+                              icon: const Icon(Icons.download_done),
+                              label: const Text('Receive Batch / গ্রহণ করুন'),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(42),
+                                backgroundColor: Colors.green.shade800,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // My Stock Tab
+                ListView(
+                  padding: const EdgeInsets.all(16.0),
+                  children: [
+                    Card(
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'BATCH: 7K3Q9XMD4T2B',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade100,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    'In Custody',
+                                    style: TextStyle(
+                                      color: Colors.green.shade900,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            const Text('Tomato (hybrid) • On Hand: 500.0 kg'),
+                            const Text('Quality Grade: A (Fresh)'),
+                            const SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                context.push('/dispatch?code=7K3Q9XMD4T2B');
+                              },
+                              icon: const Icon(Icons.upload),
+                              label: const Text('Dispatch Batch / প্রেরণ করুন'),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(42),
+                                backgroundColor: Colors.blue.shade800,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Waiting Tab
+                ListView(
+                  padding: const EdgeInsets.all(16.0),
+                  children: [
+                    Card(
+                      elevation: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'BATCH: 7K3Q9XMD4T2B',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            const SizedBox(height: 6),
+                            const Text('Dispatched 500.0 kg to Kolkata Mandi Wholesaler'),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Status: Waiting for receiver confirmation',
+                              style: TextStyle(color: Colors.amber.shade900, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -149,9 +315,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Scan QR triggered')),
-                      );
+                      context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
                     },
                     icon: const Icon(Icons.qr_code_scanner, size: 24),
                     label: const Text('Scan QR'),
@@ -205,19 +369,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             child: const Text('Close'),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildListEmptyState(String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Text(
-          message,
-          style: const TextStyle(fontSize: 16, color: Colors.black54),
-          textAlign: TextAlign.center,
-        ),
       ),
     );
   }

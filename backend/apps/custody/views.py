@@ -2,55 +2,44 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from apps.identity.authentication import IsVerifiedOrg
+from apps.custody.services.handover_service import (
+    receive_handover,
+    dispute_handover,
+    resolve_handover,
+)
+
+
+def handover_response(handover) -> dict:
+    return {
+        "handover_id": str(handover.handover_id),
+        "lot_code": handover.lot.public_code,
+        "state": handover.state,
+        "declared_qty_kg": float(handover.declared_qty_kg),
+        "received_qty_kg": float(handover.received_qty_kg) if handover.received_qty_kg is not None else None,
+        "expires_at": handover.expires_at.isoformat(),
+    }
 
 
 class HandoverReceiveView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsVerifiedOrg]
 
     def post(self, request, handover_id):
-        return Response(
-            {
-                "handover_id": str(handover_id),
-                "lot_code": "7K3Q9XMD4T2B",
-                "state": "ACCEPTED",
-                "declared_qty_kg": 500.0,
-                "received_qty_kg": float(request.data.get("received_qty_kg", 500.0)),
-                "expires_at": "2026-10-12T16:30:00Z",
-            },
-            status=status.HTTP_200_OK,
-        )
+        handover = receive_handover(request.user, handover_id, request.data)
+        return Response(handover_response(handover), status=status.HTTP_200_OK)
 
 
 class HandoverDisputeView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsVerifiedOrg]
 
     def post(self, request, handover_id):
-        return Response(
-            {
-                "handover_id": str(handover_id),
-                "lot_code": "7K3Q9XMD4T2B",
-                "state": "DISPUTED",
-                "declared_qty_kg": 500.0,
-                "received_qty_kg": float(request.data.get("claimed_qty_kg", 480.0)),
-                "expires_at": "2026-10-12T16:30:00Z",
-            },
-            status=status.HTTP_200_OK,
-        )
+        handover = dispute_handover(request.user, handover_id, request.data)
+        return Response(handover_response(handover), status=status.HTTP_200_OK)
 
 
 class HandoverResolveView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsVerifiedOrg]
 
     def post(self, request, handover_id):
-        return Response(
-            {
-                "handover_id": str(handover_id),
-                "lot_code": "7K3Q9XMD4T2B",
-                "state": "ACCEPTED",
-                "declared_qty_kg": 500.0,
-                "received_qty_kg": float(request.data.get("agreed_qty_kg", 490.0)),
-                "expires_at": "2026-10-12T16:30:00Z",
-            },
-            status=status.HTTP_200_OK,
-        )
+        handover = resolve_handover(request.user, handover_id, request.data)
+        return Response(handover_response(handover), status=status.HTTP_200_OK)
