@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../domain/auth_state.dart';
 import 'controllers/auth_controller.dart';
 
 class OrgRegistrationScreen extends ConsumerStatefulWidget {
@@ -160,7 +161,8 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
                                 fssaiNo: _fssaiController.text.trim().isEmpty ? null : _fssaiController.text.trim(),
                                 consentNoticeVersion: '1.0',
                               );
-                              if (success && mounted) {
+                              if (!mounted) return;
+                              if (success) {
                                 context.go('/');
                               }
                             }

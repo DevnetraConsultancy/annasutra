@@ -2,6 +2,7 @@ import '../../../domain/platform/local_database.dart';
 
 class AndroidLocalDatabase implements LocalDatabase {
   bool _initialized = false;
+  final List<Map<String, dynamic>> _queuedEvents = <Map<String, dynamic>>[];
 
   @override
   Future<void> initialize() async {
@@ -17,8 +18,18 @@ class AndroidLocalDatabase implements LocalDatabase {
 
   @override
   Future<void> wipeAll() async {
-    // Wipes encrypted database on logout
+    _queuedEvents.clear();
     _initialized = false;
+  }
+
+  @override
+  Future<void> saveQueuedEvent(Map<String, dynamic> event) async {
+    _queuedEvents.add(event);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getQueuedEvents() async {
+    return List<Map<String, dynamic>>.unmodifiable(_queuedEvents);
   }
 
   bool get isInitialized => _initialized;

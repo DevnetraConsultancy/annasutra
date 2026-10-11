@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/platform/platform_providers.dart';
-import '../../../domain/platform/secure_store.dart';
-import '../../../domain/platform/signer.dart';
+import 'package:annasutra_mobile/data/platform/platform_providers.dart';
+import 'package:annasutra_mobile/domain/platform/secure_store.dart';
+import 'package:annasutra_mobile/domain/platform/signer.dart';
 import '../../domain/auth_state.dart';
 
 final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {

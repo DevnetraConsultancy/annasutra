@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/platform/local_database.dart';
-import '../../domain/platform/qr_scanner.dart';
-import '../../domain/platform/secure_store.dart';
-import '../../domain/platform/signer.dart';
-import '../../domain/platform/sync_scheduler.dart';
+import 'package:annasutra_mobile/domain/platform/local_database.dart';
+import 'package:annasutra_mobile/domain/platform/qr_scanner.dart';
+import 'package:annasutra_mobile/domain/platform/secure_store.dart';
+import 'package:annasutra_mobile/domain/platform/signer.dart';
+import 'package:annasutra_mobile/domain/platform/sync_scheduler.dart';
 
 import 'android/android_local_database.dart';
 import 'android/android_qr_scanner.dart';

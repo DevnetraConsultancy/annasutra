@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../data/platform/platform_providers.dart';
+import 'package:annasutra_mobile/data/platform/platform_providers.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 
 class BatchCreateScreen extends ConsumerStatefulWidget {
