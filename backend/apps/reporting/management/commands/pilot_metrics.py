@@ -66,7 +66,7 @@ class Command(BaseCommand):
         # 4. Security & Alert Triage
         alerts = Alert.objects.aggregate(
             total=Count("alert_id"),
-            unresolved=Count("alert_id", filter=Alert.objects.filter(resolved_at__isnull=True)),
+            unresolved=Count("alert_id", filter=Q(status="OPEN")),
         )
         scan_logs = ScanLog.objects.count()
         anchors = HashAnchor.objects.count()
