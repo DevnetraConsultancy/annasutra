@@ -41,6 +41,12 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
     final authNotifier = ref.read(authControllerProvider.notifier);
     final theme = Theme.of(context);
 
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
+      if (previous?.status == AuthStatus.loading && next.status == AuthStatus.authenticated) {
+        context.go('/');
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register Business / Farm'),
@@ -153,18 +159,14 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
                   child: ElevatedButton(
                     onPressed: (!_consentGiven || authState.status == AuthStatus.loading)
                         ? null
-                        : () async {
+                        : () {
                             if (_formKey.currentState?.validate() ?? false) {
-                              final success = await authNotifier.registerOrganisation(
+                              authNotifier.registerOrganisation(
                                 name: _nameController.text.trim(),
                                 orgType: _selectedOrgType,
                                 fssaiNo: _fssaiController.text.trim().isEmpty ? null : _fssaiController.text.trim(),
                                 consentNoticeVersion: '1.0',
                               );
-                              if (!mounted) return;
-                              if (success) {
-                                context.go('/');
-                              }
                             }
                           },
                     child: authState.status == AuthStatus.loading
