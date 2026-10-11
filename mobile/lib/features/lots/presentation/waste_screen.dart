@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:annasutra_mobile/core/platform/signer.dart';
-import 'package:annasutra_mobile/features/sync/sync_service.dart';
-import 'package:annasutra_mobile/l10n/app_localizations.dart';
+import '../../../data/platform/platform_providers.dart';
+import '../../sync/sync_service.dart';
 
 class WasteScreen extends ConsumerStatefulWidget {
   final String lotCode;
@@ -45,7 +44,9 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
   }
 
   Future<void> _submitWaste() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     final qty = double.parse(_qtyController.text.trim());
     if (qty > widget.onHandKg) {
@@ -58,51 +59,57 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
     setState(() => _isSubmitting = true);
 
     try {
+      final signer = ref.read(signerProvider);
+      final localDb = ref.read(localDatabaseProvider);
+
       final eventId = const Uuid().v4();
       final eventTime = DateTime.now().toUtc().toIso8601String();
 
-      final payload = {
+      final payload = <String, dynamic>{
         'event_id': eventId,
         'event_time': eventTime,
         'qty_kg': qty,
         'reason_code': _selectedReason,
-        'evidence_ids': _photoAttached ? [const Uuid().v4()] : [],
+        'evidence_ids': _photoAttached ? <String>[const Uuid().v4()] : <String>[],
       };
 
       final payloadBytes = Uint8List.fromList(utf8.encode(jsonEncode(payload)));
-      final signer = Signer();
       final sigBase64 = await signer.sign(payloadBytes);
       payload['device_signature'] = sigBase64;
 
-      await ref.read(syncNotifierProvider.notifier).queueEvent(
-        path: '/v1/lots/${widget.lotCode}/waste',
-        body: payload,
-      );
+      await localDb.saveQueuedEvent({
+        'path': '/v1/lots/${widget.lotCode}/waste',
+        'method': 'POST',
+        'body': payload,
+      });
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Waste recorded successfully.')),
-        );
-        context.pop();
-      }
+      await ref.read(syncControllerProvider.notifier).refreshPendingCount();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Waste recorded successfully in local outbox!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.pop();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to record waste: $e')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to record waste: $e'), backgroundColor: Colors.red),
+      );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.recordWaste),
+        title: const Text('Record Waste / ক্ষতি নথিভুক্ত করুন'),
       ),
       body: SafeArea(
         child: Form(
@@ -130,37 +137,41 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
               TextFormField(
                 controller: _qtyController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
-                  labelText: l10n.wasteQtyKg,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.delete_outline),
+                decoration: const InputDecoration(
+                  labelText: 'Waste Quantity (kg) / বর্জ্য পরিমাণ',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.delete_outline),
                 ),
                 validator: (v) {
                   final val = double.tryParse(v ?? '');
-                  if (val == null || val <= 0) return 'Must be a positive quantity';
+                  if (val == null || val <= 0) {
+                    return 'Must be a positive quantity';
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedReason,
-                decoration: InputDecoration(
-                  labelText: l10n.wasteReason,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.report_problem_outlined),
+                decoration: const InputDecoration(
+                  labelText: 'Reason for Waste / কারণ',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.report_problem_outlined),
                 ),
                 items: _reasons.map((r) {
                   return DropdownMenuItem(value: r, child: Text(r));
                 }).toList(),
                 onChanged: (val) {
-                  if (val != null) setState(() => _selectedReason = val);
+                  if (val != null) {
+                    setState(() => _selectedReason = val);
+                  }
                 },
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
                 icon: Icon(_photoAttached ? Icons.check_circle : Icons.camera_alt,
                     color: _photoAttached ? Colors.green : null),
-                label: Text(_photoAttached ? 'Evidence Attached' : l10n.uploadPhoto),
+                label: Text(_photoAttached ? 'Evidence Attached / প্রমাণ যুক্ত' : 'Upload Photo Evidence / ছবি আপলোড'),
                 onPressed: () {
                   setState(() => _photoAttached = !_photoAttached);
                 },
@@ -175,7 +186,7 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
                 onPressed: _isSubmitting ? null : _submitWaste,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(l10n.recordWaste),
+                    : const Text('Record Waste / ক্ষতি নথিভুক্ত করুন'),
               ),
             ],
           ),

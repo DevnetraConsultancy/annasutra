@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:annasutra_mobile/core/platform/signer.dart';
-import 'package:annasutra_mobile/features/sync/sync_service.dart';
-import 'package:annasutra_mobile/l10n/app_localizations.dart';
+import '../../../data/platform/platform_providers.dart';
+import '../../sync/sync_service.dart';
 
 class InspectionScreen extends ConsumerStatefulWidget {
   final String lotCode;
@@ -40,59 +39,67 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
   }
 
   Future<void> _submitInspection() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     setState(() => _isSubmitting = true);
 
     try {
+      final signer = ref.read(signerProvider);
+      final localDb = ref.read(localDatabaseProvider);
+
       final eventId = const Uuid().v4();
       final eventTime = DateTime.now().toUtc().toIso8601String();
       final tempVal = double.tryParse(_tempController.text.trim());
 
-      final payload = {
+      final payload = <String, dynamic>{
         'event_id': eventId,
         'event_time': eventTime,
         'grade': _selectedGrade,
         'defect_pct': _defectPct,
         'temperature_c': tempVal,
         'notes': _notesController.text.trim(),
-        'evidence_ids': _photoAttached ? [const Uuid().v4()] : [],
+        'evidence_ids': _photoAttached ? <String>[const Uuid().v4()] : <String>[],
       };
 
       final payloadBytes = Uint8List.fromList(utf8.encode(jsonEncode(payload)));
-      final signer = Signer();
       final sigBase64 = await signer.sign(payloadBytes);
       payload['device_signature'] = sigBase64;
 
-      await ref.read(syncNotifierProvider.notifier).queueEvent(
-        path: '/v1/lots/${widget.lotCode}/inspections',
-        body: payload,
-      );
+      await localDb.saveQueuedEvent({
+        'path': '/v1/lots/${widget.lotCode}/inspections',
+        'method': 'POST',
+        'body': payload,
+      });
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Quality inspection recorded successfully.')),
-        );
-        context.pop();
-      }
+      await ref.read(syncControllerProvider.notifier).refreshPendingCount();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Quality inspection recorded successfully in local outbox!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.pop();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to record inspection: $e')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to record inspection: $e'), backgroundColor: Colors.red),
+      );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.inspectLot),
+        title: const Text('Inspect Quality / গুণমান পরীক্ষা'),
       ),
       body: SafeArea(
         child: Form(
@@ -112,23 +119,25 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedGrade,
-                decoration: InputDecoration(
-                  labelText: l10n.grade,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.verified),
+                decoration: const InputDecoration(
+                  labelText: 'Quality Grade / গ্রেড',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.verified),
                 ),
                 items: _grades.map((g) {
                   return DropdownMenuItem(value: g, child: Text(g));
                 }).toList(),
                 onChanged: (val) {
-                  if (val != null) setState(() => _selectedGrade = val);
+                  if (val != null) {
+                    setState(() => _selectedGrade = val);
+                  }
                 },
               ),
               const SizedBox(height: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${l10n.defectPct}: ${_defectPct.toStringAsFixed(1)}%'),
+                  Text('Defect Percentage: ${_defectPct.toStringAsFixed(1)}%'),
                   Slider(
                     value: _defectPct,
                     min: 0.0,
@@ -143,27 +152,27 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
               TextFormField(
                 controller: _tempController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
-                  labelText: l10n.temperatureC,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.thermostat),
+                decoration: const InputDecoration(
+                  labelText: 'Storage Temperature (°C) / তাপমাত্রা',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.thermostat),
                 ),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
-                decoration: InputDecoration(
-                  labelText: l10n.notes,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.note),
+                decoration: const InputDecoration(
+                  labelText: 'Inspection Notes / বিবরণ',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.note),
                 ),
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
                 icon: Icon(_photoAttached ? Icons.check_circle : Icons.camera_alt,
                     color: _photoAttached ? Colors.green : null),
-                label: Text(_photoAttached ? 'Evidence Attached' : l10n.uploadPhoto),
+                label: Text(_photoAttached ? 'Evidence Attached / প্রমাণ যুক্ত' : 'Upload Photo Evidence / ছবি আপলোড'),
                 onPressed: () {
                   setState(() => _photoAttached = !_photoAttached);
                 },
@@ -178,7 +187,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
                 onPressed: _isSubmitting ? null : _submitInspection,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(l10n.inspectLot),
+                    : const Text('Inspect Quality / গুণমান পরীক্ষা'),
               ),
             ],
           ),

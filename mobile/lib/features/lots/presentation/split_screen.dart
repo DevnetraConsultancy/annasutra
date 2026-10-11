@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:annasutra_mobile/core/platform/signer.dart';
-import 'package:annasutra_mobile/features/sync/sync_service.dart';
-import 'package:annasutra_mobile/l10n/app_localizations.dart';
+import '../../../data/platform/platform_providers.dart';
+import '../../sync/sync_service.dart';
 
 class ChildLotInput {
   final TextEditingController serialController = TextEditingController();
@@ -76,7 +75,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
   }
 
   Future<void> _submitSplit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     if (_totalChildQty > widget.onHandKg) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +89,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
     setState(() => _isSubmitting = true);
 
     try {
+      final signer = ref.read(signerProvider);
+      final localDb = ref.read(localDatabaseProvider);
+
       final eventId = const Uuid().v4();
       final eventTime = DateTime.now().toUtc().toIso8601String();
 
@@ -105,40 +109,44 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       };
 
       final payloadBytes = Uint8List.fromList(utf8.encode(jsonEncode(payload)));
-      final signer = Signer();
       final sigBase64 = await signer.sign(payloadBytes);
       payload['device_signature'] = sigBase64;
 
-      await ref.read(syncNotifierProvider.notifier).queueEvent(
-        path: '/v1/lots/${widget.lotCode}/split',
-        body: payload,
-      );
+      await localDb.saveQueuedEvent({
+        'path': '/v1/lots/${widget.lotCode}/split',
+        'method': 'POST',
+        'body': payload,
+      });
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lot split submitted successfully.')),
-        );
-        context.pop();
-      }
+      await ref.read(syncControllerProvider.notifier).refreshPendingCount();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Lot split queued successfully in local outbox!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.pop();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to split lot: $e')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to split lot: $e'), backgroundColor: Colors.red),
+      );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final remaining = widget.onHandKg - _totalChildQty;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.splitBatchTitle),
+        title: const Text('Split Batch / লট ভাগ করুন'),
       ),
       body: SafeArea(
         child: Form(
@@ -161,7 +169,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                       Text('Initial On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg'),
                       const SizedBox(height: 4),
                       Text(
-                        l10n.remainingKg(remaining.toStringAsFixed(1)),
+                        'Remaining: ${remaining.toStringAsFixed(1)} kg',
                         style: TextStyle(
                           color: remaining < 0 ? Colors.red : Colors.green[800],
                           fontWeight: FontWeight.bold,
@@ -197,24 +205,31 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         ),
                         TextFormField(
                           controller: child.serialController,
-                          decoration: InputDecoration(
-                            labelText: l10n.childSerial,
-                            border: const OutlineInputBorder(),
+                          decoration: const InputDecoration(
+                            labelText: 'Child Label Serial',
+                            border: OutlineInputBorder(),
                           ),
-                          validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return 'Required';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: child.qtyController,
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          decoration: InputDecoration(
-                            labelText: l10n.childQty,
-                            border: const OutlineInputBorder(),
+                          decoration: const InputDecoration(
+                            labelText: 'Child Quantity (kg)',
+                            border: OutlineInputBorder(),
                           ),
                           onChanged: (_) => setState(() {}),
                           validator: (v) {
                             final val = double.tryParse(v ?? '');
-                            if (val == null || val <= 0) return 'Must be positive';
+                            if (val == null || val <= 0) {
+                              return 'Must be positive';
+                            }
                             return null;
                           },
                         ),
@@ -225,7 +240,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
               }),
               OutlinedButton.icon(
                 icon: const Icon(Icons.add),
-                label: Text(l10n.addChild),
+                label: const Text('Add Child Lot / নতুন উপ-লট যোগ করুন'),
                 onPressed: _addChild,
               ),
               const SizedBox(height: 24),
@@ -238,7 +253,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                 onPressed: _isSubmitting ? null : _submitSplit,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(l10n.splitLot),
+                    : const Text('Split Lot / লট ভাগ করুন'),
               ),
             ],
           ),

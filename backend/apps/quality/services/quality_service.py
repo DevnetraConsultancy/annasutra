@@ -136,17 +136,8 @@ def request_evidence_upload(user, data: dict) -> dict:
     if not sha256_hex:
         raise exceptions.ValidationError({"detail": "sha256 is required.", "code": "FIELD_REQUIRED"})
 
-    try:
-        if isinstance(sha256_hex, str):
-            sha256_bytes = bytes.fromhex(sha256_hex) if len(sha256_hex) == 64 else sha256_hex.encode("utf-8")
-        else:
-            sha256_bytes = bytes(sha256_hex)
-    except Exception:
-        sha256_bytes = str(sha256_hex).encode("utf-8")
-
     evidence_id = uuid.uuid4()
     expires_at = timezone.now() + timedelta(hours=2)
-    object_key = f"evidence/{evidence_id}_{kind.lower()}"
 
     # Return upload instructions conforming to EvidenceUpload schema
     upload_url = f"/api/v1/evidence/upload/{evidence_id}"

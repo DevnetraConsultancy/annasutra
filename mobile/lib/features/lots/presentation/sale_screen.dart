@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:annasutra_mobile/core/platform/signer.dart';
-import 'package:annasutra_mobile/features/sync/sync_service.dart';
-import 'package:annasutra_mobile/l10n/app_localizations.dart';
+import '../../../data/platform/platform_providers.dart';
+import '../../sync/sync_service.dart';
 
 class SaleScreen extends ConsumerStatefulWidget {
   final String lotCode;
@@ -35,7 +34,9 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
   }
 
   Future<void> _submitSale() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     final qty = double.parse(_qtyController.text.trim());
     if (qty > widget.onHandKg) {
@@ -48,6 +49,9 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
     setState(() => _isSubmitting = true);
 
     try {
+      final signer = ref.read(signerProvider);
+      final localDb = ref.read(localDatabaseProvider);
+
       final eventId = const Uuid().v4();
       final eventTime = DateTime.now().toUtc().toIso8601String();
 
@@ -60,39 +64,42 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
       };
 
       final payloadBytes = Uint8List.fromList(utf8.encode(jsonEncode(payload)));
-      final signer = Signer();
       final sigBase64 = await signer.sign(payloadBytes);
       payload['device_signature'] = sigBase64;
 
-      await ref.read(syncNotifierProvider.notifier).queueEvent(
-        path: '/v1/lots/${widget.lotCode}/sales',
-        body: payload,
-      );
+      await localDb.saveQueuedEvent({
+        'path': '/v1/lots/${widget.lotCode}/sales',
+        'method': 'POST',
+        'body': payload,
+      });
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Retail sale recorded successfully.')),
-        );
-        context.pop();
-      }
+      await ref.read(syncControllerProvider.notifier).refreshPendingCount();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Retail sale recorded successfully in local outbox!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.pop();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to record sale: $e')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to record sale: $e'), backgroundColor: Colors.red),
+      );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.recordSale),
+        title: const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন'),
       ),
       body: SafeArea(
         child: Form(
@@ -125,14 +132,16 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
               TextFormField(
                 controller: _qtyController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
-                  labelText: l10n.saleQtyKg,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.point_of_sale),
+                decoration: const InputDecoration(
+                  labelText: 'Sold Quantity (kg) / বিক্রির পরিমাণ',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.point_of_sale),
                 ),
                 validator: (v) {
                   final val = double.tryParse(v ?? '');
-                  if (val == null || val <= 0) return 'Must be a positive quantity';
+                  if (val == null || val <= 0) {
+                    return 'Must be a positive quantity';
+                  }
                   return null;
                 },
               ),
@@ -146,7 +155,7 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
                 onPressed: _isSubmitting ? null : _submitSale,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(l10n.recordSale),
+                    : const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন'),
               ),
             ],
           ),
