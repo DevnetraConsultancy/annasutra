@@ -270,6 +270,75 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                                 foregroundColor: Colors.white,
                               ),
                             ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/split?code=7K3Q9XMD4T2B&qty=500.0');
+                                  },
+                                  icon: const Icon(Icons.call_split, size: 16),
+                                  label: const Text('Split Lot / লট ভাগ করুন'),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/inspection?code=7K3Q9XMD4T2B');
+                                  },
+                                  icon: const Icon(Icons.verified, size: 16),
+                                  label: const Text('Inspect Quality / গুণমান পরীক্ষা'),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/waste?code=7K3Q9XMD4T2B&qty=500.0');
+                                  },
+                                  icon: const Icon(Icons.delete_outline, size: 16),
+                                  label: const Text('Record Waste / ক্ষতি নথিভুক্ত করুন'),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    context.push('/sale?code=7K3Q9XMD4T2B&qty=500.0');
+                                  },
+                                  icon: const Icon(Icons.point_of_sale, size: 16),
+                                  label: const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Card(
+                      color: Colors.red.shade50,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.red.shade400, width: 1.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.warning, color: Colors.red, size: 28),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'RECALL ALERT: LOT-RECALL-001',
+                                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'WARNING: This lot has an active RECALL notice. Do not distribute / এই লটটির প্রত্যাহার বিজ্ঞপ্তি রয়েছে।',
+                                    style: TextStyle(color: Colors.red, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),

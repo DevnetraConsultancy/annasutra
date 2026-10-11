@@ -60,5 +60,30 @@
         "type": "int"
       }
     }
+  },
+  "splitLot": "Split Lot",
+  "splitBatchTitle": "Split Batch into Child Lots",
+  "childSerial": "Child Label Serial",
+  "childQty": "Child Quantity (kg)",
+  "addChild": "Add Child Lot",
+  "recordWaste": "Record Waste / Spoilage",
+  "wasteReason": "Reason for Waste",
+  "wasteQtyKg": "Waste Quantity (kg)",
+  "recordSale": "Record Retail Sale",
+  "saleQtyKg": "Sold Quantity (kg)",
+  "inspectLot": "Inspect Quality",
+  "grade": "Quality Grade",
+  "defectPct": "Defect Percentage (%)",
+  "temperatureC": "Temperature (°C)",
+  "notes": "Inspection Notes",
+  "uploadPhoto": "Upload Photo Evidence",
+  "recalledWarning": "WARNING: This lot has an active RECALL notice. Do not distribute.",
+  "remainingKg": "Remaining: {qty} kg",
+  "@remainingKg": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
   }
 }

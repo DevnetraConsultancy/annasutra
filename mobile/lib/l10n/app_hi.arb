@@ -60,5 +60,30 @@
         "type": "int"
       }
     }
+  },
+  "splitLot": "लॉट विभाजित करें (Split)",
+  "splitBatchTitle": "लॉट को उप-बैचों में विभाजित करें",
+  "childSerial": "उप-लॉट लेबल क्रमांक",
+  "childQty": "उप-लॉट मात्रा (किग्रा)",
+  "addChild": "नया उप-लॉट जोड़ें",
+  "recordWaste": "अपशिष्ट / खराबी दर्ज करें",
+  "wasteReason": "खराबी का कारण",
+  "wasteQtyKg": "अपशिष्ट मात्रा (किग्रा)",
+  "recordSale": "खुदरा बिक्री दर्ज करें",
+  "saleQtyKg": "बिक्री मात्रा (किग्रा)",
+  "inspectLot": "गुणवत्ता निरीक्षण करें",
+  "grade": "गुणवत्ता ग्रेड",
+  "defectPct": "दोष प्रतिशत (%)",
+  "temperatureC": "तापमान (°C)",
+  "notes": "निरीक्षण विवरण",
+  "uploadPhoto": "फ़ोटो साक्ष्य अपलोड करें",
+  "recalledWarning": "चेतावनी: इस लॉट पर वापसी (RECALL) नोटिस सक्रिय है। इसे वितरित न करें।",
+  "remainingKg": "शेष: {qty} किग्रा",
+  "@remainingKg": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
   }
 }
