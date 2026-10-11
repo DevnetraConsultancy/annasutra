@@ -16,6 +16,6 @@ void main() {
     expect(find.textContaining('7K3Q9XMD4T2B'), findsOneWidget);
     expect(find.textContaining('Receiver Organisation ID'), findsOneWidget);
     expect(find.textContaining('Quantity to Dispatch'), findsOneWidget);
-    expect(find.byType(ElevatedButton), findsOneWidget);
+    expect(find.byType(ElevatedButton, skipOffstage: false), findsOneWidget);
   });
 }

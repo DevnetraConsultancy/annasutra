@@ -58,12 +58,6 @@ def create_sample_lot(farmer_user, serial="TOM261010ABCD", qty=500.0):
         issued_by=farmer_user,
         count=10,
     )
-    label = QrLabel.objects.create(
-        serial=serial,
-        block=block,
-        issued_to_org=farmer_user.org,
-        status="BOUND",
-    )
     lot = Lot.objects.create(
         lot_id=uuid.uuid4(),
         public_code=serial,
@@ -74,8 +68,13 @@ def create_sample_lot(farmer_user, serial="TOM261010ABCD", qty=500.0):
         custodian_org=farmer_user.org,
         head_seq=1,
     )
-    label.lot = lot
-    label.save()
+    QrLabel.objects.create(
+        serial=serial,
+        block=block,
+        issued_to_org=farmer_user.org,
+        status="BOUND",
+        lot=lot,
+    )
 
     LotBalance.objects.create(
         lot=lot,
