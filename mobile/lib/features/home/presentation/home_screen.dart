@@ -280,28 +280,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                                     context.push('/split?code=7K3Q9XMD4T2B&qty=500.0');
                                   },
                                   icon: const Icon(Icons.call_split, size: 16),
-                                  label: Text(l10n.splitLot),
+                                  label: const Text('Split Lot / লট ভাগ করুন'),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () {
                                     context.push('/inspection?code=7K3Q9XMD4T2B');
                                   },
                                   icon: const Icon(Icons.verified, size: 16),
-                                  label: Text(l10n.inspectLot),
+                                  label: const Text('Inspect Quality / গুণমান পরীক্ষা'),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () {
                                     context.push('/waste?code=7K3Q9XMD4T2B&qty=500.0');
                                   },
                                   icon: const Icon(Icons.delete_outline, size: 16),
-                                  label: Text(l10n.recordWaste),
+                                  label: const Text('Record Waste / ক্ষতি নথিভুক্ত করুন'),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () {
                                     context.push('/sale?code=7K3Q9XMD4T2B&qty=500.0');
                                   },
                                   icon: const Icon(Icons.point_of_sale, size: 16),
-                                  label: Text(l10n.recordSale),
+                                  label: const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন'),
                                 ),
                               ],
                             ),
@@ -316,25 +316,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         side: BorderSide(color: Colors.red.shade400, width: 1.5),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.warning, color: Colors.red, size: 28),
-                            const SizedBox(width: 12),
+                            Icon(Icons.warning, color: Colors.red, size: 28),
+                            SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     'RECALL ALERT: LOT-RECALL-001',
-                                    style: TextStyle(color: Colors.red.shade900, fontWeight: FontWeight.bold),
+                                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4),
                                   Text(
-                                    l10n.recalledWarning,
-                                    style: TextStyle(color: Colors.red.shade800, fontSize: 13),
+                                    'WARNING: This lot has an active RECALL notice. Do not distribute / এই লটটির প্রত্যাহার বিজ্ঞপ্তি রয়েছে।',
+                                    style: TextStyle(color: Colors.red, fontSize: 13),
                                   ),
                                 ],
                               ),

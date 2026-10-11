@@ -26,7 +26,7 @@ class TraceEventAdmin(admin.ModelAdmin):
 
 @admin.register(HashAnchor)
 class HashAnchorAdmin(admin.ModelAdmin):
-    list_display = ("anchor_id", "anchor_type", "anchor_date", "lot_count", "published_at")
+    list_display = ("anchor_date", "location", "created_at")
     readonly_fields = [f.name for f in HashAnchor._meta.fields]
 
     def has_add_permission(self, request):
