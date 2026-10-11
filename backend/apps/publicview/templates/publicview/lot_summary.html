@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnnaSutra - Produce Traceability Record</title>
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --bg: #f9fbf9;
+      --card-bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #555555;
+      --border: #e0e0e0;
+      --disclaimer-bg: #fff8e1;
+      --disclaimer-border: #ffe082;
+      --disclaimer-text: #795548;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--primary);
+    }
+    .header p {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .lot-code-badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .field {
+      margin-bottom: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 10px;
+    }
+    .field:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .field-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .field-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .stat-box {
+      background: #f4fbf5;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .disclaimer-box {
+      background: var(--disclaimer-bg);
+      border: 1px solid var(--disclaimer-border);
+      border-radius: 8px;
+      padding: 16px;
+      color: var(--disclaimer-text);
+      font-size: 13px;
+      margin-top: 20px;
+    }
+    .disclaimer-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #5d4037;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>AnnaSutra / অন্নসূত্র / अन्नसूत्र</h1>
+      <p>Agricultural Produce Verification / কৃষি পণ্য যাচাইকরণ</p>
+    </header>
+
+    <main class="card">
+      <div class="lot-code-badge">BATCH: {{ lot.code }}</div>
+
+      <div class="field">
+        <div class="field-label">Crop & Variety / ফসল / फसल</div>
+        <div class="field-value">{{ lot.product }}</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Harvest Date / কাটার তারিখ / कटाई की तारीख</div>
+        <div class="field-value">{{ lot.harvest_date }}</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Origin Region / উৎপত্তি অঞ্চল / उत्पत्ति क्षेत्र</div>
+        <div class="field-value">{{ lot.region }}</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-number">{{ lot.stages_confirmed }}</div>
+          <div class="stat-label">Custody Stages Confirmed<br>(হস্তান্তর পর্যায়)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">{{ lot.quality_checks }}</div>
+          <div class="stat-label">Quality Inspections<br>(গুণমান পরীক্ষা)</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top: 14px;">
+        <div class="field-label">Verification Scan Count / স্ক্যান সংখ্যা</div>
+        <div class="field-value">{{ lot.scan_count }} verified lookups</div>
+      </div>
+    </main>
+
+    <div class="disclaimer-box">
+      <strong>Important Notice / গুরুত্বপূর্ণ বিজ্ঞপ্তি / महत्वपूर्ण सूचना:</strong>
+      <p style="margin: 0 0 6px 0;">{{ lot.disclaimer }}</p>
+      <p style="margin: 0; font-style: italic; font-size: 12px;">
+        এই রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি এই প্যাকেজের সামগ্রী প্রমাণ করে না।<br>
+        यह रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित है। यह इस पैकेज की सामग्री को साबित नहीं करता है।
+      </p>
+    </div>
+
+    <footer class="footer">
+      Powered by AnnaSutra Open Traceability Ledger &copy; 2026
+    </footer>
+  </div>
+</body>
+</html>

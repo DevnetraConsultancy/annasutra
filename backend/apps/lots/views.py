@@ -184,6 +184,9 @@ class LotListCreateView(APIView):
             lot.head_hash = event_hash
             lot.save(update_fields=["head_hash"])
 
+            from apps.publicview.services import refresh_public_view
+            refresh_public_view(lot)
+
         return Response(
             {
                 "lot_id": str(lot.lot_id),
@@ -273,7 +276,19 @@ class LotDispatchView(APIView):
     permission_classes = [IsVerifiedOrg]
 
     def post(self, request, code):
-        return Response({"handover_id": str(uuid.uuid4())}, status=status.HTTP_201_CREATED)
+        from apps.custody.services.handover_service import dispatch_lot
+        handover = dispatch_lot(request.user, code, request.data)
+        return Response(
+            {
+                "handover_id": str(handover.handover_id),
+                "lot_code": handover.lot.public_code,
+                "state": handover.state,
+                "declared_qty_kg": float(handover.declared_qty_kg),
+                "received_qty_kg": float(handover.received_qty_kg) if handover.received_qty_kg is not None else None,
+                "expires_at": handover.expires_at.isoformat(),
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class LotSplitView(APIView):

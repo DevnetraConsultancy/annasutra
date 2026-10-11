@@ -39,5 +39,26 @@
   "netQuantityKg": "Net Quantity (kg)",
   "cratesCount": "Crates / Bags Count",
   "submitBatch": "Sign & Submit Batch",
-  "unverifiedWarning": "Organisation pending verification. Actions disabled until approved by platform admin."
+  "unverifiedWarning": "Organisation pending verification. Actions disabled until approved by platform admin.",
+  "dispatch": "Dispatch",
+  "dispatchBatchTitle": "Dispatch Batch",
+  "destinationOrg": "Receiver Organisation",
+  "vehicleNo": "Vehicle Number (Optional)",
+  "destination": "Destination (Optional)",
+  "receive": "Receive",
+  "receiveBatchTitle": "Receive Batch",
+  "matches": "Matches (1-Tap)",
+  "receivedQtyKg": "Received Quantity (kg)",
+  "rejectedQtyKg": "Rejected Quantity (kg)",
+  "discrepancyWarning": "Quantity discrepancy exceeds 2% tolerance!",
+  "syncNow": "Sync Now",
+  "syncing": "Syncing...",
+  "pendingEvents": "{count} events queued offline",
+  "@pendingEvents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

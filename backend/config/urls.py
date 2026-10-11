@@ -40,4 +40,5 @@ urlpatterns = [
     path("v1/sync/", include("apps.ledger.sync_urls")),
     path("v1/recalls", include("apps.reporting.urls")),
     path("v1/public/", include("apps.publicview.urls")),
+    path("L/<str:code>", include("apps.publicview.short_urls")),
 ]
