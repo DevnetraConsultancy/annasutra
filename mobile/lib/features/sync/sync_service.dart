@@ -1,7 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/platform/local_database.dart';
 import '../../data/platform/platform_providers.dart';
+
+const String defaultApiUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: kIsWeb ? '' : 'http://10.0.2.2:8000',
+);
 
 class SyncState {
   final int pendingCount;
@@ -98,9 +104,9 @@ final syncControllerProvider = StateNotifierProvider<SyncNotifier, SyncState>((r
   final localDb = ref.watch(localDatabaseProvider);
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'http://localhost:8000',
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 5),
+      baseUrl: defaultApiUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
     ),
   );
   return SyncNotifier(localDb, dio);

@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "insecure-default-key-for-building-must-override-in-prod"),
-    ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost"]),
+    ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost", ".vercel.app"]),
 )
 
 # Read .env or .env.local if present
@@ -18,6 +18,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, "..", ".env.local"))
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=["http://localhost:8000", "http://127.0.0.1:8000", "https://*.vercel.app"],
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -151,8 +155,25 @@ X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 # CERT-In direction: 180-day ICT logging retention configuration
-LOGS_DIR = BASE_DIR / "logs"
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
+if os.environ.get("VERCEL"):
+    LOGS_DIR = Path("/tmp") / "logs"
+else:
+    LOGS_DIR = BASE_DIR / "logs"
+
+try:
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    audit_file_handler = {
+        "class": "logging.FileHandler",
+        "filename": str(LOGS_DIR / "audit.log"),
+        "formatter": "audit",
+    }
+    audit_handlers = ["console", "audit_file"]
+except OSError:
+    audit_file_handler = {
+        "class": "logging.StreamHandler",
+        "formatter": "audit",
+    }
+    audit_handlers = ["console"]
 
 LOGGING = {
     "version": 1,
@@ -171,20 +192,16 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "standard",
         },
-        "audit_file": {
-            "class": "logging.FileHandler",
-            "filename": str(LOGS_DIR / "audit.log"),
-            "formatter": "audit",
-        },
+        "audit_file": audit_file_handler,
     },
     "loggers": {
         "annasutra.audit": {
-            "handlers": ["console", "audit_file"],
+            "handlers": audit_handlers,
             "level": "INFO",
             "propagate": False,
         },
         "annasutra.security": {
-            "handlers": ["console", "audit_file"],
+            "handlers": audit_handlers,
             "level": "INFO",
             "propagate": False,
         },

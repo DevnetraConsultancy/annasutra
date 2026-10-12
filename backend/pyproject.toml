@@ -8,6 +8,20 @@ version = "0.1.0"
 description = "AnnaSutra Agri-traceability backend"
 readme = "README.md"
 requires-python = ">=3.12"
+dependencies = [
+    "Django>=5.1.2,<5.2.0",
+    "djangorestframework>=3.15.2,<3.16.0",
+    "psycopg[binary]>=3.2.3,<3.3.0",
+    "django-environ>=0.11.2,<0.12.0",
+    "cryptography>=43.0.1,<44.0.0",
+    "webauthn>=2.1.0,<2.6.0",
+    "requests>=2.32.3,<2.33.0",
+    "pyyaml>=6.0.2,<6.1.0",
+    "PyJWT>=2.9.0,<3.0.0",
+]
+
+[tool.setuptools]
+packages = ["apps", "config"]
 
 [tool.ruff]
 line-length = 100

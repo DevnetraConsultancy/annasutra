@@ -55,3 +55,17 @@ jobs:
 
       - name: Build Android APK (Debug)
         run: flutter build apk --debug
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: annasutra-android-apk
+          path: mobile/build/app/outputs/flutter-apk/*.apk
+          retention-days: 30
+
+      - name: Upload Web PWA
+        uses: actions/upload-artifact@v4
+        with:
+          name: annasutra-web-pwa
+          path: mobile/build/web
+          retention-days: 30
