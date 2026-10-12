@@ -57,3 +57,12 @@ def public_lot_html_view(request, code: str):
     payload["scan_count"] = ScanLog.objects.filter(serial=code).count()
 
     return render(request, "publicview/lot_summary.html", {"lot": payload})
+
+
+def landing_page_view(request):
+    """AnnaSutra public portal landing page."""
+    query_code = request.GET.get("code", "").strip()
+    if query_code:
+        from django.shortcuts import redirect
+        return redirect("public_lot_html_canonical", code=query_code)
+    return render(request, "publicview/landing.html")

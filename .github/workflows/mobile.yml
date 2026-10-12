@@ -37,6 +37,9 @@ jobs:
         run: |
           flutter create . --platforms web,android --org in.example.annasutra
           rm -f test/widget_test.dart
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/g' android/app/build.gradle || true
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 35/g' android/app/build.gradle || true
+          sed -i 's/compileSdk flutter.compileSdkVersion/compileSdk 35/g' android/app/build.gradle || true
 
       - name: Install dependencies
         run: flutter pub get
