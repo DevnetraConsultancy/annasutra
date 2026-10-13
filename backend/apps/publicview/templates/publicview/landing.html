@@ -245,20 +245,6 @@
       padding: 56px 20px 52px;
       position: relative;
     }
-    .hero .badge-ribbon {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(230, 126, 34, 0.22);
-      border: 1px solid #f59e0b;
-      border-radius: 20px;
-      padding: 5px 16px;
-      font-size: 11.5px;
-      color: #fef3c7;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      margin-bottom: 16px;
-    }
     .hero h2 {
       margin: 0 0 12px;
       font-size: 36px;
@@ -313,33 +299,8 @@
     /* CONTAINER */
     .container {
       max-width: 960px;
-      margin: -24px auto 40px;
+      margin: 24px auto 40px;
       padding: 0 16px;
-    }
-
-    /* STATS CARD (HOME PAGE ONLY) */
-    .stats-card {
-      background: #ffffff;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      padding: 18px 24px;
-      margin-bottom: 24px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      text-align: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-    }
-    .stat-item .num {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--primary);
-    }
-    .stat-item .lbl {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 700;
-      margin-top: 2px;
     }
 
     /* SEARCH CARD */
@@ -887,7 +848,6 @@
 
     @media (max-width: 768px) {
       .flow-steps-grid { grid-template-columns: 1fr; }
-      .stats-card { grid-template-columns: repeat(2, 1fr); }
       .hero h2 { font-size: 26px; }
     }
   </style>
@@ -947,9 +907,6 @@
 
   <!-- 3. HERO SECTION (HOME PAGE ONLY) -->
   <section class="hero">
-    <div class="badge-ribbon" id="heroBadge">
-      🇮🇳 NATIONAL AGRI-PRODUCE CRYPTOGRAPHIC LEDGER • DPDP ACT 2023 COMPLIANT
-    </div>
     <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
     <p class="tagline" id="heroTagline">
       India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
@@ -965,25 +922,6 @@
   </section>
 
   <main class="container">
-    <!-- 4. STATS CARD (HOME PAGE ONLY) -->
-    <div class="stats-card">
-      <div class="stat-item">
-        <div class="num">26</div>
-        <div class="lbl" id="stat1">Immutable Tables</div>
-      </div>
-      <div class="stat-item">
-        <div class="num">100%</div>
-        <div class="lbl" id="stat2">Append-Only Triggers</div>
-      </div>
-      <div class="stat-item">
-        <div class="num">SHA-256</div>
-        <div class="lbl" id="stat3">Chain of Custody</div>
-      </div>
-      <div class="stat-item">
-        <div class="num">0%</div>
-        <div class="lbl" id="stat4">PII Exposure</div>
-      </div>
-    </div>
 
     <!-- 5. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY) -->
     <div class="flow-showcase">
@@ -1277,18 +1215,12 @@
   <script>
     const i18n = {
       en: {
-        topDev: "🏛️ Developed by C-DAC | MeitY, Govt. of India",
         navSearchText: "Verify Lot",
         navLoginText: "Entity Access",
-        heroBadge: "🇮🇳 NATIONAL AGRI-PRODUCE CRYPTOGRAPHIC LEDGER • DPDP ACT 2023 COMPLIANT",
         heroHeadline: "From Soil to Shelf, Every Grain Accounted For.",
         heroTagline: "India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.",
         btnHeroVerify: "Verify Produce Lot",
         btnHeroOperator: "Universal Entity Sign In",
-        stat1: "Immutable Tables",
-        stat2: "Append-Only Triggers",
-        stat3: "Chain of Custody",
-        stat4: "PII Exposure",
         flowTitle: "Unified 5-Tier Supply-Chain Architecture",
         flowSubtitle: "Direct cryptographic custody transfer across all agricultural decision-makers",
         flowStep1Title: "Producer",
@@ -1338,18 +1270,12 @@
         btnLogout: "Log Out / Switch Entity"
       },
       hi: {
-        topDev: "🏛️ सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
         navSearchText: "लॉट जांचें",
         navLoginText: "संस्थागत प्रवेश",
-        heroBadge: "🇮🇳 राष्ट्रीय कृषि-उत्पाद क्रिप्टोग्राफ़िक लेज़र • डीपीडीपी अधिनियम 2023 अनुपालित",
         heroHeadline: "खेत से थाली तक, हर दाने का हिसाब।",
         heroTagline: "भारत का एकीकृत कृषि उत्पाद कस्टडी प्लेटफॉर्म जो किसानों के सशक्तिकरण और पारदर्शी आपूर्ति-श्रृंखला की गारंटी देता है।",
         btnHeroVerify: "उत्पाद लॉट सत्यापित करें",
         btnHeroOperator: "संस्थागत लॉगिन",
-        stat1: "अपरिवर्तनीय टेबल",
-        stat2: "केवल-जोड़ ट्रिगर्स",
-        stat3: "कस्टडी श्रृंखला",
-        stat4: "डेटा रिसाव",
         flowTitle: "एकीकृत 5-स्तरीय आपूर्ति श्रृंखला संरचना",
         flowSubtitle: "सभी कृषि निर्णयकर्ताओं के बीच सीधा क्रिप्टोग्राफ़िक कस्टडी हस्तांतरण",
         flowStep1Title: "उत्पादक",
@@ -1399,18 +1325,12 @@
         btnLogout: "लॉग आउट / संस्था बदलें"
       },
       bn: {
-        topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা নির্মিত | মেটি (MeitY), ভারত সরকার",
         navSearchText: "লট যাচাই",
         navLoginText: "সংস্থা লগইন",
-        heroBadge: "🇮🇳 জাতীয় কৃষি পণ্য ক্রিপ্টোগ্রাফিক লেজার • ডিপিডিপি আইন ২০২৩ সম্মত",
         heroHeadline: "মাটি থেকে থালা, প্রতিটি শস্যের হিসাব।",
         heroTagline: "ভারতের সমন্বিত কৃষি পণ্য ক্রিপ্টোগ্রাফিক হেফাজত প্ল্যাটফর্ম যা স্বচ্ছ ও প্রামাণিক সরবরাহ শৃঙ্খল নিশ্চিত করে।",
         btnHeroVerify: "কৃষি লট যাচাই করুন",
         btnHeroOperator: "সংস্থা লগইন",
-        stat1: "অপরিবর্তনীয় টেবিল",
-        stat2: "কেবল-যুক্ত ট্রিগার",
-        stat3: "হেফাজত শৃঙ্খল",
-        stat4: "ডেটা সুরক্ষা",
         flowTitle: "সমন্বিত ৫-স্তর বিশিষ্ট সরবরাহ শৃঙ্খল",
         flowSubtitle: "কৃষি মূল্য শৃঙ্খলের সিদ্ধান্ত গ্রহণকারীদের মধ্যে প্রত্যক্ষ ডিজিটাল হেফাজত হস্তান্তর",
         flowStep1Title: "উৎপাদক",
@@ -1549,16 +1469,10 @@
       window.dispatchEvent(new CustomEvent('annasutra_lang_change', { detail: { lang } }));
       setTxt('navSearchText', t.navSearchText);
       setTxt('navLoginText', t.navLoginText);
-      setTxt('heroBadge', t.heroBadge);
       setTxt('heroHeadline', t.heroHeadline);
       setTxt('heroTagline', t.heroTagline);
       setTxt('btnHeroVerifyText', t.btnHeroVerify);
       setTxt('btnHeroOperatorText', t.btnHeroOperator);
-
-      setTxt('stat1', t.stat1);
-      setTxt('stat2', t.stat2);
-      setTxt('stat3', t.stat3);
-      setTxt('stat4', t.stat4);
 
       setTxt('flowTitle', t.flowTitle);
       setTxt('flowSubtitle', t.flowSubtitle);

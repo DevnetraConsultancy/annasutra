@@ -27,19 +27,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
   static const Map<String, Map<String, String>> _strings = {
     'en': {
-      'topDev': 'Developed by C-DAC | MeitY, Govt. of India',
       'brandTitle': 'AnnaSutra',
       'brandSubtitle': 'National Agri-Produce Traceability Platform',
       'navLogin': 'Entity Login',
-      'heroTag': 'NATIONAL REPOSITORY • 100% IMMUTABLE LEDGER',
       'heroHead': 'Empowering Farmers.\nProtecting Consumers.',
       'heroSub': 'Direct cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable tables and offline-ready verification.',
       'scanQrHero': 'Scan QR Code',
       'newBatchHero': 'New Harvest Lot',
-      'stat1': 'Immutable Ledger',
-      'stat2': 'Append-Only Triggers',
-      'stat3': 'Resilient Field Sync',
-      'stat4': 'Consent Protected',
       'entityTitle': 'Universal Entity Access',
       'entitySub': 'Select your supply-chain tier for dedicated operations and custody tools',
       'roleFarmer': 'Farmer / FPO Producer',
@@ -61,25 +55,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'recordSale': 'Record Retail Sale',
       'scanQr': 'Scan QR',
       'createBatch': 'Create Batch',
+      'trustTitle': 'National Trust & Verification Standards',
+      'trust1Title': 'Cryptographic Append-Only Ledger',
+      'trust1Desc': 'Every harvest, dispatch, and quality inspection is secured with SHA-256 hash chains and immutable database triggers.',
+      'trust2Title': 'Zero Personal Data Leakage',
+      'trust2Desc': 'Farmer personal identity, precise farm GPS coordinates, and commercial pricing are strictly protected under the DPDP Act 2023.',
+      'trust3Title': 'Mutual Custody Confirmation',
+      'trust3Desc': 'Produce ownership transfers require verified sign-off between both dispatching and receiving operators.',
       'footerDev': 'Developed by Centre for Development of Advanced Computing (C-DAC)',
       'footerGov': 'Ministry of Electronics & Information Technology, Government of India',
       'disclaimer': 'Notice: Records are based on information entered by supply-chain participants. They do not prove physical package contents.',
       'dpdpLink': 'DPDP Act 2023 Compliance & Grievance Redressal Officer: grievance@annasutra.in',
     },
     'hi': {
-      'topDev': 'सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार',
       'brandTitle': 'अन्नसूत्र',
       'brandSubtitle': 'राष्ट्रीय कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म',
       'navLogin': 'संस्थागत प्रवेश',
-      'heroTag': 'राष्ट्रीय भंडार • 100% अपरिवर्तनीय लेज़र',
       'heroHead': 'किसानों का सशक्तिकरण।\nउपभोक्ताओं की सुरक्षा।',
       'heroSub': 'खेत से थाली तक संपूर्ण डिजिटल कस्टडी। अपरिवर्तनीय डेटाबेस द्वारा सुरक्षित बैच ट्रैकिंग।',
       'scanQrHero': 'क्यूआर कोड स्कैन करें',
       'newBatchHero': 'नया फसल लॉट बनाएं',
-      'stat1': 'अपरिवर्तनीय लेज़र',
-      'stat2': 'केवल-जोड़ ट्रिगर्स',
-      'stat3:': 'ऑफ़लाइन फील्ड सिंक',
-      'stat4': 'सहमति सुरक्षित',
       'entityTitle': 'यूनिवर्सल संस्थागत पहुंच',
       'entitySub': 'समर्पित संचालन और कस्टडी टूल के लिए अपनी आपूर्ति-श्रृंखला श्रेणी चुनें',
       'roleFarmer': 'किसान / एफपीओ',
@@ -101,25 +96,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'recordSale': 'बिक्री दर्ज करें',
       'scanQr': 'क्यूआर स्कैन',
       'createBatch': 'बैच बनाएं',
+      'trustTitle': 'राष्ट्रीय विश्वास एवं सत्यापन मानक',
+      'trust1Title': 'क्रिप्टोग्राफ़िक केवल-जोड़ लेज़र',
+      'trust1Desc': 'प्रत्येक फसल, प्रेषण और गुणवत्ता निरीक्षण SHA-256 हैश श्रृंखला और अपरिवर्तनीय डेटाबेस ट्रिगर्स द्वारा सुरक्षित है।',
+      'trust2Title': 'शून्य व्यक्तिगत डेटा रिसाव',
+      'trust2Desc': 'किसान की व्यक्तिगत पहचान, सटीक जीपीएस निर्देशांक और वाणिज्यिक मूल्य निर्धारण DPDP अधिनियम 2023 के तहत सुरक्षित हैं।',
+      'trust3Title': 'पारस्परिक कस्टडी पुष्टि',
+      'trust3Desc': 'उत्पाद स्वामित्व हस्तांतरण के लिए प्रेषक और प्राप्तकर्ता दोनों संचालकों के सत्यापन की आवश्यकता होती है।',
       'footerDev': 'प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC) द्वारा विकसित',
       'footerGov': 'इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार',
       'disclaimer': 'सूचना: रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित हैं। वे भौतिक पैकेज सामग्री को साबित नहीं करते हैं।',
       'dpdpLink': 'DPDP अधिनियम 2023 अनुपालन एवं शिकायत निवारण अधिकारी: grievance@annasutra.in',
     },
     'bn': {
-      'topDev': 'সি-ড্যাক (C-DAC) দ্বারা তৈরি | ইলেকট্রনিক্স ও তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার',
       'brandTitle': 'অন্নসূত্র',
       'brandSubtitle': 'জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম',
       'navLogin': 'সংস্থা প্রবেশ',
-      'heroTag': 'জাতীয় ভাণ্ডার • ১০০% অপরিবর্তনীয় খতিয়ান',
       'heroHead': 'কৃষকের ক্ষমতায়ন।\nভোক্তার সুরক্ষা।',
       'heroSub': 'মাটি থেকে থালা পর্যন্ত ক্রিপ্টোগ্রাফিক সুরক্ষা। অপরিবর্তনীয় ডাটাবেসে ব্যাচ ট্র্যাকিং।',
       'scanQrHero': 'কিউআর কোড স্ক্যান',
       'newBatchHero': 'নতুন ফসল লট',
-      'stat1': 'অপরিবর্তনীয় খতিয়ান',
-      'stat2': 'কেবল-সংযোজন ট্রিগার',
-      'stat3': 'অফলাইন ফিল্ড সিঙ্ক',
-      'stat4': 'সম্মতি সুরক্ষিত',
       'entityTitle': 'সার্বজনীন সংস্থা প্রবেশাধিকার',
       'entitySub': 'কাস্টডি কার্যক্রমের জন্য আপনার সরবরাহ-শৃঙ্খল স্তরটি নির্বাচন করুন',
       'roleFarmer': 'কৃষক / সমবায়',
@@ -141,6 +137,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'recordSale': 'বিক্রি নথিভুক্ত করুন',
       'scanQr': 'কিউআর স্ক্যান',
       'createBatch': 'ব্যাচ তৈরি',
+      'trustTitle': 'জাতীয় আস্থা ও যাচাইকরণ মানদণ্ড',
+      'trust1Title': 'ক্রিপ্টোগ্রাফিক কেবল-সংযোজন খতিয়ান',
+      'trust1Desc': 'প্রতিটি ফসল তোলা, প্রেরণ এবং মান পরিদর্শন SHA-256 হ্যাশ চেইন এবং অপরিবর্তনীয় ডাটাবেস ট্রিগার দ্বারা সুরক্ষিত।',
+      'trust2Title': 'শূন্য ব্যক্তিগত তথ্য প্রকাশ',
+      'trust2Desc': 'কৃষকের ব্যক্তিগত পরিচয়, খামারের সুনির্দিষ্ট জিপিএস স্থানাঙ্ক এবং বাণিজ্যিক মূল্য ডিপিডিপি আইন ২০২৩ এর অধীনে সুরক্ষিত।',
+      'trust3Title': 'পারস্পরিক হেফাজত নিশ্চিতকরণ',
+      'trust3Desc': 'পণ্য মালিকানা হস্তান্তরের জন্য প্রেরণকারী এবং গ্রহণকারী উভয় পরিচালকের যাচাইকৃত সম্মতির প্রয়োজন।',
       'footerDev': 'সেন্টার ফর ডেভেলপমেন্ট অব অ্যাডভান্সড কম্পিউটিং (C-DAC) দ্বারা তৈরি',
       'footerGov': 'ইলেকট্রনিক্স ও তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার',
       'disclaimer': 'বিজ্ঞপ্তি: রেকর্ডগুলি সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দেওয়া তথ্যের উপর ভিত্তি করে তৈরি। এটি প্যাকেজের সামগ্রী প্রমাণ করে না।',
@@ -258,6 +261,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         _buildOperationalConsole(context, theme),
                         const SizedBox(height: 16),
                         _buildAccessibleActionButtons(context),
+                        const SizedBox(height: 16),
+                        _buildNationalTrustStandards(context),
                         const SizedBox(height: 16),
                         _buildOfficialFooter(context),
                       ],
@@ -497,31 +502,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE67E22).withOpacity(0.25),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFF59E0B), width: 1),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.verified, color: Color(0xFFFCD34D), size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          _t('heroTag'),
-                          style: const TextStyle(
-                            color: Color(0xFFFEF3C7),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
                   Text(
                     _t('heroHead'),
                     style: TextStyle(
@@ -579,26 +559,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF051B14).withOpacity(0.85),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF1E4E3D), width: 1),
-                    ),
-                    child: Wrap(
-                      spacing: 24,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.spaceBetween,
-                      children: [
-                        _buildStatMetric('26', _t('stat1')),
-                        _buildStatMetric('100%', _t('stat2')),
-                        _buildStatMetric('SQLite', _t('stat3')),
-                        _buildStatMetric('DPDP 2023', _t('stat4')),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -608,25 +568,78 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildStatMetric(String value, String label) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            color: Color(0xFFFCD34D),
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
+  Widget _buildNationalTrustStandards(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
           ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color(0xFF94A3B8),
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.verified_user, color: Color(0xFF0B3D2E), size: 22),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _t('trustTitle'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF0F172A),
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildTrustItem('🛡️', _t('trust1Title'), _t('trust1Desc')),
+          const Divider(height: 24, thickness: 1, color: Color(0xFFF1F5F9)),
+          _buildTrustItem('🔒', _t('trust2Title'), _t('trust2Desc')),
+          const Divider(height: 24, thickness: 1, color: Color(0xFFF1F5F9)),
+          _buildTrustItem('⚖️', _t('trust3Title'), _t('trust3Desc')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrustItem(String emoji, String title, String description) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(emoji, style: const TextStyle(fontSize: 22)),
+        const SizedBox(width: 12),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF475569),
+                height: 1.45,
+              ),
+              children: [
+                TextSpan(
+                  text: '$title: ',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+                TextSpan(text: description),
+              ],
+            ),
           ),
         ),
       ],
