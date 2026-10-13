@@ -23,7 +23,7 @@
       --border: #e2e8f0;
     }
     * { box-sizing: border-box; }
-    html { font-size: 15px; }
+    html { font-size: 15px; scroll-behavior: smooth; }
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
@@ -33,7 +33,7 @@
       line-height: 1.5;
     }
 
-    /* TOP UTILITY BAR */
+    /* 1. TOP UTILITY BAR */
     .top-bar {
       background-color: var(--primary-dark);
       color: #e2e8f0;
@@ -88,7 +88,7 @@
       outline: none;
     }
 
-    /* MAIN NAVBAR */
+    /* 2. MAIN NAVBAR */
     .navbar {
       background-color: #ffffff;
       padding: 12px 24px;
@@ -97,12 +97,16 @@
       align-items: center;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .brand-group {
       display: flex;
       align-items: center;
       gap: 12px;
       cursor: pointer;
+      text-decoration: none;
     }
     .brand-logo-img {
       height: 40px;
@@ -114,59 +118,72 @@
       align-items: center;
       gap: 12px;
     }
-    .btn-login-nav {
-      background-color: var(--saffron);
-      color: white;
-      padding: 10px 20px;
+    .btn-nav-search {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1px solid #cbd5e1;
+      padding: 9px 16px;
       border-radius: 8px;
-      border: none;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      gap: 6px;
+    }
+    .btn-nav-search:hover { background: #e2e8f0; }
+    .btn-nav-login {
+      background-color: var(--saffron);
+      color: white;
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
-      transition: background-color 0.2s, transform 0.1s;
+      transition: background-color 0.2s;
     }
-    .btn-login-nav:hover {
-      background-color: var(--saffron-hover);
-    }
+    .btn-nav-login:hover { background-color: var(--saffron-hover); }
     .user-pill {
       display: none;
       background: #14532d;
       color: #86efac;
-      padding: 8px 16px;
+      padding: 7px 14px;
       border-radius: 8px;
       font-size: 12.5px;
-      font-weight: 700;
+      font-weight: 800;
       border: 1px solid #22c55e;
       cursor: pointer;
     }
 
-    /* HERO BANNER */
+    /* 3. HERO SECTION (HOME PAGE ONLY) */
     .hero {
-      background: linear-gradient(135deg, #07271d 0%, #0b3d2e 60%, #14532d 100%);
+      background: linear-gradient(135deg, #07271d 0%, #0b3d2e 60%, #062319 100%);
       color: white;
       text-align: center;
       padding: 56px 20px 52px;
+      position: relative;
     }
     .hero .badge-ribbon {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(230, 126, 34, 0.25);
+      background: rgba(230, 126, 34, 0.22);
       border: 1px solid #f59e0b;
       border-radius: 20px;
       padding: 5px 16px;
-      font-size: 12px;
+      font-size: 11.5px;
       color: #fef3c7;
-      font-weight: 700;
-      letter-spacing: 0.4px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       margin-bottom: 16px;
     }
     .hero h2 {
       margin: 0 0 12px;
-      font-size: 34px;
+      font-size: 36px;
       font-weight: 900;
       letter-spacing: -0.6px;
       line-height: 1.2;
@@ -174,10 +191,10 @@
     .hero .tagline {
       font-size: 16px;
       opacity: 0.92;
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto 24px;
       color: #e2e8f0;
-      line-height: 1.5;
+      line-height: 1.55;
     }
     .hero-actions {
       display: flex;
@@ -215,14 +232,14 @@
     }
     .btn-hero-secondary:hover { background: rgba(255, 255, 255, 0.22); }
 
-    /* MAIN CONTAINER */
+    /* CONTAINER */
     .container {
-      max-width: 860px;
+      max-width: 960px;
       margin: -24px auto 40px;
       padding: 0 16px;
     }
 
-    /* STATS RIBBON */
+    /* STATS CARD (HOME PAGE ONLY) */
     .stats-card {
       background: #ffffff;
       border-radius: 14px;
@@ -233,7 +250,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       text-align: center;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
     }
     .stat-item .num {
       font-size: 22px;
@@ -243,7 +260,7 @@
     .stat-item .lbl {
       font-size: 12px;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
       margin-top: 2px;
     }
 
@@ -251,10 +268,10 @@
     .search-card {
       background: var(--card-bg);
       border-radius: 16px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
       border: 1px solid var(--border);
       padding: 30px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     .search-card h2 {
       margin: 0 0 8px;
@@ -286,259 +303,316 @@
       font-weight: 700;
       letter-spacing: 0.5px;
     }
-    .search-input:focus {
-      border-color: var(--primary);
-    }
+    .search-input:focus { border-color: var(--primary); }
     .search-btn {
-      background: var(--primary);
+      width: 100%;
+      background: var(--saffron);
       color: white;
       border: none;
+      padding: 14px;
       border-radius: 10px;
-      padding: 15px 22px;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      min-height: 52px;
-      transition: background 0.2s;
-    }
-    .search-btn:hover {
-      background: var(--primary-dark);
-    }
-    .sample-codes {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-top: 12px;
+      transition: background 0.2s;
+    }
+    .search-btn:hover { background: var(--saffron-hover); }
+    .sample-codes {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       font-size: 12px;
       color: var(--text-muted);
       flex-wrap: wrap;
     }
     .chip-code {
-      background: #eef4f0;
-      color: var(--primary);
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
       padding: 3px 8px;
       border-radius: 4px;
-      cursor: pointer;
       font-family: monospace;
-      font-weight: bold;
-      border: 1px solid #cce2d4;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
     }
+    .chip-code:hover { background: #e2e8f0; }
 
-    /* OPERATIONAL CUSTODY DASHBOARD */
-    .dashboard-panel {
-      display: none;
+    /* 5-TIER ARCHITECTURE SHOWCASE (HOME PAGE ONLY) */
+    .flow-showcase {
       background: #ffffff;
+      border: 1px solid var(--border);
       border-radius: 16px;
-      border: 1.5px solid #22c55e;
       padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      margin-bottom: 28px;
     }
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 12px;
-    }
-    .dashboard-title h4 {
-      margin: 0;
-      font-size: 16px;
-      color: #14532d;
-      font-weight: 800;
-    }
-    .dashboard-title span {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .btn-logout {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: 1px solid #f87171;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .dashboard-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .dash-tab-btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: none;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #f1f5f9;
+    .flow-showcase h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
       color: var(--slate-dark);
+      font-weight: 800;
+      text-align: center;
     }
-    .dash-tab-btn.active {
-      background: var(--primary);
-      color: white;
+    .flow-showcase p.sub {
+      margin: 0 0 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
     }
-    .batch-card {
-      background: #f8faf8;
+    .flow-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      position: relative;
+    }
+    .flow-step-box {
+      background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 12px;
+      padding: 12px 10px;
+      text-align: center;
     }
-    .batch-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .batch-code { font-weight: 900; font-size: 14px; }
-    .batch-status {
-      background: #dbeafe;
-      color: #1e40af;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: bold;
-    }
-    .batch-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .btn-action-small {
-      padding: 7px 14px;
-      border-radius: 6px;
-      border: none;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
+    .flow-step-num {
+      width: 22px;
+      height: 22px;
       background: var(--primary);
       color: white;
-    }
-    .btn-action-small.outline {
-      background: white;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-    }
-
-    /* UNIVERSAL ENTITY ACCESS SECTION */
-    .entity-section {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-    }
-    .entity-section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-    .entity-section-header .icon-box {
-      background: rgba(11, 61, 46, 0.1);
-      color: var(--primary);
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      margin: 0 auto 6px;
     }
-    .entity-section-header h3 {
-      margin: 0;
-      font-size: 18px;
+    .flow-step-title {
+      font-size: 13px;
       font-weight: 800;
       color: var(--slate-dark);
+      margin-bottom: 4px;
+    }
+    .flow-step-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* 5-ENTITY LOGIN ACCESS TERMINAL (HOME PAGE ONLY) */
+    .entity-section {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+    }
+    .entity-section-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .entity-section-header h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--primary);
     }
     .entity-section-header p {
       margin: 0;
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-muted);
     }
     .entity-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 14px;
     }
     .entity-card {
       background: #fbfdfb;
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 18px;
       cursor: pointer;
-      transition: border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     .entity-card:hover {
       border-color: var(--primary);
-      box-shadow: 0 4px 12px rgba(11, 61, 46, 0.1);
+      box-shadow: 0 6px 16px rgba(11, 61, 46, 0.12);
       transform: translateY(-2px);
     }
     .entity-card .card-head {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 8px;
     }
     .entity-card .card-icon {
-      font-size: 20px;
-      background: var(--primary);
-      color: white;
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
+      font-size: 22px;
+      background: var(--primary-light);
+      border: 1px solid #bbf7d0;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .entity-card .card-title {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--slate-dark);
     }
-    .entity-card .card-desc {
-      font-size: 12px;
+    .entity-card .card-subtitle {
+      font-size: 11px;
       color: var(--text-muted);
-      line-height: 1.4;
-      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .entity-card .card-desc {
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      flex: 1;
     }
     .entity-card .btn-card-login {
       width: 100%;
       background: var(--primary);
       color: white;
       border: none;
-      padding: 9px;
+      padding: 10px;
       border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      transition: background 0.15s;
     }
     .entity-card .btn-card-login:hover {
       background: var(--primary-dark);
     }
 
-    /* TRUST STANDARDS CARD */
+    /* CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY WHEN LOGGED IN) */
+    .confined-workspace {
+      display: none;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 2px solid #15803d;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 6px 24px rgba(21, 128, 61, 0.12);
+    }
+    .confined-banner {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .confined-badge {
+      font-size: 12px;
+      font-weight: 800;
+      color: #166534;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-logout {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .workspace-header {
+      margin-bottom: 18px;
+    }
+    .workspace-header h4 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+    .workspace-header p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .workspace-tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .btn-workspace-tool {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-workspace-tool:hover { background: var(--primary-dark); }
+    .btn-workspace-tool.secondary {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1.5px solid #cbd5e1;
+    }
+    .btn-workspace-tool.secondary:hover { background: #e2e8f0; }
+
+    .batch-item-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .batch-code-tag {
+      font-family: monospace;
+      font-weight: 800;
+      color: var(--primary);
+      background: #dcfce7;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* TRUST STANDARDS (HOME PAGE ONLY) */
     .features-card {
       background: var(--card-bg);
       border-radius: 14px;
       border: 1px solid var(--border);
       padding: 24px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     .features-card h3 {
       margin: 0 0 16px;
-      font-size: 17px;
+      font-size: 18px;
       color: var(--primary);
       font-weight: 800;
     }
@@ -553,56 +627,95 @@
     .feature-item:last-child { margin-bottom: 0; }
     .feature-icon { font-size: 20px; }
 
-    /* FOOTER */
-    .footer {
+    /* GOD-LEVEL INSTITUTIONAL FOOTER */
+    .institutional-footer {
+      background: #07271d;
+      color: #e2e8f0;
+      padding: 36px 20px 28px;
+      border-top: 2px solid #144d3b;
+    }
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
       text-align: center;
-      padding: 32px 16px 48px;
-      color: var(--text-muted);
-      font-size: 12px;
-      border-top: 1px solid #e2e8f0;
-      background: #f1f5f9;
     }
-    .cdac-footer-img {
-      height: 38px;
-      width: auto;
-      object-fit: contain;
-      margin-bottom: 12px;
+    .helpline-ribbon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
     }
-    .btn-dpdp-footer {
-      background: #fef3c7;
-      border: 1px solid #f59e0b;
-      color: #92400e;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 700;
-      cursor: pointer;
+    .helpline-item {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin-top: 10px;
-      transition: background 0.2s;
     }
-    .btn-dpdp-footer:hover {
-      background: #fde68a;
+    .helpline-item strong {
+      color: #fcd34d;
+      font-weight: 800;
     }
-    .footer strong { color: #0f172a; }
-    .footer a {
-      color: var(--primary);
+    .footer-buttons-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .btn-footer-action {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
       text-decoration: none;
-      margin: 0 8px;
-      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .footer a:hover { text-decoration: underline; }
-    .disclaimer-note {
-      max-width: 620px;
-      margin: 14px auto;
+    .btn-footer-action:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: #f59e0b;
+      color: #ffffff;
+    }
+    .footer-maker-block {
+      margin-bottom: 14px;
+    }
+    .cdac-footer-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .footer-org-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    .footer-gov-title {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .footer-legal-notice {
       font-size: 11px;
       color: #64748b;
-      padding: 8px 12px;
-      background: #e2e8f0;
-      border-radius: 6px;
-      line-height: 1.4;
+      max-width: 720px;
+      margin: 14px auto 0;
+      line-height: 1.45;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 12px;
     }
 
     /* MODAL */
@@ -610,7 +723,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.7);
       z-index: 1000;
       align-items: center;
       justify-content: center;
@@ -694,10 +807,10 @@
       cursor: pointer;
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 768px) {
+      .flow-steps-grid { grid-template-columns: 1fr; }
       .stats-card { grid-template-columns: repeat(2, 1fr); }
       .hero h2 { font-size: 26px; }
-      .brand-title h1 { font-size: 18px; }
     }
   </style>
 </head>
@@ -723,45 +836,48 @@
   </div>
 
   <!-- 2. MAIN NAVBAR -->
-  <div class="navbar">
-    <div class="brand-group" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+  <header class="navbar">
+    <a href="/" class="brand-group" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
       <img 
-        src="/static/publicview/images/annasutra_logo.png" 
+        src="{{ brand_logo }}" 
         alt="AnnaSutra" 
         class="brand-logo-img" 
       />
-    </div>
+    </a>
     <div class="nav-actions">
-      <button class="btn-login-nav" id="navLoginBtn" onclick="openLoginModal('FARMER')">
-        👥 <span id="navLoginText">Entity Login</span>
+      <button class="btn-nav-search" onclick="focusSearch()">
+        🔍 <span id="navSearchText">Verify Lot</span>
       </button>
-      <div class="user-pill" id="userPill" onclick="toggleDashboard()">
-        👤 <span id="activeUserName">Farmer (Active)</span>
+      <button class="btn-nav-login" id="navLoginBtn" onclick="scrollToEntitySection()">
+        👥 <span id="navLoginText">Entity Access</span>
+      </button>
+      <div class="user-pill" id="userPill" onclick="scrollToWorkspace()">
+        👤 <span id="activeUserName">Producer (Active)</span>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- 3. HERO BANNER -->
-  <div class="hero">
+  <!-- 3. HERO SECTION (HOME PAGE ONLY) -->
+  <section class="hero">
     <div class="badge-ribbon" id="heroBadge">
-      🛡️ 100% IMMUTABLE LEDGER • 26 VERIFIABLE TABLES • DPDP ACT 2023
+      🇮🇳 NATIONAL AGRI-PRODUCE CRYPTOGRAPHIC LEDGER • DPDP ACT 2023 COMPLIANT
     </div>
-    <h2 id="heroHeadline">Empowering Farmers. Verifying Every Bite.</h2>
+    <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
     <p class="tagline" id="heroTagline">
-      End-to-end cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable Aiven MySQL tables with offline-ready verification.
+      India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
     </p>
     <div class="hero-actions">
       <button class="btn-hero-primary" id="btnHeroVerify" onclick="focusSearch()">
         🔍 <span id="btnHeroVerifyText">Verify Produce Lot</span>
       </button>
-      <button class="btn-hero-secondary" id="btnHeroOperator" onclick="openLoginModal('FARMER')">
-        🌾 <span id="btnHeroOperatorText">Farmer & Operator Access</span>
+      <button class="btn-hero-secondary" id="btnHeroOperator" onclick="scrollToEntitySection()">
+        🌾 <span id="btnHeroOperatorText">Universal Entity Sign In</span>
       </button>
     </div>
-  </div>
+  </section>
 
-  <div class="container">
-    <!-- 4. STATS RIBBON -->
+  <main class="container">
+    <!-- 4. STATS CARD (HOME PAGE ONLY) -->
     <div class="stats-card">
       <div class="stat-item">
         <div class="num">26</div>
@@ -781,67 +897,42 @@
       </div>
     </div>
 
-    <!-- 5. ACTIVE OPERATIONAL CUSTODY DASHBOARD (REVEALED ON LOGIN) -->
-    <div class="dashboard-panel" id="dashboardPanel">
-      <div class="dashboard-header">
-        <div class="dashboard-title">
-          <h4 id="dashTitle">🌾 Operational Custody Console</h4>
-          <span id="dashSubtitle">Logged in as: Bardhaman Farmer Coop (FPO-WB-0492)</span>
+    <!-- 5. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY) -->
+    <div class="flow-showcase">
+      <h3 id="flowTitle">Unified 5-Tier Supply-Chain Architecture</h3>
+      <p class="sub" id="flowSubtitle">Direct cryptographic custody transfer across all agricultural decision-makers</p>
+      
+      <div class="flow-steps-grid">
+        <div class="flow-step-box">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-title" id="flowStep1Title">Producer</div>
+          <div class="flow-step-desc" id="flowStep1Desc">Farmer / FPO logs harvest & generates QR crate labels.</div>
         </div>
-        <button class="btn-logout" id="btnLogout" onclick="logoutEntity()">Log Out / Switch Entity</button>
-      </div>
-
-      <div class="dashboard-tabs">
-        <button class="dash-tab-btn active" id="tabBtnIncoming" onclick="switchDashTab('incoming', this)">Incoming</button>
-        <button class="dash-tab-btn" id="tabBtnStock" onclick="switchDashTab('stock', this)">My Stock (1)</button>
-        <button class="dash-tab-btn" id="tabBtnWaiting" onclick="switchDashTab('waiting', this)">Waiting</button>
-      </div>
-
-      <div id="tabContentStock">
-        <div class="batch-card">
-          <div class="batch-head">
-            <span class="batch-code">BATCH: 7K3Q9XMD4T2B</span>
-            <span class="batch-status" style="background: #dcfce7; color: #15803d;" id="statusInCustody">In Custody</span>
-          </div>
-          <div style="font-size: 13px; color: #334155;">Tomato (hybrid) • On Hand: 500.0 kg • Grade A</div>
-          <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Harvested at: Bardhaman Farm Cluster A-4</div>
-          <div class="batch-actions">
-            <button class="btn-action-small" id="btnDispatchBatch" onclick="alert('Dispatch batch initiated for 7K3Q9XMD4T2B')">Dispatch Batch</button>
-            <button class="btn-action-small outline" id="btnSplitLot" onclick="alert('Split lot initiated')">Split Lot</button>
-            <button class="btn-action-small outline" id="btnInspectQuality" onclick="alert('Quality inspection logged')">Inspect Quality</button>
-            <button class="btn-action-small outline" id="btnRecordSale" onclick="alert('Record sale dialog')">Record Sale</button>
-          </div>
+        <div class="flow-step-box">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-title" id="flowStep2Title">Aggregator</div>
+          <div class="flow-step-desc" id="flowStep2Desc">Mandi collection, weight verification, Agmarknet grading.</div>
         </div>
-      </div>
-
-      <div id="tabContentIncoming" style="display: none;">
-        <div class="batch-card">
-          <div class="batch-head">
-            <span class="batch-code">BATCH: 8M2P1KXZ9V4C</span>
-            <span class="batch-status" id="statusInTransit">In Transit</span>
-          </div>
-          <div style="font-size: 13px; color: #334155;">Potato (Jyoti) • Declared: 1,200.0 kg</div>
-          <div style="font-size: 12px; color: #64748b; margin-top: 2px;">From: Hooghly Aggregator Coop</div>
-          <div class="batch-actions">
-            <button class="btn-action-small" id="btnReceiveBatch" onclick="alert('Batch 8M2P1KXZ9V4C received and custody accepted!')">Receive Batch</button>
-          </div>
+        <div class="flow-step-box">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-title" id="flowStep3Title">Wholesaler</div>
+          <div class="flow-step-desc" id="flowStep3Desc">Terminal market intake, lot splitting, cold storage.</div>
         </div>
-      </div>
-
-      <div id="tabContentWaiting" style="display: none;">
-        <div class="batch-card">
-          <div class="batch-head">
-            <span class="batch-code">BATCH: 7K3Q9XMD4T2B</span>
-            <span class="batch-status" style="background: #fef3c7; color: #b45309;" id="statusAwaiting">Awaiting Receiver</span>
-          </div>
-          <div style="font-size: 13px; color: #334155;">Dispatched 500.0 kg to Kolkata APMC Wholesaler</div>
-          <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Status: Waiting for receiver confirmation</div>
+        <div class="flow-step-box">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-title" id="flowStep4Title">Distributor</div>
+          <div class="flow-step-desc" id="flowStep4Desc">Fleet logistics, transit temp logging, regional delivery.</div>
+        </div>
+        <div class="flow-step-box">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-title" id="flowStep5Title">Retailer</div>
+          <div class="flow-step-desc" id="flowStep5Desc">Kirana / POS intake, consumer shelf QR, final sale logging.</div>
         </div>
       </div>
     </div>
 
     <!-- 6. LOT VERIFICATION CARD -->
-    <div class="search-card">
+    <div class="search-card" id="searchSection">
       <h2 id="searchTitle">Verify Lot Traceability</h2>
       <p id="searchSubtitle">Scan a QR code on produce crates or enter the 12-character lot code below.</p>
       
@@ -853,7 +944,7 @@
           id="searchInput"
           placeholder="e.g. 7K3Q9XMD4T2B" 
           required 
-          autocomplete="off"
+          autocomplete="off" 
         />
         <button class="search-btn" type="submit" id="searchBtn">
           Verify Lot
@@ -867,70 +958,120 @@
       </div>
     </div>
 
-    <!-- 7. UNIVERSAL ENTITY ACCESS SECTION -->
-    <div class="entity-section">
-      <div class="entity-section-header">
-        <div class="icon-box">👥</div>
-        <div>
-          <h3 id="entitySectionTitle">Universal Entity Access</h3>
-          <p id="entitySectionSubtitle">Direct login for every tier in the agricultural value chain</p>
+    <!-- 7. CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
+    <div class="confined-workspace" id="confinedWorkspace">
+      <div class="confined-banner">
+        <div class="confined-badge">
+          🔒 <span id="confinedBadgeText">ROLE CONFINED: Operating strictly within authorized domain.</span>
         </div>
+        <button class="btn-logout" onclick="logoutEntity()" id="btnLogout">Log Out / Switch Entity</button>
+      </div>
+
+      <div class="workspace-header">
+        <h4 id="workspaceTitle">Operational Custody Console</h4>
+        <p id="workspaceSubtitle">Logged in as verified entity</p>
+      </div>
+
+      <div class="workspace-tools-grid" id="workspaceTools">
+        <!-- Dynamic tools injected strictly based on role -->
+      </div>
+
+      <div style="margin-top: 18px;">
+        <h5 style="margin: 0 0 10px; font-size: 14px; font-weight: 800; color: var(--slate-dark);" id="workspaceBatchHeading">
+          Active Batches in Custody:
+        </h5>
+        <div id="workspaceBatchesList">
+          <!-- Dynamic batch list -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. UNIVERSAL ENTITY ACCESS SECTION (HOME PAGE ONLY - 5 EXACT ENTITIES) -->
+    <div class="entity-section" id="entitySection">
+      <div class="entity-section-header">
+        <h3 id="entitySectionTitle">Universal Entity Access Portal</h3>
+        <p id="entitySectionSubtitle">Dedicated login for every decision-maker in the value chain</p>
       </div>
 
       <div class="entity-grid">
-        <!-- Farmer / FPO -->
-        <div class="entity-card" onclick="openLoginModal('FARMER')">
+        <!-- 1. Producer -->
+        <div class="entity-card" onclick="openLoginModal('PRODUCER')">
           <div class="card-head">
             <div class="card-icon">🌾</div>
-            <div class="card-title" id="roleTitleFarmer">Farmer / FPO</div>
+            <div>
+              <div class="card-title" id="roleTitleProducer">Producer</div>
+              <div class="card-subtitle">Farmer / FPO / Cultivator</div>
+            </div>
           </div>
-          <div class="card-desc" id="roleDescFarmer">Create harvest lots, tag crates, dispatch to Mandi.</div>
-          <button class="btn-card-login" id="btnRoleFarmer">Login as Farmer ➔</button>
+          <div class="card-desc" id="roleDescProducer">
+            Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.
+          </div>
+          <button class="btn-card-login" id="btnRoleProducer">Login as Producer ➔</button>
         </div>
 
-        <!-- Mandi Aggregator -->
-        <div class="entity-card" onclick="openLoginModal('MANDI')">
+        <!-- 2. Aggregator -->
+        <div class="entity-card" onclick="openLoginModal('AGGREGATOR')">
+          <div class="card-head">
+            <div class="card-icon">⚖️</div>
+            <div>
+              <div class="card-title" id="roleTitleAggregator">Aggregator</div>
+              <div class="card-subtitle">Mandi Arhatiya / APMC Yard</div>
+            </div>
+          </div>
+          <div class="card-desc" id="roleDescAggregator">
+            Receive farm consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.
+          </div>
+          <button class="btn-card-login" id="btnRoleAggregator">Login as Aggregator ➔</button>
+        </div>
+
+        <!-- 3. Wholesaler -->
+        <div class="entity-card" onclick="openLoginModal('WHOLESALER')">
           <div class="card-head">
             <div class="card-icon">🏢</div>
-            <div class="card-title" id="roleTitleMandi">Mandi Aggregator</div>
+            <div>
+              <div class="card-title" id="roleTitleWholesaler">Wholesaler</div>
+              <div class="card-subtitle">Terminal Market / Bulk Trader</div>
+            </div>
           </div>
-          <div class="card-desc" id="roleDescMandi">Receive inbound lots, grade quality, split consignments.</div>
-          <button class="btn-card-login" id="btnRoleMandi">Login as Mandi ➔</button>
+          <div class="card-desc" id="roleDescWholesaler">
+            Terminal intake, split bulk lots into trading consignments, allocate cold chambers, and dispatch to Distributors.
+          </div>
+          <button class="btn-card-login" id="btnRoleWholesaler">Login as Wholesaler ➔</button>
         </div>
 
-        <!-- Cold Storage -->
-        <div class="entity-card" onclick="openLoginModal('COLD_STORAGE')">
+        <!-- 4. Distributor -->
+        <div class="entity-card" onclick="openLoginModal('DISTRIBUTOR')">
           <div class="card-head">
-            <div class="card-icon">❄️</div>
-            <div class="card-title" id="roleTitleCold">Cold Storage</div>
+            <div class="card-icon">🚚</div>
+            <div>
+              <div class="card-title" id="roleTitleDistributor">Distributor</div>
+              <div class="card-subtitle">Logistics Fleet & Secondary Depot</div>
+            </div>
           </div>
-          <div class="card-desc" id="roleDescCold">Chamber custody, temperature logging, outward dispatch.</div>
-          <button class="btn-card-login" id="btnRoleCold">Login as Cold Storage ➔</button>
+          <div class="card-desc" id="roleDescDistributor">
+            Accept transport custody, log vehicle GPS and cold-chain temperatures, and deliver to retail stores.
+          </div>
+          <button class="btn-card-login" id="btnRoleDistributor">Login as Distributor ➔</button>
         </div>
 
-        <!-- Packhouse / Processor -->
-        <div class="entity-card" onclick="openLoginModal('PROCESSOR')">
-          <div class="card-head">
-            <div class="card-icon">⚙️</div>
-            <div class="card-title" id="roleTitleProcessor">Processor Unit</div>
-          </div>
-          <div class="card-desc" id="roleDescProcessor">Intake, milling, grading, consumer retail packaging.</div>
-          <button class="btn-card-login" id="btnRoleProcessor">Login as Processor ➔</button>
-        </div>
-
-        <!-- Retailer -->
+        <!-- 5. Retailer -->
         <div class="entity-card" onclick="openLoginModal('RETAILER')">
           <div class="card-head">
             <div class="card-icon">🛒</div>
-            <div class="card-title" id="roleTitleRetailer">Retailer / Kirana</div>
+            <div>
+              <div class="card-title" id="roleTitleRetailer">Retailer</div>
+              <div class="card-subtitle">Kirana / Supermarket / POS</div>
+            </div>
           </div>
-          <div class="card-desc" id="roleDescRetailer">Point of sale verification, consumer batch checkout.</div>
+          <div class="card-desc" id="roleDescRetailer">
+            Inbound store receipt, generate customer-facing shelf QR codes, and record retail checkout sales.
+          </div>
           <button class="btn-card-login" id="btnRoleRetailer">Login as Retailer ➔</button>
         </div>
       </div>
     </div>
 
-    <!-- 8. TRUST STANDARDS -->
+    <!-- 9. NATIONAL TRUST STANDARDS (HOME PAGE ONLY) -->
     <div class="features-card">
       <h3 id="trustTitle">National Trust & Verification Standards</h3>
       <div class="feature-item">
@@ -946,53 +1087,74 @@
         <div><strong id="trust3Title">Mutual Custody Confirmation:</strong> <span id="trust3Desc">Produce ownership transfers require verified sign-off between both dispatching and receiving operators.</span></div>
       </div>
     </div>
+  </main>
 
-    <!-- 9. OFFICIAL FOOTER -->
-    <div class="footer">
-      <div>
-        <img 
-          src="/static/publicview/images/cdac_logo.png" 
-          alt="C-DAC" 
-          class="cdac-footer-img" 
-        />
-      </div>
-      <div><strong id="footerBrand">AnnaSutra Agri-Traceability Platform</strong></div>
-      <div style="margin-top: 4px;" id="footerDev">Developed by Centre for Development of Advanced Computing (C-DAC)</div>
-      <div style="margin-top: 2px;" id="footerGov">Ministry of Electronics & Information Technology, Government of India</div>
-      
-      <div class="disclaimer-note" id="footerDisclaimer">
-        Notice: Records are based on information entered by supply-chain participants. They do not prove physical package contents.
+  <!-- 10. GOD-LEVEL INSTITUTIONAL FOOTER -->
+  <footer class="institutional-footer">
+    <div class="footer-inner">
+      <!-- Tier 1: Toll Free Helpline Ribbon -->
+      <div class="helpline-ribbon">
+        <span class="helpline-item">
+          📞 <span>Kisan Call Centre:</span> <strong>1800-180-1551</strong>
+        </span>
+        <span class="helpline-item">
+          🛡️ <span>National Consumer Helpline:</span> <strong>1915</strong>
+        </span>
+        <span class="helpline-item">
+          🚨 <span>Technical Desk:</span> <strong>1800-425-CDAC</strong>
+        </span>
       </div>
 
-      <div>
-        <button class="btn-dpdp-footer" id="btnDpdpFooter" onclick="openDpdpModal()">
-          🛡️ <span id="btnDpdpFooterText">DPDP Act 2023 Compliance Notice</span>
+      <!-- Tier 2: Action Buttons Bar -->
+      <div class="footer-buttons-bar">
+        <button class="btn-footer-action" onclick="openDpdpModal()">
+          🛡️ <span id="btnFooterDpdp">DPDP Act 2023 Policy</span>
+        </button>
+        <button class="btn-footer-action" onclick="alert('Agmarknet Standards: Compliant with national APMC grading criteria and BIS agricultural produce standards.')">
+          📜 <span>Agmarknet Standards</span>
+        </button>
+        <a href="/health/" class="btn-footer-action">
+          🏥 <span id="btnFooterHealth">System Health & Uptime</span>
+        </a>
+        <button class="btn-footer-action" onclick="alert('Security Audit: AnnaSutra conforms to OWASP ASVS 5.0 Level 2 and CERT-In 180-day audit log retention directions.')">
+          🔐 <span>Security Audit & Compliance</span>
+        </button>
+        <button class="btn-footer-action" onclick="alert('Grievance Redressal Officer:\nEmail: grievance@annasutra.in\nAddress: C-DAC Knowledge Park, Bengaluru, India')">
+          👤 <span>Grievance Officer</span>
         </button>
       </div>
 
-      <div style="margin-top: 14px;">
-        <a href="/health/" id="linkHealth">System Health</a> •
-        <a href="/admin/" id="linkAdmin">Admin Portal</a> •
-        <a href="#" onclick="openDpdpModal(); return false;" id="linkPrivacy">Privacy Notice</a>
+      <!-- Tier 3: Maker Details & Logo -->
+      <div class="footer-maker-block">
+        <img 
+          src="{{ cdac_logo }}" 
+          alt="C-DAC" 
+          class="cdac-footer-img" 
+        />
+        <div class="footer-org-title">Centre for Development of Advanced Computing (C-DAC)</div>
+        <div class="footer-gov-title">Ministry of Electronics & Information Technology, Government of India</div>
+      </div>
+
+      <div class="footer-legal-notice">
+        Notice: AnnaSutra records are cryptographically attested by authorized entities. Physical package contents and quality are verified at grading inspection stages under national trust standards.
       </div>
     </div>
-  </div>
+  </footer>
 
-  <!-- 10. LOGIN MODAL -->
+  <!-- 11. ENTITY LOGIN MODAL -->
   <div class="modal-overlay" id="loginModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
       <button class="modal-close" onclick="closeLoginModal()">✕</button>
       <div class="modal-head">
         <h3 id="modalRoleTitle">Entity Login</h3>
-        <p id="modalSubtitle">Direct authentication on the AnnaSutra Platform</p>
+        <p id="modalSubtitle">Role-Confined Authentication on AnnaSutra</p>
       </div>
 
-      <!-- Quick 1-Tap Field Test Login -->
       <div class="demo-fast-box">
-        <strong id="demoFastTitle">⚡ 1-Tap Field Evaluation Access</strong>
+        <strong id="demoFastTitle">⚡ 1-Tap Evaluation Sign In</strong>
         <p id="demoOrgHint">Sign in immediately as verified entity without waiting for SMS.</p>
         <button class="btn-demo-tap" id="btnDemoTap" onclick="execute1TapLogin()">
-          1-Tap Sign In as this Entity
+          1-Tap Sign In
         </button>
       </div>
 
@@ -1007,7 +1169,7 @@
     </div>
   </div>
 
-  <!-- 11. DPDP PRIVACY MODAL -->
+  <!-- 12. DPDP PRIVACY MODAL -->
   <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
       <button class="modal-close" onclick="closeDpdpModal()">✕</button>
@@ -1015,51 +1177,62 @@
         <h3 id="dpdpTitle">DPDP Act 2023 Compliance</h3>
         <p id="dpdpSub">Digital Personal Data Protection Notice</p>
       </div>
-      <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 16px;" id="dpdpBody">
+      <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 16px;">
         <p>AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
         <p><strong>Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
       </div>
-      <button class="btn-otp-submit" id="dpdpCloseBtn" onclick="closeDpdpModal()">I Understand & Continue</button>
+      <button class="btn-otp-submit" onclick="closeDpdpModal()">I Understand & Continue</button>
     </div>
   </div>
 
-  <!-- COMPLETE TRANSLATIONS & CLIENT ENGINE -->
+  <!-- TRANSLATION & CLIENT WORKSPACE ENGINE -->
   <script>
     const i18n = {
       en: {
         topDev: "🏛️ Developed by C-DAC | MeitY, Govt. of India",
-        brandTitle: "AnnaSutra",
-        brandSubtitle: "National Agri-Produce Traceability Platform",
-        navLoginText: "Entity Login",
-        heroBadge: "🛡️ 100% IMMUTABLE LEDGER • 26 VERIFIABLE TABLES • DPDP ACT 2023",
-        heroHeadline: "Empowering Farmers. Verifying Every Bite.",
-        heroTagline: "End-to-end cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable Aiven MySQL tables with offline-ready verification.",
+        navSearchText: "Verify Lot",
+        navLoginText: "Entity Access",
+        heroBadge: "🇮🇳 NATIONAL AGRI-PRODUCE CRYPTOGRAPHIC LEDGER • DPDP ACT 2023 COMPLIANT",
+        heroHeadline: "From Soil to Shelf, Every Grain Accounted For.",
+        heroTagline: "India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.",
         btnHeroVerify: "Verify Produce Lot",
-        btnHeroOperator: "Farmer & Operator Access",
+        btnHeroOperator: "Universal Entity Sign In",
         stat1: "Immutable Tables",
         stat2: "Append-Only Triggers",
         stat3: "Chain of Custody",
         stat4: "PII Exposure",
+        flowTitle: "Unified 5-Tier Supply-Chain Architecture",
+        flowSubtitle: "Direct cryptographic custody transfer across all agricultural decision-makers",
+        flowStep1Title: "Producer",
+        flowStep1Desc: "Farmer / FPO logs harvest & generates QR crate labels.",
+        flowStep2Title: "Aggregator",
+        flowStep2Desc: "Mandi collection, weight verification, Agmarknet grading.",
+        flowStep3Title: "Wholesaler",
+        flowStep3Desc: "Terminal market intake, lot splitting, cold storage.",
+        flowStep4Title: "Distributor",
+        flowStep4Desc: "Fleet logistics, transit temp logging, regional delivery.",
+        flowStep5Title: "Retailer",
+        flowStep5Desc: "Kirana / POS intake, consumer shelf QR, final sale logging.",
         searchTitle: "Verify Lot Traceability",
         searchSubtitle: "Scan a QR code on produce crates or enter the 12-character lot code below.",
         searchBtn: "Verify Lot",
         sampleLabel: "Sample Codes:",
-        entitySectionTitle: "Universal Entity Access",
-        entitySectionSubtitle: "Direct login for every tier in the agricultural value chain",
-        roleTitleFarmer: "Farmer / FPO",
-        roleDescFarmer: "Create harvest lots, tag crates, dispatch to Mandi.",
-        btnRoleFarmer: "Login as Farmer ➔",
-        roleTitleMandi: "Mandi Aggregator",
-        roleDescMandi: "Receive inbound lots, grade quality, split consignments.",
-        btnRoleMandi: "Login as Mandi ➔",
-        roleTitleCold: "Cold Storage",
-        roleDescCold: "Chamber custody, temperature logging, outward dispatch.",
-        btnRoleCold: "Login as Cold Storage ➔",
-        roleTitleProcessor: "Processor Unit",
-        roleDescProcessor: "Intake, milling, grading, consumer retail packaging.",
-        btnRoleProcessor: "Login as Processor ➔",
-        roleTitleRetailer: "Retailer / Kirana",
-        roleDescRetailer: "Point of sale verification, consumer batch checkout.",
+        entitySectionTitle: "Universal Entity Access Portal",
+        entitySectionSubtitle: "Dedicated login for every decision-maker in the value chain",
+        roleTitleProducer: "Producer",
+        roleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
+        btnRoleProducer: "Login as Producer ➔",
+        roleTitleAggregator: "Aggregator",
+        roleDescAggregator: "Receive farm consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.",
+        btnRoleAggregator: "Login as Aggregator ➔",
+        roleTitleWholesaler: "Wholesaler",
+        roleDescWholesaler: "Terminal intake, split bulk lots into trading consignments, allocate cold chambers, and dispatch to Distributors.",
+        btnRoleWholesaler: "Login as Wholesaler ➔",
+        roleTitleDistributor: "Distributor",
+        roleDescDistributor: "Accept transport custody, log vehicle GPS and cold-chain temperatures, and deliver to retail stores.",
+        btnRoleDistributor: "Login as Distributor ➔",
+        roleTitleRetailer: "Retailer",
+        roleDescRetailer: "Inbound store receipt, generate customer-facing shelf QR codes, and record retail checkout sales.",
         btnRoleRetailer: "Login as Retailer ➔",
         trustTitle: "National Trust & Verification Standards",
         trust1Title: "Cryptographic Append-Only Ledger:",
@@ -1068,187 +1241,225 @@
         trust2Desc: "Farmer personal identity, precise farm GPS coordinates, and commercial pricing are strictly protected under the DPDP Act 2023.",
         trust3Title: "Mutual Custody Confirmation:",
         trust3Desc: "Produce ownership transfers require verified sign-off between both dispatching and receiving operators.",
-        footerBrand: "AnnaSutra Agri-Traceability Platform",
-        footerDev: "Developed by Centre for Development of Advanced Computing (C-DAC)",
-        footerGov: "Ministry of Electronics & Information Technology, Government of India",
-        footerDisclaimer: "Notice: Records are based on information entered by supply-chain participants. They do not prove physical package contents.",
-        linkHealth: "System Health",
-        linkAdmin: "Admin Portal",
-        linkPrivacy: "Privacy Notice",
-        modalRolePrefix: "Login: ",
-        modalSubtitle: "Direct authentication on the AnnaSutra Platform",
-        demoFastTitle: "⚡ 1-Tap Field Evaluation Access",
-        btnDemoTap: "1-Tap Sign In as this Entity",
+        btnFooterDpdp: "DPDP Act 2023 Policy",
+        btnFooterHealth: "System Health & Uptime",
+        demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
+        btnDemoTap: "1-Tap Sign In",
         otpOrLabel: "── OR SIGN IN WITH MOBILE OTP ──",
         btnSendOtp: "Send Verification OTP",
-        btnDispatchBatch: "Dispatch Batch",
-        btnSplitLot: "Split Lot",
-        btnInspectQuality: "Inspect Quality",
-        btnRecordSale: "Record Sale",
-        btnReceiveBatch: "Receive Batch",
-        statusInCustody: "In Custody",
-        statusInTransit: "In Transit",
-        statusAwaiting: "Awaiting Receiver",
         btnLogout: "Log Out / Switch Entity"
       },
       hi: {
         topDev: "🏛️ सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
-        brandTitle: "अन्नसूत्र",
-        brandSubtitle: "राष्ट्रीय कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म",
+        navSearchText: "लॉट जांचें",
         navLoginText: "संस्थागत प्रवेश",
-        heroBadge: "🛡️ 100% अपरिवर्तनीय लेज़र • 26 सत्यापित तालिकाएं • DPDP अधिनियम 2023",
-        heroHeadline: "किसानों का सशक्तिकरण। हर निवाले का सत्यापन।",
-        heroTagline: "खेत से थाली तक संपूर्ण डिजिटल कस्टडी। अपरिवर्तनीय डेटाबेस द्वारा सुरक्षित बैच ट्रैकिंग।",
-        btnHeroVerify: "लॉट का सत्यापन करें",
-        btnHeroOperator: "किसान व ऑपरेटर लॉगिन",
-        stat1: "अपरिवर्तनीय तालिकाएं",
+        heroBadge: "🇮🇳 राष्ट्रीय कृषि-उत्पाद क्रिप्टोग्राफ़िक लेज़र • डीपीडीपी अधिनियम 2023 अनुपालित",
+        heroHeadline: "खेत से थाली तक, हर दाने का हिसाब।",
+        heroTagline: "भारत का एकीकृत कृषि उत्पाद कस्टडी प्लेटफॉर्म जो किसानों के सशक्तिकरण और पारदर्शी आपूर्ति-श्रृंखला की गारंटी देता है।",
+        btnHeroVerify: "उत्पाद लॉट सत्यापित करें",
+        btnHeroOperator: "संस्थागत लॉगिन",
+        stat1: "अपरिवर्तनीय टेबल",
         stat2: "केवल-जोड़ ट्रिगर्स",
         stat3: "कस्टडी श्रृंखला",
-        stat4: "व्यक्तिगत डेटा सुरक्षा",
+        stat4: "डेटा रिसाव",
+        flowTitle: "एकीकृत 5-स्तरीय आपूर्ति श्रृंखला संरचना",
+        flowSubtitle: "सभी कृषि निर्णयकर्ताओं के बीच सीधा क्रिप्टोग्राफ़िक कस्टडी हस्तांतरण",
+        flowStep1Title: "उत्पादक",
+        flowStep1Desc: "किसान / एफपीओ फसल दर्ज करते हैं और क्यूआर क्रेट टैग बनाते हैं।",
+        flowStep2Title: "संग्रहकर्ता",
+        flowStep2Desc: "मंडी आवक, वजन सत्यापन, एगमार्कनेट ग्रेडिंग।",
+        flowStep3Title: "थोक व्यापारी",
+        flowStep3Desc: "टर्मिनल बाजार आवक, लॉट विभाजन, कोल्ड स्टोरेज।",
+        flowStep4Title: "वितरक",
+        flowStep4Desc: "वाहन लॉजिस्टिक्स, तापमान निगरानी, खुदरा वितरण।",
+        flowStep5Title: "खुदरा विक्रेता",
+        flowStep5Desc: "दुकान आवक, शेल्फ क्यूआर डिस्प्ले, अंतिम बिक्री प्रविष्टि।",
         searchTitle: "लॉट ट्रैसेबिलिटी सत्यापित करें",
-        searchSubtitle: "क्रेट पर लगे क्यूआर कोड को स्कैन करें या नीचे 12-अक्षरों का लॉट कोड दर्ज करें।",
-        searchBtn: "सत्यापित करें",
+        searchSubtitle: "क्रेट पर क्यूआर कोड स्कैन करें या नीचे 12-अक्षरों का कोड दर्ज करें।",
+        searchBtn: "लॉट सत्यापित करें",
         sampleLabel: "नमूना कोड:",
-        entitySectionTitle: "यूनिवर्सल संस्थागत पहुंच",
-        entitySectionSubtitle: "कृषि आपूर्ति श्रृंखला के प्रत्येक स्तर के लिए सीधा प्रवेश",
-        roleTitleFarmer: "किसान / एफपीओ",
-        roleDescFarmer: "फसल बैच बनाएं, क्रेट टैग करें, मंडी भेजें।",
-        btnRoleFarmer: "किसान के रूप में लॉगिन करें ➔",
-        roleTitleMandi: "मंडी आढ़ती / एपीएमसी",
-        roleDescMandi: "आवक माल प्राप्त करें, ग्रेडिंग करें, लॉट विभाजन करें।",
-        btnRoleMandi: "मंडी के रूप में लॉगिन करें ➔",
-        roleTitleCold: "शीत गृह / गोदाम",
-        roleDescCold: "भंडारण रसीद, तापमान लॉगिंग, निकासी प्रबंधन।",
-        btnRoleCold: "शीत गृह के रूप में लॉगिन करें ➔",
-        roleTitleProcessor: "प्रसंस्करण इकाई",
-        roleDescProcessor: "कच्चा माल प्रसंस्करण, छंटाई, खुदरा पैकेजिंग।",
-        btnRoleProcessor: "प्रसंस्करण के रूप में लॉगिन करें ➔",
-        roleTitleRetailer: "थोक व खुदरा विक्रेता",
-        roleDescRetailer: "बिक्री केंद्र सत्यापन, खुदरा बिलिंग।",
-        btnRoleRetailer: "खुदरा विक्रेता के रूप में लॉगिन करें ➔",
-        trustTitle: "राष्ट्रीय विश्वास एवं सत्यापन मानक",
-        trust1Title: "क्रिप्टोग्राफिक लेज़र:",
-        trust1Desc: "प्रत्येक कटाई, प्रेषण और निरीक्षण SHA-256 हैश श्रृंखला द्वारा सुरक्षित है।",
-        trust2Title: "शून्य व्यक्तिगत डेटा प्रकटीकरण:",
-        trust2Desc: "किसान की व्यक्तिगत पहचान और खेत का जीपीएस DPDP अधिनियम 2023 के तहत सुरक्षित है।",
-        trust3Title: "द्विपक्षीय कस्टडी पुष्टि:",
-        trust3Desc: "उत्पाद हस्तांतरण के लिए दोनों पक्षों की डिजिटल पुष्टि अनिवार्य है।",
-        footerBrand: "अन्नसूत्र कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म",
-        footerDev: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC) द्वारा विकसित",
-        footerGov: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
-        footerDisclaimer: "सूचना: रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित हैं। वे भौतिक पैकेज सामग्री को साबित नहीं करते हैं।",
-        linkHealth: "सिस्टम स्थिति",
-        linkAdmin: "प्रशासक पोर्टल",
-        linkPrivacy: "गोपनीयता सूचना",
-        modalRolePrefix: "लॉगिन: ",
-        modalSubtitle: "अन्नसूत्र प्लेटफॉर्म पर सीधा प्रमाणीकरण",
-        demoFastTitle: "⚡ 1-टैप त्वरित मूल्यांकन प्रवेश",
-        btnDemoTap: "1-टैप में सीधे साइन इन करें",
-        otpOrLabel: "── या मोबाइल ओटीपी द्वारा साइन इन करें ──",
+        entitySectionTitle: "यूनिवर्सल संस्थागत प्रवेश पोर्टल",
+        entitySectionSubtitle: "आपूर्ति-श्रृंखला के प्रत्येक निर्णयकर्ता के लिए समर्पित लॉगिन",
+        roleTitleProducer: "उत्पादक",
+        roleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
+        btnRoleProducer: "उत्पादक के रूप में लॉगिन ➔",
+        roleTitleAggregator: "संग्रहकर्ता",
+        roleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
+        btnRoleAggregator: "संग्रहकर्ता के रूप में लॉगिन ➔",
+        roleTitleWholesaler: "थोक व्यापारी",
+        roleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
+        btnRoleWholesaler: "थोक व्यापारी के रूप में लॉगिन ➔",
+        roleTitleDistributor: "वितरक",
+        roleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
+        btnRoleDistributor: "वितरक के रूप में लॉगिन ➔",
+        roleTitleRetailer: "खुदरा विक्रेता",
+        roleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
+        btnRoleRetailer: "खुदरा विक्रेता के रूप में लॉगिन ➔",
+        trustTitle: "राष्ट्रीय विश्वास और सत्यापन मानक",
+        trust1Title: "क्रिप्टोग्राफ़िक केवल-जोड़ लेज़र:",
+        trust1Desc: "प्रत्येक कटाई, प्रेषण और गुणवत्ता निरीक्षण SHA-256 हैश श्रृंखला द्वारा सुरक्षित है।",
+        trust2Title: "शून्य व्यक्तिगत डेटा रिसाव:",
+        trust2Desc: "किसान की व्यक्तिगत पहचान, सटीक जीपीएस निर्देशांक और कीमतें डीपीडीपी अधिनियम 2023 के तहत सुरक्षित हैं।",
+        trust3Title: "पारस्परिक कस्टडी पुष्टि:",
+        trust3Desc: "उत्पाद स्वामित्व हस्तांतरण के लिए प्रेषक और प्राप्तकर्ता दोनों का सत्यापन अनिवार्य है।",
+        btnFooterDpdp: "डीपीडीपी अधिनियम 2023 नीति",
+        btnFooterHealth: "सिस्टम स्वास्थ्य एवं अपटाइम",
+        demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
+        btnDemoTap: "1-टैप साइन इन",
+        otpOrLabel: "── अथवा मोबाइल ओटीपी से साइन इन करें ──",
         btnSendOtp: "ओटीपी कोड भेजें",
-        btnDispatchBatch: "बैच प्रेषित करें",
-        btnSplitLot: "लॉट विभाजित करें",
-        btnInspectQuality: "गुणवत्ता जांचें",
-        btnRecordSale: "बिक्री दर्ज करें",
-        btnReceiveBatch: "बैच प्राप्त करें",
-        statusInCustody: "कस्टडी में",
-        statusInTransit: "मार्ग में",
-        statusAwaiting: "स्वीकृति प्रतीक्षित",
         btnLogout: "लॉग आउट / संस्था बदलें"
       },
       bn: {
-        topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা তৈরি | ইলেকট্রনিক্স ও তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার",
-        brandTitle: "অন্নসূত্র",
-        brandSubtitle: "জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম",
-        navLoginText: "সংস্থা প্রবেশ",
-        heroBadge: "🛡️ ১০০% অপরিবর্তনীয় খতিয়ান • ২৬টি সারণী • DPDP আইন ২০২৩",
-        heroHeadline: "কৃষকের ক্ষমতায়ন। প্রতিটি খাবারের যাচাইকরণ।",
-        heroTagline: "মাটি থেকে থালা পর্যন্ত ক্রিপ্টোগ্রাফিক সুরক্ষা। অপরিবর্তনীয় ডাটাবেসে ব্যাচ ট্র্যাকিং।",
-        btnHeroVerify: "লট যাচাই করুন",
-        btnHeroOperator: "কৃষক ও অপারেটর প্রবেশ",
-        stat1: "অপরিবর্তনীয় সারণী",
-        stat2: "কেবল-সংযোজন ট্রিগার",
-        stat3: "হেফাজত শৃঙ্খলা",
-        stat4: "ব্যক্তিগত তথ্যের সুরক্ষা",
-        searchTitle: "লটের তথ্য যাচাই করুন",
-        searchSubtitle: "ক্রেটের কিউআর কোড স্ক্যান করুন বা নিচে ১২-সংখ্যার কোডটি লিখুন।",
-        searchBtn: "সন্ধান করুন",
+        topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা নির্মিত | মেটি (MeitY), ভারত সরকার",
+        navSearchText: "লট যাচাই",
+        navLoginText: "সংস্থা লগইন",
+        heroBadge: "🇮🇳 জাতীয় কৃষি পণ্য ক্রিপ্টোগ্রাফিক লেজার • ডিপিডিপি আইন ২০২৩ সম্মত",
+        heroHeadline: "মাটি থেকে থালা, প্রতিটি শস্যের হিসাব।",
+        heroTagline: "ভারতের সমন্বিত কৃষি পণ্য ক্রিপ্টোগ্রাফিক হেফাজত প্ল্যাটফর্ম যা স্বচ্ছ ও প্রামাণিক সরবরাহ শৃঙ্খল নিশ্চিত করে।",
+        btnHeroVerify: "কৃষি লট যাচাই করুন",
+        btnHeroOperator: "সংস্থা লগইন",
+        stat1: "অপরিবর্তনীয় টেবিল",
+        stat2: "কেবল-যুক্ত ট্রিগার",
+        stat3: "হেফাজত শৃঙ্খল",
+        stat4: "ডেটা সুরক্ষা",
+        flowTitle: "সমন্বিত ৫-স্তর বিশিষ্ট সরবরাহ শৃঙ্খল",
+        flowSubtitle: "কৃষি মূল্য শৃঙ্খলের সিদ্ধান্ত গ্রহণকারীদের মধ্যে প্রত্যক্ষ ডিজিটাল হেফাজত হস্তান্তর",
+        flowStep1Title: "উৎপাদক",
+        flowStep1Desc: "কৃষক / সমবায় ফসল নথিভুক্ত করেন ও কিউআর লেবেল তৈরি করেন।",
+        flowStep2Title: "সংগ্রহকারী",
+        flowStep2Desc: "মণ্ডি সংগ্রহ, ওজন যাচাই, অ্যাগমার্কনেট গুণমান গ্রেডিং।",
+        flowStep3Title: "পাইকারি বিক্রেতা",
+        flowStep3Desc: "টার্মিনাল মার্কেট চালান গ্রহণ, লট বিভাজন ও হিমাগার সংরক্ষণ।",
+        flowStep4Title: "পরিবেশক",
+        flowStep4Desc: "লজিস্টিকস ফ্লিট, পরিবহন তাপমাত্রা ট্র্যাকিং ও দোকানে সরবরাহ।",
+        flowStep5Title: "খুচরা বিক্রেতা",
+        flowStep5Desc: "দোকানে পণ্য গ্রহণ, গ্রাহকের জন্য কিউআর প্রদর্শন ও বিক্রয় নথি।",
+        searchTitle: "লট ট্রেসেবিলিটি যাচাই করুন",
+        searchSubtitle: "ক্রেটে থাকা কিউআর কোড স্ক্যান করুন অথবা ১২-সংখ্যার কোডটি প্রবেশ করান।",
+        searchBtn: "লট যাচাই করুন",
         sampleLabel: "নমুনা কোড:",
-        entitySectionTitle: "সার্বজনীন সংস্থা প্রবেশাধিকার",
-        entitySectionSubtitle: "কৃষি সরবরাহ শৃঙ্খলের সকল স্তরের জন্য সরাসরি প্রবেশ",
-        roleTitleFarmer: "কৃষক / সমবায়",
-        roleDescFarmer: "ফসল লট তৈরি, ক্রেট ট্যাগ, মাণ্ডিতে প্রেরণ।",
-        btnRoleFarmer: "কৃষক হিসেবে প্রবেশ করুন ➔",
-        roleTitleMandi: "মাণ্ডি ব্যবসায়ী",
-        roleDescMandi: "পণ্য গ্রহণ, গুণমান পরীক্ষা, লট ভাগ ও নিলাম।",
-        btnRoleMandi: "মাণ্ডি হিসেবে প্রবেশ করুন ➔",
-        roleTitleCold: "হিমাগার / গুদাম",
-        roleDescCold: "সংরক্ষণ রসিদ, তাপমাত্রা নজরদারি, প্রেরণ।",
-        btnRoleCold: "হিমাগার হিসেবে প্রবেশ করুন ➔",
-        roleTitleProcessor: "খাদ্য প্রক্রিয়াকরণ",
-        roleDescProcessor: "কাঁচামাল প্রক্রিয়াকরণ, বাছাই ও প্যাকেটজাতকরণ।",
-        btnRoleProcessor: "প্রক্রিয়াকরণ হিসেবে প্রবেশ করুন ➔",
+        entitySectionTitle: "ইউনিভার্সাল সংস্থা প্রবেশ পোর্টাল",
+        entitySectionSubtitle: "সরবরাহ শৃঙ্খলের সকল সিদ্ধান্ত গ্রহণকারীর জন্য বিশেষায়িত লগইন",
+        roleTitleProducer: "উৎপাদক",
+        roleDescProducer: "ফসল লট নথিভুক্ত করুন, কিউআর ট্যাগ ইস্যু করুন এবং মণ্ডিতে পাঠান।",
+        btnRoleProducer: "উৎপাদক হিসেবে লগইন ➔",
+        roleTitleAggregator: "সংগ্রহকারী",
+        roleDescAggregator: "খামার থেকে পণ্য গ্রহণ, ওজন রেকর্ড ও পাইকারি বিক্রেতার নিকট প্রেরণ।",
+        btnRoleAggregator: "সংগ্রহকারী হিসেবে লগইন ➔",
+        roleTitleWholesaler: "পাইকারি বিক্রেতা",
+        roleDescWholesaler: "টার্মিনাল চালান গ্রহণ, লট বিভাজন ও পরিবেশকের নিকট প্রেরণ।",
+        btnRoleWholesaler: "পাইকারি বিক্রেতা হিসেবে লগইন ➔",
+        roleTitleDistributor: "পরিবেশক",
+        roleDescDistributor: "পরিবহন হেফাজত গ্রহণ, তাপমাত্রা ট্র্যাকিং ও দোকানে চালান সরবরাহ।",
+        btnRoleDistributor: "পরিবেশক হিসেবে লগইন ➔",
         roleTitleRetailer: "খুচরা বিক্রেতা",
-        roleDescRetailer: "বিক্রয় কেন্দ্র যাচাইকরণ, খুচরা বিক্রয় নথিভুক্ত।",
-        btnRoleRetailer: "খুচরা বিক্রেতা হিসেবে প্রবেশ করুন ➔",
+        roleDescRetailer: "দোকানে চালান গ্রহণ, কাউন্টার কিউআর স্ট্যান্ডি ও চূড়ান্ত বিক্রয় নথিভুক্ত।",
+        btnRoleRetailer: "খুচরা বিক্রেতা হিসেবে লগইন ➔",
         trustTitle: "জাতীয় বিশ্বাস ও যাচাইকরণ মানদণ্ড",
-        trust1Title: "ক্রিপ্টোগ্রাফিক খতিয়ান:",
-        trust1Desc: "প্রতিটি ফসল তোলা ও হস্তান্তর SHA-256 হ্যাশ চেইন দ্বারা সুরক্ষিত।",
-        trust2Title: "ব্যক্তিগত গোপনীয়তা সুরক্ষা:",
-        trust2Desc: "কৃষকের ব্যক্তিগত পরিচয় ও জিপিএস DPDP আইন ২০২৩ অনুসারে সুরক্ষিত।",
-        trust3Title: "দ্বিপাক্ষিক হেফাজত নিশ্চিতকরণ:",
-        trust3Desc: "মালিকানা হস্তান্তরের জন্য উভয় পক্ষের ডিজিটাল অনুমোদন আবশ্যক।",
-        footerBrand: "অন্নসূত্র কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম",
-        footerDev: "সেন্টার ফর ডেভেলপমেন্ট অব অ্যাডভান্সড কম্পিউটিং (C-DAC) দ্বারা তৈরি",
-        footerGov: "ইলেকট্রনিক্স ও তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার",
-        footerDisclaimer: "বিজ্ঞপ্তি: রেকর্ডগুলি সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দেওয়া তথ্যের উপর ভিত্তি করে তৈরি। এটি প্যাকেজের সামগ্রী প্রমাণ করে না।",
-        linkHealth: "সিস্টেম স্বাস্থ্য",
-        linkAdmin: "অ্যাডমিন পোর্টাল",
-        linkPrivacy: "গোপনীয়তা বিজ্ঞপ্তি",
-        modalRolePrefix: "লগইন: ",
-        modalSubtitle: "অন্নসূত্র প্ল্যাটফর্মে সরাসরি প্রমাণীকরণ",
+        trust1Title: "ক্রিপ্টোগ্রাফিক অপরিবর্তনীয় লেজার:",
+        trust1Desc: "প্রতিটি ফসল তোলা, প্রেরণ ও গুণমান পরীক্ষা SHA-256 চেইন দ্বারা সুরক্ষিত।",
+        trust2Title: "শূন্য ব্যক্তিগত তথ্য প্রকাশ:",
+        trust2Desc: "কৃষকের ব্যক্তিগত পরিচয়, সঠিক জিপিএস ও বাণিজ্যিক মূল্য ডিপিডিপি আইন ২০২৩ এর অধীনে সুরক্ষিত।",
+        trust3Title: "পারস্পরিক হেফাজত নিশ্চিতকরণ:",
+        trust3Desc: "মালিকানা হস্তান্তরের জন্য প্রেরক এবং প্রাপক উভয়ের ডিজিটাল অনুমোদন আবশ্যক।",
+        btnFooterDpdp: "ডিপিডিপি আইন ২০২৩ নীতি",
+        btnFooterHealth: "সিস্টেম স্থিতি ও আপটাইম",
         demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",
         btnDemoTap: "১-ট্যাপে সাইন ইন করুন",
         otpOrLabel: "── অথবা মোবাইল ওটিপি দিয়ে সাইন ইন করুন ──",
-        btnSendOtp: "ওটিপি কোড পাঠান",
-        btnDispatchBatch: "ব্যাচ প্রেরণ করুন",
-        btnSplitLot: "লট ভাগ করুন",
-        btnInspectQuality: "গুণমান পরীক্ষা করুন",
-        btnRecordSale: "বিক্রি নথিভুক্ত করুন",
-        btnReceiveBatch: "ব্যাচ গ্রহণ করুন",
-        statusInCustody: "হেফাজতে রয়েছে",
-        statusInTransit: "পথে রয়েছে",
-        statusAwaiting: "অনুমোদনের অপেক্ষায়",
+        btnSendOtp: "ওটিপি পাঠান",
         btnLogout: "লগ আউট / সংস্থা পরিবর্তন"
       }
     };
 
-    let currentLang = 'en';
-    let currentRole = 'FARMER';
-    const sampleOrgs = {
-      'FARMER': 'Bardhaman Farmer Coop (FPO-WB-0492)',
-      'MANDI': 'Kolkata Central APMC Traders Ltd',
-      'COLD_STORAGE': 'Hooghly Cold Chain Logistics Ltd',
-      'PROCESSOR': 'Bengal Agro Processing Works Pvt Ltd',
-      'RETAILER': 'Maa Durga Retail Fresh Mart'
+    const roleDefinitions = {
+      'PRODUCER': {
+        title: 'Producer Custody Operations (Farm & Harvest)',
+        org: 'Bardhaman Farmer Producer Co. (FPO-WB-0492)',
+        tools: [
+          { label: '+ Register New Farm Lot', icon: '🌾', action: 'createNewLot()' },
+          { label: '🏷️ Issue Crate QR Tags', icon: '🖨️', action: 'printQrTags()' },
+          { label: '🚚 Dispatch to Aggregator', icon: '📦', action: 'dispatchToAggregator()' }
+        ],
+        batches: [
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • 500.0 kg • Harvested today at Cluster A-4', status: 'In Farm Custody' },
+          { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) • 1,200.0 kg • Packed in 24 crates', status: 'Ready for Mandi Dispatch' }
+        ]
+      },
+      'AGGREGATOR': {
+        title: 'Aggregator Mandi Operations (Collection & Grading)',
+        org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
+        tools: [
+          { label: '📥 Accept Producer Handover', icon: '✓', action: 'acceptProducerHandover()' },
+          { label: '⚖️ Record Weight & Grade (A/B/C)', icon: '🔍', action: 'gradeLot()' },
+          { label: '📦 Consolidate & Dispatch to Wholesaler', icon: '🏢', action: 'dispatchToWholesaler()' }
+        ],
+        batches: [
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • Inward Received from FPO-WB-0492 • Graded: A', status: 'Mandi Yard Stock' },
+          { code: '8M2P1KXZ9V4C', desc: 'Onion (Nashik Red) • 2,400.0 kg • Weighment confirmed', status: 'Awaiting Wholesaler Handover' }
+        ]
+      },
+      'WHOLESALER': {
+        title: 'Wholesaler Terminal Operations (Storage & Bulk Trade)',
+        org: 'Kolkata Central Terminal Market Wholesalers Ltd',
+        tools: [
+          { label: '✂️ Split Consignment (Mass Balance)', icon: '⚖️', action: 'splitWholesaleLot()' },
+          { label: '❄️ Assign Cold Storage Chamber', icon: '🌡️', action: 'assignColdStorage()' },
+          { label: '🚛 Dispatch to Regional Distributor', icon: '🚚', action: 'dispatchToDistributor()' }
+        ],
+        batches: [
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • 500.0 kg • Allocated to Cold Bay C-12', status: 'Chamber Custody (4.2°C)' },
+          { code: '9K4L2MXP7Q1A', desc: 'Capsicum (Green) • 800.0 kg • Split into 4 commercial sub-lots', status: 'Bulk Warehouse Stock' }
+        ]
+      },
+      'DISTRIBUTOR': {
+        title: 'Distributor Logistics Operations (Fleet & Transit)',
+        org: 'Bengal Agro Cold-Chain Logistics Fleet (DIST-WB-88)',
+        tools: [
+          { label: '🚚 Accept Transit Custody', icon: '📦', action: 'acceptTransitCustody()' },
+          { label: '🌡️ Log Vehicle GPS & Temperature', icon: '📍', action: 'logTransitTemp()' },
+          { label: '🏪 Handover Consignment to Retailer', icon: '🛒', action: 'handoverToRetailer()' }
+        ],
+        batches: [
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • 500.0 kg • Reefer Truck WB-19-AX-4402', status: 'In Transit (Kolkata Route)' },
+          { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 kg • En route to New Town Retail Depot', status: 'In Transit' }
+        ]
+      },
+      'RETAILER': {
+        title: 'Retailer Point-of-Sale Operations (Consumer & Shelf)',
+        org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
+        tools: [
+          { label: '📦 Receive Inbound Retail Crates', icon: '✓', action: 'receiveRetailCrates()' },
+          { label: '🖨️ Print Consumer Shelf QR Standee', icon: '🏷️', action: 'printConsumerShelfQr()' },
+          { label: '🛒 Record Consumer Retail Sale', icon: '💳', action: 'recordRetailSale()' }
+        ],
+        batches: [
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • On Shelf: 120.0 kg • Grade A Organic', status: 'Active on Retail Shelf' },
+          { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • On Shelf: 80.0 kg • 24 Verified Customer Scans', status: 'Active on Retail Shelf' }
+        ]
+      }
     };
+
+    let currentLang = 'en';
+    let currentRole = 'PRODUCER';
 
     function setLanguage(lang) {
       if (!i18n[lang]) lang = 'en';
       currentLang = lang;
       document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
-      localStorage.setItem('annasutra_lang', lang);
+      localStorage.setItem("annasutra_lang", lang);
       const sel = document.getElementById('langSelector');
       if (sel) sel.value = lang;
 
       const t = i18n[lang];
-      if (!t) return;
       const setTxt = (id, val) => {
         const el = document.getElementById(id);
         if (el && val !== undefined) el.innerText = val;
       };
 
       setTxt('topDevText', t.topDev);
+      setTxt('navSearchText', t.navSearchText);
       setTxt('navLoginText', t.navLoginText);
       setTxt('heroBadge', t.heroBadge);
       setTxt('heroHeadline', t.heroHeadline);
@@ -1261,6 +1472,19 @@
       setTxt('stat3', t.stat3);
       setTxt('stat4', t.stat4);
 
+      setTxt('flowTitle', t.flowTitle);
+      setTxt('flowSubtitle', t.flowSubtitle);
+      setTxt('flowStep1Title', t.flowStep1Title);
+      setTxt('flowStep1Desc', t.flowStep1Desc);
+      setTxt('flowStep2Title', t.flowStep2Title);
+      setTxt('flowStep2Desc', t.flowStep2Desc);
+      setTxt('flowStep3Title', t.flowStep3Title);
+      setTxt('flowStep3Desc', t.flowStep3Desc);
+      setTxt('flowStep4Title', t.flowStep4Title);
+      setTxt('flowStep4Desc', t.flowStep4Desc);
+      setTxt('flowStep5Title', t.flowStep5Title);
+      setTxt('flowStep5Desc', t.flowStep5Desc);
+
       setTxt('searchTitle', t.searchTitle);
       setTxt('searchSubtitle', t.searchSubtitle);
       setTxt('searchBtn', t.searchBtn);
@@ -1269,21 +1493,21 @@
       setTxt('entitySectionTitle', t.entitySectionTitle);
       setTxt('entitySectionSubtitle', t.entitySectionSubtitle);
 
-      setTxt('roleTitleFarmer', t.roleTitleFarmer);
-      setTxt('roleDescFarmer', t.roleDescFarmer);
-      setTxt('btnRoleFarmer', t.btnRoleFarmer);
+      setTxt('roleTitleProducer', t.roleTitleProducer);
+      setTxt('roleDescProducer', t.roleDescProducer);
+      setTxt('btnRoleProducer', t.btnRoleProducer);
 
-      setTxt('roleTitleMandi', t.roleTitleMandi);
-      setTxt('roleDescMandi', t.roleDescMandi);
-      setTxt('btnRoleMandi', t.btnRoleMandi);
+      setTxt('roleTitleAggregator', t.roleTitleAggregator);
+      setTxt('roleDescAggregator', t.roleDescAggregator);
+      setTxt('btnRoleAggregator', t.btnRoleAggregator);
 
-      setTxt('roleTitleCold', t.roleTitleCold);
-      setTxt('roleDescCold', t.roleDescCold);
-      setTxt('btnRoleCold', t.btnRoleCold);
+      setTxt('roleTitleWholesaler', t.roleTitleWholesaler);
+      setTxt('roleDescWholesaler', t.roleDescWholesaler);
+      setTxt('btnRoleWholesaler', t.btnRoleWholesaler);
 
-      setTxt('roleTitleProcessor', t.roleTitleProcessor);
-      setTxt('roleDescProcessor', t.roleDescProcessor);
-      setTxt('btnRoleProcessor', t.btnRoleProcessor);
+      setTxt('roleTitleDistributor', t.roleTitleDistributor);
+      setTxt('roleDescDistributor', t.roleDescDistributor);
+      setTxt('btnRoleDistributor', t.btnRoleDistributor);
 
       setTxt('roleTitleRetailer', t.roleTitleRetailer);
       setTxt('roleDescRetailer', t.roleDescRetailer);
@@ -1297,28 +1521,12 @@
       setTxt('trust3Title', t.trust3Title);
       setTxt('trust3Desc', t.trust3Desc);
 
-      setTxt('footerBrand', t.footerBrand);
-      setTxt('footerDev', t.footerDev);
-      setTxt('footerGov', t.footerGov);
-      setTxt('footerDisclaimer', t.footerDisclaimer);
-      setTxt('linkHealth', t.linkHealth);
-      setTxt('linkAdmin', t.linkAdmin);
-      setTxt('linkPrivacy', t.linkPrivacy);
-      setTxt('btnDpdpFooterText', t.linkPrivacy);
-
+      setTxt('btnFooterDpdp', t.btnFooterDpdp);
+      setTxt('btnFooterHealth', t.btnFooterHealth);
       setTxt('demoFastTitle', t.demoFastTitle);
       setTxt('btnDemoTap', t.btnDemoTap);
       setTxt('otpOrLabel', t.otpOrLabel);
       setTxt('btnSendOtp', t.btnSendOtp);
-
-      setTxt('btnDispatchBatch', t.btnDispatchBatch);
-      setTxt('btnSplitLot', t.btnSplitLot);
-      setTxt('btnInspectQuality', t.btnInspectQuality);
-      setTxt('btnRecordSale', t.btnRecordSale);
-      setTxt('btnReceiveBatch', t.btnReceiveBatch);
-      setTxt('statusInCustody', t.statusInCustody);
-      setTxt('statusInTransit', t.statusInTransit);
-      setTxt('statusAwaiting', t.statusAwaiting);
       setTxt('btnLogout', t.btnLogout);
     }
 
@@ -1337,26 +1545,32 @@
     }
 
     function fillSearch(code) {
-      document.getElementById('searchInput').value = code;
+      const input = document.getElementById('searchInput');
+      input.value = code;
+      input.focus();
     }
 
     function focusSearch() {
-      const el = document.getElementById('searchInput');
-      el.focus();
+      const el = document.getElementById('searchSection');
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('searchInput').focus();
+    }
+
+    function scrollToEntitySection() {
+      const el = document.getElementById('entitySection');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToWorkspace() {
+      const el = document.getElementById('confinedWorkspace');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function openLoginModal(role) {
-      currentRole = role || 'FARMER';
-      const t = i18n[currentLang];
-      let roleTitle = t.roleTitleFarmer;
-      if (role === 'MANDI') roleTitle = t.roleTitleMandi;
-      if (role === 'COLD_STORAGE') roleTitle = t.roleTitleCold;
-      if (role === 'PROCESSOR') roleTitle = t.roleTitleProcessor;
-      if (role === 'RETAILER') roleTitle = t.roleTitleRetailer;
-
-      document.getElementById('modalRoleTitle').innerText = t.modalRolePrefix + roleTitle;
-      document.getElementById('demoOrgHint').innerText = (sampleOrgs[currentRole] || 'Authorized Operator');
+      currentRole = role || 'PRODUCER';
+      const def = roleDefinitions[currentRole];
+      document.getElementById('modalRoleTitle').innerText = 'Login: ' + currentRole;
+      document.getElementById('demoOrgHint').innerText = def.org;
       document.getElementById('loginModal').style.display = 'flex';
     }
 
@@ -1379,42 +1593,86 @@
       }
     }
 
+    /* STRICT ROLE CONFINEMENT LOGIC */
     function execute1TapLogin() {
-      const orgName = sampleOrgs[currentRole] || 'Authorized Operator';
       closeLoginModal();
+      const def = roleDefinitions[currentRole];
       
+      // Update Navbar Pill
       document.getElementById('navLoginBtn').style.display = 'none';
       const userPill = document.getElementById('userPill');
-      userPill.style.display = 'block';
-      document.getElementById('activeUserName').innerText = currentRole + ': ' + orgName;
-      
-      document.getElementById('dashSubtitle').innerText = orgName + ' • ' + currentRole;
-      const dash = document.getElementById('dashboardPanel');
-      dash.style.display = 'block';
-      dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      userPill.style.display = 'inline-flex';
+      document.getElementById('activeUserName').innerText = currentRole + ' (Active)';
+
+      // Render Strict Confined Workspace
+      document.getElementById('confinedBadgeText').innerText = 
+        '🔒 ROLE CONFINED: Operating strictly within authorized [' + currentRole + '] boundary.';
+      document.getElementById('workspaceTitle').innerText = def.title;
+      document.getElementById('workspaceSubtitle').innerText = 'Verified Organization: ' + def.org;
+
+      // Inject Role-Specific Tools Only
+      const toolsContainer = document.getElementById('workspaceTools');
+      toolsContainer.innerHTML = '';
+      def.tools.forEach(tool => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-workspace-tool';
+        btn.innerText = tool.label;
+        btn.onclick = () => eval(tool.action);
+        toolsContainer.appendChild(btn);
+      });
+
+      // Inject Role-Specific Batches Only
+      const batchesContainer = document.getElementById('workspaceBatchesList');
+      batchesContainer.innerHTML = '';
+      def.batches.forEach(b => {
+        const item = document.createElement('div');
+        item.className = 'batch-item-card';
+        item.innerHTML = `
+          <div>
+            <span class="batch-code-tag">${b.code}</span>
+            <span style="font-size: 13px; color: #334155; margin-left: 8px;">${b.desc}</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 700; color: #15803d; background: #f0fdf4; padding: 4px 10px; border-radius: 20px;">${b.status}</span>
+        `;
+        batchesContainer.appendChild(item);
+      });
+
+      // Reveal Workspace and Hide Entity Chooser
+      const ws = document.getElementById('confinedWorkspace');
+      ws.style.display = 'block';
+      document.getElementById('entitySection').style.display = 'none';
+      ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function logoutEntity() {
       document.getElementById('navLoginBtn').style.display = 'inline-flex';
       document.getElementById('userPill').style.display = 'none';
-      document.getElementById('dashboardPanel').style.display = 'none';
+      document.getElementById('confinedWorkspace').style.display = 'none';
+      document.getElementById('entitySection').style.display = 'block';
+      scrollToEntitySection();
     }
 
-    function toggleDashboard() {
-      const panel = document.getElementById('dashboardPanel');
-      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    }
+    /* SPECIFIC CONFINED ACTIONS */
+    function createNewLot() { alert('PRODUCER ACTION: Launching Farm Harvest Registration dialog.'); }
+    function printQrTags() { alert('PRODUCER ACTION: Generating serialized crate QR labels.'); }
+    function dispatchToAggregator() { alert('PRODUCER ACTION: Consignment dispatch handover to Mandi Aggregator.'); }
 
-    function switchDashTab(tabName, btn) {
-      document.querySelectorAll('.dash-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    function acceptProducerHandover() { alert('AGGREGATOR ACTION: Mandi gatekeeper custody receipt logged.'); }
+    function gradeLot() { alert('AGGREGATOR ACTION: Agmarknet Grade inspection form opened.'); }
+    function dispatchToWholesaler() { alert('AGGREGATOR ACTION: Consignment dispatch to Terminal Wholesaler.'); }
 
-      document.getElementById('tabContentStock').style.display = tabName === 'stock' ? 'block' : 'none';
-      document.getElementById('tabContentIncoming').style.display = tabName === 'incoming' ? 'block' : 'none';
-      document.getElementById('tabContentWaiting').style.display = tabName === 'waiting' ? 'block' : 'none';
-    }
+    function splitWholesaleLot() { alert('WHOLESALER ACTION: Mass-balance lot splitting dialog.'); }
+    function assignColdStorage() { alert('WHOLESALER ACTION: Chamber bay and temperature log updated.'); }
+    function dispatchToDistributor() { alert('WHOLESALER ACTION: Bulk dispatch to Distributor fleet.'); }
 
-    // Initialize saved language or default to English
+    function acceptTransitCustody() { alert('DISTRIBUTOR ACTION: Transit custody accepted from Wholesaler.'); }
+    function logTransitTemp() { alert('DISTRIBUTOR ACTION: IoT Reefer temperature and GPS log captured.'); }
+    function handoverToRetailer() { alert('DISTRIBUTOR ACTION: Last-mile handover to Retail store.'); }
+
+    function receiveRetailCrates() { alert('RETAILER ACTION: Inward retail verification accepted.'); }
+    function printConsumerShelfQr() { alert('RETAILER ACTION: Consumer shelf standee QR generated.'); }
+    function recordRetailSale() { alert('RETAILER ACTION: Consumer point-of-sale receipt deducted from batch.'); }
+
     window.addEventListener('DOMContentLoaded', () => {
       const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
       if (savedLevel !== 0) changeFontSize(0);

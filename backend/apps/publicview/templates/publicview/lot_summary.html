@@ -31,13 +31,16 @@
       margin: 0;
       padding: 0;
       line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* TOP UTILITY BAR */
     .top-bar {
       background-color: var(--primary-dark);
       color: #e2e8f0;
-      padding: 8px 20px;
+      padding: 8px 24px;
       font-size: 12px;
       display: flex;
       justify-content: space-between;
@@ -87,33 +90,31 @@
       outline: none;
     }
 
-    /* MAIN NAVBAR */
+    /* MAIN NAVBAR - UTILITY ONLY */
     .navbar {
       background-color: #ffffff;
       padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
       border-bottom: 1px solid var(--border);
     }
     .brand-link {
       display: flex;
       align-items: center;
-      gap: 10px;
       text-decoration: none;
-      color: inherit;
     }
     .brand-logo-img {
       height: 38px;
       width: auto;
       object-fit: contain;
     }
-    .btn-home-nav {
+    .btn-nav-home {
       background: #f1f5f9;
       color: var(--primary);
       border: 1px solid #cbd5e1;
-      padding: 8px 14px;
+      padding: 8px 16px;
       border-radius: 8px;
       font-size: 13px;
       font-weight: 700;
@@ -121,21 +122,24 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: background 0.2s;
     }
-    .btn-home-nav:hover {
+    .btn-nav-home:hover {
       background: #e2e8f0;
     }
 
-    /* CONTAINER */
-    .container {
+    /* CONTAINER & RECORD CARD */
+    .main-wrapper {
+      flex: 1;
       max-width: 640px;
+      width: 100%;
       margin: 32px auto 48px;
       padding: 0 16px;
     }
     .summary-card {
       background: var(--card-bg);
       border-radius: 16px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
       border: 1px solid var(--border);
       padding: 28px;
       margin-bottom: 20px;
@@ -192,7 +196,6 @@
       font-weight: 700;
       color: var(--slate-dark);
     }
-
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -217,12 +220,11 @@
       font-weight: 600;
       margin-top: 4px;
     }
-
     .disclaimer-box {
       background: #fffbeb;
       border: 1px solid #fde68a;
       border-radius: 12px;
-      padding: 18px;
+      padding: 16px;
       color: #92400e;
       font-size: 12.5px;
       line-height: 1.5;
@@ -235,36 +237,103 @@
       font-size: 13px;
     }
 
-    /* FOOTER */
-    .footer {
+    /* INSTITUTIONAL FOOTER */
+    .institutional-footer {
+      background: #07271d;
+      color: #e2e8f0;
+      padding: 32px 20px 24px;
+      border-top: 2px solid #144d3b;
+      margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
       text-align: center;
-      padding: 32px 16px 40px;
-      color: var(--text-muted);
+    }
+    .helpline-ribbon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+    }
+    .helpline-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .helpline-item strong {
+      color: #fcd34d;
+    }
+    .footer-buttons-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .btn-footer-action {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 12px;
-      border-top: 1px solid var(--border);
-      background: #f1f5f9;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-footer-action:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: #f59e0b;
+      color: #ffffff;
+    }
+    .footer-maker-block {
+      margin-bottom: 12px;
     }
     .cdac-footer-img {
-      height: 34px;
+      height: 32px;
       width: auto;
       object-fit: contain;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-    .footer strong { color: #0f172a; }
-    .footer a {
-      color: var(--primary);
-      text-decoration: none;
-      margin: 0 8px;
-      font-weight: 600;
+    .footer-org-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
     }
-    .footer a:hover { text-decoration: underline; }
+    .footer-gov-title {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .footer-legal-notice {
+      font-size: 11px;
+      color: #64748b;
+      max-width: 680px;
+      margin: 12px auto 0;
+      line-height: 1.4;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 10px;
+    }
 
-    /* DPDP MODAL */
+    /* MODAL */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.7);
       z-index: 1000;
       align-items: center;
       justify-content: center;
@@ -312,22 +381,22 @@
     </div>
   </div>
 
-  <!-- 2. NAVBAR -->
+  <!-- 2. NAVBAR (UTILITY ONLY) -->
   <div class="navbar">
-    <a href="/" class="brand-link">
+    <a href="/" class="brand-link" title="AnnaSutra Home">
       <img 
-        src="/static/publicview/images/annasutra_logo.png" 
+        src="{{ brand_logo }}" 
         alt="AnnaSutra" 
         class="brand-logo-img" 
       />
     </a>
-    <a href="/" class="btn-home-nav" id="btnNavHome">
+    <a href="/" class="btn-nav-home" id="btnNavHome">
       🏠 <span id="btnNavHomeText">Home Portal</span>
     </a>
   </div>
 
-  <!-- 3. MAIN SUMMARY CARD -->
-  <div class="container">
+  <!-- 3. MAIN SUMMARY RECORD CARD -->
+  <div class="main-wrapper">
     <div class="summary-card">
       <div class="batch-verified-header">
         <div class="lot-badge">BATCH: {{ lot.code }}</div>
@@ -364,7 +433,7 @@
 
       <div class="field" style="margin-top: 18px;">
         <div class="field-label" id="lblScans">Public Lookups</div>
-        <div class="field-value"><span id="scanCountNum">{{ lot.scan_count }}</span> <span id="lblVerifiedScans">verified scans</span></div>
+        <div class="field-value"><span id="scanCountNum">{{ lot.scan_count }}</span> <span id="lblVerifiedScans">verified lookups</span></div>
       </div>
     </div>
 
@@ -378,42 +447,67 @@
     </div>
   </div>
 
-  <!-- 4. OFFICIAL FOOTER -->
-  <div class="footer">
-    <div>
-      <img 
-        src="/static/publicview/images/cdac_logo.png" 
-        alt="C-DAC" 
-        class="cdac-footer-img" 
-      />
-    </div>
-    <div><strong id="footerBrand">AnnaSutra Agri-Traceability Platform</strong></div>
-    <div style="margin-top: 4px;" id="footerDev">Centre for Development of Advanced Computing (C-DAC)</div>
-    <div style="margin-top: 2px;" id="footerGov">Ministry of Electronics & Information Technology, Government of India</div>
+  <!-- 4. GOD-LEVEL INSTITUTIONAL FOOTER -->
+  <footer class="institutional-footer">
+    <div class="footer-inner">
+      <!-- Toll Free Helpline Ribbon -->
+      <div class="helpline-ribbon">
+        <span class="helpline-item">
+          📞 <span>Kisan Call Centre:</span> <strong>1800-180-1551</strong>
+        </span>
+        <span class="helpline-item">
+          🛡️ <span>National Consumer Helpline:</span> <strong>1915</strong>
+        </span>
+        <span class="helpline-item">
+          🚨 <span>Technical Desk:</span> <strong>1800-425-CDAC</strong>
+        </span>
+      </div>
 
-    <div style="margin-top: 14px;">
-      <a href="/" id="linkHome">Home</a> •
-      <a href="/health/" id="linkHealth">System Health</a> •
-      <a href="#" onclick="openDpdpModal(); return false;" id="linkPrivacy">DPDP Act 2023 Notice</a>
-    </div>
-  </div>
+      <!-- Action Buttons Bar -->
+      <div class="footer-buttons-bar">
+        <button class="btn-footer-action" onclick="openDpdpModal()">
+          🛡️ <span id="btnFooterDpdp">DPDP Act 2023 Policy</span>
+        </button>
+        <a href="/health/" class="btn-footer-action">
+          🏥 <span id="btnFooterHealth">System Health & Uptime</span>
+        </a>
+        <button class="btn-footer-action" onclick="alert('Agmarknet Standards: Compliant with APMC grading criteria and BIS agricultural produce standards.')">
+          📜 <span>Agmarknet Standards</span>
+        </button>
+      </div>
 
-  <!-- 5. DPDP MODAL -->
+      <!-- Maker Details & Logo -->
+      <div class="footer-maker-block">
+        <img 
+          src="{{ cdac_logo }}" 
+          alt="C-DAC" 
+          class="cdac-footer-img" 
+        />
+        <div class="footer-org-title">Centre for Development of Advanced Computing (C-DAC)</div>
+        <div class="footer-gov-title">Ministry of Electronics & Information Technology, Government of India</div>
+      </div>
+
+      <div class="footer-legal-notice">
+        Notice: AnnaSutra records are cryptographically attested by authorized entities. Physical package contents and quality are verified at grading inspection stages under national trust standards.
+      </div>
+    </div>
+  </footer>
+
+  <!-- DPDP MODAL -->
   <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
       <button class="modal-close" onclick="closeDpdpModal()">✕</button>
       <div style="text-align: center; margin-bottom: 16px;">
-        <h3 style="margin: 0 0 6px; color: var(--primary); font-size: 20px;" id="dpdpHead">DPDP Act 2023 Compliance</h3>
-        <p style="margin: 0; font-size: 13px; color: var(--text-muted);" id="dpdpSub">Digital Personal Data Protection Notice</p>
+        <h3 style="margin: 0 0 6px; color: var(--primary); font-size: 20px;">DPDP Act 2023 Compliance</h3>
+        <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Digital Personal Data Protection Policy</p>
       </div>
-      <div style="font-size: 13.5px; color: #334155; line-height: 1.5; margin-bottom: 18px;" id="dpdpBody">
+      <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 18px;">
         <p>AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
         <p><strong>Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
       </div>
       <button 
         style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer;" 
-        onclick="closeDpdpModal()" 
-        id="btnDpdpClose"
+        onclick="closeDpdpModal()"
       >
         I Understand & Continue
       </button>
@@ -432,18 +526,11 @@
         lblStages: "Custody Stages Confirmed",
         lblQuality: "Quality Inspections",
         lblScans: "Public Lookups",
-        lblVerifiedScans: "verified scans",
+        lblVerifiedScans: "verified lookups",
         disclaimerHead: "Important Notice:",
         disclaimerP2: "Records are based on information entered by supply-chain participants. They do not prove physical package contents.",
-        footerBrand: "AnnaSutra Agri-Traceability Platform",
-        footerDev: "Centre for Development of Advanced Computing (C-DAC)",
-        footerGov: "Ministry of Electronics & Information Technology, Government of India",
-        linkHome: "Home",
-        linkHealth: "System Health",
-        linkPrivacy: "DPDP Act 2023 Notice",
-        dpdpHead: "DPDP Act 2023 Compliance",
-        dpdpSub: "Digital Personal Data Protection Notice",
-        btnDpdpClose: "I Understand & Continue"
+        btnFooterDpdp: "DPDP Act 2023 Policy",
+        btnFooterHealth: "System Health & Uptime"
       },
       hi: {
         topDev: "🏛️ सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
@@ -455,18 +542,11 @@
         lblStages: "सत्यापित कस्टडी चरण",
         lblQuality: "गुणवत्ता निरीक्षण",
         lblScans: "सार्वजनिक खोज",
-        lblVerifiedScans: "सत्यापित स्कैन",
+        lblVerifiedScans: "सत्यापित खोजें",
         disclaimerHead: "महत्वपूर्ण सूचना:",
         disclaimerP2: "यह रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित है। यह इस पैकेज की सामग्री को साबित नहीं करता है।",
-        footerBrand: "अन्नसूत्र कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म",
-        footerDev: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
-        footerGov: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
-        linkHome: "होम",
-        linkHealth: "सिस्टम स्वास्थ्य",
-        linkPrivacy: "डीपीडीपी अधिनियम 2023 सूचना",
-        dpdpHead: "डीपीडीपी अधिनियम 2023 अनुपालन",
-        dpdpSub: "डिजिटल व्यक्तिगत डेटा संरक्षण सूचना",
-        btnDpdpClose: "समझ गया, जारी रखें"
+        btnFooterDpdp: "डीपीडीपी अधिनियम 2023 नीति",
+        btnFooterHealth: "सिस्टम स्वास्थ्य एवं अपटाइम"
       },
       bn: {
         topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা নির্মিত | মেটি (MeitY), ভারত সরকার",
@@ -478,26 +558,16 @@
         lblStages: "নিশ্চিত হস্তান্তর পর্যায়",
         lblQuality: "গুণমান পরীক্ষা",
         lblScans: "পাবলিক লুকআপ",
-        lblVerifiedScans: "যাচাইকৃত স্ক্যান",
+        lblVerifiedScans: "যাচাইকৃত লুকআপ",
         disclaimerHead: "গুরুত্বপূর্ণ বিজ্ঞপ্তি:",
         disclaimerP2: "এই রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি এই প্যাকেজের সামগ্রী প্রমাণ করে না।",
-        footerBrand: "অন্নসূত্র কৃষি ট্রেসেবিলিটি প্ল্যাটফর্ম",
-        footerDev: "সেন্টার ফর ডেভেলপমেন্ট অব অ্যাডভান্সড কম্পিউটিং (সি-ড্যাক)",
-        footerGov: "ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রক, ভারত সরকার",
-        linkHome: "হোম",
-        linkHealth: "সিস্টেম স্থিতি",
-        linkPrivacy: "ডিপিদিপি আইন ২০২৩ বিজ্ঞপ্তি",
-        dpdpHead: "ডিপিদিপি আইন ২০২৩ সম্মতি",
-        dpdpSub: "ডিজিটাল ব্যক্তিগত ডেটা সুরক্ষা বিজ্ঞপ্তি",
-        btnDpdpClose: "আমি বুঝেছি ও চালিয়ে যান"
+        btnFooterDpdp: "ডিপিডিপি আইন ২০২৩ নীতি",
+        btnFooterHealth: "সিস্টেম স্থিতি ও আপটাইম"
       }
     };
 
-    let currentLang = 'en';
-
     function setLanguage(lang) {
       if (!translations[lang]) lang = 'en';
-      currentLang = lang;
       document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
       localStorage.setItem("annasutra_lang", lang);
       document.getElementById('langSelector').value = lang;
@@ -515,15 +585,8 @@
       document.getElementById('lblVerifiedScans').innerText = t.lblVerifiedScans;
       document.getElementById('disclaimerHead').innerText = t.disclaimerHead;
       document.getElementById('disclaimerP2').innerText = t.disclaimerP2;
-      document.getElementById('footerBrand').innerText = t.footerBrand;
-      document.getElementById('footerDev').innerText = t.footerDev;
-      document.getElementById('footerGov').innerText = t.footerGov;
-      document.getElementById('linkHome').innerText = t.linkHome;
-      document.getElementById('linkHealth').innerText = t.linkHealth;
-      document.getElementById('linkPrivacy').innerText = t.linkPrivacy;
-      document.getElementById('dpdpHead').innerText = t.dpdpHead;
-      document.getElementById('dpdpSub').innerText = t.dpdpSub;
-      document.getElementById('btnDpdpClose').innerText = t.btnDpdpClose;
+      document.getElementById('btnFooterDpdp').innerText = t.btnFooterDpdp;
+      document.getElementById('btnFooterHealth').innerText = t.btnFooterHealth;
     }
 
     function getCookie(name) {
