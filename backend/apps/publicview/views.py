@@ -50,13 +50,17 @@ def public_lot_html_view(request, code: str):
         result=result_str,
     )
 
+    user_lang = request.COOKIES.get("annasutra_lang", "en")
+    if user_lang not in ["en", "hi", "bn"]:
+        user_lang = "en"
+
     if not public_view:
-        return render(request, "publicview/lot_not_found.html", {"code": code}, status=404)
+        return render(request, "publicview/lot_not_found.html", {"code": code, "user_lang": user_lang}, status=404)
 
     payload = dict(public_view.payload)
     payload["scan_count"] = ScanLog.objects.filter(serial=code).count()
 
-    return render(request, "publicview/lot_summary.html", {"lot": payload})
+    return render(request, "publicview/lot_summary.html", {"lot": payload, "user_lang": user_lang})
 
 
 def landing_page_view(request):
@@ -65,4 +69,8 @@ def landing_page_view(request):
     if query_code:
         from django.shortcuts import redirect
         return redirect("public_lot_html_canonical", code=query_code)
-    return render(request, "publicview/landing.html")
+    user_lang = request.COOKIES.get("annasutra_lang", "en")
+    if user_lang not in ["en", "hi", "bn"]:
+        user_lang = "en"
+    return render(request, "publicview/landing.html", {"user_lang": user_lang})
+

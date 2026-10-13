@@ -4,67 +4,176 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AnnaSutra - Produce Traceability Record</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #2e7d32;
-      --bg: #f9fbf9;
+      --primary: #0b3d2e;
+      --primary-dark: #07271d;
+      --primary-light: #f0fdf4;
+      --saffron: #e67e22;
+      --saffron-hover: #d35400;
+      --accent-gold: #f59e0b;
+      --slate-dark: #0f172a;
+      --bg: #f8faf7;
       --card-bg: #ffffff;
-      --text: #1a1a1a;
-      --text-muted: #555555;
-      --border: #e0e0e0;
-      --disclaimer-bg: #fff8e1;
-      --disclaimer-border: #ffe082;
-      --disclaimer-text: #795548;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
     }
+    * { box-sizing: border-box; }
+    html { font-size: 15px; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 16px;
+      padding: 0;
       line-height: 1.5;
     }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
+
+    /* TOP UTILITY BAR */
+    .top-bar {
+      background-color: var(--primary-dark);
+      color: #e2e8f0;
+      padding: 8px 20px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #144d3b;
     }
-    .header {
-      text-align: center;
+    .top-bar .developer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+    .top-bar .right-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .font-resizer {
+      display: inline-flex;
+      background: #114232;
+      border: 1px solid #23654e;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .btn-text-size {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-text-size:hover {
+      background: #1b5e46;
+      color: #ffffff;
+    }
+    .lang-dropdown {
+      background: #114232;
+      border: 1px solid #23654e;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* MAIN NAVBAR */
+    .navbar {
+      background-color: #ffffff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo-img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+    }
+    .btn-home-nav {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-home-nav:hover {
+      background: #e2e8f0;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 640px;
+      margin: 32px auto 48px;
+      padding: 0 16px;
+    }
+    .summary-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border);
+      padding: 28px;
       margin-bottom: 20px;
     }
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-      color: var(--primary);
+    .batch-verified-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .header p {
-      margin: 4px 0 0;
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      border: 1px solid var(--border);
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-    .lot-code-badge {
+    .lot-badge {
       display: inline-block;
-      background: #e8f5e9;
-      color: var(--primary);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-weight: 700;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1.5px solid #86efac;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 800;
       font-size: 16px;
-      letter-spacing: 1px;
-      margin-bottom: 16px;
+      letter-spacing: 0.8px;
+    }
+    .status-verified {
+      background: #dcfce7;
+      color: #15803d;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
     .field {
-      margin-bottom: 14px;
-      border-bottom: 1px solid #f0f0f0;
-      padding-bottom: 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 12px;
     }
     .field:last-child {
       border-bottom: none;
@@ -73,114 +182,381 @@
     }
     .field-label {
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-weight: 700;
       color: var(--text-muted);
-      margin-bottom: 2px;
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
     }
     .field-value {
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--slate-dark);
     }
+
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 14px;
+      margin-top: 18px;
     }
     .stat-box {
-      background: #f4fbf5;
-      border: 1px solid #c8e6c9;
-      border-radius: 8px;
-      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
       text-align: center;
     }
     .stat-number {
       font-size: 24px;
-      font-weight: bold;
+      font-weight: 900;
       color: var(--primary);
     }
     .stat-label {
       font-size: 12px;
       color: var(--text-muted);
+      font-weight: 600;
       margin-top: 4px;
     }
+
     .disclaimer-box {
-      background: var(--disclaimer-bg);
-      border: 1px solid var(--disclaimer-border);
-      border-radius: 8px;
-      padding: 16px;
-      color: var(--disclaimer-text);
-      font-size: 13px;
-      margin-top: 20px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      padding: 18px;
+      color: #92400e;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin-bottom: 24px;
     }
     .disclaimer-box strong {
       display: block;
       margin-bottom: 6px;
-      color: #5d4037;
+      color: #78350f;
+      font-size: 13px;
     }
+
+    /* FOOTER */
     .footer {
       text-align: center;
-      margin-top: 24px;
+      padding: 32px 16px 40px;
+      color: var(--text-muted);
       font-size: 12px;
+      border-top: 1px solid var(--border);
+      background: #f1f5f9;
+    }
+    .cdac-footer-img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .footer strong { color: #0f172a; }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: 600;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    /* DPDP MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
       color: var(--text-muted);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1>AnnaSutra / অন্নসূত্র / अन्नसूत्र</h1>
-      <p>Agricultural Produce Verification / কৃষি পণ্য যাচাইকরণ</p>
-    </header>
 
-    <main class="card">
-      <div class="lot-code-badge">BATCH: {{ lot.code }}</div>
+  <!-- 1. TOP UTILITY BAR -->
+  <div class="top-bar">
+    <div class="developer" id="topDevText">
+      🏛️ Developed by C-DAC | MeitY, Govt. of India
+    </div>
+    <div class="right-tools">
+      <div class="font-resizer">
+        <button type="button" class="btn-text-size" onclick="changeFontSize(-1)" title="Decrease font size">A-</button>
+        <button type="button" class="btn-text-size" onclick="changeFontSize(0)" title="Default font size">A</button>
+        <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
+      </div>
+      <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
+        <option value="en">English (EN)</option>
+        <option value="hi">हिन्दी (HI)</option>
+        <option value="bn">বাংলা (BN)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 2. NAVBAR -->
+  <div class="navbar">
+    <a href="/" class="brand-link">
+      <img 
+        src="/static/publicview/images/annasutra_logo.png" 
+        alt="AnnaSutra" 
+        class="brand-logo-img" 
+      />
+    </a>
+    <a href="/" class="btn-home-nav" id="btnNavHome">
+      🏠 <span id="btnNavHomeText">Home Portal</span>
+    </a>
+  </div>
+
+  <!-- 3. MAIN SUMMARY CARD -->
+  <div class="container">
+    <div class="summary-card">
+      <div class="batch-verified-header">
+        <div class="lot-badge">BATCH: {{ lot.code }}</div>
+        <div class="status-verified" id="statusVerified">
+          ✓ <span id="statusVerifiedText">Verified on Ledger</span>
+        </div>
+      </div>
 
       <div class="field">
-        <div class="field-label">Crop & Variety / ফসল / फसल</div>
+        <div class="field-label" id="lblProduct">Crop & Variety</div>
         <div class="field-value">{{ lot.product }}</div>
       </div>
 
       <div class="field">
-        <div class="field-label">Harvest Date / কাটার তারিখ / कटाई की तारीख</div>
+        <div class="field-label" id="lblHarvest">Harvest Date</div>
         <div class="field-value">{{ lot.harvest_date }}</div>
       </div>
 
       <div class="field">
-        <div class="field-label">Origin Region / উৎপত্তি অঞ্চল / उत्पत्ति क्षेत्र</div>
+        <div class="field-label" id="lblRegion">Origin Region</div>
         <div class="field-value">{{ lot.region }}</div>
       </div>
 
       <div class="stats-grid">
         <div class="stat-box">
           <div class="stat-number">{{ lot.stages_confirmed }}</div>
-          <div class="stat-label">Custody Stages Confirmed<br>(হস্তান্তর পর্যায়)</div>
+          <div class="stat-label" id="lblStages">Custody Stages Confirmed</div>
         </div>
         <div class="stat-box">
           <div class="stat-number">{{ lot.quality_checks }}</div>
-          <div class="stat-label">Quality Inspections<br>(গুণমান পরীক্ষা)</div>
+          <div class="stat-label" id="lblQuality">Quality Inspections</div>
         </div>
       </div>
 
-      <div class="field" style="margin-top: 14px;">
-        <div class="field-label">Verification Scan Count / স্ক্যান সংখ্যা</div>
-        <div class="field-value">{{ lot.scan_count }} verified lookups</div>
+      <div class="field" style="margin-top: 18px;">
+        <div class="field-label" id="lblScans">Public Lookups</div>
+        <div class="field-value"><span id="scanCountNum">{{ lot.scan_count }}</span> <span id="lblVerifiedScans">verified scans</span></div>
       </div>
-    </main>
-
-    <div class="disclaimer-box">
-      <strong>Important Notice / গুরুত্বপূর্ণ বিজ্ঞপ্তি / महत्वपूर्ण सूचना:</strong>
-      <p style="margin: 0 0 6px 0;">{{ lot.disclaimer }}</p>
-      <p style="margin: 0; font-style: italic; font-size: 12px;">
-        এই রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি এই প্যাকেজের সামগ্রী প্রমাণ করে না।<br>
-        यह रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित है। यह इस पैकेज की सामग्री को साबित नहीं करता है।
-      </p>
     </div>
 
-    <footer class="footer">
-      Powered by AnnaSutra Open Traceability Ledger &copy; 2026
-    </footer>
+    <!-- Single-Language Official Notice -->
+    <div class="disclaimer-box">
+      <strong id="disclaimerHead">Important Notice:</strong>
+      <p style="margin: 0 0 6px 0;" id="disclaimerP1">{{ lot.disclaimer }}</p>
+      <p style="margin: 0; font-style: italic; font-size: 11.5px;" id="disclaimerP2">
+        Records are based on information entered by supply-chain participants. They do not prove physical package contents.
+      </p>
+    </div>
   </div>
+
+  <!-- 4. OFFICIAL FOOTER -->
+  <div class="footer">
+    <div>
+      <img 
+        src="/static/publicview/images/cdac_logo.png" 
+        alt="C-DAC" 
+        class="cdac-footer-img" 
+      />
+    </div>
+    <div><strong id="footerBrand">AnnaSutra Agri-Traceability Platform</strong></div>
+    <div style="margin-top: 4px;" id="footerDev">Centre for Development of Advanced Computing (C-DAC)</div>
+    <div style="margin-top: 2px;" id="footerGov">Ministry of Electronics & Information Technology, Government of India</div>
+
+    <div style="margin-top: 14px;">
+      <a href="/" id="linkHome">Home</a> •
+      <a href="/health/" id="linkHealth">System Health</a> •
+      <a href="#" onclick="openDpdpModal(); return false;" id="linkPrivacy">DPDP Act 2023 Notice</a>
+    </div>
+  </div>
+
+  <!-- 5. DPDP MODAL -->
+  <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeDpdpModal()">✕</button>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <h3 style="margin: 0 0 6px; color: var(--primary); font-size: 20px;" id="dpdpHead">DPDP Act 2023 Compliance</h3>
+        <p style="margin: 0; font-size: 13px; color: var(--text-muted);" id="dpdpSub">Digital Personal Data Protection Notice</p>
+      </div>
+      <div style="font-size: 13.5px; color: #334155; line-height: 1.5; margin-bottom: 18px;" id="dpdpBody">
+        <p>AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
+        <p><strong>Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
+      </div>
+      <button 
+        style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer;" 
+        onclick="closeDpdpModal()" 
+        id="btnDpdpClose"
+      >
+        I Understand & Continue
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        topDev: "🏛️ Developed by C-DAC | MeitY, Govt. of India",
+        btnNavHomeText: "Home Portal",
+        statusVerifiedText: "Verified on Ledger",
+        lblProduct: "Crop & Variety",
+        lblHarvest: "Harvest Date",
+        lblRegion: "Origin Region",
+        lblStages: "Custody Stages Confirmed",
+        lblQuality: "Quality Inspections",
+        lblScans: "Public Lookups",
+        lblVerifiedScans: "verified scans",
+        disclaimerHead: "Important Notice:",
+        disclaimerP2: "Records are based on information entered by supply-chain participants. They do not prove physical package contents.",
+        footerBrand: "AnnaSutra Agri-Traceability Platform",
+        footerDev: "Centre for Development of Advanced Computing (C-DAC)",
+        footerGov: "Ministry of Electronics & Information Technology, Government of India",
+        linkHome: "Home",
+        linkHealth: "System Health",
+        linkPrivacy: "DPDP Act 2023 Notice",
+        dpdpHead: "DPDP Act 2023 Compliance",
+        dpdpSub: "Digital Personal Data Protection Notice",
+        btnDpdpClose: "I Understand & Continue"
+      },
+      hi: {
+        topDev: "🏛️ सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
+        btnNavHomeText: "मुख्य पोर्टल",
+        statusVerifiedText: "लेज़र पर सत्यापित",
+        lblProduct: "फसल एवं किस्म",
+        lblHarvest: "कटाई की तारीख",
+        lblRegion: "उत्पत्ति क्षेत्र",
+        lblStages: "सत्यापित कस्टडी चरण",
+        lblQuality: "गुणवत्ता निरीक्षण",
+        lblScans: "सार्वजनिक खोज",
+        lblVerifiedScans: "सत्यापित स्कैन",
+        disclaimerHead: "महत्वपूर्ण सूचना:",
+        disclaimerP2: "यह रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित है। यह इस पैकेज की सामग्री को साबित नहीं करता है।",
+        footerBrand: "अन्नसूत्र कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म",
+        footerDev: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
+        footerGov: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
+        linkHome: "होम",
+        linkHealth: "सिस्टम स्वास्थ्य",
+        linkPrivacy: "डीपीडीपी अधिनियम 2023 सूचना",
+        dpdpHead: "डीपीडीपी अधिनियम 2023 अनुपालन",
+        dpdpSub: "डिजिटल व्यक्तिगत डेटा संरक्षण सूचना",
+        btnDpdpClose: "समझ गया, जारी रखें"
+      },
+      bn: {
+        topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা নির্মিত | মেটি (MeitY), ভারত সরকার",
+        btnNavHomeText: "মূল পোর্টাল",
+        statusVerifiedText: "লেজারে যাচাইকৃত",
+        lblProduct: "ফসল ও জাত",
+        lblHarvest: "ফসল কাটার তারিখ",
+        lblRegion: "উৎপত্তি অঞ্চল",
+        lblStages: "নিশ্চিত হস্তান্তর পর্যায়",
+        lblQuality: "গুণমান পরীক্ষা",
+        lblScans: "পাবলিক লুকআপ",
+        lblVerifiedScans: "যাচাইকৃত স্ক্যান",
+        disclaimerHead: "গুরুত্বপূর্ণ বিজ্ঞপ্তি:",
+        disclaimerP2: "এই রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি এই প্যাকেজের সামগ্রী প্রমাণ করে না।",
+        footerBrand: "অন্নসূত্র কৃষি ট্রেসেবিলিটি প্ল্যাটফর্ম",
+        footerDev: "সেন্টার ফর ডেভেলপমেন্ট অব অ্যাডভান্সড কম্পিউটিং (সি-ড্যাক)",
+        footerGov: "ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রক, ভারত সরকার",
+        linkHome: "হোম",
+        linkHealth: "সিস্টেম স্থিতি",
+        linkPrivacy: "ডিপিদিপি আইন ২০২৩ বিজ্ঞপ্তি",
+        dpdpHead: "ডিপিদিপি আইন ২০২৩ সম্মতি",
+        dpdpSub: "ডিজিটাল ব্যক্তিগত ডেটা সুরক্ষা বিজ্ঞপ্তি",
+        btnDpdpClose: "আমি বুঝেছি ও চালিয়ে যান"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      if (!translations[lang]) lang = 'en';
+      currentLang = lang;
+      document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
+      localStorage.setItem("annasutra_lang", lang);
+      document.getElementById('langSelector').value = lang;
+
+      const t = translations[lang];
+      document.getElementById('topDevText').innerText = t.topDev;
+      document.getElementById('btnNavHomeText').innerText = t.btnNavHomeText;
+      document.getElementById('statusVerifiedText').innerText = t.statusVerifiedText;
+      document.getElementById('lblProduct').innerText = t.lblProduct;
+      document.getElementById('lblHarvest').innerText = t.lblHarvest;
+      document.getElementById('lblRegion').innerText = t.lblRegion;
+      document.getElementById('lblStages').innerText = t.lblStages;
+      document.getElementById('lblQuality').innerText = t.lblQuality;
+      document.getElementById('lblScans').innerText = t.lblScans;
+      document.getElementById('lblVerifiedScans').innerText = t.lblVerifiedScans;
+      document.getElementById('disclaimerHead').innerText = t.disclaimerHead;
+      document.getElementById('disclaimerP2').innerText = t.disclaimerP2;
+      document.getElementById('footerBrand').innerText = t.footerBrand;
+      document.getElementById('footerDev').innerText = t.footerDev;
+      document.getElementById('footerGov').innerText = t.footerGov;
+      document.getElementById('linkHome').innerText = t.linkHome;
+      document.getElementById('linkHealth').innerText = t.linkHealth;
+      document.getElementById('linkPrivacy').innerText = t.linkPrivacy;
+      document.getElementById('dpdpHead').innerText = t.dpdpHead;
+      document.getElementById('dpdpSub').innerText = t.dpdpSub;
+      document.getElementById('btnDpdpClose').innerText = t.btnDpdpClose;
+    }
+
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
+    }
+
+    function changeFontSize(delta) {
+      let current = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
+      if (delta === 0) current = 0;
+      else current = Math.max(-1, Math.min(2, current + delta));
+      localStorage.setItem('annasutra_font_level', current);
+      const sizes = { '-1': '13.5px', '0': '15px', '1': '16.5px', '2': '18px' };
+      document.documentElement.style.fontSize = sizes[current] || '15px';
+    }
+
+    function openDpdpModal() {
+      document.getElementById('dpdpModal').style.display = 'flex';
+    }
+    function closeDpdpModal() {
+      document.getElementById('dpdpModal').style.display = 'none';
+    }
+    function closeModalOnBackdrop(e) {
+      if (e.target.classList.contains('modal-overlay')) closeDpdpModal();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
+      if (savedLevel !== 0) changeFontSize(0);
+
+      const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
+      setLanguage(savedLang);
+    });
+  </script>
 </body>
 </html>

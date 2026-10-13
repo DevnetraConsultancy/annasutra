@@ -59,6 +59,7 @@ mobile/.flutter-plugins-dependencies
 mobile/.packages
 mobile/build/
 mobile/android/local.properties
+mobile/android/app/src/main/java/**/GeneratedPluginRegistrant.java
 mobile/android/app/debug/
 mobile/android/app/profile/
 mobile/android/app/release/

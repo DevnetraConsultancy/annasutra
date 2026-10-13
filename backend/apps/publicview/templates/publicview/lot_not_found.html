@@ -4,62 +4,555 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AnnaSutra - Batch Not Found</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #0b3d2e;
+      --primary-dark: #07271d;
+      --saffron: #e67e22;
+      --saffron-hover: #d35400;
+      --accent-gold: #f59e0b;
+      --slate-dark: #0f172a;
+      --bg: #f8faf7;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    html { font-size: 15px; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f9fbf9;
-      color: #1a1a1a;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       margin: 0;
-      padding: 16px;
+      padding: 0;
       line-height: 1.5;
     }
+
+    /* TOP UTILITY BAR */
+    .top-bar {
+      background-color: var(--primary-dark);
+      color: #e2e8f0;
+      padding: 8px 20px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #144d3b;
+    }
+    .top-bar .developer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+    .top-bar .right-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .font-resizer {
+      display: inline-flex;
+      background: #114232;
+      border: 1px solid #23654e;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .btn-text-size {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-text-size:hover {
+      background: #1b5e46;
+      color: #ffffff;
+    }
+    .lang-dropdown {
+      background: #114232;
+      border: 1px solid #23654e;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* MAIN NAVBAR */
+    .navbar {
+      background-color: #ffffff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo-img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+    }
+    .btn-home-nav {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-home-nav:hover {
+      background: #e2e8f0;
+    }
+
+    /* CONTAINER & NOT FOUND CARD */
     .container {
-      max-width: 600px;
-      margin: 40px auto;
+      max-width: 620px;
+      margin: 40px auto 48px;
+      padding: 0 16px;
+    }
+    .not-found-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      padding: 36px 28px;
       text-align: center;
     }
-    .card {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      border: 1px solid #e0e0e0;
-      padding: 32px 20px;
+    .alert-icon-box {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      background: #fef2f2;
+      border: 2px solid #fecaca;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
     }
-    h1 {
-      color: #d32f2f;
+    .not-found-card h1 {
+      margin: 0 0 10px;
+      color: #b91c1c;
       font-size: 22px;
-      margin-top: 0;
+      font-weight: 900;
+      letter-spacing: -0.3px;
     }
-    p {
-      color: #555;
+    .lot-badge {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      font-family: monospace;
       font-size: 15px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin: 6px 0 12px;
     }
-    .disclaimer-box {
-      background: #fff8e1;
-      border: 1px solid #ffe082;
-      border-radius: 8px;
-      padding: 16px;
-      color: #795548;
-      font-size: 13px;
-      margin-top: 24px;
+    .desc-text {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      margin: 0 0 24px;
+      line-height: 1.5;
+    }
+    .search-recheck-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
       text-align: left;
+    }
+    .search-recheck-box label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-dark);
+      margin-bottom: 8px;
+    }
+    .search-input-group {
+      display: flex;
+      gap: 10px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+    .btn-verify-again {
+      background: var(--saffron);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-verify-again:hover {
+      background: var(--saffron-hover);
+    }
+
+    .notice-box {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 10px;
+      padding: 14px;
+      color: #854d0e;
+      font-size: 12.5px;
+      line-height: 1.45;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .notice-box strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #713f12;
+    }
+
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .btn-back-home:hover {
+      background: var(--primary-dark);
+    }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      padding: 32px 16px 40px;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+      background: #f1f5f9;
+    }
+    .cdac-footer-img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .footer strong { color: #0f172a; }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: 600;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    /* DPDP MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h1>Batch Not Found / ব্যাচ পাওয়া যায়নি</h1>
-      <p>The code <strong>{{ code }}</strong> does not match any registered produce record in the AnnaSutra ledger.</p>
-      <p style="font-size: 13px; color: #777;">Please verify that you scanned an authentic AnnaSutra label or contact the retailer.</p>
 
-      <div class="disclaimer-box">
-        <strong>Notice / বিজ্ঞপ্তি:</strong>
-        <p style="margin: 4px 0 0 0;">
-          AnnaSutra records are based on verified supply-chain participants. Unregistered codes cannot be verified.
-        </p>
+  <!-- 1. TOP UTILITY BAR -->
+  <div class="top-bar">
+    <div class="developer" id="topDevText">
+      🏛️ Developed by C-DAC | MeitY, Govt. of India
+    </div>
+    <div class="right-tools">
+      <div class="font-resizer">
+        <button type="button" class="btn-text-size" onclick="changeFontSize(-1)" title="Decrease font size">A-</button>
+        <button type="button" class="btn-text-size" onclick="changeFontSize(0)" title="Default font size">A</button>
+        <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
       </div>
+      <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
+        <option value="en">English (EN)</option>
+        <option value="hi">हिन्दी (HI)</option>
+        <option value="bn">বাংলা (BN)</option>
+      </select>
     </div>
   </div>
+
+  <!-- 2. NAVBAR -->
+  <div class="navbar">
+    <a href="/" class="brand-link">
+      <img 
+        src="/static/publicview/images/annasutra_logo.png" 
+        alt="AnnaSutra" 
+        class="brand-logo-img" 
+      />
+    </a>
+    <a href="/" class="btn-home-nav" id="btnNavHome">
+      🏠 <span id="btnNavHomeText">Home Portal</span>
+    </a>
+  </div>
+
+  <!-- 3. MAIN NOT FOUND CONTENT -->
+  <div class="container">
+    <div class="not-found-card">
+      <div class="alert-icon-box">⚠️</div>
+      <h1 id="titleNotFound">Batch Not Found</h1>
+      <div><span class="lot-badge">{{ code }}</span></div>
+      <p class="desc-text" id="descNotFound">
+        The produce code entered does not match any registered lot record in the AnnaSutra ledger.
+      </p>
+
+      <!-- Recheck Form -->
+      <div class="search-recheck-box">
+        <label id="lblTryAgain">Try searching another batch or QR code:</label>
+        <form class="search-input-group" method="GET" action="/">
+          <input 
+            type="text" 
+            name="code" 
+            class="search-input" 
+            placeholder="e.g. 7K3Q9XMD4T2B" 
+            required 
+            autocomplete="off" 
+          />
+          <button type="submit" class="btn-verify-again" id="btnVerifyAgain">Verify</button>
+        </form>
+      </div>
+
+      <!-- Single-Language Official Notice -->
+      <div class="notice-box">
+        <strong id="noticeTitle">Important Notice:</strong>
+        <span id="noticeDesc">
+          AnnaSutra records are based on verified supply-chain participants. Unregistered or altered codes cannot be verified. Please check that you scanned an authentic AnnaSutra QR label.
+        </span>
+      </div>
+
+      <a href="/" class="btn-back-home" id="btnReturnHome">
+        ← <span id="btnReturnHomeText">Return to Home Portal</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 4. OFFICIAL FOOTER -->
+  <div class="footer">
+    <div>
+      <img 
+        src="/static/publicview/images/cdac_logo.png" 
+        alt="C-DAC" 
+        class="cdac-footer-img" 
+      />
+    </div>
+    <div><strong id="footerBrand">AnnaSutra Agri-Traceability Platform</strong></div>
+    <div style="margin-top: 4px;" id="footerDev">Centre for Development of Advanced Computing (C-DAC)</div>
+    <div style="margin-top: 2px;" id="footerGov">Ministry of Electronics & Information Technology, Government of India</div>
+
+    <div style="margin-top: 14px;">
+      <a href="/" id="linkHome">Home</a> •
+      <a href="/health/" id="linkHealth">System Health</a> •
+      <a href="#" onclick="openDpdpModal(); return false;" id="linkPrivacy">DPDP Act 2023 Notice</a>
+    </div>
+  </div>
+
+  <!-- 5. DPDP MODAL -->
+  <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeDpdpModal()">✕</button>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <h3 style="margin: 0 0 6px; color: var(--primary); font-size: 20px;" id="dpdpHead">DPDP Act 2023 Compliance</h3>
+        <p style="margin: 0; font-size: 13px; color: var(--text-muted);" id="dpdpSub">Digital Personal Data Protection Notice</p>
+      </div>
+      <div style="font-size: 13.5px; color: #334155; line-height: 1.5; margin-bottom: 18px;" id="dpdpBody">
+        <p>AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
+        <p><strong>Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
+      </div>
+      <button 
+        style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer;" 
+        onclick="closeDpdpModal()" 
+        id="btnDpdpClose"
+      >
+        I Understand & Continue
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        topDev: "🏛️ Developed by C-DAC | MeitY, Govt. of India",
+        btnNavHomeText: "Home Portal",
+        titleNotFound: "Batch Not Found",
+        descNotFound: "The produce code entered does not match any registered lot record in the AnnaSutra ledger.",
+        lblTryAgain: "Try searching another batch or QR code:",
+        btnVerifyAgain: "Verify",
+        noticeTitle: "Important Notice:",
+        noticeDesc: "AnnaSutra records are based on verified supply-chain participants. Unregistered or altered codes cannot be verified. Please check that you scanned an authentic AnnaSutra QR label.",
+        btnReturnHomeText: "Return to Home Portal",
+        footerBrand: "AnnaSutra Agri-Traceability Platform",
+        footerDev: "Centre for Development of Advanced Computing (C-DAC)",
+        footerGov: "Ministry of Electronics & Information Technology, Government of India",
+        linkHome: "Home",
+        linkHealth: "System Health",
+        linkPrivacy: "DPDP Act 2023 Notice",
+        dpdpHead: "DPDP Act 2023 Compliance",
+        dpdpSub: "Digital Personal Data Protection Notice",
+        btnDpdpClose: "I Understand & Continue"
+      },
+      hi: {
+        topDev: "🏛️ सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
+        btnNavHomeText: "मुख्य पोर्टल",
+        titleNotFound: "बैच नहीं मिला",
+        descNotFound: "दर्ज किया गया उत्पाद कोड अन्नसूत्र लेज़र में किसी भी पंजीकृत लॉट रिकॉर्ड से मेल नहीं खाता है।",
+        lblTryAgain: "अन्य बैच या क्यूआर कोड खोजें:",
+        btnVerifyAgain: "सत्यापित करें",
+        noticeTitle: "महत्वपूर्ण सूचना:",
+        noticeDesc: "अन्नसूत्र रिकॉर्ड सत्यापित आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज विवरण पर आधारित हैं। अपंजीकृत या परिवर्तित कोड सत्यापित नहीं किए जा सकते। कृपया सुनिश्चित करें कि आपने प्रामाणिक अन्नसूत्र क्यूआर लेबल स्कैन किया है।",
+        btnReturnHomeText: "मुख्य पोर्टल पर वापस जाएं",
+        footerBrand: "अन्नसूत्र कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म",
+        footerDev: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
+        footerGov: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
+        linkHome: "होम",
+        linkHealth: "सिस्टम स्वास्थ्य",
+        linkPrivacy: "डीपीडीपी अधिनियम 2023 सूचना",
+        dpdpHead: "डीपीडीपी अधिनियम 2023 अनुपालन",
+        dpdpSub: "डिजिटल व्यक्तिगत डेटा संरक्षण सूचना",
+        btnDpdpClose: "समझ गया, जारी रखें"
+      },
+      bn: {
+        topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা নির্মিত | মেটি (MeitY), ভারত সরকার",
+        btnNavHomeText: "মূল পোর্টাল",
+        titleNotFound: "ব্যাচ পাওয়া যায়নি",
+        descNotFound: "প্রদত্ত কৃষি কোডটি অন্নসূত্র লেজারে কোনো নিবন্ধিত রেকর্ডের সাথে মিলছে না।",
+        lblTryAgain: "অন্য ব্যাচ বা কিউআর কোড অনুসন্ধান করুন:",
+        btnVerifyAgain: "যাচাই করুন",
+        noticeTitle: "গুরুত্বপূর্ণ বিজ্ঞপ্তি:",
+        noticeDesc: "অন্নসূত্র রেকর্ডগুলি যাচাইকৃত সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের তথ্যের উপর ভিত্তি করে। অনিবন্ধিত বা পরিবর্তিত কোড যাচাই করা সম্ভব নয়। দয়া করে নিশ্চিত করুন যে আপনি একটি খাঁটি অন্নসূত্র কিউআর লেবেল স্ক্যান করেছেন।",
+        btnReturnHomeText: "মূল পোর্টালে ফিরে যান",
+        footerBrand: "অন্নসূত্র কৃষি ট্রেসেবিলিটি প্ল্যাটফর্ম",
+        footerDev: "সেন্টার ফর ডেভেলপমেন্ট অব অ্যাডভান্সড কম্পিউটিং (সি-ড্যাক)",
+        footerGov: "ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রক, ভারত সরকার",
+        linkHome: "হোম",
+        linkHealth: "সিস্টেম স্থিতি",
+        linkPrivacy: "ডিপিদিপি আইন ২০২৩ বিজ্ঞপ্তি",
+        dpdpHead: "ডিপিদিপি আইন ২০২৩ সম্মতি",
+        dpdpSub: "ডিজিটাল ব্যক্তিগত ডেটা সুরক্ষা বিজ্ঞপ্তি",
+        btnDpdpClose: "আমি বুঝেছি ও চালিয়ে যান"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      if (!translations[lang]) lang = 'en';
+      currentLang = lang;
+      document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
+      localStorage.setItem("annasutra_lang", lang);
+      document.getElementById('langSelector').value = lang;
+
+      const t = translations[lang];
+      document.getElementById('topDevText').innerText = t.topDev;
+      document.getElementById('btnNavHomeText').innerText = t.btnNavHomeText;
+      document.getElementById('titleNotFound').innerText = t.titleNotFound;
+      document.getElementById('descNotFound').innerText = t.descNotFound;
+      document.getElementById('lblTryAgain').innerText = t.lblTryAgain;
+      document.getElementById('btnVerifyAgain').innerText = t.btnVerifyAgain;
+      document.getElementById('noticeTitle').innerText = t.noticeTitle;
+      document.getElementById('noticeDesc').innerText = t.noticeDesc;
+      document.getElementById('btnReturnHomeText').innerText = t.btnReturnHomeText;
+      document.getElementById('footerBrand').innerText = t.footerBrand;
+      document.getElementById('footerDev').innerText = t.footerDev;
+      document.getElementById('footerGov').innerText = t.footerGov;
+      document.getElementById('linkHome').innerText = t.linkHome;
+      document.getElementById('linkHealth').innerText = t.linkHealth;
+      document.getElementById('linkPrivacy').innerText = t.linkPrivacy;
+      document.getElementById('dpdpHead').innerText = t.dpdpHead;
+      document.getElementById('dpdpSub').innerText = t.dpdpSub;
+      document.getElementById('btnDpdpClose').innerText = t.btnDpdpClose;
+    }
+
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
+    }
+
+    function changeFontSize(delta) {
+      let current = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
+      if (delta === 0) current = 0;
+      else current = Math.max(-1, Math.min(2, current + delta));
+      localStorage.setItem('annasutra_font_level', current);
+      const sizes = { '-1': '13.5px', '0': '15px', '1': '16.5px', '2': '18px' };
+      document.documentElement.style.fontSize = sizes[current] || '15px';
+    }
+
+    function openDpdpModal() {
+      document.getElementById('dpdpModal').style.display = 'flex';
+    }
+    function closeDpdpModal() {
+      document.getElementById('dpdpModal').style.display = 'none';
+    }
+    function closeModalOnBackdrop(e) {
+      if (e.target.classList.contains('modal-overlay')) closeDpdpModal();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
+      if (savedLevel !== 0) changeFontSize(0);
+
+      const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
+      setLanguage(savedLang);
+    });
+  </script>
 </body>
 </html>

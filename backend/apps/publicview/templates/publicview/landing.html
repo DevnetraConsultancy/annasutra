@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AnnaSutra - National Agri-Produce Traceability Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #0b3d2e;
@@ -20,8 +23,9 @@
       --border: #e2e8f0;
     }
     * { box-sizing: border-box; }
+    html { font-size: 15px; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       margin: 0;
@@ -50,7 +54,27 @@
     .top-bar .right-tools {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+    }
+    .font-resizer {
+      display: inline-flex;
+      background: #114232;
+      border: 1px solid #23654e;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .btn-text-size {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-text-size:hover {
+      background: #1b5e46;
+      color: #ffffff;
     }
     .top-bar .lang-dropdown {
       background: #114232;
@@ -63,60 +87,27 @@
       cursor: pointer;
       outline: none;
     }
-    .top-bar .dpdp-btn {
-      color: var(--accent-gold);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-    }
 
     /* MAIN NAVBAR */
     .navbar {
-      background-color: var(--primary);
-      padding: 14px 24px;
+      background-color: #ffffff;
+      padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-bottom: 1px solid var(--border);
     }
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       cursor: pointer;
     }
-    .brand-emblem {
-      width: 44px;
-      height: 44px;
-      background: radial-gradient(circle, #f59e0b 0%, #d97706 100%);
-      border: 2.5px solid #fef3c7;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      color: #0b3d2e;
-      font-size: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    .brand-title {
-      display: flex;
-      flex-direction: column;
-    }
-    .brand-title h1 {
-      margin: 0;
-      font-size: 22px;
-      color: #ffffff;
-      font-weight: 900;
-      letter-spacing: -0.3px;
-      line-height: 1.1;
-    }
-    .brand-title span {
-      font-size: 12px;
-      color: #fcd34d;
-      font-weight: 600;
+    .brand-logo-img {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
     }
     .nav-actions {
       display: flex;
@@ -571,6 +562,30 @@
       border-top: 1px solid #e2e8f0;
       background: #f1f5f9;
     }
+    .cdac-footer-img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+    .btn-dpdp-footer {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .btn-dpdp-footer:hover {
+      background: #fde68a;
+    }
     .footer strong { color: #0f172a; }
     .footer a {
       color: var(--primary);
@@ -694,25 +709,27 @@
       🏛️ Developed by C-DAC | MeitY, Govt. of India
     </div>
     <div class="right-tools">
+      <div class="font-resizer">
+        <button type="button" class="btn-text-size" onclick="changeFontSize(-1)" title="Decrease font size">A-</button>
+        <button type="button" class="btn-text-size" onclick="changeFontSize(0)" title="Default font size">A</button>
+        <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
+      </div>
       <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
         <option value="en">English (EN)</option>
         <option value="hi">हिन्दी (HI)</option>
         <option value="bn">বাংলা (BN)</option>
       </select>
-      <button class="dpdp-btn" id="topDpdpBtn" onclick="openDpdpModal()">
-        🛡️ DPDP 2023
-      </button>
     </div>
   </div>
 
   <!-- 2. MAIN NAVBAR -->
   <div class="navbar">
     <div class="brand-group" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-      <div class="brand-emblem">AS</div>
-      <div class="brand-title">
-        <h1 id="brandTitle">AnnaSutra</h1>
-        <span id="brandSubtitle">National Agri-Produce Traceability Platform</span>
-      </div>
+      <img 
+        src="/static/publicview/images/annasutra_logo.png" 
+        alt="AnnaSutra" 
+        class="brand-logo-img" 
+      />
     </div>
     <div class="nav-actions">
       <button class="btn-login-nav" id="navLoginBtn" onclick="openLoginModal('FARMER')">
@@ -932,6 +949,13 @@
 
     <!-- 9. OFFICIAL FOOTER -->
     <div class="footer">
+      <div>
+        <img 
+          src="/static/publicview/images/cdac_logo.png" 
+          alt="C-DAC" 
+          class="cdac-footer-img" 
+        />
+      </div>
       <div><strong id="footerBrand">AnnaSutra Agri-Traceability Platform</strong></div>
       <div style="margin-top: 4px;" id="footerDev">Developed by Centre for Development of Advanced Computing (C-DAC)</div>
       <div style="margin-top: 2px;" id="footerGov">Ministry of Electronics & Information Technology, Government of India</div>
@@ -940,7 +964,13 @@
         Notice: Records are based on information entered by supply-chain participants. They do not prove physical package contents.
       </div>
 
-      <div style="margin-top: 10px;">
+      <div>
+        <button class="btn-dpdp-footer" id="btnDpdpFooter" onclick="openDpdpModal()">
+          🛡️ <span id="btnDpdpFooterText">DPDP Act 2023 Compliance Notice</span>
+        </button>
+      </div>
+
+      <div style="margin-top: 14px;">
         <a href="/health/" id="linkHealth">System Health</a> •
         <a href="/admin/" id="linkAdmin">Admin Portal</a> •
         <a href="#" onclick="openDpdpModal(); return false;" id="linkPrivacy">Privacy Notice</a>
@@ -1204,85 +1234,106 @@
     };
 
     function setLanguage(lang) {
-      if (!i18n[lang]) return;
+      if (!i18n[lang]) lang = 'en';
       currentLang = lang;
+      document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
       localStorage.setItem('annasutra_lang', lang);
-      document.getElementById('langSelector').value = lang;
+      const sel = document.getElementById('langSelector');
+      if (sel) sel.value = lang;
 
       const t = i18n[lang];
-      document.getElementById('topDevText').innerText = t.topDev;
-      document.getElementById('brandTitle').innerText = t.brandTitle;
-      document.getElementById('brandSubtitle').innerText = t.brandSubtitle;
-      document.getElementById('navLoginText').innerText = t.navLoginText;
-      document.getElementById('heroBadge').innerText = t.heroBadge;
-      document.getElementById('heroHeadline').innerText = t.heroHeadline;
-      document.getElementById('heroTagline').innerText = t.heroTagline;
-      document.getElementById('btnHeroVerifyText').innerText = t.btnHeroVerify;
-      document.getElementById('btnHeroOperatorText').innerText = t.btnHeroOperator;
+      if (!t) return;
+      const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.innerText = val;
+      };
 
-      document.getElementById('stat1').innerText = t.stat1;
-      document.getElementById('stat2').innerText = t.stat2;
-      document.getElementById('stat3').innerText = t.stat3;
-      document.getElementById('stat4').innerText = t.stat4;
+      setTxt('topDevText', t.topDev);
+      setTxt('navLoginText', t.navLoginText);
+      setTxt('heroBadge', t.heroBadge);
+      setTxt('heroHeadline', t.heroHeadline);
+      setTxt('heroTagline', t.heroTagline);
+      setTxt('btnHeroVerifyText', t.btnHeroVerify);
+      setTxt('btnHeroOperatorText', t.btnHeroOperator);
 
-      document.getElementById('searchTitle').innerText = t.searchTitle;
-      document.getElementById('searchSubtitle').innerText = t.searchSubtitle;
-      document.getElementById('searchBtn').innerText = t.searchBtn;
-      document.getElementById('sampleLabel').innerText = t.sampleLabel;
+      setTxt('stat1', t.stat1);
+      setTxt('stat2', t.stat2);
+      setTxt('stat3', t.stat3);
+      setTxt('stat4', t.stat4);
 
-      document.getElementById('entitySectionTitle').innerText = t.entitySectionTitle;
-      document.getElementById('entitySectionSubtitle').innerText = t.entitySectionSubtitle;
+      setTxt('searchTitle', t.searchTitle);
+      setTxt('searchSubtitle', t.searchSubtitle);
+      setTxt('searchBtn', t.searchBtn);
+      setTxt('sampleLabel', t.sampleLabel);
 
-      document.getElementById('roleTitleFarmer').innerText = t.roleTitleFarmer;
-      document.getElementById('roleDescFarmer').innerText = t.roleDescFarmer;
-      document.getElementById('btnRoleFarmer').innerText = t.btnRoleFarmer;
+      setTxt('entitySectionTitle', t.entitySectionTitle);
+      setTxt('entitySectionSubtitle', t.entitySectionSubtitle);
 
-      document.getElementById('roleTitleMandi').innerText = t.roleTitleMandi;
-      document.getElementById('roleDescMandi').innerText = t.roleDescMandi;
-      document.getElementById('btnRoleMandi').innerText = t.btnRoleMandi;
+      setTxt('roleTitleFarmer', t.roleTitleFarmer);
+      setTxt('roleDescFarmer', t.roleDescFarmer);
+      setTxt('btnRoleFarmer', t.btnRoleFarmer);
 
-      document.getElementById('roleTitleCold').innerText = t.roleTitleCold;
-      document.getElementById('roleDescCold').innerText = t.roleDescCold;
-      document.getElementById('btnRoleCold').innerText = t.btnRoleCold;
+      setTxt('roleTitleMandi', t.roleTitleMandi);
+      setTxt('roleDescMandi', t.roleDescMandi);
+      setTxt('btnRoleMandi', t.btnRoleMandi);
 
-      document.getElementById('roleTitleProcessor').innerText = t.roleTitleProcessor;
-      document.getElementById('roleDescProcessor').innerText = t.roleDescProcessor;
-      document.getElementById('btnRoleProcessor').innerText = t.btnRoleProcessor;
+      setTxt('roleTitleCold', t.roleTitleCold);
+      setTxt('roleDescCold', t.roleDescCold);
+      setTxt('btnRoleCold', t.btnRoleCold);
 
-      document.getElementById('roleTitleRetailer').innerText = t.roleTitleRetailer;
-      document.getElementById('roleDescRetailer').innerText = t.roleDescRetailer;
-      document.getElementById('btnRoleRetailer').innerText = t.btnRoleRetailer;
+      setTxt('roleTitleProcessor', t.roleTitleProcessor);
+      setTxt('roleDescProcessor', t.roleDescProcessor);
+      setTxt('btnRoleProcessor', t.btnRoleProcessor);
 
-      document.getElementById('trustTitle').innerText = t.trustTitle;
-      document.getElementById('trust1Title').innerText = t.trust1Title;
-      document.getElementById('trust1Desc').innerText = t.trust1Desc;
-      document.getElementById('trust2Title').innerText = t.trust2Title;
-      document.getElementById('trust2Desc').innerText = t.trust2Desc;
-      document.getElementById('trust3Title').innerText = t.trust3Title;
-      document.getElementById('trust3Desc').innerText = t.trust3Desc;
+      setTxt('roleTitleRetailer', t.roleTitleRetailer);
+      setTxt('roleDescRetailer', t.roleDescRetailer);
+      setTxt('btnRoleRetailer', t.btnRoleRetailer);
 
-      document.getElementById('footerBrand').innerText = t.footerBrand;
-      document.getElementById('footerDev').innerText = t.footerDev;
-      document.getElementById('footerGov').innerText = t.footerGov;
-      document.getElementById('footerDisclaimer').innerText = t.footerDisclaimer;
-      document.getElementById('linkHealth').innerText = t.linkHealth;
-      document.getElementById('linkAdmin').innerText = t.linkAdmin;
-      document.getElementById('linkPrivacy').innerText = t.linkPrivacy;
+      setTxt('trustTitle', t.trustTitle);
+      setTxt('trust1Title', t.trust1Title);
+      setTxt('trust1Desc', t.trust1Desc);
+      setTxt('trust2Title', t.trust2Title);
+      setTxt('trust2Desc', t.trust2Desc);
+      setTxt('trust3Title', t.trust3Title);
+      setTxt('trust3Desc', t.trust3Desc);
 
-      document.getElementById('demoFastTitle').innerText = t.demoFastTitle;
-      document.getElementById('btnDemoTap').innerText = t.btnDemoTap;
-      document.getElementById('otpOrLabel').innerText = t.otpOrLabel;
-      document.getElementById('btnSendOtp').innerText = t.btnSendOtp;
+      setTxt('footerBrand', t.footerBrand);
+      setTxt('footerDev', t.footerDev);
+      setTxt('footerGov', t.footerGov);
+      setTxt('footerDisclaimer', t.footerDisclaimer);
+      setTxt('linkHealth', t.linkHealth);
+      setTxt('linkAdmin', t.linkAdmin);
+      setTxt('linkPrivacy', t.linkPrivacy);
+      setTxt('btnDpdpFooterText', t.linkPrivacy);
 
-      document.getElementById('btnDispatchBatch').innerText = t.btnDispatchBatch;
-      document.getElementById('btnSplitLot').innerText = t.btnSplitLot;
-      document.getElementById('btnInspectQuality').innerText = t.btnInspectQuality;
-      document.getElementById('btnRecordSale').innerText = t.btnRecordSale;
-      document.getElementById('btnReceiveBatch').innerText = t.btnReceiveBatch;
-      document.getElementById('statusInCustody').innerText = t.statusInCustody;
-      document.getElementById('statusInTransit').innerText = t.statusInTransit;
-      document.getElementById('statusAwaiting').innerText = t.statusAwaiting;
-      document.getElementById('btnLogout').innerText = t.btnLogout;
+      setTxt('demoFastTitle', t.demoFastTitle);
+      setTxt('btnDemoTap', t.btnDemoTap);
+      setTxt('otpOrLabel', t.otpOrLabel);
+      setTxt('btnSendOtp', t.btnSendOtp);
+
+      setTxt('btnDispatchBatch', t.btnDispatchBatch);
+      setTxt('btnSplitLot', t.btnSplitLot);
+      setTxt('btnInspectQuality', t.btnInspectQuality);
+      setTxt('btnRecordSale', t.btnRecordSale);
+      setTxt('btnReceiveBatch', t.btnReceiveBatch);
+      setTxt('statusInCustody', t.statusInCustody);
+      setTxt('statusInTransit', t.statusInTransit);
+      setTxt('statusAwaiting', t.statusAwaiting);
+      setTxt('btnLogout', t.btnLogout);
+    }
+
+    function changeFontSize(delta) {
+      let current = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
+      if (delta === 0) current = 0;
+      else current = Math.max(-1, Math.min(2, current + delta));
+      localStorage.setItem('annasutra_font_level', current);
+      const sizes = { '-1': '13.5px', '0': '15px', '1': '16.5px', '2': '18px' };
+      document.documentElement.style.fontSize = sizes[current] || '15px';
+    }
+
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
     }
 
     function fillSearch(code) {
@@ -1365,8 +1416,11 @@
 
     // Initialize saved language or default to English
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('annasutra_lang') || 'en';
-      setLanguage(saved);
+      const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
+      if (savedLevel !== 0) changeFontSize(0);
+
+      const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
+      setLanguage(savedLang);
     });
   </script>
 </body>

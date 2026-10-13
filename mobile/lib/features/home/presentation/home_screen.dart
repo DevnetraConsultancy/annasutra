@@ -289,20 +289,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(8),
             child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFE67E22), width: 1.5),
-                borderRadius: BorderRadius.circular(20),
-              ),
+              height: 38,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Image.asset(
-                'assets/images/annasutra_emblem.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const CircleAvatar(
-                  backgroundColor: Color(0xFF14532D),
-                  child: Text('AS', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                'assets/images/annasutra_official_logo.png',
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Image.asset(
+                  'assets/images/annasutra_emblem.jpg',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const CircleAvatar(
+                    backgroundColor: Color(0xFF14532D),
+                    child: Text('AS', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                  ),
                 ),
               ),
             ),
@@ -1261,9 +1261,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               Container(width: 1, height: 24, color: Colors.white24),
               const SizedBox(width: 20),
               Image.asset(
-                'assets/images/cdac_logo.png',
+                'assets/images/cdac_official_banner.png',
                 height: 24,
-                errorBuilder: (_, __, ___) => const Icon(Icons.memory, color: Colors.white70),
+                errorBuilder: (_, __, ___) => Image.asset(
+                  'assets/images/cdac_logo.png',
+                  height: 24,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.memory, color: Colors.white70),
+                ),
               ),
             ],
           ),
