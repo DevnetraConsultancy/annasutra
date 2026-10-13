@@ -494,9 +494,9 @@
         <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
       </div>
       <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
-        <option value="en">English (EN)</option>
-        <option value="hi">हिन्दी (HI)</option>
-        <option value="bn">বাংলা (BN)</option>
+        <option value="en" {% if user_lang == "en" %}selected{% endif %}>English (EN)</option>
+        <option value="hi" {% if user_lang == "hi" %}selected{% endif %}>हिन्दी (HI)</option>
+        <option value="bn" {% if user_lang == "bn" %}selected{% endif %}>বাংলা (BN)</option>
       </select>
     </div>
   </div>
@@ -560,13 +560,13 @@
       <!-- Toll Free Helpline Ribbon -->
       <div class="helpline-ribbon">
         <span class="helpline-item">
-          📞 <span>Kisan Call Centre:</span> <strong>1800-180-1551</strong>
+          📞 <span id="lblHelplineKisan">Kisan Call Centre:</span> <strong>1800-180-1551</strong>
         </span>
         <span class="helpline-item">
-          🛡️ <span>National Consumer Helpline:</span> <strong>1915</strong>
+          🛡️ <span id="lblHelplineConsumer">National Consumer Helpline:</span> <strong>1915</strong>
         </span>
         <span class="helpline-item">
-          🚨 <span>Technical Desk:</span> <strong>1800-425-CDAC</strong>
+          🚨 <span id="lblHelplineTech">Technical Desk:</span> <strong>1800-425-CDAC</strong>
         </span>
       </div>
 
@@ -579,7 +579,7 @@
           🏥 <span id="btnFooterHealth">System Health & Uptime</span>
         </a>
         <button class="btn-footer-action" onclick="alert('Agmarknet Standards: Compliant with APMC grading criteria and BIS agricultural produce standards.')">
-          📜 <span>Agmarknet Standards</span>
+          📜 <span id="btnFooterAgmarknet">Agmarknet Standards</span>
         </button>
       </div>
 
@@ -592,11 +592,11 @@
             class="cdac-footer-img" 
           />
         </div>
-        <div class="footer-org-title">Centre for Development of Advanced Computing (C-DAC)</div>
-        <div class="footer-gov-title">Ministry of Electronics & Information Technology, Government of India</div>
+        <div class="footer-org-title" id="footerOrgTitle">Centre for Development of Advanced Computing (C-DAC)</div>
+        <div class="footer-gov-title" id="footerGovTitle">Ministry of Electronics & Information Technology, Government of India</div>
       </div>
 
-      <div class="footer-legal-notice">
+      <div class="footer-legal-notice" id="footerLegalNotice">
         Notice: AnnaSutra records are cryptographically attested by authorized entities. Physical package contents and quality are verified at grading inspection stages under national trust standards.
       </div>
     </div>
@@ -624,9 +624,13 @@
   </div>
 
   <script>
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : null;
+    }
+
     const translations = {
       en: {
-        topDev: "🏛️ Developed by C-DAC | MeitY, Govt. of India",
         btnNavHomeText: "Home Portal",
         titleNotFound: "Batch Not Found",
         descNotFound: "The produce code entered does not match any registered lot record in the AnnaSutra ledger.",
@@ -635,11 +639,17 @@
         noticeTitle: "Important Notice:",
         noticeDesc: "AnnaSutra records are based on verified supply-chain participants. Unregistered or altered codes cannot be verified. Please check that you scanned an authentic AnnaSutra QR label.",
         btnReturnHomeText: "Return to Home Portal",
+        lblHelplineKisan: "Kisan Call Centre:",
+        lblHelplineConsumer: "National Consumer Helpline:",
+        lblHelplineTech: "Technical Desk:",
         btnFooterDpdp: "DPDP Act 2023 Policy",
-        btnFooterHealth: "System Health & Uptime"
+        btnFooterHealth: "System Health & Uptime",
+        btnFooterAgmarknet: "Agmarknet Standards",
+        footerOrgTitle: "Centre for Development of Advanced Computing (C-DAC)",
+        footerGovTitle: "Ministry of Electronics & Information Technology, Government of India",
+        footerLegalNotice: "Notice: AnnaSutra records are cryptographically attested by authorized entities. Physical package contents and quality are verified at grading inspection stages under national trust standards."
       },
       hi: {
-        topDev: "🏛️ सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
         btnNavHomeText: "मुख्य पोर्टल",
         titleNotFound: "बैच नहीं मिला",
         descNotFound: "दर्ज किया गया उत्पाद कोड अन्नसूत्र लेज़र में किसी भी पंजीकृत लॉट रिकॉर्ड से मेल नहीं खाता है।",
@@ -648,11 +658,17 @@
         noticeTitle: "महत्वपूर्ण सूचना:",
         noticeDesc: "अन्नसूत्र रिकॉर्ड सत्यापित आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज विवरण पर आधारित हैं। अपंजीकृत या परिवर्तित कोड सत्यापित नहीं किए जा सकते। कृपया सुनिश्चित करें कि आपने प्रामाणिक अन्नसूत्र क्यूआर लेबल स्कैन किया है।",
         btnReturnHomeText: "मुख्य पोर्टल पर वापस जाएं",
+        lblHelplineKisan: "किसान कॉल सेंटर:",
+        lblHelplineConsumer: "राष्ट्रीय उपभोक्ता हेल्पलाइन:",
+        lblHelplineTech: "तकनीकी सहायता डेस्क:",
         btnFooterDpdp: "डीपीडीपी अधिनियम 2023 नीति",
-        btnFooterHealth: "सिस्टम स्वास्थ्य एवं अपटाइम"
+        btnFooterHealth: "सिस्टम स्वास्थ्य एवं अपटाइम",
+        btnFooterAgmarknet: "एगमार्कनेट मानक",
+        footerOrgTitle: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
+        footerGovTitle: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
+        footerLegalNotice: "सूचना: अन्नसूत्र रिकॉर्ड अधिकृत संस्थाओं द्वारा क्रिप्टोग्राफ़िक रूप से प्रमाणित हैं। पैकेज की भौतिक सामग्री और गुणवत्ता राष्ट्रीय विश्वास मानकों के तहत निरीक्षण चरणों में सत्यापित की जाती है।"
       },
       bn: {
-        topDev: "🏛️ সি-ড্যাক (C-DAC) দ্বারা নির্মিত | মেটি (MeitY), ভারত সরকার",
         btnNavHomeText: "মূল পোর্টাল",
         titleNotFound: "ব্যাচ পাওয়া যায়নি",
         descNotFound: "প্রদত্ত কৃষি কোডটি অন্নসূত্র লেজারে কোনো নিবন্ধিত রেকর্ডের সাথে মিলছে না।",
@@ -661,8 +677,15 @@
         noticeTitle: "গুরুত্বপূর্ণ বিজ্ঞপ্তি:",
         noticeDesc: "অন্নসূত্র রেকর্ডগুলি যাচাইকৃত সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের তথ্যের উপর ভিত্তি করে। অনিবন্ধিত বা পরিবর্তিত কোড যাচাই করা সম্ভব নয়। দয়া করে নিশ্চিত করুন যে আপনি একটি খাঁটি অন্নসূত্র কিউআর লেবেল স্ক্যান করেছেন।",
         btnReturnHomeText: "মূল পোর্টালে ফিরে যান",
+        lblHelplineKisan: "কিসান কল সেন্টার:",
+        lblHelplineConsumer: "জাতীয় উপভোক্তা হেল্পলাইন:",
+        lblHelplineTech: "প্রযুক্তিগত সহায়তা ডেস্ক:",
         btnFooterDpdp: "ডিপিডিপি আইন ২০২৩ নীতি",
-        btnFooterHealth: "সিস্টেম স্থিতি ও আপটাইম"
+        btnFooterHealth: "সিস্টেম স্থিতি ও আপটাইম",
+        btnFooterAgmarknet: "অ্যাগমার্কনেট মানদণ্ড",
+        footerOrgTitle: "প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC)",
+        footerGovTitle: "ইলেকট্রনিক্স এবং তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার",
+        footerLegalNotice: "বিজ্ঞপ্তি: অন্নসূত্র রেকর্ড অনুমোদিত সংস্থাসমূহ দ্বারা ক্রিপ্টোগ্রাফিকভাবে প্রত্যয়িত। জাতীয় বিশ্বাস মানদণ্ডের অধীনে গ্রেডিং পরিদর্শন পর্যায়ে পণ্যের শারীরিক সামগ্রী ও গুণমান যাচাই করা হয়।"
       }
     };
 
@@ -670,25 +693,34 @@
       if (!translations[lang]) lang = 'en';
       document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
       localStorage.setItem("annasutra_lang", lang);
-      document.getElementById('langSelector').value = lang;
+      const sel = document.getElementById('langSelector');
+      if (sel) sel.value = lang;
 
       const t = translations[lang];
       window.dispatchEvent(new CustomEvent('annasutra_lang_change', { detail: { lang } }));
-      document.getElementById('btnNavHomeText').innerText = t.btnNavHomeText;
-      document.getElementById('titleNotFound').innerText = t.titleNotFound;
-      document.getElementById('descNotFound').innerText = t.descNotFound;
-      document.getElementById('lblTryAgain').innerText = t.lblTryAgain;
-      document.getElementById('btnVerifyAgain').innerText = t.btnVerifyAgain;
-      document.getElementById('noticeTitle').innerText = t.noticeTitle;
-      document.getElementById('noticeDesc').innerText = t.noticeDesc;
-      document.getElementById('btnReturnHomeText').innerText = t.btnReturnHomeText;
-      document.getElementById('btnFooterDpdp').innerText = t.btnFooterDpdp;
-      document.getElementById('btnFooterHealth').innerText = t.btnFooterHealth;
-    }
 
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      return match ? match[2] : null;
+      const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.innerText = val;
+      };
+
+      setTxt('btnNavHomeText', t.btnNavHomeText);
+      setTxt('titleNotFound', t.titleNotFound);
+      setTxt('descNotFound', t.descNotFound);
+      setTxt('lblTryAgain', t.lblTryAgain);
+      setTxt('btnVerifyAgain', t.btnVerifyAgain);
+      setTxt('noticeTitle', t.noticeTitle);
+      setTxt('noticeDesc', t.noticeDesc);
+      setTxt('btnReturnHomeText', t.btnReturnHomeText);
+      setTxt('lblHelplineKisan', t.lblHelplineKisan);
+      setTxt('lblHelplineConsumer', t.lblHelplineConsumer);
+      setTxt('lblHelplineTech', t.lblHelplineTech);
+      setTxt('btnFooterDpdp', t.btnFooterDpdp);
+      setTxt('btnFooterHealth', t.btnFooterHealth);
+      setTxt('btnFooterAgmarknet', t.btnFooterAgmarknet);
+      setTxt('footerOrgTitle', t.footerOrgTitle);
+      setTxt('footerGovTitle', t.footerGovTitle);
+      setTxt('footerLegalNotice', t.footerLegalNotice);
     }
 
     function changeFontSize(delta) {
@@ -710,28 +742,19 @@
       if (e.target.classList.contains('modal-overlay')) closeDpdpModal();
     }
 
-    // -------------------------------------------------------------
-    // LIVE WEATHER (IP GEOLOCATION) & LIVE DATE/TIME ENGINE
-    // -------------------------------------------------------------
+    // Weather & clock
     (function initWeatherAndClock() {
       function updateClock() {
         const now = new Date();
-        const currentLang = localStorage.getItem('annasutra_lang') || 'en';
+        const curLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || 'en';
         const localeMap = { en: 'en-IN', hi: 'hi-IN', bn: 'bn-IN' };
-        const activeLocale = localeMap[currentLang] || 'en-IN';
+        const activeLocale = localeMap[curLang] || 'en-IN';
 
         const timeStr = now.toLocaleTimeString(activeLocale, {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: true
+          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
         });
-
         const dateStr = now.toLocaleDateString(activeLocale, {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric'
+          weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
         });
 
         const timeEl = document.getElementById('liveTime');
@@ -744,100 +767,18 @@
       setInterval(updateClock, 1000);
       window.addEventListener('annasutra_lang_change', updateClock);
 
-      function interpretWmoCode(code) {
-        if (code === 0) return { icon: "☀️", label: "Clear" };
-        if (code === 1) return { icon: "🌤️", label: "Mainly Clear" };
-        if (code === 2) return { icon: "⛅", label: "Partly Cloudy" };
-        if (code === 3) return { icon: "☁️", label: "Overcast" };
-        if (code === 45 || code === 48) return { icon: "🌫️", label: "Foggy" };
-        if (code >= 51 && code <= 55) return { icon: "🌦️", label: "Drizzle" };
-        if (code >= 61 && code <= 65) return { icon: "🌧️", label: "Rain" };
-        if (code >= 71 && code <= 77) return { icon: "🌨️", label: "Snow" };
-        if (code >= 80 && code <= 82) return { icon: "🌦️", label: "Showers" };
-        if (code >= 95) return { icon: "⛈️", label: "Thunderstorm" };
-        return { icon: "🌤️", label: "Fair" };
-      }
-
-      function applyWeather(weather) {
-        const iconEl = document.getElementById('weatherIcon');
-        const tempEl = document.getElementById('weatherTemp');
-        const locEl = document.getElementById('weatherLoc');
-
-        if (iconEl && weather.icon) iconEl.textContent = weather.icon;
-        if (tempEl && weather.temp !== undefined) tempEl.textContent = Math.round(weather.temp) + '°C';
-        if (locEl) {
-          const locName = weather.city || 'India';
-          const condition = weather.label ? ' • ' + weather.label : '';
-          locEl.textContent = locName + condition;
-          locEl.title = `Current Weather at ${locName}: ${weather.temp}°C, ${weather.label || 'Fair'}`;
-        }
-      }
-
       const CACHE_KEY = 'annasutra_weather_cache_v1';
       try {
         const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
         if (cached && (Date.now() - cached.timestamp < 15 * 60 * 1000)) {
-          applyWeather(cached);
-          return;
+          const iconEl = document.getElementById('weatherIcon');
+          const tempEl = document.getElementById('weatherTemp');
+          const locEl = document.getElementById('weatherLoc');
+          if (iconEl && cached.icon) iconEl.textContent = cached.icon;
+          if (tempEl && cached.temp !== undefined) tempEl.textContent = Math.round(cached.temp) + '°C';
+          if (locEl) locEl.textContent = cached.city + (cached.label ? ' • ' + cached.label : '');
         }
       } catch (e) {}
-
-      async function fetchWeatherByIp() {
-        try {
-          let lat = 22.57, lon = 88.36, city = 'Kolkata';
-          try {
-            const ipRes = await fetch('https://ipwho.is/', { cache: 'no-store' });
-            if (ipRes.ok) {
-              const ipData = await ipRes.json();
-              if (ipData.success !== false && ipData.latitude && ipData.longitude) {
-                lat = ipData.latitude;
-                lon = ipData.longitude;
-                city = ipData.city || ipData.region || 'Local';
-              }
-            }
-          } catch (e1) {
-            try {
-              const ipRes2 = await fetch('https://ipapi.co/json/');
-              if (ipRes2.ok) {
-                const ipData2 = await ipRes2.json();
-                if (ipData2.latitude && ipData2.longitude) {
-                  lat = ipData2.latitude;
-                  lon = ipData2.longitude;
-                  city = ipData2.city || 'Local';
-                }
-              }
-            } catch (e2) {}
-          }
-
-          const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
-          const weatherRes = await fetch(weatherUrl);
-          if (!weatherRes.ok) throw new Error('Weather API call failed');
-          const weatherData = await weatherRes.json();
-
-          const temp = (weatherData.current && weatherData.current.temperature_2m !== undefined) ? weatherData.current.temperature_2m : 28;
-          const code = (weatherData.current && weatherData.current.weather_code !== undefined) ? weatherData.current.weather_code : 1;
-          const wmo = interpretWmoCode(code);
-
-          const weatherPayload = {
-            city: city,
-            temp: temp,
-            icon: wmo.icon,
-            label: wmo.label,
-            timestamp: Date.now()
-          };
-
-          try {
-            sessionStorage.setItem(CACHE_KEY, JSON.stringify(weatherPayload));
-          } catch (e) {}
-
-          applyWeather(weatherPayload);
-        } catch (err) {
-          console.warn('Weather fetch warning (using graceful fallback):', err);
-          applyWeather({ city: 'India', temp: 28, icon: '🌤️', label: 'Fair' });
-        }
-      }
-
-      fetchWeatherByIp();
     })();
 
     window.addEventListener('DOMContentLoaded', () => {
