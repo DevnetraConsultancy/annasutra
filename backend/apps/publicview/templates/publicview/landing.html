@@ -145,13 +145,18 @@
       background: transparent;
       border: none;
       color: #e2e8f0;
-      padding: 4px 8px;
+      padding: 4px 9px;
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s;
     }
     .btn-text-size:hover {
       background: #1b5e46;
+      color: #ffffff;
+    }
+    .btn-text-size.active {
+      background: var(--saffron);
       color: #ffffff;
     }
     .top-bar .lang-dropdown {
@@ -169,7 +174,7 @@
     /* 2. MAIN NAVBAR */
     .navbar {
       background-color: #ffffff;
-      padding: 12px 24px;
+      padding: 12px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -230,19 +235,27 @@
       background: #ecfdf5;
       color: #047857;
       border: 1px solid #a7f3d0;
-      padding: 6px 9px;
+      padding: 6px 11px;
       border-radius: 7px;
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      gap: 6px;
       justify-content: center;
       transition: all 0.2s;
       line-height: 1;
     }
+    .btn-nav-qr svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
     .btn-nav-qr:hover {
       background: #d1fae5;
-      transform: scale(1.06);
+      border-color: #059669;
+      transform: translateY(-1px);
     }
     .btn-nav-submit {
       background: var(--primary);
@@ -255,7 +268,7 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      justify-content: center;
       transition: background 0.2s;
     }
     .btn-nav-submit:hover {
@@ -264,7 +277,7 @@
     .btn-nav-login {
       background-color: var(--saffron);
       color: white;
-      padding: 8px 18px;
+      padding: 8px 20px;
       border-radius: 8px;
       border: none;
       font-size: 13.5px;
@@ -272,13 +285,15 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      transition: background-color 0.2s, transform 0.2s;
+      justify-content: center;
+      transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
       flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(230, 126, 34, 0.25);
     }
     .btn-nav-login:hover {
       background-color: var(--saffron-hover);
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(230, 126, 34, 0.35);
     }
     .user-pill {
       display: none;
@@ -293,19 +308,23 @@
     }
 
     /* 3. HERO VIEWPORT SHOWCASE (NPCI PROMO STYLE - CRYSTAL CLEAR VIDEO) */
+    /* 3. HERO VIEWPORT SHOWCASE (FULL SCREEN EDGE-TO-EDGE - ZERO MARGIN GAPS) */
     .hero-viewport-wrap {
-      max-width: 1260px;
-      margin: 18px auto 0;
-      padding: 0 16px;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background: #07271d;
     }
     .hero-viewport-frame {
       position: relative;
       width: 100%;
-      min-height: 520px;
-      border-radius: 22px;
+      min-height: 560px;
+      height: 70vh;
+      max-height: 760px;
+      border-radius: 0; /* NO rounded corner */
       overflow: hidden;
-      background: #0f172a;
-      box-shadow: 0 16px 40px -12px rgba(11, 61, 46, 0.25), 0 0 0 1px rgba(11, 61, 46, 0.12);
+      background: #07271d;
+      box-shadow: none;
       display: flex;
       align-items: center;
     }
@@ -319,118 +338,53 @@
       height: 100%;
       object-fit: cover;
       transform: translate(-50%, -50%);
-      opacity: 1; /* 100% CRYSTAL CLEAR - NO GREEN MUD COVER! */
+      opacity: 1; /* 100% CRYSTAL CLEAR - NO GREEN MUD COVER */
       z-index: 1;
     }
     /* Directional soft scrim ONLY on left side for text readability. Right 55% of video is 100% clear! */
     .hero-directional-scrim {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(7, 39, 29, 0.94) 0%, rgba(7, 39, 29, 0.82) 42%, rgba(7, 39, 29, 0.2) 72%, transparent 100%);
+      background: linear-gradient(90deg, rgba(7, 39, 29, 0.95) 0%, rgba(7, 39, 29, 0.84) 42%, rgba(7, 39, 29, 0.22) 72%, transparent 100%);
       z-index: 2;
       pointer-events: none;
     }
     .hero-billboard-content {
       position: relative;
       z-index: 3;
-      max-width: 640px;
-      padding: 48px 36px 48px 44px;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 60px 32px;
       color: #ffffff;
       text-align: left;
-    }
-    .hero-sovereign-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #fde047;
-      letter-spacing: 0.5px;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-    .hero-badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 8px #22c55e;
-      display: inline-block;
-    }
-    .hero-billboard-content h2 {
-      margin: 0 0 14px;
-      font-size: 38px;
-      font-weight: 900;
-      letter-spacing: -0.6px;
-      line-height: 1.2;
-      color: #ffffff;
-      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
-    }
-    .hero-billboard-content .tagline {
-      font-size: 16px;
-      line-height: 1.55;
-      color: #f1f5f9;
-      margin: 0 0 24px;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
-    }
-    .hero-actions {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
+      flex-direction: column;
+      justify-content: center;
     }
-    .btn-hero-primary {
-      background: var(--saffron);
-      color: white;
-      padding: 13px 24px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 14.5px;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(230, 126, 34, 0.4);
+    .hero-billboard-inner {
+      max-width: 680px;
     }
-    .btn-hero-primary:hover {
-      background: var(--saffron-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(230, 126, 34, 0.5);
+    .hero-billboard-inner h2 {
+      margin: 0 0 16px;
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      line-height: 1.18;
+      color: #ffffff;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.85);
     }
-    .btn-hero-secondary {
-      background: rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: white;
-      padding: 13px 22px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14.5px;
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-    .btn-hero-secondary:hover {
-      background: rgba(255, 255, 255, 0.25);
-      border-color: rgba(255, 255, 255, 0.6);
-      transform: translateY(-1px);
+    .hero-billboard-inner .tagline {
+      font-size: 17px;
+      line-height: 1.6;
+      color: #f1f5f9;
+      margin: 0;
+      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
     }
     .hero-video-controls {
       position: absolute;
-      bottom: 20px;
-      right: 24px;
+      bottom: 24px;
+      right: 32px;
       z-index: 4;
       display: flex;
       align-items: center;
@@ -442,8 +396,8 @@
       -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #ffffff;
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       cursor: pointer;
       display: inline-flex;
@@ -459,22 +413,27 @@
       transform: scale(1.08);
     }
 
-    /* LIVE TELEMETRY TICKER BAR */
+    /* 4. LIVE TELEMETRY TICKER BAR - FULL-WIDTH EDGE TO EDGE */
     .ledger-ticker-bar {
-      max-width: 1260px;
-      margin: 14px auto 0;
-      padding: 0 16px;
+      width: 100%;
+      margin: 0;
+      padding: 10px 0;
+      background: #041c14;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
     .ledger-ticker-inner {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px 18px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      gap: 16px;
       overflow: hidden;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
     }
     .ledger-ticker-label {
       background: #ecfdf5;
@@ -482,7 +441,7 @@
       border: 1px solid #a7f3d0;
       font-size: 11px;
       font-weight: 800;
-      padding: 3px 9px;
+      padding: 3px 10px;
       border-radius: 6px;
       white-space: nowrap;
       display: inline-flex;
@@ -491,7 +450,7 @@
     }
     .ledger-ticker-stream {
       font-size: 12px;
-      color: #334155;
+      color: #e2e8f0;
       font-family: monospace;
       white-space: nowrap;
       overflow: hidden;
@@ -499,16 +458,23 @@
       flex: 1;
     }
 
-    /* NATIONAL STATS STRIP */
+    /* 5. NATIONAL STATS STRIP - FULL-WIDTH EDGE TO EDGE */
     .home-stats-strip {
-      max-width: 1260px;
-      margin: 20px auto 0;
-      padding: 0 16px;
+      width: 100%;
+      margin: 0;
+      padding: 32px 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+    .home-stats-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
     }
     .home-stats-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
     .home-stat-card {
       background: #ffffff;
@@ -543,18 +509,22 @@
       line-height: 1.3;
     }
 
-    /* LIVE ENTITY DASHBOARD PREVIEW CONSOLE */
+    /* 6. LIVE ENTITY DASHBOARD PREVIEW CONSOLE - FULL-WIDTH EDGE TO EDGE */
     .entity-dash-preview-wrap {
-      max-width: 1260px;
-      margin: 32px auto 0;
-      padding: 0 16px;
+      width: 100%;
+      margin: 0;
+      padding: 64px 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
     }
     .entity-dash-preview-card {
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
     }
     .entity-dash-preview-header {
       text-align: center;
@@ -810,249 +780,79 @@
       }
     }
 
-    /* CONTAINER */
-    .container {
-      max-width: 960px;
-      margin: 24px auto 40px;
-      padding: 0 16px;
+    /* 7. 5-TIER ARCHITECTURE SHOWCASE - FULL-WIDTH EDGE TO EDGE */
+    .flow-showcase-section {
+      width: 100%;
+      margin: 0;
+      padding: 64px 0;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
     }
-
-    /* SEARCH CARD */
-    .search-card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-      border: 1px solid var(--border);
-      padding: 30px;
-      margin-bottom: 28px;
+    .flow-showcase-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
     }
-    .search-card h2 {
+    .flow-showcase-container h3 {
       margin: 0 0 8px;
-      font-size: 22px;
-      color: var(--primary);
-      text-align: center;
-      font-weight: 800;
-    }
-    .search-card p {
-      margin: 0 0 20px;
-      font-size: 14px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-    .search-form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .search-input {
-      width: 100%;
-      padding: 15px 18px;
-      font-size: 16px;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      outline: none;
-      transition: border-color 0.2s;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    .search-input:focus { border-color: var(--primary); }
-    .search-btn {
-      width: 100%;
-      background: var(--saffron);
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background 0.2s;
-    }
-    .search-btn:hover { background: var(--saffron-hover); }
-    .sample-codes {
-      margin-top: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-    .chip-code {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-weight: 700;
-      color: var(--primary);
-      cursor: pointer;
-    }
-    .chip-code:hover { background: #e2e8f0; }
-
-    /* 5-TIER ARCHITECTURE SHOWCASE (HOME PAGE ONLY) */
-    .flow-showcase {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 28px;
-    }
-    .flow-showcase h3 {
-      margin: 0 0 6px;
-      font-size: 18px;
+      font-size: 24px;
       color: var(--slate-dark);
-      font-weight: 800;
+      font-weight: 900;
       text-align: center;
+      letter-spacing: -0.4px;
     }
-    .flow-showcase p.sub {
-      margin: 0 0 20px;
-      font-size: 13px;
+    .flow-showcase-container p.sub {
+      margin: 0 0 32px;
+      font-size: 14px;
       color: var(--text-muted);
       text-align: center;
     }
     .flow-steps-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      gap: 16px;
       position: relative;
     }
     .flow-step-box {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 10px;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 16px;
       text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease;
+    }
+    .flow-step-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(11, 61, 46, 0.08);
     }
     .flow-step-num {
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       background: var(--primary);
       color: white;
       border-radius: 50%;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 6px;
+      margin: 0 auto 10px;
     }
     .flow-step-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--slate-dark);
-      margin-bottom: 4px;
-    }
-    .flow-step-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.35;
-    }
-
-    /* 5-ENTITY LOGIN ACCESS TERMINAL (HOME PAGE ONLY) */
-    .entity-section {
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-    }
-    .entity-section-header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .entity-section-header h3 {
-      margin: 0 0 6px;
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--primary);
-    }
-    .entity-section-header p {
-      margin: 0;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-    .entity-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 14px;
-    }
-    .entity-card {
-      background: #fbfdfb;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .entity-card:hover {
-      border-color: var(--primary);
-      box-shadow: 0 6px 16px rgba(11, 61, 46, 0.12);
-      transform: translateY(-2px);
-    }
-    .entity-card .card-head {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-    .entity-card .card-icon {
-      font-size: 22px;
-      background: var(--primary-light);
-      border: 1px solid #bbf7d0;
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .entity-card .card-title {
       font-size: 15px;
       font-weight: 800;
       color: var(--slate-dark);
+      margin-bottom: 6px;
     }
-    .entity-card .card-subtitle {
-      font-size: 11px;
+    .flow-step-desc {
+      font-size: 12px;
       color: var(--text-muted);
-      font-weight: 600;
-    }
-    .entity-card .card-desc {
-      font-size: 12.5px;
-      color: #475569;
       line-height: 1.45;
-      margin-bottom: 14px;
-      flex: 1;
     }
-    .entity-card .btn-card-login {
-      width: 100%;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background 0.15s;
-    }
-    .entity-card .btn-card-login:hover {
-      background: var(--primary-dark);
-    }
+
+
 
     /* CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY WHEN LOGGED IN) */
     .confined-workspace {
@@ -1228,43 +1028,175 @@
       font-size: 13px;
     }
 
-    /* TRUST STANDARDS (HOME PAGE ONLY) */
-    .features-card {
-      background: var(--card-bg);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      padding: 24px;
-      margin-bottom: 28px;
+    /* 9. NATIONAL TRUST & VERIFICATION STANDARDS - GOD-LEVEL FULL-WIDTH SHOWCASE */
+    .trust-standards-section {
+      width: 100%;
+      margin: 0;
+      padding: 84px 0;
+      background: linear-gradient(180deg, #07271d 0%, #041c14 100%);
+      color: #ffffff;
+      border-top: 1px solid #144d3b;
+      border-bottom: 1px solid #144d3b;
     }
-    .features-card h3 {
-      margin: 0 0 16px;
-      font-size: 18px;
-      color: var(--primary);
+    .trust-standards-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      text-align: center;
+    }
+    .trust-sovereign-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 11px;
       font-weight: 800;
+      color: #fde047;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
-    .feature-item {
+    .trust-tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+    .trust-standards-container h3 {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      color: #ffffff;
+      margin: 0 0 12px;
+    }
+    .trust-subtitle {
+      font-size: 15.5px;
+      color: #cbd5e1;
+      max-width: 760px;
+      margin: 0 auto 44px;
+      line-height: 1.6;
+    }
+    .trust-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      text-align: left;
+    }
+    .trust-pillar-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 32px 28px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 14px;
-      font-size: 13.5px;
-      line-height: 1.45;
+      flex-direction: column;
+      transition: all 0.25s ease;
     }
-    .feature-item:last-child { margin-bottom: 0; }
-    .feature-icon { font-size: 20px; }
+    .trust-pillar-card:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(253, 224, 71, 0.5);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    }
+    .pillar-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .pillar-svg {
+      width: 26px;
+      height: 26px;
+    }
+    .trust-pillar-card h4 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 10px;
+    }
+    .trust-pillar-card p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin: 0 0 20px;
+      flex: 1;
+    }
+    .pillar-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .pillar-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .trust-assurance-ribbon {
+      margin-top: 48px;
+      padding: 18px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .trust-assurance-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .trust-assurance-bullet {
+      color: #22c55e;
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .trust-assurance-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    @media (max-width: 900px) {
+      .trust-pillars-grid { grid-template-columns: 1fr; }
+      .trust-assurance-divider { display: none; }
+      .flow-steps-grid { grid-template-columns: 1fr; }
+    }
 
-    /* ATARAXIS-STYLE DARK FOREST GREEN CURVED FOOTER */
+    /* 10. ATARAXIS-STYLE DARK FOREST GREEN FULL-WIDTH FOOTER */
     .ataraxis-footer-wrap {
-      max-width: 1260px;
-      margin: 48px auto 24px;
-      padding: 0 16px;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background: #041c14;
+      border-top: 1px solid #144d3b;
     }
     .ataraxis-footer-card {
-      background: #082d22;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 64px 32px 32px;
+      background: transparent;
       color: #f1f5f9;
-      border-radius: 26px;
-      padding: 46px 42px 28px;
-      box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      box-shadow: none;
     }
     .ataraxis-footer-grid {
       display: grid;
@@ -1540,41 +1472,210 @@
       background: var(--primary-dark);
     }
 
-    /* UNIVERSAL ENTITY ACCESS PORTAL MODAL */
+    /* 12. "WHO ARE YOU?" - UNIVERSAL ENTITY ACCESS PORTAL MODAL */
     .portal-modal-box {
-      background: white;
-      border-radius: 22px;
+      background: #ffffff;
+      border-radius: 24px;
       width: 100%;
-      max-width: 680px;
-      padding: 30px 28px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      max-width: 1040px;
+      padding: 0;
+      box-shadow: 0 28px 70px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(11, 61, 46, 0.15);
       position: relative;
-      max-height: 90vh;
+      max-height: 92vh;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .portal-modal-header {
+      background: linear-gradient(135deg, #07271d 0%, #0b3d2e 60%, #114e3b 100%);
+      color: #ffffff;
+      padding: 28px 36px;
+      position: relative;
+      border-bottom: 2px solid #144d3b;
+    }
+    .portal-modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fde047;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .portal-modal-title {
+      margin: 0 0 6px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      color: #ffffff;
+    }
+    .portal-modal-subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: #cbd5e1;
+      max-width: 680px;
+      line-height: 1.55;
+    }
+    .portal-modal-body {
+      padding: 32px 36px;
+      background: #f8fafc;
     }
     .portal-entity-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
     }
-    .portal-entity-card {
-      background: #f8fafc;
+    .portal-card-item {
+      background: #ffffff;
       border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 16px;
+      padding: 22px;
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      text-align: left;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
     }
-    .portal-entity-card:hover {
-      border-color: var(--primary);
-      background: #f0fdf4;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(11, 61, 46, 0.1);
+    .portal-card-item:hover {
+      transform: translateY(-4px);
+    }
+    .portal-card-item.tier-producer:hover {
+      border-color: #10b981;
+      box-shadow: 0 12px 28px rgba(16, 185, 129, 0.18);
+    }
+    .portal-card-item.tier-aggregator:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 12px 28px rgba(245, 158, 11, 0.18);
+    }
+    .portal-card-item.tier-wholesaler:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 12px 28px rgba(59, 130, 246, 0.18);
+    }
+    .portal-card-item.tier-distributor:hover {
+      border-color: #6366f1;
+      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.18);
+    }
+    .portal-card-item.tier-retailer:hover {
+      border-color: #f97316;
+      box-shadow: 0 12px 28px rgba(249, 115, 22, 0.18);
+    }
+    .portal-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .portal-card-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-producer { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .avatar-aggregator { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .avatar-wholesaler { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .avatar-distributor { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }
+    .avatar-retailer { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+
+    .portal-tier-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-producer { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .badge-aggregator { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .badge-wholesaler { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-distributor { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    .badge-retailer { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+
+    .portal-card-identity h4 {
+      margin: 0 0 3px;
+      font-size: 18px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+    .portal-card-sub {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .portal-card-desc {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+      margin: 0 0 14px;
+      flex: 1;
+    }
+    .portal-card-caps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .portal-card-caps span {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .btn-portal-action {
+      width: 100%;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .action-producer { background: #059669; color: #ffffff; }
+    .action-producer:hover { background: #047857; }
+    .action-aggregator { background: #d97706; color: #ffffff; }
+    .action-aggregator:hover { background: #b45309; }
+    .action-wholesaler { background: #2563eb; color: #ffffff; }
+    .action-wholesaler:hover { background: #1d4ed8; }
+    .action-distributor { background: #4f46e5; color: #ffffff; }
+    .action-distributor:hover { background: #4338ca; }
+    .action-retailer { background: #ea580c; color: #ffffff; }
+    .action-retailer:hover { background: #c2410c; }
+    .portal-arrow {
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .portal-security-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: center;
+    }
+    .portal-security-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
     }
 
     /* QR SCANNER MODAL */
@@ -1688,14 +1789,21 @@
           required 
         />
         <button type="button" class="btn-nav-qr" onclick="openQrModal()" title="Scan QR Code with Camera" aria-label="Scan QR Code">
-          📷
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+            <rect x="7" y="7" width="10" height="10" rx="1"></rect>
+          </svg>
+          <span id="navQrBtnLabel">Scan QR</span>
         </button>
         <button type="submit" class="btn-nav-submit" id="navVerifyBtn" title="Verify Lot">
           <span id="navVerifyText">Verify</span>
         </button>
       </form>
       <button class="btn-nav-login" id="navLoginBtn" onclick="openEntityPortalModal()">
-        🔑 <span id="navLoginText">Log In</span>
+        <span id="navLoginText">Log In</span>
       </button>
       <div class="user-pill" id="userPill" onclick="scrollToWorkspace()">
         👤 <span id="activeUserName">Producer (Active)</span>
@@ -1719,22 +1827,10 @@
       <div class="hero-directional-scrim"></div>
 
       <div class="hero-billboard-content">
-        <div class="hero-sovereign-badge">
-          <span class="hero-badge-dot"></span>
-          <span id="heroBadgeText">National Cryptographic Agri-Produce Custody Network</span>
-        </div>
         <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
         <p class="tagline" id="heroTagline">
           India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
         </p>
-        <div class="hero-actions">
-          <button class="btn-hero-primary" id="btnHeroVerify" onclick="focusSearch()">
-            🔍 <span id="btnHeroVerifyText">Verify Produce Lot</span>
-          </button>
-          <button class="btn-hero-secondary" id="btnHeroOperator" onclick="openEntityPortalModal()">
-            🔑 <span id="btnHeroOperatorText">Universal Entity Sign In</span>
-          </button>
-        </div>
       </div>
 
       <div class="hero-video-controls" id="heroVideoControls">
@@ -1800,10 +1896,9 @@
     </div>
   </div>
 
-  <main class="container">
-
-    <!-- 6. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY) -->
-    <div class="flow-showcase" id="flowShowcaseSection">
+  <!-- 6. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY - FULL WIDTH EDGE TO EDGE) -->
+  <section class="flow-showcase-section" id="flowShowcaseSection">
+    <div class="flow-showcase-container">
       <h3 id="flowTitle">Unified 5-Tier Supply-Chain Architecture</h3>
       <p class="sub" id="flowSubtitle">Direct cryptographic custody transfer across all agricultural decision-makers</p>
       
@@ -1835,105 +1930,80 @@
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- 7. INTERACTIVE 5-TIER ENTITY DASHBOARD PREVIEW CONSOLE (HOME PAGE ONLY) -->
-    <div class="entity-dash-preview-wrap" id="entityDashPreviewWrap">
-      <div class="entity-dash-preview-card">
-        <div class="entity-dash-preview-header">
-          <h3 id="previewConsoleHeading">Real-Time Entity Dashboard Simulator</h3>
-          <p id="previewConsoleSubheading">Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.</p>
-        </div>
-
-        <!-- 5 Entity Switcher Tabs -->
-        <div class="entity-preview-tabs" id="previewRoleTabs">
-          <button type="button" class="btn-entity-tab active" data-role="PRODUCER" onclick="switchPreviewEntity('PRODUCER')">
-            <span>🌾</span> <span id="tabProducerLabel">Producer</span>
-          </button>
-          <button type="button" class="btn-entity-tab" data-role="AGGREGATOR" onclick="switchPreviewEntity('AGGREGATOR')">
-            <span>⚖️</span> <span id="tabAggregatorLabel">Aggregator</span>
-          </button>
-          <button type="button" class="btn-entity-tab" data-role="WHOLESALER" onclick="switchPreviewEntity('WHOLESALER')">
-            <span>🏢</span> <span id="tabWholesalerLabel">Wholesaler</span>
-          </button>
-          <button type="button" class="btn-entity-tab" data-role="DISTRIBUTOR" onclick="switchPreviewEntity('DISTRIBUTOR')">
-            <span>🚚</span> <span id="tabDistributorLabel">Distributor</span>
-          </button>
-          <button type="button" class="btn-entity-tab" data-role="RETAILER" onclick="switchPreviewEntity('RETAILER')">
-            <span>🛒</span> <span id="tabRetailerLabel">Retailer</span>
-          </button>
-        </div>
-
-        <!-- Live Simulated Screen -->
-        <div class="preview-console-screen" id="previewConsoleScreen">
-          <div class="preview-org-bar">
-            <div class="preview-org-info">
-              <span style="font-size: 20px;" id="previewRoleIcon">🌾</span>
-              <div>
-                <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
-                <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Bardhaman Organic Farmers Producer Co-op • Cluster Farm Yard #4</div>
-              </div>
-            </div>
-            <span class="preview-org-badge" id="previewBadgeText">⚡ SIMULATED LIVE NODE</span>
-          </div>
-
-          <!-- 3 KPI Cards -->
-          <div class="preview-metrics-grid" id="previewMetricsGrid">
-            <!-- Dynamically populated -->
-          </div>
-
-          <!-- Batches in Custody Table -->
-          <div class="preview-batches-table">
-            <div class="preview-table-head">
-              <span id="previewThBatch">Batch / Lot Code</span>
-              <span id="previewThDesc">Description & Volume</span>
-              <span id="previewThStatus">Custody Status</span>
-            </div>
-            <div id="previewBatchRows">
-              <!-- Dynamically populated rows -->
-            </div>
-          </div>
-
-          <!-- Action Launch Bar -->
-          <div class="preview-actions-bar">
-            <span style="font-size: 12px; color: #64748b;" id="previewActionHint">
-              Want to operate this console live? Click below to access the role workspace.
-            </span>
-            <button type="button" class="btn-preview-launch" id="btnPreviewLaunch" onclick="launchFromPreview()">
-              <span id="btnPreviewLaunchText">Sign In as Producer ➔</span>
-            </button>
-          </div>
-        </div>
+  <!-- 7. INTERACTIVE 5-TIER ENTITY DASHBOARD PREVIEW CONSOLE (HOME PAGE ONLY) -->
+  <div class="entity-dash-preview-wrap" id="entityDashPreviewWrap">
+    <div class="entity-dash-preview-card">
+      <div class="entity-dash-preview-header">
+        <h3 id="previewConsoleHeading">Real-Time Entity Dashboard Simulator</h3>
+        <p id="previewConsoleSubheading">Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.</p>
       </div>
-    </div>
 
-    <!-- 6. LOT VERIFICATION CARD -->
-    <div class="search-card" id="searchSection">
-      <h2 id="searchTitle">Verify Lot Traceability</h2>
-      <p id="searchSubtitle">Scan a QR code on produce crates or enter the 12-character lot code below.</p>
-      
-      <form class="search-form" method="GET" action="/">
-        <input 
-          class="search-input" 
-          type="text" 
-          name="code" 
-          id="searchInput"
-          placeholder="e.g. 7K3Q9XMD4T2B" 
-          required 
-          autocomplete="off" 
-        />
-        <button class="search-btn" type="submit" id="searchBtn">
-          Verify Lot
+      <!-- 5 Entity Switcher Tabs -->
+      <div class="entity-preview-tabs" id="previewRoleTabs">
+        <button type="button" class="btn-entity-tab active" data-role="PRODUCER" onclick="switchPreviewEntity('PRODUCER')">
+          <span>🌾</span> <span id="tabProducerLabel">Producer</span>
         </button>
-      </form>
+        <button type="button" class="btn-entity-tab" data-role="AGGREGATOR" onclick="switchPreviewEntity('AGGREGATOR')">
+          <span>⚖️</span> <span id="tabAggregatorLabel">Aggregator</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="WHOLESALER" onclick="switchPreviewEntity('WHOLESALER')">
+          <span>🏢</span> <span id="tabWholesalerLabel">Wholesaler</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="DISTRIBUTOR" onclick="switchPreviewEntity('DISTRIBUTOR')">
+          <span>🚚</span> <span id="tabDistributorLabel">Distributor</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="RETAILER" onclick="switchPreviewEntity('RETAILER')">
+          <span>🛒</span> <span id="tabRetailerLabel">Retailer</span>
+        </button>
+      </div>
 
-      <div class="sample-codes">
-        <span id="sampleLabel">Sample Codes:</span>
-        <span class="chip-code" onclick="fillSearch('7K3Q9XMD4T2B')">7K3Q9XMD4T2B</span>
-        <span class="chip-code" onclick="fillSearch('AS-TOM-2026-X1')">AS-TOM-2026-X1</span>
+      <!-- Live Simulated Screen -->
+      <div class="preview-console-screen" id="previewConsoleScreen">
+        <div class="preview-org-bar">
+          <div class="preview-org-info">
+            <span style="font-size: 20px;" id="previewRoleIcon">🌾</span>
+            <div>
+              <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
+              <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Bardhaman Organic Farmers Producer Co-op • Cluster Farm Yard #4</div>
+            </div>
+          </div>
+          <span class="preview-org-badge" id="previewBadgeText">⚡ SIMULATED LIVE NODE</span>
+        </div>
+
+        <!-- 3 KPI Cards -->
+        <div class="preview-metrics-grid" id="previewMetricsGrid">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Batches in Custody Table -->
+        <div class="preview-batches-table">
+          <div class="preview-table-head">
+            <span id="previewThBatch">Batch / Lot Code</span>
+            <span id="previewThDesc">Description & Volume</span>
+            <span id="previewThStatus">Custody Status</span>
+          </div>
+          <div id="previewBatchRows">
+            <!-- Dynamically populated rows -->
+          </div>
+        </div>
+
+        <!-- Action Launch Bar -->
+        <div class="preview-actions-bar">
+          <span style="font-size: 12px; color: #64748b;" id="previewActionHint">
+            Want to operate this console live? Click below to access the role workspace.
+          </span>
+          <button type="button" class="btn-preview-launch" id="btnPreviewLaunch" onclick="launchFromPreview()">
+            <span id="btnPreviewLaunchText">Sign In as Producer ➔</span>
+          </button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- 7. CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
+  <!-- CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
+  <div class="confined-workspace-container" style="max-width: 1280px; margin: 0 auto; padding: 0 24px;">
     <div class="confined-workspace" id="confinedWorkspace" style="display: none;">
       <div class="confined-banner">
         <div class="confined-badge">
@@ -1960,109 +2030,104 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- 8. UNIVERSAL ENTITY ACCESS SECTION (HOME PAGE ONLY - 5 EXACT ENTITIES) -->
-    <div class="entity-section" id="entitySection">
-      <div class="entity-section-header">
-        <h3 id="entitySectionTitle">Universal Entity Access Portal</h3>
-        <p id="entitySectionSubtitle">Dedicated login for every decision-maker in the value chain</p>
+  <!-- 8. NATIONAL TRUST & VERIFICATION STANDARDS - GOD-LEVEL FULL-WIDTH SHOWCASE -->
+  <section class="trust-standards-section" id="trustSection">
+    <div class="trust-standards-container">
+      <div class="trust-sovereign-tag">
+        <span class="trust-tag-dot"></span>
+        <span id="trustKicker">NATIONAL INTEGRITY PROTOCOL</span>
       </div>
-
-      <div class="entity-grid">
-        <!-- 1. Producer -->
-        <div class="entity-card" onclick="openLoginModal('PRODUCER')">
-          <div class="card-head">
-            <div class="card-icon">🌾</div>
-            <div>
-              <div class="card-title" id="roleTitleProducer">Producer</div>
-              <div class="card-subtitle" id="roleSubProducer">Farmer / FPO / Cultivator</div>
-            </div>
-          </div>
-          <div class="card-desc" id="roleDescProducer">
-            Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.
-          </div>
-          <button class="btn-card-login" id="btnRoleProducer">Login as Producer ➔</button>
-        </div>
-
-        <!-- 2. Aggregator -->
-        <div class="entity-card" onclick="openLoginModal('AGGREGATOR')">
-          <div class="card-head">
-            <div class="card-icon">⚖️</div>
-            <div>
-              <div class="card-title" id="roleTitleAggregator">Aggregator</div>
-              <div class="card-subtitle" id="roleSubAggregator">Mandi Arhatiya / APMC Yard</div>
-            </div>
-          </div>
-          <div class="card-desc" id="roleDescAggregator">
-            Receive farm consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.
-          </div>
-          <button class="btn-card-login" id="btnRoleAggregator">Login as Aggregator ➔</button>
-        </div>
-
-        <!-- 3. Wholesaler -->
-        <div class="entity-card" onclick="openLoginModal('WHOLESALER')">
-          <div class="card-head">
-            <div class="card-icon">🏢</div>
-            <div>
-              <div class="card-title" id="roleTitleWholesaler">Wholesaler</div>
-              <div class="card-subtitle" id="roleSubWholesaler">Terminal Market / Bulk Trader</div>
-            </div>
-          </div>
-          <div class="card-desc" id="roleDescWholesaler">
-            Terminal intake, split bulk lots into trading consignments, allocate cold chambers, and dispatch to Distributors.
-          </div>
-          <button class="btn-card-login" id="btnRoleWholesaler">Login as Wholesaler ➔</button>
-        </div>
-
-        <!-- 4. Distributor -->
-        <div class="entity-card" onclick="openLoginModal('DISTRIBUTOR')">
-          <div class="card-head">
-            <div class="card-icon">🚚</div>
-            <div>
-              <div class="card-title" id="roleTitleDistributor">Distributor</div>
-              <div class="card-subtitle" id="roleSubDistributor">Logistics Fleet & Secondary Depot</div>
-            </div>
-          </div>
-          <div class="card-desc" id="roleDescDistributor">
-            Accept transport custody, log vehicle GPS and cold-chain temperatures, and deliver to retail stores.
-          </div>
-          <button class="btn-card-login" id="btnRoleDistributor">Login as Distributor ➔</button>
-        </div>
-
-        <!-- 5. Retailer -->
-        <div class="entity-card" onclick="openLoginModal('RETAILER')">
-          <div class="card-head">
-            <div class="card-icon">🛒</div>
-            <div>
-              <div class="card-title" id="roleTitleRetailer">Retailer</div>
-              <div class="card-subtitle" id="roleSubRetailer">Kirana / Supermarket / POS</div>
-            </div>
-          </div>
-          <div class="card-desc" id="roleDescRetailer">
-            Inbound store receipt, generate customer-facing shelf QR codes, and record retail checkout sales.
-          </div>
-          <button class="btn-card-login" id="btnRoleRetailer">Login as Retailer ➔</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 9. NATIONAL TRUST STANDARDS (HOME PAGE ONLY) -->
-    <div class="features-card" id="trustSection">
       <h3 id="trustTitle">National Trust & Verification Standards</h3>
-      <div class="feature-item">
-        <span class="feature-icon">🛡️</span>
-        <div><strong id="trust1Title">Cryptographic Append-Only Ledger:</strong> <span id="trust1Desc">Every harvest, dispatch, and quality inspection is secured with SHA-256 hash chains and immutable database triggers.</span></div>
+      <p class="trust-subtitle" id="trustSubtitle">
+        Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.
+      </p>
+
+      <div class="trust-pillars-grid">
+        <!-- Pillar 1 -->
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box">
+            <svg class="pillar-svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M9 12l2 2 4-4"></path>
+            </svg>
+          </div>
+          <h4 id="trust1Title">Cryptographic Append-Only Ledger</h4>
+          <p id="trust1Desc">
+            Every harvest genesis, mandi weighing, and transit dispatch is chained with SHA-256 cryptographic hashes and immutable PostgreSQL database triggers.
+          </p>
+          <div class="pillar-pills">
+            <span class="pillar-pill">SHA-256 Hashes</span>
+            <span class="pillar-pill">Immutable Triggers</span>
+            <span class="pillar-pill">Zero History Tampering</span>
+          </div>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box">
+            <svg class="pillar-svg" viewBox="0 0 24 24" fill="none" stroke="#fde047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h4 id="trust2Title">Zero Personal Data Leakage</h4>
+          <p id="trust2Desc">
+            Farmer personal identity, precise farm GPS coordinates, and commercial trade margins are strictly protected and redacted under the Digital Personal Data Protection (DPDP) Act 2023.
+          </p>
+          <div class="pillar-pills">
+            <span class="pillar-pill">DPDP Act 2023</span>
+            <span class="pillar-pill">PII Redaction</span>
+            <span class="pillar-pill">Geofence Privacy</span>
+          </div>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box">
+            <svg class="pillar-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <h4 id="trust3Title">Mutual Custody Confirmation</h4>
+          <p id="trust3Desc">
+            Produce custody cannot be transferred unilaterally. Both dispatching and receiving operators must digitally sign off on net weights and Agmarknet grades.
+          </p>
+          <div class="pillar-pills">
+            <span class="pillar-pill">Dual-Signature Handoff</span>
+            <span class="pillar-pill">Anti-Counterfeit QR</span>
+            <span class="pillar-pill">Agmarknet Verification</span>
+          </div>
+        </div>
       </div>
-      <div class="feature-item">
-        <span class="feature-icon">🔒</span>
-        <div><strong id="trust2Title">Zero Personal Data Leakage:</strong> <span id="trust2Desc">Farmer personal identity, precise farm GPS coordinates, and commercial pricing are strictly protected under the DPDP Act 2023.</span></div>
-      </div>
-      <div class="feature-item">
-        <span class="feature-icon">⚖️</span>
-        <div><strong id="trust3Title">Mutual Custody Confirmation:</strong> <span id="trust3Desc">Produce ownership transfers require verified sign-off between both dispatching and receiving operators.</span></div>
+
+      <!-- Assurance Ribbon -->
+      <div class="trust-assurance-ribbon">
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet">✓</span>
+          <span id="trustRibbonLedger">Append-Only SHA-256 Ledger</span>
+        </div>
+        <div class="trust-assurance-divider"></div>
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet">✓</span>
+          <span id="trustRibbonDpdp">DPDP Act 2023 Certified</span>
+        </div>
+        <div class="trust-assurance-divider"></div>
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet">✓</span>
+          <span id="trustRibbonAgmark">Agmarknet Quality Grading</span>
+        </div>
+        <div class="trust-assurance-divider"></div>
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet">✓</span>
+          <span id="trustRibbonCdac">C-DAC Sovereign Cloud Node</span>
+        </div>
       </div>
     </div>
-  </main>
+  </section>
 
   <!-- 10. ATARAXIS-STYLE DARK FOREST GREEN CURVED FOOTER -->
   <footer class="ataraxis-footer-wrap">
@@ -2116,12 +2181,6 @@
               <a href="/" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
                 <span class="ataraxis-link-arrow">›</span>
                 <span id="footerLinkHome">National Homepage</span>
-              </a>
-            </li>
-            <li>
-              <a href="#searchSection" onclick="focusSearch(); return false;">
-                <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkVerify">Verify Produce Lot</span>
               </a>
             </li>
             <li>
@@ -2236,90 +2295,149 @@
     </div>
   </div>
 
-  <!-- 12. UNIVERSAL ENTITY ACCESS PORTAL MODAL -->
+  <!-- 12. "WHO ARE YOU?" - UNIVERSAL ENTITY ACCESS PORTAL MODAL -->
   <div class="modal-overlay" id="entityPortalModal" onclick="closeModalOnBackdrop(event)">
     <div class="portal-modal-box">
-      <button class="modal-close" onclick="closeEntityPortalModal()">✕</button>
-      <div class="modal-head">
-        <div style="font-size: 28px; margin-bottom: 6px;">👥</div>
-        <h3 id="portalModalTitle" style="font-size: 22px; font-weight: 900; color: var(--primary);">Universal Entity Access Portal</h3>
-        <p id="portalModalSubtitle" style="font-size: 13px; color: var(--text-muted);">Select your authorized role to access your confined operational workspace.</p>
+      <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+      
+      <div class="portal-modal-header">
+        <div class="portal-modal-badge">
+          <span class="hero-badge-dot"></span>
+          <span id="portalBadgeText">NATIONAL SOVEREIGN VALUE CHAIN</span>
+        </div>
+        <h3 class="portal-modal-title" id="portalModalTitle">Who Are You?</h3>
+        <p class="portal-modal-subtitle" id="portalModalSubtitle">
+          Select your authorized role in the agricultural value chain to access your confined operational node.
+        </p>
       </div>
 
-      <div class="portal-entity-grid">
-        <!-- 1. Producer -->
-        <div class="portal-entity-card" onclick="selectRoleFromPortal('PRODUCER')">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <span style="font-size: 22px;">🌾</span>
-            <div>
-              <strong style="font-size: 14.5px; color: #0f172a;" id="portalRoleTitleProducer">Producer</strong>
-              <div style="font-size: 11px; color: #64748b;" id="portalRoleSubProducer">Farmer / FPO / Cultivator</div>
+      <div class="portal-modal-body">
+        <div class="portal-entity-grid">
+          <!-- 1. Producer -->
+          <div class="portal-card-item tier-producer" onclick="selectRoleFromPortal('PRODUCER')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-producer">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9A9 9 0 0 1 3 11a9 9 0 0 1 9-9z"></path>
+                  <path d="M12 6v10"></path>
+                  <path d="M8 10l4-4 4 4"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-producer">Tier 1 • Genesis</span>
             </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleProducer">Producer</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #059669; margin-bottom: 8px;" id="portalRoleSubProducer">Farmer / FPO Cultivator</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescProducer">
+              Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.
+            </p>
+            <div class="pillar-pills" style="margin-bottom: 14px;">
+              <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Farm Genesis</span>
+              <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Crate QR Labels</span>
+            </div>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer ➔</button>
           </div>
-          <p style="font-size: 12px; color: #475569; margin: 4px 0 10px; line-height: 1.4;" id="portalRoleDescProducer">
-            Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.
-          </p>
-          <button type="button" class="btn-card-login" style="padding: 7px 12px; font-size: 12px; margin-top: auto;" id="btnPortalProducer">Sign In as Producer ➔</button>
+
+          <!-- 2. Aggregator -->
+          <div class="portal-card-item tier-aggregator" onclick="selectRoleFromPortal('AGGREGATOR')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-aggregator">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 6h18M12 6v14M5 10l7-4 7 4M6 14l-4 4h8l-4-4zM18 14l-4 4h8l-4-4z"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-aggregator">Tier 2 • Mandi</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAggregator">Aggregator</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #d97706; margin-bottom: 8px;" id="portalRoleSubAggregator">Mandi Arhatiya / APMC Yard</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
+              Verify gross weights on digital weighbridges, assign Agmarknet grades, and settle e-NAM auctions.
+            </p>
+            <div class="pillar-pills" style="margin-bottom: 14px;">
+              <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Weighbridge Attest</span>
+              <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Agmarknet Grade</span>
+            </div>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator ➔</button>
+          </div>
+
+          <!-- 3. Wholesaler -->
+          <div class="portal-card-item tier-wholesaler" onclick="selectRoleFromPortal('WHOLESALER')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-wholesaler">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-wholesaler">Tier 3 • Terminal</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleWholesaler">Wholesaler</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #2563eb; margin-bottom: 8px;" id="portalRoleSubWholesaler">Terminal Market / Bulk Trader</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescWholesaler">
+              Terminal intake, lot splitting with mass-balance preservation, and cold bay temperature allocation.
+            </p>
+            <div class="pillar-pills" style="margin-bottom: 14px;">
+              <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Mass-Balance Split</span>
+              <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Cold Bay Control</span>
+            </div>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler ➔</button>
+          </div>
+
+          <!-- 4. Distributor -->
+          <div class="portal-card-item tier-distributor" onclick="selectRoleFromPortal('DISTRIBUTOR')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-distributor">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13"></rect>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-distributor">Tier 4 • Logistics</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleDistributor">Distributor</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #4f46e5; margin-bottom: 8px;" id="portalRoleSubDistributor">Cold-Chain Fleet & Depot</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescDistributor">
+              Accept transit custody, log vehicle GPS highway checkpoints, and audit continuous reefer temperatures.
+            </p>
+            <div class="pillar-pills" style="margin-bottom: 14px;">
+              <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">GPS Geofence</span>
+              <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Reefer Telemetry</span>
+            </div>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor ➔</button>
+          </div>
+
+          <!-- 5. Retailer -->
+          <div class="portal-card-item tier-retailer" onclick="selectRoleFromPortal('RETAILER')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-retailer">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-retailer">Tier 5 • Last-Mile</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleRetailer">Retailer</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #ea580c; margin-bottom: 8px;" id="portalRoleSubRetailer">Supermarket & Kirana POS</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescRetailer">
+              Accept store deliveries, print consumer shelf QR standees, and log retail checkout decrement.
+            </p>
+            <div class="pillar-pills" style="margin-bottom: 14px;">
+              <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Shelf QR Standee</span>
+              <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">POS Deduct</span>
+            </div>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer ➔</button>
+          </div>
         </div>
 
-        <!-- 2. Aggregator -->
-        <div class="portal-entity-card" onclick="selectRoleFromPortal('AGGREGATOR')">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <span style="font-size: 22px;">⚖️</span>
-            <div>
-              <strong style="font-size: 14.5px; color: #0f172a;" id="portalRoleTitleAggregator">Aggregator</strong>
-              <div style="font-size: 11px; color: #64748b;" id="portalRoleSubAggregator">Mandi Arhatiya / APMC Yard</div>
-            </div>
+        <div style="margin-top: 24px; padding: 14px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+          <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span id="portalSecurityNote">Cryptographic role confinement active. Unauthorized access attempts logged to immutable audit ledger.</span>
           </div>
-          <p style="font-size: 12px; color: #475569; margin: 4px 0 10px; line-height: 1.4;" id="portalRoleDescAggregator">
-            Receive consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.
-          </p>
-          <button type="button" class="btn-card-login" style="padding: 7px 12px; font-size: 12px; margin-top: auto;" id="btnPortalAggregator">Sign In as Aggregator ➔</button>
-        </div>
-
-        <!-- 3. Wholesaler -->
-        <div class="portal-entity-card" onclick="selectRoleFromPortal('WHOLESALER')">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <span style="font-size: 22px;">🏢</span>
-            <div>
-              <strong style="font-size: 14.5px; color: #0f172a;" id="portalRoleTitleWholesaler">Wholesaler</strong>
-              <div style="font-size: 11px; color: #64748b;" id="portalRoleSubWholesaler">Terminal Market / Bulk Trader</div>
-            </div>
-          </div>
-          <p style="font-size: 12px; color: #475569; margin: 4px 0 10px; line-height: 1.4;" id="portalRoleDescWholesaler">
-            Terminal intake, split bulk lots into trading consignments, and allocate cold storage.
-          </p>
-          <button type="button" class="btn-card-login" style="padding: 7px 12px; font-size: 12px; margin-top: auto;" id="btnPortalWholesaler">Sign In as Wholesaler ➔</button>
-        </div>
-
-        <!-- 4. Distributor -->
-        <div class="portal-entity-card" onclick="selectRoleFromPortal('DISTRIBUTOR')">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <span style="font-size: 22px;">🚚</span>
-            <div>
-              <strong style="font-size: 14.5px; color: #0f172a;" id="portalRoleTitleDistributor">Distributor</strong>
-              <div style="font-size: 11px; color: #64748b;" id="portalRoleSubDistributor">Logistics Fleet & Secondary Depot</div>
-            </div>
-          </div>
-          <p style="font-size: 12px; color: #475569; margin: 4px 0 10px; line-height: 1.4;" id="portalRoleDescDistributor">
-            Accept transport custody, log vehicle GPS & cold-chain temperatures, and deliver to retailers.
-          </p>
-          <button type="button" class="btn-card-login" style="padding: 7px 12px; font-size: 12px; margin-top: auto;" id="btnPortalDistributor">Sign In as Distributor ➔</button>
-        </div>
-
-        <!-- 5. Retailer -->
-        <div class="portal-entity-card" onclick="selectRoleFromPortal('RETAILER')">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <span style="font-size: 22px;">🛒</span>
-            <div>
-              <strong style="font-size: 14.5px; color: #0f172a;" id="portalRoleTitleRetailer">Retailer</strong>
-              <div style="font-size: 11px; color: #64748b;" id="portalRoleSubRetailer">Kirana / Supermarket / POS</div>
-            </div>
-          </div>
-          <p style="font-size: 12px; color: #475569; margin: 4px 0 10px; line-height: 1.4;" id="portalRoleDescRetailer">
-            Inbound store receipt, generate customer shelf QR codes, and record retail checkout sales.
-          </p>
-          <button type="button" class="btn-card-login" style="padding: 7px 12px; font-size: 12px; margin-top: auto;" id="btnPortalRetailer">Sign In as Retailer ➔</button>
+          <span style="font-size: 11px; font-weight: 800; color: #15803d; background: #ecfdf5; border: 1px solid #86efac; padding: 3px 8px; border-radius: 12px;">DPDP Act 2023 Compliant</span>
         </div>
       </div>
     </div>
@@ -2330,9 +2448,17 @@
     <div class="qr-modal-box">
       <button class="modal-close" onclick="closeQrModal()">✕</button>
       <div class="modal-head" style="margin-bottom: 12px;">
-        <div style="font-size: 28px; margin-bottom: 4px;">📷</div>
-        <h3 id="qrModalTitle" style="font-size: 19px; font-weight: 900; color: var(--primary);">Instant QR Code Scanner</h3>
-        <p id="qrModalSubtitle" style="font-size: 12.5px; color: var(--text-muted);">Point your device camera at any produce crate QR tag or upload an image.</p>
+        <div style="margin-bottom: 6px; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+            <rect x="7" y="7" width="10" height="10" rx="1"></rect>
+          </svg>
+        </div>
+        <h3 id="qrModalTitle" style="font-size: 19px; font-weight: 900; color: var(--primary); margin: 0 0 4px;">Instant QR Code Scanner</h3>
+        <p id="qrModalSubtitle" style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Point your device camera at any produce crate QR tag or upload an image.</p>
       </div>
 
       <div class="qr-video-viewport" id="qrViewport">
@@ -2344,11 +2470,13 @@
       </div>
 
       <div style="display: flex; gap: 10px; margin-bottom: 14px;">
-        <button type="button" class="btn-workspace-tool secondary" style="flex: 1; padding: 8px 10px; font-size: 12px;" onclick="toggleQrCamera()">
-          🔄 <span id="btnSwitchCameraText">Toggle Camera</span>
+        <button type="button" class="btn-workspace-tool secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;" onclick="toggleQrCamera()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          <span id="btnSwitchCameraText">Toggle Camera</span>
         </button>
-        <label class="btn-workspace-tool" style="flex: 1; padding: 8px 10px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
-          📁 <span id="btnUploadQrText">Upload QR Photo</span>
+        <label class="btn-workspace-tool" style="flex: 1; padding: 8px 10px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span id="btnUploadQrText">Upload QR Photo</span>
           <input type="file" accept="image/*" style="display: none;" onchange="handleQrImageUpload(event)" />
         </label>
       </div>
@@ -2445,8 +2573,6 @@
         navLoginText: "Log In",
         heroHeadline: "From Soil to Shelf, Every Grain Accounted For.",
         heroTagline: "India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.",
-        btnHeroVerify: "Verify Produce Lot",
-        btnHeroOperator: "Universal Entity Sign In",
         flowTitle: "Unified 5-Tier Supply-Chain Architecture",
         flowSubtitle: "Direct cryptographic custody transfer across all agricultural decision-makers",
         flowStep1Title: "Producer",
@@ -2459,32 +2585,6 @@
         flowStep4Desc: "Fleet logistics, transit temp logging, regional delivery.",
         flowStep5Title: "Retailer",
         flowStep5Desc: "Kirana / POS intake, consumer shelf QR, final sale logging.",
-        searchTitle: "Verify Lot Traceability",
-        searchSubtitle: "Scan a QR code on produce crates or enter the 12-character lot code below.",
-        searchBtn: "Verify Lot",
-        sampleLabel: "Sample Codes:",
-        entitySectionTitle: "Universal Entity Access Portal",
-        entitySectionSubtitle: "Dedicated login for every decision-maker in the value chain",
-        roleTitleProducer: "Producer",
-        roleSubProducer: "Farmer / FPO / Cultivator",
-        roleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
-        btnRoleProducer: "Login as Producer ➔",
-        roleTitleAggregator: "Aggregator",
-        roleSubAggregator: "Mandi Arhatiya / APMC Yard",
-        roleDescAggregator: "Receive farm consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.",
-        btnRoleAggregator: "Login as Aggregator ➔",
-        roleTitleWholesaler: "Wholesaler",
-        roleSubWholesaler: "Terminal Market / Bulk Trader",
-        roleDescWholesaler: "Terminal intake, split bulk lots into trading consignments, allocate cold chambers, and dispatch to Distributors.",
-        btnRoleWholesaler: "Login as Wholesaler ➔",
-        roleTitleDistributor: "Distributor",
-        roleSubDistributor: "Logistics Fleet & Secondary Depot",
-        roleDescDistributor: "Accept transport custody, log vehicle GPS and cold-chain temperatures, and deliver to retail stores.",
-        btnRoleDistributor: "Login as Distributor ➔",
-        roleTitleRetailer: "Retailer",
-        roleSubRetailer: "Kirana / Supermarket / POS",
-        roleDescRetailer: "Inbound store receipt, generate customer-facing shelf QR codes, and record retail checkout sales.",
-        btnRoleRetailer: "Login as Retailer ➔",
         trustTitle: "National Trust & Verification Standards",
         trust1Title: "Cryptographic Append-Only Ledger:",
         trust1Desc: "Every harvest, dispatch, and quality inspection is secured with SHA-256 hash chains and immutable database triggers.",
@@ -2528,7 +2628,6 @@
         dpdpGrievanceLabel: "Grievance Redressal Officer:",
         btnDpdpClose: "I Understand & Continue",
         btnLogout: "Log Out / Switch Entity",
-        heroBadgeText: "National Cryptographic Agri-Produce Custody Network",
         tickerTitle: "LIVE CUSTODY TICKER",
         statProduceKgLabel: "Kg Produce Tracked",
         statFarmersLabel: "Registered Farmers",
@@ -2548,8 +2647,18 @@
         previewThStatus: "Custody Status",
         previewActionHint: "Want to operate this console live? Click below to access the role workspace.",
         previewSimBadge: "⚡ SIMULATED LIVE NODE",
-        portalModalTitle: "Universal Entity Access Portal",
-        portalModalSubtitle: "Select your authorized role to access your confined operational workspace.",
+        navQrBtnLabel: "Scan QR",
+        portalBadgeText: "NATIONAL SOVEREIGN VALUE CHAIN",
+        portalModalTitle: "Who Are You?",
+        portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
+        portalSecurityNote: "Cryptographic role confinement active. Unauthorized access attempts logged to immutable audit ledger.",
+        trustKicker: "NATIONAL INTEGRITY PROTOCOL",
+        trustTitle: "National Trust & Verification Standards",
+        trustSubtitle: "Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.",
+        trustRibbonLedger: "Append-Only SHA-256 Ledger",
+        trustRibbonDpdp: "DPDP Act 2023 Certified",
+        trustRibbonAgmark: "Agmarknet Quality Grading",
+        trustRibbonCdac: "C-DAC Sovereign Cloud Node",
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO / Cultivator",
         portalRoleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
@@ -2584,8 +2693,6 @@
         navLoginText: "लॉग इन",
         heroHeadline: "खेत से थाली तक, हर दाने का हिसाब।",
         heroTagline: "भारत का एकीकृत कृषि उत्पाद कस्टडी प्लेटफॉर्म जो किसानों के सशक्तिकरण और पारदर्शी आपूर्ति-श्रृंखला की गारंटी देता है।",
-        btnHeroVerify: "उत्पाद लॉट सत्यापित करें",
-        btnHeroOperator: "संस्थागत लॉगिन",
         flowTitle: "एकीकृत 5-स्तरीय आपूर्ति श्रृंखला संरचना",
         flowSubtitle: "सभी कृषि निर्णयकर्ताओं के बीच सीधा क्रिप्टोग्राफ़िक कस्टडी हस्तांतरण",
         flowStep1Title: "उत्पादक",
@@ -2598,32 +2705,6 @@
         flowStep4Desc: "वाहन लॉजिस्टिक्स, तापमान निगरानी, खुदरा वितरण।",
         flowStep5Title: "खुदरा विक्रेता",
         flowStep5Desc: "दुकान आवक, शेल्फ क्यूआर डिस्प्ले, अंतिम बिक्री प्रविष्टि।",
-        searchTitle: "लॉट ट्रैसेबिलिटी सत्यापित करें",
-        searchSubtitle: "क्रेट पर क्यूआर कोड स्कैन करें या नीचे 12-अक्षरों का कोड दर्ज करें।",
-        searchBtn: "लॉट सत्यापित करें",
-        sampleLabel: "नमूना कोड:",
-        entitySectionTitle: "यूनिवर्सल संस्थागत प्रवेश पोर्टल",
-        entitySectionSubtitle: "आपूर्ति-श्रृंखला के प्रत्येक निर्णयकर्ता के लिए समर्पित लॉगिन",
-        roleTitleProducer: "उत्पादक",
-        roleSubProducer: "किसान / एफपीओ / उत्पादक",
-        roleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
-        btnRoleProducer: "उत्पादक के रूप में लॉगिन ➔",
-        roleTitleAggregator: "संग्रहकर्ता",
-        roleSubAggregator: "मंडी आढ़ती / एपीएमसी यार्ड",
-        roleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
-        btnRoleAggregator: "संग्रहकर्ता के रूप में लॉगिन ➔",
-        roleTitleWholesaler: "थोक व्यापारी",
-        roleSubWholesaler: "टर्मिनल बाजार / थोक व्यापारी",
-        roleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
-        btnRoleWholesaler: "थोक व्यापारी के रूप में लॉगिन ➔",
-        roleTitleDistributor: "वितरक",
-        roleSubDistributor: "लॉजिस्टिक्स फ्लीट / द्वितीयक डिपो",
-        roleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
-        btnRoleDistributor: "वितरक के रूप में लॉगिन ➔",
-        roleTitleRetailer: "खुदरा विक्रेता",
-        roleSubRetailer: "किराना / सुपरमार्केट / पीओएस",
-        roleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
-        btnRoleRetailer: "खुदरा विक्रेता के रूप में लॉगिन ➔",
         trustTitle: "राष्ट्रीय विश्वास और सत्यापन मानक",
         trust1Title: "क्रिप्टोग्राफ़िक केवल-जोड़ लेज़र:",
         trust1Desc: "प्रत्येक कटाई, प्रेषण और गुणवत्ता निरीक्षण SHA-256 हैश श्रृंखला द्वारा सुरक्षित है।",
@@ -2667,7 +2748,6 @@
         dpdpGrievanceLabel: "शिकायत निवारण अधिकारी:",
         btnDpdpClose: "मैं समझ गया और आगे बढ़ें",
         btnLogout: "लॉग आउट / संस्था बदलें",
-        heroBadgeText: "राष्ट्रीय क्रिप्टोग्राफ़िक कृषि उत्पाद कस्टडी नेटवर्क",
         tickerTitle: "लाइव कस्टडी टिकर",
         statProduceKgLabel: "ट्रैक किया गया उत्पाद (किग्रा)",
         statFarmersLabel: "पंजीकृत किसान",
@@ -2687,8 +2767,18 @@
         previewThStatus: "कस्टडी स्थिति",
         previewActionHint: "क्या आप इस कंसोल को लाइव चलाना चाहते हैं? कार्यक्षेत्र में जाने के लिए नीचे क्लिक करें।",
         previewSimBadge: "⚡ लाइव नोड सिमुलेशन",
-        portalModalTitle: "यूनिवर्सल संस्थागत प्रवेश पोर्टल",
-        portalModalSubtitle: "अपने अधिकृत कार्यक्षेत्र में प्रवेश के लिए अपनी भूमिका का चयन करें।",
+        navQrBtnLabel: "क्यूआर स्कैन",
+        portalBadgeText: "राष्ट्रीय संप्रभु मूल्य श्रृंखला",
+        portalModalTitle: "आप कौन हैं?",
+        portalModalSubtitle: "अपने अधिकृत परिचालन नोड तक पहुँचने के लिए आपूर्ति श्रृंखला में अपनी भूमिका चुनें।",
+        portalSecurityNote: "क्रिप्टोग्राफ़िक भूमिका सीमा सक्रिय। अनधिकृत प्रयास अपरिवर्तनीय लेज़र में दर्ज किए जाते हैं।",
+        trustKicker: "राष्ट्रीय अखंडता प्रोटोकॉल",
+        trustTitle: "राष्ट्रीय विश्वास और सत्यापन मानक",
+        trustSubtitle: "खाद्य सुरक्षा, किसान गोपनीयता और छेड़छाड़-मुक्त व्यापार को बनाए रखने वाली संप्रभु क्रिप्टोग्राफ़िक गारंटी।",
+        trustRibbonLedger: "केवल-जोड़ SHA-256 लेज़र",
+        trustRibbonDpdp: "डीपीडीपी अधिनियम 2023 प्रमाणित",
+        trustRibbonAgmark: "एगमार्कनेट गुणवत्ता ग्रेडिंग",
+        trustRibbonCdac: "सी-डैक संप्रभु क्लाउड नोड",
         portalRoleTitleProducer: "उत्पादक",
         portalRoleSubProducer: "किसान / एफपीओ / उत्पादक",
         portalRoleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
@@ -2723,8 +2813,6 @@
         navLoginText: "লগ ইন",
         heroHeadline: "মাটি থেকে থালা, প্রতিটি শস্যের হিসাব।",
         heroTagline: "ভারতের সমন্বিত কৃষি পণ্য ক্রিপ্টোগ্রাফিক হেফাজত প্ল্যাটফর্ম যা স্বচ্ছ ও প্রামাণিক সরবরাহ শৃঙ্খল নিশ্চিত করে।",
-        btnHeroVerify: "কৃষি লট যাচাই করুন",
-        btnHeroOperator: "সংস্থা লগইন",
         flowTitle: "সমন্বিত ৫-স্তর বিশিষ্ট সরবরাহ শৃঙ্খল",
         flowSubtitle: "কৃষি মূল্য শৃঙ্খলের সিদ্ধান্ত গ্রহণকারীদের মধ্যে প্রত্যক্ষ ডিজিটাল হেফাজত হস্তান্তর",
         flowStep1Title: "উৎপাদক",
@@ -2737,32 +2825,6 @@
         flowStep4Desc: "লজিস্টিকস ফ্লিট, পরিবহন তাপমাত্রা ট্র্যাকিং ও দোকানে সরবরাহ।",
         flowStep5Title: "খুচরা বিক্রেতা",
         flowStep5Desc: "দোকানে পণ্য গ্রহণ, গ্রাহকের জন্য কিউআর প্রদর্শন ও বিক্রয় নথি।",
-        searchTitle: "লট ট্রেসেবিলিটি যাচাই করুন",
-        searchSubtitle: "ক্রেটে থাকা কিউআর কোড স্ক্যান করুন অথবা ১২-সংখ্যার কোডটি প্রবেশ করান।",
-        searchBtn: "লট যাচাই করুন",
-        sampleLabel: "নমুনা কোড:",
-        entitySectionTitle: "ইউনিভার্সাল সংস্থা প্রবেশ পোর্টাল",
-        entitySectionSubtitle: "সরবরাহ শৃঙ্খলের সকল সিদ্ধান্ত গ্রহণকারীর জন্য বিশেষায়িত লগইন",
-        roleTitleProducer: "উৎপাদক",
-        roleSubProducer: "কৃষক / সমবায় / চাষী",
-        roleDescProducer: "ফসল লট নথিভুক্ত করুন, কিউআর ট্যাগ ইস্যু করুন এবং মণ্ডিতে পাঠান।",
-        btnRoleProducer: "উৎপাদক হিসেবে লগইন ➔",
-        roleTitleAggregator: "সংগ্রহকারী",
-        roleSubAggregator: "মণ্ডি আড়তদার / এপিএমসি ইয়ার্ড",
-        roleDescAggregator: "খামার থেকে পণ্য গ্রহণ, ওজন রেকর্ড ও পাইকারি বিক্রেতার নিকট প্রেরণ।",
-        btnRoleAggregator: "সংগ্রহকারী হিসেবে লগইন ➔",
-        roleTitleWholesaler: "পাইকারি বিক্রেতা",
-        roleSubWholesaler: "টার্মিনাল মার্কেট / পাইকারি ব্যবসায়ী",
-        roleDescWholesaler: "টার্মিনাল চালান গ্রহণ, লট বিভাজন ও পরিবেশকের নিকট প্রেরণ।",
-        btnRoleWholesaler: "পাইকারি বিক্রেতা হিসেবে লগইন ➔",
-        roleTitleDistributor: "পরিবেশক",
-        roleSubDistributor: "লজিস্টিকস ফ্লিট / দ্বিতীয় ডিপো",
-        roleDescDistributor: "পরিবহন হেফাজত গ্রহণ, তাপমাত্রা ট্র্যাকিং ও দোকানে চালান সরবরাহ।",
-        btnRoleDistributor: "পরিবেশক হিসেবে লগইন ➔",
-        roleTitleRetailer: "খুচরা বিক্রেতা",
-        roleSubRetailer: "মুদি দোকান / সুপারমার্কেট / পিওএস",
-        roleDescRetailer: "দোকানে চালান গ্রহণ, কাউন্টার কিউআর স্ট্যান্ডি ও চূড়ান্ত বিক্রয় নথিভুক্ত।",
-        btnRoleRetailer: "খুচরা বিক্রেতা হিসেবে লগইন ➔",
         trustTitle: "জাতীয় বিশ্বাস ও যাচাইকরণ মানদণ্ড",
         trust1Title: "ক্রিপ্টোগ্রাফিক অপরিবর্তনীয় লেজার:",
         trust1Desc: "প্রতিটি ফসল তোলা, প্রেরণ ও গুণমান পরীক্ষা SHA-256 চেইন দ্বারা সুরক্ষিত।",
@@ -2806,7 +2868,6 @@
         dpdpGrievanceLabel: "অভিযোগ নিষ্পত্তি আধিকারিক:",
         btnDpdpClose: "আমি বুঝতে পেরেছি ও এগিয়ে যান",
         btnLogout: "লগ আউট / সংস্থা পরিবর্তন করুন",
-        heroBadgeText: "জাতীয় ক্রিপ্টোগ্রাফিক কৃষি পণ্য হেফাজত নেটওয়ার্ক",
         tickerTitle: "লাইভ হেফাজত টিকার",
         statProduceKgLabel: "ট্র্যাককৃত পণ্য (কেজি)",
         statFarmersLabel: "নিবন্ধিত কৃষক",
@@ -2826,8 +2887,18 @@
         previewThStatus: "হেফাজত স্থিতি",
         previewActionHint: "এই কনসোলটি সরাসরি ব্যবহার করতে চান? কার্যক্ষেত্রে প্রবেশ করতে নিচে ক্লিক করুন।",
         previewSimBadge: "⚡ লাইভ নোড সিমুলেশন",
-        portalModalTitle: "ইউনিভার্সাল সংস্থা প্রবেশ পোর্টাল",
-        portalModalSubtitle: "আপনার অনুমোদিত কার্যক্ষেত্রে প্রবেশের জন্য ভূমিকা নির্বাচন করুন।",
+        navQrBtnLabel: "কিউআর স্ক্যান",
+        portalBadgeText: "জাতীয় সার্বভৌম মূল্য শৃঙ্খল",
+        portalModalTitle: "আপনি কে?",
+        portalModalSubtitle: "আপনার অনুমোদিত অপারেশনাল নোড ব্যবহারের জন্য কৃষি সরবরাহ শৃঙ্খলে আপনার ভূমিকা নির্বাচন করুন।",
+        portalSecurityNote: "ক্রিপ্টোগ্রাফিক ভূমিকা সীমাবদ্ধতা সক্রিয়। অননুমোদিত চেষ্টা অপরিবর্তনীয় লেজারে নথিভুক্ত হয়।",
+        trustKicker: "জাতীয় বিশ্বস্ততা প্রোটোকল",
+        trustTitle: "জাতীয় বিশ্বাস ও যাচাইকরণ মানদণ্ড",
+        trustSubtitle: "খাদ্য নিরাপত্তা, কৃষক গোপনীয়তা এবং পরিবর্তন-রোধী বাণিজ্য রক্ষাকারী জাতীয় ক্রিপ্টোগ্রাফিক সুরক্ষা।",
+        trustRibbonLedger: "অপরিবর্তনীয় SHA-256 লেজার",
+        trustRibbonDpdp: "ডিপিডিপি আইন ২০২৩ প্রত্যয়িত",
+        trustRibbonAgmark: "অ্যাগমার্কনেট মানসম্পন্ন গ্রেডিং",
+        trustRibbonCdac: "সি-ড্যাক সার্বভৌম ক্লাউড নোড",
         portalRoleTitleProducer: "উৎপাদক",
         portalRoleSubProducer: "কৃষক / সমবায় / চাষী",
         portalRoleDescProducer: "ফসল লট নথিভুক্ত করুন, কিউআর ট্যাগ ইস্যু করুন এবং মণ্ডিতে পাঠান।",
@@ -4555,6 +4626,7 @@
       // Navbar
       setTxt('navSearchText', t.navSearchText);
       setTxt('navVerifyText', t.navVerifyText);
+      setTxt('navQrBtnLabel', t.navQrBtnLabel);
       const navLotInp = document.getElementById('navLotInput');
       if (navLotInp) navLotInp.placeholder = t.navLotPlaceholder;
       setTxt('navLoginText', t.navLoginText);
@@ -4562,9 +4634,6 @@
       // Hero & Ticker & Stats
       setTxt('heroHeadline', t.heroHeadline);
       setTxt('heroTagline', t.heroTagline);
-      setTxt('btnHeroVerifyText', t.btnHeroVerify);
-      setTxt('btnHeroOperatorText', t.btnHeroOperator);
-      setTxt('heroBadgeText', t.heroBadgeText);
       setTxt('tickerTitle', t.tickerTitle);
       setTxt('statProduceKgLabel', t.statProduceKgLabel);
       setTxt('statFarmersLabel', t.statFarmersLabel);
@@ -4602,48 +4671,20 @@
       setTxt('flowStep5Title', t.flowStep5Title);
       setTxt('flowStep5Desc', t.flowStep5Desc);
 
-      // Search
-      setTxt('searchTitle', t.searchTitle);
-      setTxt('searchSubtitle', t.searchSubtitle);
-      setTxt('searchBtn', t.searchBtn);
-      setTxt('sampleLabel', t.sampleLabel);
-
-      // Entity Cards
-      setTxt('entitySectionTitle', t.entitySectionTitle);
-      setTxt('entitySectionSubtitle', t.entitySectionSubtitle);
-      setTxt('roleTitleProducer', t.roleTitleProducer);
-      setTxt('roleSubProducer', t.roleSubProducer);
-      setTxt('roleDescProducer', t.roleDescProducer);
-      setTxt('btnRoleProducer', t.btnRoleProducer);
-
-      setTxt('roleTitleAggregator', t.roleTitleAggregator);
-      setTxt('roleSubAggregator', t.roleSubAggregator);
-      setTxt('roleDescAggregator', t.roleDescAggregator);
-      setTxt('btnRoleAggregator', t.btnRoleAggregator);
-
-      setTxt('roleTitleWholesaler', t.roleTitleWholesaler);
-      setTxt('roleSubWholesaler', t.roleSubWholesaler);
-      setTxt('roleDescWholesaler', t.roleDescWholesaler);
-      setTxt('btnRoleWholesaler', t.btnRoleWholesaler);
-
-      setTxt('roleTitleDistributor', t.roleTitleDistributor);
-      setTxt('roleSubDistributor', t.roleSubDistributor);
-      setTxt('roleDescDistributor', t.roleDescDistributor);
-      setTxt('btnRoleDistributor', t.btnRoleDistributor);
-
-      setTxt('roleTitleRetailer', t.roleTitleRetailer);
-      setTxt('roleSubRetailer', t.roleSubRetailer);
-      setTxt('roleDescRetailer', t.roleDescRetailer);
-      setTxt('btnRoleRetailer', t.btnRoleRetailer);
-
-      // Trust Standards
+      // Trust Standards Showcase
+      setTxt('trustKicker', t.trustKicker);
       setTxt('trustTitle', t.trustTitle);
+      setTxt('trustSubtitle', t.trustSubtitle);
       setTxt('trust1Title', t.trust1Title);
       setTxt('trust1Desc', t.trust1Desc);
       setTxt('trust2Title', t.trust2Title);
       setTxt('trust2Desc', t.trust2Desc);
       setTxt('trust3Title', t.trust3Title);
       setTxt('trust3Desc', t.trust3Desc);
+      setTxt('trustRibbonLedger', t.trustRibbonLedger);
+      setTxt('trustRibbonDpdp', t.trustRibbonDpdp);
+      setTxt('trustRibbonAgmark', t.trustRibbonAgmark);
+      setTxt('trustRibbonCdac', t.trustRibbonCdac);
 
       // Ataraxis Footer
       setTxt('footerMissionText', t.footerMissionText);
@@ -4653,7 +4694,6 @@
       setTxt('btnBackToTopText', t.btnBackToTopText);
       setTxt('footerColExploreTitle', t.footerColExploreTitle);
       setTxt('footerLinkHome', t.footerLinkHome);
-      setTxt('footerLinkVerify', t.footerLinkVerify);
       setTxt('footerLinkLogin', t.footerLinkLogin);
       setTxt('footerLinkSim', t.footerLinkSim);
       setTxt('footerLinkFlow', t.footerLinkFlow);
@@ -4687,8 +4727,10 @@
       setTxt('btnLogout', t.btnLogout);
 
       // Universal Entity Portal Modal
+      setTxt('portalBadgeText', t.portalBadgeText);
       setTxt('portalModalTitle', t.portalModalTitle);
       setTxt('portalModalSubtitle', t.portalModalSubtitle);
+      setTxt('portalSecurityNote', t.portalSecurityNote);
       setTxt('portalRoleTitleProducer', t.portalRoleTitleProducer);
       setTxt('portalRoleSubProducer', t.portalRoleSubProducer);
       setTxt('portalRoleDescProducer', t.portalRoleDescProducer);
@@ -5247,7 +5289,7 @@
       const orgLoc = (currentRole === 'PRODUCER' ? (currentLang === 'bn' ? 'বর্ধমান' : currentLang === 'hi' ? 'बर्धमान' : 'Bardhaman') : 'Active');
       document.getElementById('activeUserName').innerText = rName + ' (' + orgLoc + ')';
 
-      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
+      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
@@ -5269,7 +5311,7 @@
       const ws = document.getElementById('confinedWorkspace');
       if (ws) ws.style.display = 'none';
 
-      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
+      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'block';
       });
@@ -5282,32 +5324,45 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function applyFontSize(level) {
+      const zoomMap = { '-1': '0.92', '0': '1', '1': '1.1' };
+      const fontMap = { '-1': '13.5px', '0': '15px', '1': '16.5px' };
+      const targetZoom = zoomMap[level] || '1';
+      document.body.style.zoom = targetZoom;
+      document.documentElement.style.fontSize = fontMap[level] || '15px';
+      localStorage.setItem('annasutra_font_level', level);
+      document.querySelectorAll('.font-resizer .btn-text-size').forEach(btn => {
+        const txt = btn.innerText.trim();
+        const isTarget = (level === -1 && txt === 'A-') ||
+                         (level === 0 && txt === 'A') ||
+                         (level === 1 && txt === 'A+');
+        if (isTarget) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+    }
+
     function changeFontSize(delta) {
       let current = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
       if (delta === 0) current = 0;
-      else current = Math.max(-1, Math.min(2, current + delta));
-      localStorage.setItem('annasutra_font_level', current);
-      const sizes = { '-1': '13.5px', '0': '15px', '1': '16.5px', '2': '18px' };
-      document.documentElement.style.fontSize = sizes[current] || '15px';
+      else current = Math.max(-1, Math.min(1, current + delta));
+      applyFontSize(current);
     }
 
     function fillSearch(code) {
-      const input = document.getElementById('searchInput');
-      input.value = code;
-      input.focus();
-    }
-
-    function focusSearch() {
-      const el = document.getElementById('searchSection');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('searchInput').focus();
+      const input = document.getElementById('navLotInput');
+      if (input) {
+        input.value = code;
+        focusSearch();
       }
     }
 
-    function scrollToEntitySection() {
-      const el = document.getElementById('entitySection');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    function focusSearch() {
+      const el = document.getElementById('navLotInput');
+      if (el) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        el.focus();
+        el.select();
+      }
     }
 
     function scrollToWorkspace() {
@@ -5431,7 +5486,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
-      if (savedLevel !== 0) changeFontSize(0);
+      applyFontSize(savedLevel);
 
       const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
       setLanguage(savedLang);
