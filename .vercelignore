@@ -1,0 +1,9 @@
+build_artifacts/
+mobile/
+backend/venv/
+.git/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.apk
+*.zip
