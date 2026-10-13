@@ -621,6 +621,10 @@ def apply_schema(apps, schema_editor):
     vendor = connection.vendor
     with connection.cursor() as cursor:
         if vendor == "mysql":
+            try:
+                cursor.execute("SET GLOBAL log_bin_trust_function_creators = 1;")
+            except Exception:
+                pass
             for statement in MYSQL_STATEMENTS:
                 clean_stmt = statement.strip()
                 if clean_stmt:

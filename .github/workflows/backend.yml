@@ -25,7 +25,7 @@ jobs:
 
     env:
       DJANGO_SETTINGS_MODULE: config.settings.test
-      DATABASE_URL: mysql://annasutra_user:test_password@127.0.0.1:3306/annasutra_test
+      DATABASE_URL: mysql://root:root_test_password@127.0.0.1:3306/annasutra_test
       SECRET_KEY: ci-test-secret-key-1234567890-minimum-32-chars-long
 
     steps:
@@ -43,6 +43,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r backend/requirements-dev.txt
+
+      - name: Configure MySQL server parameters
+        run: |
+          mysql -h 127.0.0.1 -u root -proot_test_password -e "SET GLOBAL log_bin_trust_function_creators = 1;" || true
 
       - name: Lint check (Ruff)
         run: |
