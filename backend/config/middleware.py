@@ -16,7 +16,22 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
     - Cache-Control for sensitive API endpoints
     """
 
+    def process_request(self, request):
+        if getattr(settings, "DEBUG", False) and request.method == "OPTIONS":
+            from django.http import HttpResponse
+            response = HttpResponse()
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Idempotency-Key"
+            return response
+        return None
+
     def process_response(self, request, response):
+        if getattr(settings, "DEBUG", False):
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Idempotency-Key"
+
         # 1. Content Security Policy: strict origin, no unsafe-inline scripts
         csp_directives = [
             "default-src 'self'",

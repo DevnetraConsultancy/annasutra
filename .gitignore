@@ -77,5 +77,6 @@ mobile/linux/flutter/ephemeral/
 .DS_Store
 Thumbs.db
 .vercel
+build_artifacts/
 .env*
 !.env.example
