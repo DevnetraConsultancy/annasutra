@@ -237,28 +237,22 @@
       cursor: pointer;
     }
 
-    /* 3. HERO SECTION (HOME PAGE ONLY - NPCI STYLE) */
-    .hero {
-      background: #07271d;
-      color: white;
-      text-align: center;
-      padding: 68px 24px 60px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 440px;
+    /* 3. HERO VIEWPORT SHOWCASE (NPCI PROMO STYLE - CRYSTAL CLEAR VIDEO) */
+    .hero-viewport-wrap {
+      max-width: 1260px;
+      margin: 18px auto 0;
+      padding: 0 16px;
     }
-    .hero-video-container {
-      position: absolute;
-      inset: 0;
+    .hero-viewport-frame {
+      position: relative;
       width: 100%;
-      height: 100%;
+      min-height: 520px;
+      border-radius: 22px;
       overflow: hidden;
-      z-index: 1;
-      pointer-events: none;
+      background: #0f172a;
+      box-shadow: 0 16px 40px -12px rgba(11, 61, 46, 0.25), 0 0 0 1px rgba(11, 61, 46, 0.12);
+      display: flex;
+      align-items: center;
     }
     .hero-bg-video {
       position: absolute;
@@ -270,39 +264,42 @@
       height: 100%;
       object-fit: cover;
       transform: translate(-50%, -50%);
-      opacity: 0.44;
-      transition: opacity 0.8s ease;
+      opacity: 1; /* 100% CRYSTAL CLEAR - NO GREEN MUD COVER! */
+      z-index: 1;
     }
-    .hero-gradient-overlay {
+    /* Directional soft scrim ONLY on left side for text readability. Right 55% of video is 100% clear! */
+    .hero-directional-scrim {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(7, 39, 29, 0.92) 0%, rgba(11, 61, 46, 0.78) 50%, rgba(5, 26, 19, 0.94) 100%),
-                  radial-gradient(circle at center, transparent 0%, rgba(3, 17, 12, 0.6) 100%);
+      background: linear-gradient(90deg, rgba(7, 39, 29, 0.94) 0%, rgba(7, 39, 29, 0.82) 42%, rgba(7, 39, 29, 0.2) 72%, transparent 100%);
       z-index: 2;
+      pointer-events: none;
     }
-    .hero-content {
+    .hero-billboard-content {
       position: relative;
       z-index: 3;
-      max-width: 840px;
-      margin: 0 auto;
+      max-width: 640px;
+      padding: 48px 36px 48px 44px;
+      color: #ffffff;
+      text-align: left;
     }
     .hero-sovereign-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      padding: 5px 14px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 14px;
       border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       color: #fde047;
-      letter-spacing: 0.4px;
-      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
       text-transform: uppercase;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
     .hero-badge-dot {
       width: 7px;
@@ -312,37 +309,35 @@
       box-shadow: 0 0 8px #22c55e;
       display: inline-block;
     }
-    .hero h2 {
+    .hero-billboard-content h2 {
       margin: 0 0 14px;
       font-size: 38px;
       font-weight: 900;
       letter-spacing: -0.6px;
-      line-height: 1.22;
-      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75);
+      line-height: 1.2;
+      color: #ffffff;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
     }
-    .hero .tagline {
-      font-size: 16.5px;
-      opacity: 0.95;
-      max-width: 720px;
-      margin: 0 auto 26px;
+    .hero-billboard-content .tagline {
+      font-size: 16px;
+      line-height: 1.55;
       color: #f1f5f9;
-      line-height: 1.6;
-      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65);
+      margin: 0 0 24px;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
     }
     .hero-actions {
       display: flex;
-      justify-content: center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
       align-items: center;
     }
     .btn-hero-primary {
       background: var(--saffron);
       color: white;
-      padding: 13px 26px;
+      padding: 13px 24px;
       border-radius: 10px;
       font-weight: 800;
-      font-size: 15px;
+      font-size: 14.5px;
       border: none;
       cursor: pointer;
       display: inline-flex;
@@ -357,14 +352,14 @@
       box-shadow: 0 6px 18px rgba(230, 126, 34, 0.5);
     }
     .btn-hero-secondary {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.14);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: white;
-      padding: 13px 24px;
+      padding: 13px 22px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14.5px;
       border: 1.5px solid rgba(255, 255, 255, 0.35);
       cursor: pointer;
       display: inline-flex;
@@ -373,19 +368,19 @@
       transition: all 0.2s;
     }
     .btn-hero-secondary:hover {
-      background: rgba(255, 255, 255, 0.22);
-      border-color: rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.6);
       transform: translateY(-1px);
     }
     .btn-hero-promo {
-      background: rgba(11, 61, 46, 0.75);
+      background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: #fde047;
-      padding: 13px 22px;
+      padding: 13px 20px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 14.5px;
+      font-size: 14px;
       border: 1.5px solid rgba(253, 224, 71, 0.45);
       cursor: pointer;
       display: inline-flex;
@@ -394,22 +389,45 @@
       transition: all 0.2s;
     }
     .btn-hero-promo:hover {
-      background: rgba(11, 61, 46, 0.95);
+      background: rgba(15, 23, 42, 0.95);
       border-color: #fde047;
       color: #ffffff;
       transform: translateY(-1px);
     }
     .hero-video-controls {
       position: absolute;
-      bottom: 16px;
-      right: 20px;
+      bottom: 20px;
+      right: 24px;
       z-index: 4;
       display: flex;
       align-items: center;
       gap: 8px;
     }
+    .hero-live-pill {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 11px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .live-dot-red {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+      display: inline-block;
+    }
     .hero-video-ctrl-btn {
-      background: rgba(7, 39, 29, 0.75);
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -430,6 +448,275 @@
       border-color: var(--saffron);
       transform: scale(1.08);
     }
+
+    /* LIVE TELEMETRY TICKER BAR */
+    .ledger-ticker-bar {
+      max-width: 1260px;
+      margin: 14px auto 0;
+      padding: 0 16px;
+    }
+    .ledger-ticker-inner {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+    }
+    .ledger-ticker-label {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ledger-ticker-stream {
+      font-size: 12px;
+      color: #334155;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    /* NATIONAL STATS STRIP */
+    .home-stats-strip {
+      max-width: 1260px;
+      margin: 20px auto 0;
+      padding: 0 16px;
+    }
+    .home-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+    .home-stat-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 14px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .home-stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+      border-color: #cbd5e1;
+    }
+    .home-stat-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .home-stat-num {
+      font-size: 21px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+    }
+    .home-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 3px;
+      line-height: 1.3;
+    }
+
+    /* LIVE ENTITY DASHBOARD PREVIEW CONSOLE */
+    .entity-dash-preview-wrap {
+      max-width: 1260px;
+      margin: 32px auto 0;
+      padding: 0 16px;
+    }
+    .entity-dash-preview-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    .entity-dash-preview-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 22px;
+    }
+    .entity-dash-preview-header h3 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--primary);
+      margin: 0 0 6px;
+      letter-spacing: -0.4px;
+    }
+    .entity-dash-preview-header p {
+      font-size: 13.5px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .entity-preview-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .btn-entity-tab {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+      padding: 9px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s;
+    }
+    .btn-entity-tab:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .btn-entity-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
+    }
+    .preview-console-screen {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 22px;
+    }
+    .preview-org-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+    .preview-org-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .preview-org-badge {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #15803d;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .preview-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .preview-metric-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+    .preview-metric-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .preview-metric-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.4px;
+    }
+    .preview-metric-tag {
+      font-size: 11px;
+      color: #15803d;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .preview-batches-table {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .preview-table-head {
+      background: #f1f5f9;
+      padding: 10px 16px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .preview-batch-row {
+      padding: 11px 16px;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .preview-batch-code {
+      font-family: monospace;
+      font-weight: 800;
+      color: var(--primary);
+      background: #f0fdf4;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid #bbf7d0;
+    }
+    .preview-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-preview-launch {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .btn-preview-launch:hover {
+      background: var(--primary-dark);
+    }
+
     /* CINEMA PROMO VIDEO MODAL */
     .promo-modal-card {
       background: #0f172a;
@@ -494,6 +781,23 @@
     @media (prefers-reduced-motion: reduce) {
       .hero-bg-video { display: none; }
       .hero-video-controls { display: none; }
+    }
+    @media (max-width: 1024px) {
+      .home-stats-grid { grid-template-columns: repeat(3, 1fr); }
+      .hero-viewport-frame { min-height: 480px; }
+      .hero-billboard-content h2 { font-size: 32px; }
+      .preview-metrics-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .home-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-viewport-frame { min-height: 440px; }
+      .hero-billboard-content { padding: 32px 20px; }
+      .hero-billboard-content h2 { font-size: 26px; }
+      .hero-billboard-content .tagline { font-size: 14px; }
+      .hero-video-controls { bottom: 12px; right: 14px; }
+      .hero-directional-scrim {
+        background: linear-gradient(180deg, rgba(7, 39, 29, 0.90) 0%, rgba(7, 39, 29, 0.78) 55%, rgba(7, 39, 29, 0.45) 100%);
+      }
     }
 
     /* CONTAINER */
@@ -1188,9 +1492,9 @@
     </div>
   </header>
 
-  <!-- 3. HERO SECTION (HOME PAGE ONLY - NPCI STYLE BACKGROUND VIDEO) -->
-  <section class="hero" id="heroSection">
-    <div class="hero-video-container" aria-hidden="true">
+  <!-- 3. HERO VIEWPORT SHOWCASE (NPCI PROMO STYLE - CRYSTAL CLEAR VIDEO) -->
+  <section class="hero-viewport-wrap" id="heroSection">
+    <div class="hero-viewport-frame">
       <video 
         id="heroBgVideo" 
         class="hero-bg-video" 
@@ -1201,56 +1505,109 @@
         preload="auto">
         <source src="{{ hero_video_url }}" type="video/mp4">
       </video>
-      <div class="hero-gradient-overlay"></div>
-    </div>
+      <div class="hero-directional-scrim"></div>
 
-    <div class="hero-content">
-      <div class="hero-sovereign-badge">
-        <span class="hero-badge-dot"></span>
-        <span id="heroBadgeText">National Cryptographic Agri-Produce Custody Network</span>
+      <div class="hero-billboard-content">
+        <div class="hero-sovereign-badge">
+          <span class="hero-badge-dot"></span>
+          <span id="heroBadgeText">National Cryptographic Agri-Produce Custody Network</span>
+        </div>
+        <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
+        <p class="tagline" id="heroTagline">
+          India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-hero-primary" id="btnHeroVerify" onclick="focusSearch()">
+            🔍 <span id="btnHeroVerifyText">Verify Produce Lot</span>
+          </button>
+          <button class="btn-hero-secondary" id="btnHeroOperator" onclick="scrollToEntitySection()">
+            🌾 <span id="btnHeroOperatorText">Universal Entity Sign In</span>
+          </button>
+          <button class="btn-hero-promo" id="btnWatchPromo" onclick="openPromoModal()">
+            <span>▶</span> <span id="btnWatchPromoText">Watch Promo Film</span>
+          </button>
+        </div>
       </div>
-      <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
-      <p class="tagline" id="heroTagline">
-        India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
-      </p>
-      <div class="hero-actions">
-        <button class="btn-hero-primary" id="btnHeroVerify" onclick="focusSearch()">
-          🔍 <span id="btnHeroVerifyText">Verify Produce Lot</span>
-        </button>
-        <button class="btn-hero-secondary" id="btnHeroOperator" onclick="scrollToEntitySection()">
-          🌾 <span id="btnHeroOperatorText">Universal Entity Sign In</span>
-        </button>
-        <button class="btn-hero-promo" id="btnWatchPromo" onclick="openPromoModal()">
-          <span>▶</span> <span id="btnWatchPromoText">Watch Promo Film</span>
-        </button>
-      </div>
-    </div>
 
-    <div class="hero-video-controls" id="heroVideoControls">
-      <button 
-        type="button" 
-        class="hero-video-ctrl-btn" 
-        id="btnToggleVideoPlay" 
-        onclick="toggleHeroVideoPlay()" 
-        title="Pause / Play Background Video" 
-        aria-label="Pause Background Video">
-        <span id="videoPlayIcon">⏸️</span>
-      </button>
-      <button 
-        type="button" 
-        class="hero-video-ctrl-btn" 
-        id="btnToggleVideoMute" 
-        onclick="toggleHeroVideoMute()" 
-        title="Unmute / Mute Background Sound" 
-        aria-label="Toggle Sound">
-        <span id="videoMuteIcon">🔇</span>
-      </button>
+      <div class="hero-video-controls" id="heroVideoControls">
+        <div class="hero-live-pill">
+          <span class="live-dot-red"></span>
+          <span id="liveFeedLabel">LIVE BROADCAST</span>
+        </div>
+        <button 
+          type="button" 
+          class="hero-video-ctrl-btn" 
+          id="btnToggleVideoPlay" 
+          onclick="toggleHeroVideoPlay()" 
+          title="Pause / Play Background Video" 
+          aria-label="Pause Background Video">
+          <span id="videoPlayIcon">⏸️</span>
+        </button>
+        <button 
+          type="button" 
+          class="hero-video-ctrl-btn" 
+          id="btnToggleVideoMute" 
+          onclick="toggleHeroVideoMute()" 
+          title="Unmute / Mute Background Sound" 
+          aria-label="Toggle Sound">
+          <span id="videoMuteIcon">🔇</span>
+        </button>
+      </div>
     </div>
   </section>
 
+  <!-- 4. LIVE TELEMETRY TICKER BAR -->
+  <div class="ledger-ticker-bar" id="ledgerTickerBar">
+    <div class="ledger-ticker-inner">
+      <span class="ledger-ticker-label">
+        <span class="hero-badge-dot"></span>
+        <span id="tickerTitle">LIVE CUSTODY TICKER</span>
+      </span>
+      <span class="ledger-ticker-stream" id="tickerStream">
+        ⚡ [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
+      </span>
+    </div>
+  </div>
+
+  <!-- 5. NATIONAL TRUST & ECOSYSTEM STATS STRIP -->
+  <div class="home-stats-strip" id="homeStatsStrip">
+    <div class="home-stats-grid">
+      <div class="home-stat-card">
+        <div class="home-stat-icon">🌾</div>
+        <div class="home-stat-num" id="statProduceKg">1,42,850+</div>
+        <div class="home-stat-label" id="statProduceKgLabel">Kg Produce Tracked</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon">👨‍🌾</div>
+        <div class="home-stat-num" id="statFarmers">2,480+</div>
+        <div class="home-stat-label" id="statFarmersLabel">Registered Farmers</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon">🏆</div>
+        <div class="home-stat-num" id="statGradeA">99.8%</div>
+        <div class="home-stat-label" id="statGradeALabel">Agmarknet Grade A</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon">📱</div>
+        <div class="home-stat-num" id="statScans">48,900+</div>
+        <div class="home-stat-label" id="statScansLabel">Consumer QR Scans</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon">🛡️</div>
+        <div class="home-stat-num" id="statPrivacy">0.0%</div>
+        <div class="home-stat-label" id="statPrivacyLabel">Data Leakage (DPDP)</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon">⛓️</div>
+        <div class="home-stat-num" id="statAppendOnly">100%</div>
+        <div class="home-stat-label" id="statAppendOnlyLabel">Append-Only Integrity</div>
+      </div>
+    </div>
+  </div>
+
   <main class="container">
 
-    <!-- 5. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY) -->
+    <!-- 6. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY) -->
     <div class="flow-showcase" id="flowShowcaseSection">
       <h3 id="flowTitle">Unified 5-Tier Supply-Chain Architecture</h3>
       <p class="sub" id="flowSubtitle">Direct cryptographic custody transfer across all agricultural decision-makers</p>
@@ -1280,6 +1637,76 @@
           <div class="flow-step-num">5</div>
           <div class="flow-step-title" id="flowStep5Title">Retailer</div>
           <div class="flow-step-desc" id="flowStep5Desc">Kirana / POS intake, consumer shelf QR, final sale logging.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. INTERACTIVE 5-TIER ENTITY DASHBOARD PREVIEW CONSOLE (HOME PAGE ONLY) -->
+    <div class="entity-dash-preview-wrap" id="entityDashPreviewWrap">
+      <div class="entity-dash-preview-card">
+        <div class="entity-dash-preview-header">
+          <h3 id="previewConsoleHeading">Real-Time Entity Dashboard Simulator</h3>
+          <p id="previewConsoleSubheading">Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.</p>
+        </div>
+
+        <!-- 5 Entity Switcher Tabs -->
+        <div class="entity-preview-tabs" id="previewRoleTabs">
+          <button type="button" class="btn-entity-tab active" data-role="PRODUCER" onclick="switchPreviewEntity('PRODUCER')">
+            <span>🌾</span> <span id="tabProducerLabel">Producer</span>
+          </button>
+          <button type="button" class="btn-entity-tab" data-role="AGGREGATOR" onclick="switchPreviewEntity('AGGREGATOR')">
+            <span>⚖️</span> <span id="tabAggregatorLabel">Aggregator</span>
+          </button>
+          <button type="button" class="btn-entity-tab" data-role="WHOLESALER" onclick="switchPreviewEntity('WHOLESALER')">
+            <span>🏢</span> <span id="tabWholesalerLabel">Wholesaler</span>
+          </button>
+          <button type="button" class="btn-entity-tab" data-role="DISTRIBUTOR" onclick="switchPreviewEntity('DISTRIBUTOR')">
+            <span>🚚</span> <span id="tabDistributorLabel">Distributor</span>
+          </button>
+          <button type="button" class="btn-entity-tab" data-role="RETAILER" onclick="switchPreviewEntity('RETAILER')">
+            <span>🛒</span> <span id="tabRetailerLabel">Retailer</span>
+          </button>
+        </div>
+
+        <!-- Live Simulated Screen -->
+        <div class="preview-console-screen" id="previewConsoleScreen">
+          <div class="preview-org-bar">
+            <div class="preview-org-info">
+              <span style="font-size: 20px;" id="previewRoleIcon">🌾</span>
+              <div>
+                <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
+                <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Bardhaman Organic Farmers Producer Co-op • Cluster Farm Yard #4</div>
+              </div>
+            </div>
+            <span class="preview-org-badge" id="previewBadgeText">⚡ SIMULATED LIVE NODE</span>
+          </div>
+
+          <!-- 3 KPI Cards -->
+          <div class="preview-metrics-grid" id="previewMetricsGrid">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Batches in Custody Table -->
+          <div class="preview-batches-table">
+            <div class="preview-table-head">
+              <span id="previewThBatch">Batch / Lot Code</span>
+              <span id="previewThDesc">Description & Volume</span>
+              <span id="previewThStatus">Custody Status</span>
+            </div>
+            <div id="previewBatchRows">
+              <!-- Dynamically populated rows -->
+            </div>
+          </div>
+
+          <!-- Action Launch Bar -->
+          <div class="preview-actions-bar">
+            <span style="font-size: 12px; color: #64748b;" id="previewActionHint">
+              Want to operate this console live? Click below to access the role workspace.
+            </span>
+            <button type="button" class="btn-preview-launch" id="btnPreviewLaunch" onclick="launchFromPreview()">
+              <span id="btnPreviewLaunchText">Sign In as Producer ➔</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1692,7 +2119,27 @@
         promoModalHeading: "AnnaSutra National Supply Chain Film",
         promoModalSubheading: "Official Farm-to-Fork Traceability Initiative",
         promoModalFootnote: "Developed by C-DAC | MeitY, Government of India • DPDP Act 2023 Compliant",
-        btnPromoModalClose: "Close"
+        btnPromoModalClose: "Close",
+        tickerTitle: "LIVE CUSTODY TICKER",
+        statProduceKgLabel: "Kg Produce Tracked",
+        statFarmersLabel: "Registered Farmers",
+        statGradeALabel: "Agmarknet Grade A",
+        statScansLabel: "Consumer QR Scans",
+        statPrivacyLabel: "Data Leakage (DPDP)",
+        statAppendOnlyLabel: "Append-Only Integrity",
+        liveFeedLabel: "LIVE BROADCAST",
+        previewConsoleHeading: "Real-Time Entity Dashboard Simulator",
+        previewConsoleSubheading: "Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.",
+        tabProducerLabel: "Producer",
+        tabAggregatorLabel: "Aggregator",
+        tabWholesalerLabel: "Wholesaler",
+        tabDistributorLabel: "Distributor",
+        tabRetailerLabel: "Retailer",
+        previewThBatch: "Batch / Lot Code",
+        previewThDesc: "Description & Volume",
+        previewThStatus: "Custody Status",
+        previewActionHint: "Want to operate this console live? Click below to access the role workspace.",
+        previewSimBadge: "⚡ SIMULATED LIVE NODE"
       },
       hi: {
         navSearchText: "लॉट जांचें",
@@ -1775,7 +2222,27 @@
         promoModalHeading: "अन्नसूत्र राष्ट्रीय आपूर्ति-श्रृंखला फिल्म",
         promoModalSubheading: "आधिकारिक खेत-से-थाली ट्रैसेबिलिटी पहल",
         promoModalFootnote: "सी-डैक | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार • डीपीडीपी अधिनियम 2023 अनुपालन",
-        btnPromoModalClose: "बंद करें"
+        btnPromoModalClose: "बंद करें",
+        tickerTitle: "लाइव कस्टडी टिकर",
+        statProduceKgLabel: "ट्रैक किया गया उत्पाद (किग्रा)",
+        statFarmersLabel: "पंजीकृत किसान",
+        statGradeALabel: "एगमार्कनेट ग्रेड ए",
+        statScansLabel: "उपभोक्ता क्यूआर स्कैन",
+        statPrivacyLabel: "डेटा रिसाव (डीपीडीपी)",
+        statAppendOnlyLabel: "अपरिवर्तनीय अखंडता",
+        liveFeedLabel: "सीधा प्रसारण",
+        previewConsoleHeading: "वास्तविक समय संस्थागत डैशबोर्ड सिमुलेटर",
+        previewConsoleSubheading: "देखें कि राष्ट्रीय आपूर्ति-श्रृंखला नेटवर्क में प्रत्येक भागीदार अपने नोड को कैसे नियंत्रित करता है।",
+        tabProducerLabel: "उत्पादक",
+        tabAggregatorLabel: "संग्रहकर्ता",
+        tabWholesalerLabel: "थोक व्यापारी",
+        tabDistributorLabel: "वितरक",
+        tabRetailerLabel: "खुदरा विक्रेता",
+        previewThBatch: "बैच / लॉट कोड",
+        previewThDesc: "विवरण एवं मात्रा",
+        previewThStatus: "कस्टडी स्थिति",
+        previewActionHint: "क्या आप इस कंसोल को लाइव चलाना चाहते हैं? कार्यक्षेत्र में जाने के लिए नीचे क्लिक करें।",
+        previewSimBadge: "⚡ लाइव नोड सिमुलेशन"
       },
       bn: {
         navSearchText: "লট যাচাই",
@@ -1858,8 +2325,27 @@
         promoModalHeading: "অন্নসূত্র জাতীয় সরবরাহ-শৃঙ্খল ফিল্ম",
         promoModalSubheading: "খামার থেকে থালা পর্যন্ত অফিসিয়াল ট্রেসেবিলিটি উদ্যোগ",
         promoModalFootnote: "সি-ড্যাক | ইলেকট্রনিক্স এবং তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার • ডিপিডিপি আইন ২০২৩ সম্মত",
-        btnPromoModalClose: "বন্ধ করুন"
-      }
+        btnPromoModalClose: "বন্ধ করুন",
+        tickerTitle: "লাইভ হেফাজত টিকার",
+        statProduceKgLabel: "ট্র্যাককৃত পণ্য (কেজি)",
+        statFarmersLabel: "নিবন্ধিত কৃষক",
+        statGradeALabel: "অ্যাগমার্কনেট গ্রেড এ",
+        statScansLabel: "ভোক্তা কিউআর স্ক্যান",
+        statPrivacyLabel: "তথ্য ফাঁস (ডিপিডিপি)",
+        statAppendOnlyLabel: "অপরিবর্তনীয় বিশ্বস্ততা",
+        liveFeedLabel: "সরাসরি সম্প্রচার",
+        previewConsoleHeading: "রিয়েল-টাইম সংস্থা ড্যাশবোর্ড সিমুলেটর",
+        previewConsoleSubheading: "জাতীয় সরবরাহ শৃঙ্খল নেটওয়ার্কে প্রতিটি অংশগ্রহণকারী তাদের নোড কীভাবে নিয়ন্ত্রণ করে তা দেখুন।",
+        tabProducerLabel: "উৎপাদক",
+        tabAggregatorLabel: "সংগ্রহকারী",
+        tabWholesalerLabel: "পাইকারি বিক্রেতা",
+        tabDistributorLabel: "পরিবেশক",
+        tabRetailerLabel: "খুচরা বিক্রেতা",
+        previewThBatch: "ব্যাচ / লট কোড",
+        previewThDesc: "বিবরণ ও পরিমাণ",
+        previewThStatus: "হেফাজত স্থিতি",
+        previewActionHint: "এই কনসোলটি সরাসরি ব্যবহার করতে চান? কার্যক্ষেত্রে প্রবেশ করতে নিচে ক্লিক করুন।",
+        previewSimBadge: "⚡ লাইভ নোড সিমুলেশন"
       }
     };
 
@@ -3183,9 +3669,364 @@
       }
     };
 
+    const dashboardPreviewData = {
+      en: {
+        PRODUCER: {
+          icon: '🌾',
+          title: 'Producer Operations Console',
+          org: 'Bardhaman Organic Farmers Producer Co-op',
+          station: 'Cluster Farm Yard #4, Bardhaman',
+          launchBtn: 'Sign In as Producer ➔',
+          metrics: [
+            { title: 'Total Harvested', val: '18,450 Kg', tag: '↑ 14% vs last month' },
+            { title: 'Active QR Batches', val: '12 Batches', tag: 'All tamper-evident sealed' },
+            { title: 'Dispatched to Mandi', val: '14,200 Kg', tag: 'Dual-signed transfer' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Grade A Organic', status: 'In Farm Custody' },
+            { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) • 1,200.0 Kg • 24 Crates Sealed', status: 'Ready for Mandi' },
+            { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) • 320.0 Kg • Verified Lot', status: 'Quality Certified' }
+          ]
+        },
+        AGGREGATOR: {
+          icon: '⚖️',
+          title: 'Aggregator Mandi Console',
+          org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
+          station: 'Gate #2 Weighbridge & Grading Yard',
+          launchBtn: 'Sign In as Aggregator ➔',
+          metrics: [
+            { title: 'Mandi Inward Intake', val: '42,800 Kg', tag: 'Digital weighbridge certified' },
+            { title: 'Agmarknet Grade A', val: '99.4%', tag: 'Official quality tested' },
+            { title: 'Auction Cleared', val: '₹ 14.8 Lakh', tag: 'e-NAM settlements' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Grade A) • 500.0 Kg • Mandi Weighbridge Slip #8812', status: 'In Mandi Custody' },
+            { code: 'HGH-LOT-9921-A', desc: 'Potato (Jyoti Grade A) • 700.0 Kg • Auction Cleared', status: 'Auction Settled' },
+            { code: 'HGH-LOT-9921-B', desc: 'Potato (Jyoti Grade B) • 500.0 Kg • Transit Pass Issued', status: 'Ready for Wholesaler' }
+          ]
+        },
+        WHOLESALER: {
+          icon: '🏢',
+          title: 'Wholesaler Terminal Console',
+          org: 'Kolkata Central Wholesalers Ltd (Posta Market)',
+          station: 'Posta Terminal Complex, Kolkata',
+          launchBtn: 'Sign In as Wholesaler ➔',
+          metrics: [
+            { title: 'Cold Bay Inventory', val: '65,200 Kg', tag: 'Controlled 4°C - 8°C chambers' },
+            { title: 'Consignments Split', val: '38 Lots', tag: 'Mass-balance preserved' },
+            { title: 'Fleet Dispatches', val: '24 Shipments', tag: 'Locked reefer trucks' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid) • 500.0 Kg • Cold Bay #3 Active', status: 'In Cold Storage' },
+            { code: 'CCW-PLT-4401', desc: 'Onion (Nasik Red) • 1,800.0 Kg • Pallet G-02', status: 'Terminal Stock' },
+            { code: 'CCW-PLT-4402', desc: 'Green Chilli • 250.0 Kg • AC Chamber #1', status: 'Ready for Fleet' }
+          ]
+        },
+        DISTRIBUTOR: {
+          icon: '🚚',
+          title: 'Distributor Logistics Console',
+          org: 'Bengal Cold-Chain Express Logistics (WB-LOG-004)',
+          station: 'Central Transit Depot, New Town, Kolkata',
+          launchBtn: 'Sign In as Distributor ➔',
+          metrics: [
+            { title: 'Active Reefer Trucks', val: '18 Trucks', tag: 'Live GPS geofenced' },
+            { title: 'Mean Cargo Temp', val: '7.4 °C', tag: 'Zero thermal excursions' },
+            { title: 'On-Time Retail Drops', val: '99.8%', tag: '42 Store destinations' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Reefer WB-19-AX-4402', status: 'In Transit (Kolkata)' },
+            { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 Kg • Highway Toll Checkpoint', status: 'In Transit' },
+            { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) • 450.0 Kg • Cold-chain verified', status: 'Arrived at Depot' }
+          ]
+        },
+        RETAILER: {
+          icon: '🛒',
+          title: 'Retailer Point-of-Sale Console',
+          org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
+          station: 'Produce Aisle, Lake Gardens, Kolkata',
+          launchBtn: 'Sign In as Retailer ➔',
+          metrics: [
+            { title: 'Shelf Stock Volume', val: '1,420 Kg', tag: 'Active on display counters' },
+            { title: 'Consumer QR Scans', val: '1,890 Scans', tag: '4.9/5.0 Customer trust score' },
+            { title: 'Freshness Retention', val: '99.2%', tag: '< 0.8% organic waste rate' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 120.0 Kg on shelf • Grade A Organic', status: 'Active on Shelf' },
+            { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • 80.0 Kg • 24 Verified Customer Scans', status: 'Active on Shelf' },
+            { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) • 45.0 Kg • Standee QR Verified', status: 'Active on Shelf' }
+          ]
+        }
+      },
+      hi: {
+        PRODUCER: {
+          icon: '🌾',
+          title: 'उत्पादक संचालन कंसोल',
+          org: 'बर्धमान ऑर्गेनिक फार्मर्स प्रोड्यूसर को-ऑप',
+          station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
+          launchBtn: 'उत्पादक के रूप में लॉगिन करें ➔',
+          metrics: [
+            { title: 'कुल कटाई उपज', val: '18,450 किग्रा', tag: '↑ पिछले माह से 14% अधिक' },
+            { title: 'सक्रिय क्यूआर बैच', val: '12 लॉट्स', tag: 'सभी क्रेट सुरक्षित रूप से सीलबंद' },
+            { title: 'मंडी को प्रेषित', val: '14,200 किग्रा', tag: 'द्विपक्षीय हस्ताक्षरित प्रेषण' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ग्रेड ए जैविक', status: 'खेत कस्टडी में' },
+            { code: 'AS-TOM-2026-X1', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट सील', status: 'मंडी प्रेषण हेतु तैयार' },
+            { code: 'WB-FPO-RABI-04', desc: 'फूलगोभी (स्नोबॉल) • 320.0 किग्रा • सत्यापित लॉट', status: 'गुणवत्ता प्रमाणित' }
+          ]
+        },
+        AGGREGATOR: {
+          icon: '⚖️',
+          title: 'संग्रहकर्ता मंडी कंसोल',
+          org: 'हुगली एपीएमसी संग्रह यार्ड (MANDI-WB-012)',
+          station: 'गेट #2 वेज-ब्रिज एवं ग्रेडिंग परिसर',
+          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें ➔',
+          metrics: [
+            { title: 'मंडी आवक वजन', val: '42,800 किग्रा', tag: 'डिजिटल वेज-ब्रिज द्वारा प्रमाणित' },
+            { title: 'एगमार्कनेट ग्रेड ए', val: '99.4%', tag: 'आधिकारिक गुणवत्ता जांच' },
+            { title: 'नीलामी निकासी', val: '₹ 14.8 लाख', tag: 'ई-नाम द्वारा निपटान' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • वेज-ब्रिज पर्ची #8812', status: 'मंडी कस्टडी में' },
+            { code: 'HGH-LOT-9921-A', desc: 'आलू (ज्योति ग्रेड ए) • 700.0 किग्रा • नीलामी पूर्ण', status: 'नीलामी संपन्न' },
+            { code: 'HGH-LOT-9921-B', desc: 'आलू (ज्योति ग्रेड बी) • 500.0 किग्रा • ट्रांजिट पास जारी', status: 'थोक व्यापारी हेतु तैयार' }
+          ]
+        },
+        WHOLESALER: {
+          icon: '🏢',
+          title: 'थोक व्यापारी टर्मिनल कंसोल',
+          org: 'कोलकाता सेंट्रल होलसेलर्स लि. (पोस्ता बाजार)',
+          station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
+          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें ➔',
+          metrics: [
+            { title: 'शीत गृह भंडार', val: '65,200 किग्रा', tag: 'नियंत्रित 4°C - 8°C तापमान' },
+            { title: 'लॉट विभाजन', val: '38 लॉट्स', tag: 'द्रव्यमान-संतुलन सुरक्षित' },
+            { title: 'फ्लीट प्रेषण', val: '24 खेपें', tag: 'सीलबंद रीफर वाहन' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बेयर #3 में सुरक्षित', status: 'हिमागार में सुरक्षित' },
+            { code: 'CCW-PLT-4401', desc: 'प्याज (नासिक लाल) • 1,800.0 किग्रा • पैलेट जी-02', status: 'टर्मिनल स्टॉक' },
+            { code: 'CCW-PLT-4402', desc: 'हरी मिर्च • 250.0 किग्रा • एसी चैंबर #1', status: 'फ्लीट हेतु तैयार' }
+          ]
+        },
+        DISTRIBUTOR: {
+          icon: '🚚',
+          title: 'वितरक लॉजिस्टिक्स कंसोल',
+          org: 'बंगाल कोल्ड-चेन एक्सप्रेस लॉजिस्टिक्स (WB-LOG-004)',
+          station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
+          launchBtn: 'वितरक के रूप में लॉगिन करें ➔',
+          metrics: [
+            { title: 'सक्रिय रीफर ट्रक', val: '18 ट्रक', tag: 'लाइव जीपीएस जियोफेंस्ड' },
+            { title: 'औसत तापमान', val: '7.4 °C', tag: 'शून्य तापीय विचलन' },
+            { title: 'समय पर डिलीवरी', val: '99.8%', tag: '42 खुदरा गंतव्य' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • रीफर WB-19-AX-4402', status: 'परिवहन में (कोलकाता)' },
+            { code: '6R3T8PLM2K9V', desc: 'सेब (किन्नौर) • 300.0 किग्रा • टोल चेकपॉइंट पर', status: 'मार्ग में' },
+            { code: 'DIST-VEG-4401', desc: 'हरी मटर (ताजा) • 450.0 किग्रा • कोल्ड-चेन प्रमाणित', status: 'डिपो में आगमन' }
+          ]
+        },
+        RETAILER: {
+          icon: '🛒',
+          title: 'खुदरा विक्रेता पीओएस कंसोल',
+          org: 'मां दुर्गा रिटेल फ्रेश मार्ट (कोलकाता आउटलेट #4)',
+          station: 'सब्जी विभाग, लेक गार्डन्स, कोलकाता',
+          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें ➔',
+          metrics: [
+            { title: 'काउंटर स्टॉक', val: '1,420 किग्रा', tag: 'दुकान के डिस्प्ले रैक पर सक्रिय' },
+            { title: 'उपभोक्ता क्यूआर स्कैन', val: '1,890 स्कैन', tag: '4.9/5.0 ग्राहक विश्वास स्कोर' },
+            { title: 'ताजगी प्रतिधारण', val: '99.2%', tag: '< 0.8% जैविक नुकसान' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 120.0 किग्रा शेल्फ पर • ग्रेड ए जैविक', status: 'शेल्फ पर सक्रिय' },
+            { code: '4T9Q2XMD7K1B', desc: 'गाजर (नारंगी) • 80.0 किग्रा • 24 सत्यापित ग्राहक स्कैन', status: 'शेल्फ पर सक्रिय' },
+            { code: 'RET-APP-9901', desc: 'सेब (किन्नौर) • 45.0 किग्रा • स्टैंडी क्यूआर सत्यापित', status: 'शेल्फ पर सक्रिय' }
+          ]
+        }
+      },
+      bn: {
+        PRODUCER: {
+          icon: '🌾',
+          title: 'উৎপাদক পরিচালনা কনসোল',
+          org: 'বর্ধমান অর্গানিক ফার্মার্স প্রডিউসার কো-অপ',
+          station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
+          launchBtn: 'উৎপাদক হিসেবে লগইন করুন ➔',
+          metrics: [
+            { title: 'মোট ফসল ফলন', val: '১৮,৪৫০ কেজি', tag: '↑ গত মাসের চেয়ে ১৪% বেশি' },
+            { title: 'সক্রিয় কিউআর ব্যাচ', val: '১২টি ব্যাচ', tag: 'সব ক্রেট সুরক্ষিত সিলযুক্ত' },
+            { title: 'মণ্ডিতে প্রেরিত', val: '১৪,২০০ কেজি', tag: 'দ্বিপাক্ষিক স্বাক্ষরে প্রেরিত' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • গ্রেড এ জৈব', status: 'খামার হেফাজতে' },
+            { code: 'AS-TOM-2026-X1', desc: 'আলু (জ্যোতি) • ১,২০০.০ কেজি • ২৪টি ক্রেট সিলযুক্ত', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
+            { code: 'WB-FPO-RABI-04', desc: 'ফুলকপি (স্নোবল) • ৩২০.০ কেজি • প্রত্যয়িত লট', status: 'গুণমান প্রত্যয়িত' }
+          ]
+        },
+        AGGREGATOR: {
+          icon: '⚖️',
+          title: 'সংগ্রহকারী মণ্ডি কনসোল',
+          org: 'হুগলি এপিএমসি সংগ্রহ ইয়ার্ড (MANDI-WB-012)',
+          station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
+          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন ➔',
+          metrics: [
+            { title: 'মণ্ডি চালান ওজন', val: '৪২,৮০০ কেজি', tag: 'ডিজিটাল ওয়েজ-ব্রিজ দ্বারা প্রত্যয়িত' },
+            { title: 'অ্যাগমার্কনেট গ্রেড এ', val: '৯৯.৪%', tag: 'অফিসিয়াল গুণমান পরীক্ষিত' },
+            { title: 'নিলাম নিষ্পত্তি', val: '₹ ১৪.৮ লাখ', tag: 'ই-নাম দ্বারা নিষ্পত্তি' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • ওয়েজ-ব্রিজ স্লিপ #৮৮১২', status: 'মণ্ডি হেফাজতে' },
+            { code: 'HGH-LOT-9921-A', desc: 'আলু (জ্যোতি গ্রেড এ) • ৭০০.০ কেজি • নিলাম সম্পন্ন', status: 'নিলাম সম্পন্ন' },
+            { code: 'HGH-LOT-9921-B', desc: 'আলু (জ্যোতি গ্রেড বি) • ৫০০.০ কেজি • ট্রানজিট পাস ইস্যু', status: 'পাইকারদের জন্য প্রস্তুত' }
+          ]
+        },
+        WHOLESALER: {
+          icon: '🏢',
+          title: 'পাইকারি টার্মিনাল কনসোল',
+          org: 'কলকাতা সেন্ট্রাল হোলসেলার্স প্রাঃ লিঃ (পোস্তা বাজার)',
+          station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
+          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন ➔',
+          metrics: [
+            { title: 'হিমাগার মজুদ', val: '৬৫,২০০ কেজি', tag: 'নিয়ন্ত্রিত ৪°সে - ৮°সে তাপমাত্রা' },
+            { title: 'চালান বিভাজন', val: '৩৮টি লট', tag: 'ভর-ভারসাম্য অক্ষত' },
+            { title: 'ফ্লিট প্রেরণ', val: '২৪টি চালান', tag: 'সিলযুক্ত রিফার ভ্যান' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সক্রিয়', status: 'হিমাগারে সংরক্ষিত' },
+            { code: 'CCW-PLT-4401', desc: 'পেঁয়াজ (নাসিক লাল) • ১,৮০০.০ কেজি • প্যালেট জি-০২', status: 'টার্মিনাল মজুদ' },
+            { code: 'CCW-PLT-4402', desc: 'কাঁচা লঙ্কা • ২৫০.০ কেজি • এসি চেম্বার #১', status: 'ফ্লিটের জন্য প্রস্তুত' }
+          ]
+        },
+        DISTRIBUTOR: {
+          icon: '🚚',
+          title: 'পরিবেশক লজিস্টিকস কনসোল',
+          org: 'বেঙ্গল কোল্ড-চেন এক্সপ্রেস লজিস্টিকস (WB-LOG-004)',
+          station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
+          launchBtn: 'পরিবেশক হিসেবে লগইন করুন ➔',
+          metrics: [
+            { title: 'সক্রিয় রিফার ট্রাক', val: '১৮টি ট্রাক', tag: 'লাইভ জিপিএস জিওফেন্সড' },
+            { title: 'গড় তাপমাত্রা', val: '৭.৪ °সে', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
+            { title: 'অন-টাইম ডেলিভারি', val: '৯৯.৮%', tag: '৪২টি খুচরা আউটলেট' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা)' },
+            { code: '6R3T8PLM2K9V', desc: 'আপেল (কিন্নর) • ৩০০.০ কেজি • টোল চেকপয়েন্টে', status: 'পথিমধ্যে' },
+            { code: 'DIST-VEG-4401', desc: 'মটরশুঁটি (তাজা) • ৪৫০.০ কেজি • কোল্ড-চেন প্রত্যয়িত', status: 'ডিপোতে পৌঁছেছে' }
+          ]
+        },
+        RETAILER: {
+          icon: '🛒',
+          title: 'খুচরা বিক্রেতা পিওএস কনসোল',
+          org: 'মা দুর্গা রিটেইল ফ্রেশ মার্ট (কলকাতা আউটলেট #৪)',
+          station: 'সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
+          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন ➔',
+          metrics: [
+            { title: 'কাউন্টার মজুদ', val: '১,৪২০ কেজি', tag: 'দোকানের ডিসপ্লে র্যাকে সক্রিয়' },
+            { title: 'ভোক্তা কিউআর স্ক্যান', val: '১,৮৯০টি স্ক্যান', tag: '৪.৯/৫.০ গ্রাহক আস্থা স্কোর' },
+            { title: 'তাজাত্ব ধারণ', val: '৯৯.২%', tag: '< ০.৮% জৈব অপচয়' }
+          ],
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ১২০.০ কেজি সেলফে • গ্রেড এ অর্গানিক', status: 'সেলফে সক্রিয়' },
+            { code: '4T9Q2XMD7K1B', desc: 'গাজর (কমলা) • ৮০.০ কেজি • ২৪টি গ্রাহক স্ক্যান সম্পন্ন', status: 'সেলফে সক্রিয়' },
+            { code: 'RET-APP-9901', desc: 'আপেল (কিন্নর) • ৪৫.০ কেজি • স্ট্যান্ডি কিউআর যাচাইকৃত', status: 'সেলফে সক্রিয়' }
+          ]
+        }
+      }
+    };
+
     let currentLang = 'en';
     let currentRole = 'PRODUCER';
+    let currentPreviewRole = 'PRODUCER';
     let activeTool = null;
+
+    const tickerEvents = {
+      en: [
+        "Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody to Aggregator",
+        "Bardhaman Organic FPO registered 750 Kg Hybrid Tomato (Lot #AS-TOM-2026-X1) • Plot B-4 Geofence • Hash: 0x3d41...b891",
+        "Bengal Cold-Chain Reefer WB-19-AX-4402 recorded in-transit temp 7.8°C • Zero thermal excursions • Route on track",
+        "Maa Durga Fresh Mart (Kolkata) dispensed 2.5 Kg via consumer QR checkout • Append-only inventory adjusted",
+        "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Agmarknet Grade A certified • e-NAM settlement"
+      ],
+      hi: [
+        "मंडी एपीएमसी आजादपुर ने 1,200 किग्रा अल्फांसो आम प्रमाणित किया (लॉट #7K3Q9XMD4T2B) • हैश: 0x9e8a...3f12 • संग्रहकर्ता को कस्टडी",
+        "बर्धमान ऑर्गेनिक एफपीओ ने 750 किग्रा हाइब्रिड टमाटर पंजीकृत किया (लॉट #AS-TOM-2026-X1) • प्लॉट बी-4 • हैश: 0x3d41...b891",
+        "बंगाल कोल्ड-चेन रीफर WB-19-AX-4402 ने परिवहन तापमान 7.8°C दर्ज किया • शून्य तापीय विचलन • समय पर मार्ग",
+        "मां दुर्गा फ्रेश मार्ट (कोलकाता) ने उपभोक्ता क्यूआर द्वारा 2.5 किग्रा बिक्री दर्ज की • अपरिवर्तनीय लेज़र समायोजित",
+        "हुगली एपीएमसी वेज-ब्रिज ने 4,250 किग्रा भार सत्यापित किया • एगमार्कनेट ग्रेड ए प्रमाणित • ई-नाम निपटान"
+      ],
+      bn: [
+        "মণ্ডি এপিএমসি আজাদপুর ১,২০০ কেজি আলফানসো আম প্রত্যয়িত করেছে (লট #7K3Q9XMD4T2B) • হ্যাশ: 0x9e8a...3f12 • সংগ্রহকারীর নিকট হেফাজত",
+        "বর্ধমান অর্গানিক এফপিও ৭৫০ কেজি হাইব্রিড টমেটো নিবন্ধন করেছে (লট #AS-TOM-2026-X1) • প্লট বি-৪ • হ্যাশ: 0x3d41...b891",
+        "বেঙ্গল কোল্ড-চেন রিফার WB-19-AX-4402 চলন্ত তাপমাত্রা ৭.৮°সে রেকর্ড করেছে • শূন্য বিচ্যুতি • সঠিক ট্রানজিট",
+        "মা দুর্গা ফ্রেশ মার্ট (কলকাতা) ভোক্তা কিউআর স্ক্যানে ২.৫ কেজি বিক্রয় সম্পন্ন করেছে • লেজার হালনাগাদ",
+        "হুগলি এপিএমসি ওয়েজ-ব্রিজ ৪,২৫০ কেজি ওজন যাচাই করেছে • অ্যাগমার্কনেট গ্রেড এ প্রত্যয়িত • ই-নাম নিষ্পত্তি"
+      ]
+    };
+    let tickerIdx = 0;
+
+    function startTickerCycle() {
+      const streamEl = document.getElementById('tickerStream');
+      if (!streamEl) return;
+      setInterval(() => {
+        const list = tickerEvents[currentLang] || tickerEvents.en;
+        tickerIdx = (tickerIdx + 1) % list.length;
+        const msg = list[tickerIdx];
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        streamEl.textContent = `⚡ [${timeStr} IST] ` + (msg || '');
+      }, 4000);
+    }
+    startTickerCycle();
+
+    function switchPreviewEntity(role) {
+      currentPreviewRole = role;
+      document.querySelectorAll('#previewRoleTabs .btn-entity-tab').forEach(btn => {
+        if (btn.dataset.role === role) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      renderEntityPreview();
+    }
+
+    function renderEntityPreview() {
+      const langData = dashboardPreviewData[currentLang] || dashboardPreviewData['en'];
+      const data = langData[currentPreviewRole] || dashboardPreviewData['en'][currentPreviewRole];
+      if (!data) return;
+
+      const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.innerText = val;
+      };
+
+      setTxt('previewRoleIcon', data.icon);
+      setTxt('previewOrgTitle', data.title);
+      setTxt('previewOrgSub', data.org + ' • ' + data.station);
+      setTxt('btnPreviewLaunchText', data.launchBtn);
+
+      const metricsGrid = document.getElementById('previewMetricsGrid');
+      if (metricsGrid) {
+        metricsGrid.innerHTML = data.metrics.map(m => `
+          <div class="preview-metric-card">
+            <div class="preview-metric-title">${m.title}</div>
+            <div class="preview-metric-val">${m.val}</div>
+            <div class="preview-metric-tag">${m.tag}</div>
+          </div>
+        `).join('');
+      }
+
+      const batchRows = document.getElementById('previewBatchRows');
+      if (batchRows) {
+        batchRows.innerHTML = data.batches.map(b => `
+          <div class="preview-batch-row">
+            <span class="preview-batch-code">${b.code}</span>
+            <span style="font-size: 13px; color: #334155; flex: 1;">${b.desc}</span>
+            <span style="font-size: 11.5px; font-weight: 700; color: #15803d; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 9px; border-radius: 20px;">${b.status}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function launchFromPreview() {
+      openLoginModal(currentPreviewRole);
+    }
 
     function setLanguage(lang) {
       if (!i18n[lang]) lang = 'en';
@@ -3207,13 +4048,36 @@
       setTxt('navSearchText', t.navSearchText);
       setTxt('navLoginText', t.navLoginText);
 
-      // Hero
+      // Hero & Ticker & Stats
       setTxt('heroHeadline', t.heroHeadline);
       setTxt('heroTagline', t.heroTagline);
       setTxt('btnHeroVerifyText', t.btnHeroVerify);
       setTxt('btnHeroOperatorText', t.btnHeroOperator);
       setTxt('heroBadgeText', t.heroBadgeText);
       setTxt('btnWatchPromoText', t.btnWatchPromo);
+      setTxt('liveFeedLabel', t.liveFeedLabel);
+      setTxt('tickerTitle', t.tickerTitle);
+      setTxt('statProduceKgLabel', t.statProduceKgLabel);
+      setTxt('statFarmersLabel', t.statFarmersLabel);
+      setTxt('statGradeALabel', t.statGradeALabel);
+      setTxt('statScansLabel', t.statScansLabel);
+      setTxt('statPrivacyLabel', t.statPrivacyLabel);
+      setTxt('statAppendOnlyLabel', t.statAppendOnlyLabel);
+
+      // Entity Dashboard Preview Simulator
+      setTxt('previewConsoleHeading', t.previewConsoleHeading);
+      setTxt('previewConsoleSubheading', t.previewConsoleSubheading);
+      setTxt('tabProducerLabel', t.tabProducerLabel);
+      setTxt('tabAggregatorLabel', t.tabAggregatorLabel);
+      setTxt('tabWholesalerLabel', t.tabWholesalerLabel);
+      setTxt('tabDistributorLabel', t.tabDistributorLabel);
+      setTxt('tabRetailerLabel', t.tabRetailerLabel);
+      setTxt('previewThBatch', t.previewThBatch);
+      setTxt('previewThDesc', t.previewThDesc);
+      setTxt('previewThStatus', t.previewThStatus);
+      setTxt('previewActionHint', t.previewActionHint);
+      setTxt('previewBadgeText', t.previewSimBadge);
+      renderEntityPreview();
 
       // 5-Tier Architecture
       setTxt('flowTitle', t.flowTitle);
@@ -3622,7 +4486,7 @@
       const orgLoc = (currentRole === 'PRODUCER' ? (currentLang === 'bn' ? 'বর্ধমান' : currentLang === 'hi' ? 'बर्धमान' : 'Bardhaman') : 'Active');
       document.getElementById('activeUserName').innerText = rName + ' (' + orgLoc + ')';
 
-      ['heroSection', 'flowShowcaseSection', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
+      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
@@ -3644,7 +4508,7 @@
       const ws = document.getElementById('confinedWorkspace');
       if (ws) ws.style.display = 'none';
 
-      ['heroSection', 'flowShowcaseSection', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
+      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'block';
       });
