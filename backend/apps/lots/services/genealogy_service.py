@@ -22,6 +22,17 @@ from apps.lots.models import Lot
 from apps.publicview.services import refresh_public_view
 
 
+def to_db_uuid(val):
+    """Formats UUID according to database engine (hex for MySQL/SQLite, native UUID for PostgreSQL)."""
+    if val is None:
+        return None
+    if not connection.features.has_native_uuid_field:
+        if hasattr(val, "hex"):
+            return val.hex
+        return str(val).replace("-", "")
+    return val
+
+
 def _check_genealogy_cycle(parent_lot_id: uuid.UUID, child_lot_id: uuid.UUID) -> None:
     """Ensures adding edge (parent_lot -> child_lot) does not introduce a cycle."""
     if parent_lot_id == child_lot_id:
@@ -41,7 +52,7 @@ def _check_genealogy_cycle(parent_lot_id: uuid.UUID, child_lot_id: uuid.UUID) ->
     SELECT 1 FROM descendants WHERE child_lot = %s LIMIT 1;
     """
     with connection.cursor() as cursor:
-        cursor.execute(query, [child_lot_id, parent_lot_id])
+        cursor.execute(query, [to_db_uuid(child_lot_id), to_db_uuid(parent_lot_id)])
         if cursor.fetchone():
             raise exceptions.ValidationError(
                 {"detail": "Genealogy cycle detected.", "code": "CYCLIC_GENEALOGY"}
@@ -245,7 +256,7 @@ def split_lot(user, parent_lot_code: str, data: dict) -> dict:
             with connection.cursor() as cursor:
                 cursor.execute(
                     "INSERT INTO lot_edge (parent_lot, child_lot, qty_kg, event_id) VALUES (%s, %s, %s, %s)",
-                    [parent_lot.lot_id, child_lot.lot_id, child_qty, event_id],
+                    [to_db_uuid(parent_lot.lot_id), to_db_uuid(child_lot.lot_id), child_qty, to_db_uuid(event_id)],
                 )
 
             # Child initial trace event
@@ -451,7 +462,7 @@ def merge_lots(user, data: dict) -> dict:
             with connection.cursor() as cursor:
                 cursor.execute(
                     "INSERT INTO lot_edge (parent_lot, child_lot, qty_kg, event_id) VALUES (%s, %s, %s, %s)",
-                    [p.lot_id, merged_lot_id, input_qty, event_id],
+                    [to_db_uuid(p.lot_id), to_db_uuid(merged_lot_id), input_qty, to_db_uuid(event_id)],
                 )
 
         # 4. Record merged lot trace event

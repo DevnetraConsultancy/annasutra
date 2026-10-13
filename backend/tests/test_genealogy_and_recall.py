@@ -29,6 +29,16 @@ from apps.quality.models import Inspection
 from apps.ledger.admin import TraceEventAdmin
 
 
+def to_db_uuid(val):
+    if val is None:
+        return None
+    if not connection.features.has_native_uuid_field:
+        if hasattr(val, "hex"):
+            return val.hex
+        return str(val).replace("-", "")
+    return val
+
+
 @pytest.fixture
 def api_client():
     return APIClient()
@@ -187,7 +197,7 @@ def test_split_lot_success_and_mass_balance(api_client, test_setup):
 
     # Verify lot_edge in database
     with connection.cursor() as cursor:
-        cursor.execute("SELECT parent_lot, child_lot, qty_kg FROM lot_edge WHERE parent_lot = %s", [parent_lot.lot_id])
+        cursor.execute("SELECT parent_lot, child_lot, qty_kg FROM lot_edge WHERE parent_lot = %s", [to_db_uuid(parent_lot.lot_id)])
         rows = cursor.fetchall()
         assert len(rows) == 2
         qtys = sorted([float(r[2]) for r in rows])
@@ -459,7 +469,7 @@ def test_recall_and_200_lot_graph_forward_trace(api_client, test_setup):
         with connection.cursor() as cursor:
             cursor.execute(
                 "INSERT INTO lot_edge (parent_lot, child_lot, qty_kg, event_id) VALUES (%s, %s, %s, %s)",
-                [current_parent.lot_id, child_lot.lot_id, Decimal("10.000"), uuid.uuid4()],
+                [to_db_uuid(current_parent.lot_id), to_db_uuid(child_lot.lot_id), Decimal("10.000"), to_db_uuid(uuid.uuid4())],
             )
         created_descendants.append(child_code)
 
@@ -515,5 +525,5 @@ def test_database_trigger_forbids_update_trace_event(test_setup):
 
     with pytest.raises(Exception) as exc_info:
         with connection.cursor() as cursor:
-            cursor.execute("UPDATE trace_event SET sync_status = 'MUTATED' WHERE event_id = %s", [event.event_id])
+            cursor.execute("UPDATE trace_event SET sync_status = 'MUTATED' WHERE event_id = %s", [to_db_uuid(event.event_id)])
     assert "trace_event is append-only" in str(exc_info.value)

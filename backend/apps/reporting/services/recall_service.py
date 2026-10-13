@@ -15,6 +15,16 @@ from apps.publicview.services import refresh_public_view
 from apps.reporting.models import Recall
 
 
+def to_db_uuid(val):
+    if val is None:
+        return None
+    if not connection.features.has_native_uuid_field:
+        if hasattr(val, "hex"):
+            return val.hex
+        return str(val).replace("-", "")
+    return val
+
+
 def open_recall(user, data: dict) -> dict:
     """Opens a product recall on a root lot and marks it RECALLED."""
     lot_code = data.get("lot_code")
@@ -119,7 +129,7 @@ def trace_recall(user, recall_id_str: str) -> dict:
 
     items = []
     with connection.cursor() as cursor:
-        cursor.execute(query, [recall.root_lot.lot_id])
+        cursor.execute(query, [to_db_uuid(recall.root_lot.lot_id)])
         rows = cursor.fetchall()
         for row in rows:
             items.append({
