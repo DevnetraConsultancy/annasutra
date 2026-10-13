@@ -254,15 +254,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildHeroBanner(context, isDesktop),
-                        _buildSyncAndVerificationAlerts(context, authState, syncState),
-                        _buildUniversalEntityLoginSection(context, authState),
-                        const SizedBox(height: 12),
-                        _buildOperationalConsole(context, theme),
-                        const SizedBox(height: 16),
-                        _buildAccessibleActionButtons(context),
-                        const SizedBox(height: 16),
-                        _buildNationalTrustStandards(context),
+                        if (!authState.isAuthenticated) ...[
+                          _buildHeroBanner(context, isDesktop),
+                          _buildUniversalEntityLoginSection(context, authState),
+                          const SizedBox(height: 16),
+                          _buildNationalTrustStandards(context),
+                        ],
+                        if (authState.isAuthenticated) ...[
+                          _buildSyncAndVerificationAlerts(context, authState, syncState),
+                          _buildOperationalConsole(context, theme),
+                          const SizedBox(height: 16),
+                          _buildAccessibleActionButtons(context),
+                        ],
                         const SizedBox(height: 16),
                         _buildOfficialFooter(context),
                       ],
@@ -1365,13 +1368,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               const SizedBox(width: 20),
               Container(width: 1, height: 24, color: Colors.white24),
               const SizedBox(width: 20),
-              Image.asset(
-                'assets/images/cdac_official_banner.png',
-                height: 24,
-                errorBuilder: (_, __, ___) => Image.asset(
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Image.asset(
                   'assets/images/cdac_logo.png',
-                  height: 24,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.memory, color: Colors.white70),
+                  height: 22,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.memory, color: Color(0xFF002080)),
                 ),
               ),
             ],

@@ -381,11 +381,21 @@
     .footer-maker-block {
       margin-bottom: 12px;
     }
+    .cdac-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      padding: 6px 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      margin-bottom: 10px;
+    }
     .cdac-footer-img {
-      height: 32px;
+      height: 36px;
       width: auto;
       object-fit: contain;
-      margin-bottom: 8px;
+      display: block;
     }
     .footer-org-title {
       font-size: 12px;
@@ -567,11 +577,13 @@
 
       <!-- Maker Details & Logo -->
       <div class="footer-maker-block">
-        <img 
-          src="{{ cdac_logo }}" 
-          alt="C-DAC" 
-          class="cdac-footer-img" 
-        />
+        <div class="cdac-badge-pill">
+          <img 
+            src="{{ cdac_logo }}" 
+            alt="C-DAC (सी डैक)" 
+            class="cdac-footer-img" 
+          />
+        </div>
         <div class="footer-org-title">Centre for Development of Advanced Computing (C-DAC)</div>
         <div class="footer-gov-title">Ministry of Electronics & Information Technology, Government of India</div>
       </div>

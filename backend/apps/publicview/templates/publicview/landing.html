@@ -596,15 +596,88 @@
     }
     .workspace-tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
     }
+    .tool-action-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .tool-action-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 16px rgba(11, 61, 46, 0.12);
+      transform: translateY(-2px);
+    }
+    .tool-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .tool-icon-circle {
+      width: 40px;
+      height: 40px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .tool-card-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--slate-dark);
+      line-height: 1.25;
+    }
+    .tool-card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #15803d;
+      background: #dcfce7;
+      padding: 2px 7px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .tool-card-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin: 4px 0 12px;
+    }
+    .btn-card-launch {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      transition: background 0.2s;
+    }
+    .btn-card-launch:hover { background: var(--primary-dark); }
     .btn-workspace-tool {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 12px;
+      padding: 10px 16px;
       border-radius: 8px;
       font-size: 13px;
       font-weight: 800;
@@ -731,11 +804,21 @@
     .footer-maker-block {
       margin-bottom: 14px;
     }
+    .cdac-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      padding: 8px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+      margin-bottom: 12px;
+    }
     .cdac-footer-img {
-      height: 36px;
+      height: 42px;
       width: auto;
       object-fit: contain;
-      margin-bottom: 10px;
+      display: block;
     }
     .footer-org-title {
       font-size: 13px;
@@ -906,7 +989,7 @@
   </header>
 
   <!-- 3. HERO SECTION (HOME PAGE ONLY) -->
-  <section class="hero">
+  <section class="hero" id="heroSection">
     <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
     <p class="tagline" id="heroTagline">
       India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
@@ -924,7 +1007,7 @@
   <main class="container">
 
     <!-- 5. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY) -->
-    <div class="flow-showcase">
+    <div class="flow-showcase" id="flowShowcaseSection">
       <h3 id="flowTitle">Unified 5-Tier Supply-Chain Architecture</h3>
       <p class="sub" id="flowSubtitle">Direct cryptographic custody transfer across all agricultural decision-makers</p>
       
@@ -985,7 +1068,7 @@
     </div>
 
     <!-- 7. CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
-    <div class="confined-workspace" id="confinedWorkspace">
+    <div class="confined-workspace" id="confinedWorkspace" style="display: none;">
       <div class="confined-banner">
         <div class="confined-badge">
           🔒 <span id="confinedBadgeText">ROLE CONFINED: Operating strictly within authorized domain.</span>
@@ -1098,7 +1181,7 @@
     </div>
 
     <!-- 9. NATIONAL TRUST STANDARDS (HOME PAGE ONLY) -->
-    <div class="features-card">
+    <div class="features-card" id="trustSection">
       <h3 id="trustTitle">National Trust & Verification Standards</h3>
       <div class="feature-item">
         <span class="feature-icon">🛡️</span>
@@ -1152,11 +1235,13 @@
 
       <!-- Tier 3: Maker Details & Logo -->
       <div class="footer-maker-block">
-        <img 
-          src="{{ cdac_logo }}" 
-          alt="C-DAC" 
-          class="cdac-footer-img" 
-        />
+        <div class="cdac-badge-pill">
+          <img 
+            src="{{ cdac_logo }}" 
+            alt="C-DAC (सी डैक)" 
+            class="cdac-footer-img" 
+          />
+        </div>
         <div class="footer-org-title">Centre for Development of Advanced Computing (C-DAC)</div>
         <div class="footer-gov-title">Ministry of Electronics & Information Technology, Government of India</div>
       </div>
@@ -1208,6 +1293,39 @@
         <p><strong>Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
       </div>
       <button class="btn-otp-submit" onclick="closeDpdpModal()">I Understand & Continue</button>
+    </div>
+  </div>
+
+  <!-- 13. DEDICATED ENTITY OPERATION MODAL -->
+  <div class="modal-overlay" id="operationModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box" style="max-width: 520px; width: 92%;">
+      <button class="modal-close" onclick="closeOperationModal()">✕</button>
+      <div class="modal-head">
+        <div style="font-size: 28px; margin-bottom: 6px;" id="opModalIcon">🌾</div>
+        <h3 id="opModalTitle" style="margin: 0 0 4px; font-size: 19px; font-weight: 900; color: var(--primary);">Operation Title</h3>
+        <p id="opModalSubtitle" style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Cryptographic Custody Event Ledger</p>
+      </div>
+
+      <div id="opModalFormContainer" style="margin: 16px 0; text-align: left;">
+        <!-- Dynamic form fields -->
+      </div>
+
+      <div id="opResultCard" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 14px; margin-bottom: 14px; text-align: left;">
+        <div style="display: flex; align-items: center; gap: 8px; color: #166534; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
+          <span>✓</span> <span id="opResultTitle">Action Committed to Ledger</span>
+        </div>
+        <div style="font-size: 11px; font-family: monospace; color: #15803d; word-break: break-all; margin-bottom: 4px;" id="opResultTx">
+          Tx Hash: 0x...
+        </div>
+        <div style="font-size: 12px; color: #334155;" id="opResultDesc">
+          Recorded to append-only chain.
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 14px;">
+        <button class="btn-workspace-tool secondary" style="flex: 1;" onclick="closeOperationModal()" id="btnOpCancel">Close</button>
+        <button class="btn-workspace-tool" style="flex: 2;" id="btnOpSubmit" onclick="commitCurrentOperation()">Commit to Ledger</button>
+      </div>
     </div>
   </div>
 
@@ -1383,74 +1501,432 @@
 
     const roleDefinitions = {
       'PRODUCER': {
-        title: 'Producer Custody Operations (Farm & Harvest)',
-        org: 'Bardhaman Farmer Producer Co. (FPO-WB-0492)',
+        title: 'Producer Operations Console (Farmer & FPO Cultivator)',
+        org: 'Bardhaman Organic Farmers Producer Co-op (FPO-WB-0492)',
+        station: 'Cluster Farm Yard #4, Bardhaman',
         tools: [
-          { label: '+ Register New Farm Lot', icon: '🌾', action: 'createNewLot()' },
-          { label: '🏷️ Issue Crate QR Tags', icon: '🖨️', action: 'printQrTags()' },
-          { label: '🚚 Dispatch to Aggregator', icon: '📦', action: 'dispatchToAggregator()' }
+          {
+            id: 'harvestLot',
+            label: 'Register New Harvest Lot',
+            icon: '🌾',
+            tag: 'Farm Genesis',
+            desc: 'Register crop harvest, quantity (kg), plot GPS coordinates, and generate genesis ledger hash.',
+            fields: [
+              { name: 'crop', label: 'Crop Name & Variety', type: 'text', value: 'Tomato (Hybrid Red)' },
+              { name: 'qty', label: 'Harvested Quantity (Kg)', type: 'number', value: '750.0' },
+              { name: 'plot', label: 'Farm Plot / Cluster ID', type: 'text', value: 'Plot B-4 (Geofenced)' },
+              { name: 'farmer', label: 'Registered Farmer / FPO Member', type: 'text', value: 'Ramesh Patil (FP-1092)' }
+            ]
+          },
+          {
+            id: 'printQr',
+            label: 'Issue Agmarknet Crate QR Labels',
+            icon: '🏷️',
+            tag: 'Serialization',
+            desc: 'Print serialized tamper-evident QR code labels for harvest transport crates.',
+            fields: [
+              { name: 'lotCode', label: 'Active Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+              { name: 'crateSize', label: 'Crate Weight Capacity (Kg)', type: 'number', value: '25.0' },
+              { name: 'crateCount', label: 'Number of Crate Labels', type: 'number', value: '30' }
+            ]
+          },
+          {
+            id: 'dispatchMandi',
+            label: 'Dispatch to APMC Mandi Aggregator',
+            icon: '🚚',
+            tag: 'Transit Gate Pass',
+            desc: 'Generate electronic transit manifest and initiate mutual custody transfer to Mandi Arhatiya.',
+            fields: [
+              { name: 'recipient', label: 'Destination Mandi / Aggregator', type: 'text', value: 'Hooghly APMC Aggregation Yard' },
+              { name: 'vehicle', label: 'Transport Vehicle Reg #', type: 'text', value: 'WB-19-AX-4402' },
+              { name: 'dispatchQty', label: 'Dispatch Weight (Kg)', type: 'number', value: '500.0' }
+            ]
+          },
+          {
+            id: 'soilTest',
+            label: 'Pre-Harvest Soil & Quality Attestation',
+            icon: '🧪',
+            tag: 'Quality Pre-Check',
+            desc: 'Log field moisture %, organic clearance certificate, and soil test sensor readings.',
+            fields: [
+              { name: 'moisture', label: 'Soil Moisture %', type: 'number', value: '18.4' },
+              { name: 'pesticide', label: 'Chemical Residue Test', type: 'text', value: 'PASS - Zero Synthetic Trace' },
+              { name: 'inspector', label: 'Field Quality Attestor', type: 'text', value: 'K. S. Mukherjee (Agri Officer)' }
+            ]
+          },
+          {
+            id: 'dpdpConsent',
+            label: 'DPDP Farmer Consent Registry',
+            icon: '📜',
+            tag: 'DPDP 2023 Compliant',
+            desc: 'Record farmer explicit data privacy consent protecting sensitive coordinates and pricing.',
+            fields: [
+              { name: 'farmerId', label: 'Farmer Virtual DPDP Token', type: 'text', value: 'DPDP-IN-FPO-8821-X9' },
+              { name: 'scope', label: 'Permitted Consent Scope', type: 'text', value: 'Produce Traceability & Quality Only' },
+              { name: 'status', label: 'PII Redaction Level', type: 'text', value: '100% Redacted (Zero Leakage)' }
+            ]
+          },
+          {
+            id: 'yieldAnalytics',
+            label: 'Harvest Yield & Mass-Balance Ledger',
+            icon: '📊',
+            tag: 'Ledger Audit',
+            desc: 'Audit season mass-balance records, farm inventory balances, and immutable trigger logs.',
+            fields: [
+              { name: 'season', label: 'Active Agricultural Season', type: 'text', value: 'Rabi 2026' },
+              { name: 'totalYield', label: 'Total FPO Recorded Yield', type: 'text', value: '48,250.0 Kg across 32 farms' },
+              { name: 'ledgerBlocks', label: 'Attested Block Height', type: 'text', value: 'Block #14,892 (Synced)' }
+            ]
+          }
         ],
         batches: [
-          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • 500.0 kg • Harvested today at Cluster A-4', status: 'In Farm Custody' },
-          { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) • 1,200.0 kg • Packed in 24 crates', status: 'Ready for Mandi Dispatch' }
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 kg • Harvested at Cluster Yard #4', status: 'In Farm Custody' },
+          { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) • 1,200.0 kg • Packed in 24 crates', status: 'Ready for Mandi Dispatch' },
+          { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) • 320.0 kg • Graded Farm Stock', status: 'Quality Inspected' }
         ]
       },
       'AGGREGATOR': {
-        title: 'Aggregator Mandi Operations (Collection & Grading)',
+        title: 'Aggregator Mandi Console (APMC Yard & Mandi Arhatiya)',
         org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
+        station: 'Gate #2 Weighment & Grading Complex',
         tools: [
-          { label: '📥 Accept Producer Handover', icon: '✓', action: 'acceptProducerHandover()' },
-          { label: '⚖️ Record Weight & Grade (A/B/C)', icon: '🔍', action: 'gradeLot()' },
-          { label: '📦 Consolidate & Dispatch to Wholesaler', icon: '🏢', action: 'dispatchToWholesaler()' }
+          {
+            id: 'acceptHandover',
+            label: 'Accept Producer Handover',
+            icon: '📥',
+            tag: 'Mandi Inward',
+            desc: 'Scan farmer crate QR code, verify vehicle gate pass and sign mutual custody receipt.',
+            fields: [
+              { name: 'lotCode', label: 'Farmer Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+              { name: 'consignor', label: 'Consignor FPO Name', type: 'text', value: 'Bardhaman Farmer Producer Co.' },
+              { name: 'condition', label: 'Arrival Crates Condition', type: 'text', value: 'Sound / Undamaged (30 Crates)' }
+            ]
+          },
+          {
+            id: 'weighbridge',
+            label: 'Digital Weighbridge Attestation',
+            icon: '⚖️',
+            tag: 'Certified Weight',
+            desc: 'Capture unalterable weighbridge gross, tare, and net weights with certified timestamp.',
+            fields: [
+              { name: 'gross', label: 'Gross Vehicle Weight (Kg)', type: 'number', value: '4250.0' },
+              { name: 'tare', label: 'Tare Weight (Kg)', type: 'number', value: '3750.0' },
+              { name: 'net', label: 'Certified Net Weight (Kg)', type: 'number', value: '500.0' },
+              { name: 'slipNo', label: 'Weighbridge Digital Slip #', type: 'text', value: 'WB-HGH-WB-8812' }
+            ]
+          },
+          {
+            id: 'gradeInspection',
+            label: 'Agmarknet Quality Grading',
+            icon: '🔬',
+            tag: 'Grade Certificate',
+            desc: 'Conduct physical examination and issue Agmarknet Grade A, B, or C quality certificate.',
+            fields: [
+              { name: 'grade', label: 'Assigned Grade', type: 'text', value: 'Grade A (Premium Commercial)' },
+              { name: 'defectPct', label: 'Defect / Blemish Percentage', type: 'number', value: '1.2' },
+              { name: 'inspector', label: 'APMC Grading Inspector License', type: 'text', value: 'AGM-WB-CERT-441' }
+            ]
+          },
+          {
+            id: 'lotSplit',
+            label: 'Consignment Splitting & Merge',
+            icon: '✂️',
+            tag: 'Mass-Balance DAG',
+            desc: 'Subdivide bulk farmer consignments into commercial auction lots preserving cryptographic parent links.',
+            fields: [
+              { name: 'parentLot', label: 'Parent Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+              { name: 'subLotA', label: 'Sub-Lot A Allocation (Kg)', type: 'number', value: '300.0' },
+              { name: 'subLotB', label: 'Sub-Lot B Allocation (Kg)', type: 'number', value: '200.0' }
+            ]
+          },
+          {
+            id: 'mandiAuction',
+            label: 'APMC Mandi Auction Record',
+            icon: '🔨',
+            tag: 'Price Discovery',
+            desc: 'Log open auction clearing price (₹/Quintal), winning trader bidder, and mandi cess attestation.',
+            fields: [
+              { name: 'winningBidder', label: 'Winning Wholesaler / Trader', type: 'text', value: 'Kolkata Central Wholesalers Ltd' },
+              { name: 'clearedRate', label: 'Auction Clearing Rate (₹/Qtl)', type: 'number', value: '2850.0' },
+              { name: 'cessAmount', label: 'Mandi Development Cess (1%)', type: 'number', value: '142.5' }
+            ]
+          },
+          {
+            id: 'eNamPass',
+            label: 'Issue e-NAM Electronic Gate Pass',
+            icon: '📜',
+            tag: 'e-NAM Transit',
+            desc: 'Generate national e-NAM transit pass for Wholesaler terminal market transfer.',
+            fields: [
+              { name: 'destMarket', label: 'Destination Terminal Market', type: 'text', value: 'Kolkata Central Wholesale Hub' },
+              { name: 'transporter', label: 'Transporter Logistics Carrier', type: 'text', value: 'Bengal Cold Fleet Services' },
+              { name: 'sealBarcodes', label: 'Crate Security Seal ID', type: 'text', value: 'SEAL-APMC-9941-K' }
+            ]
+          }
         ],
         batches: [
-          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • Inward Received from FPO-WB-0492 • Graded: A', status: 'Mandi Yard Stock' },
-          { code: '8M2P1KXZ9V4C', desc: 'Onion (Nashik Red) • 2,400.0 kg • Weighment confirmed', status: 'Awaiting Wholesaler Handover' }
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • Inward Received • Agmarknet Grade: A', status: 'Mandi Yard Stock' },
+          { code: '8M2P1KXZ9V4C', desc: 'Onion (Nashik Red) • 2,400.0 kg • Weighment confirmed', status: 'Awaiting Auction Handover' },
+          { code: 'APMC-POT-0112', desc: 'Potato (Jyoti) • 5,000.0 kg • Cold transit cleared', status: 'Gate Pass Issued' }
         ]
       },
       'WHOLESALER': {
-        title: 'Wholesaler Terminal Operations (Storage & Bulk Trade)',
+        title: 'Wholesaler Terminal Console (Storage & Bulk Trade)',
         org: 'Kolkata Central Terminal Market Wholesalers Ltd',
+        station: 'Posta Terminal Hub, Bay 14-C',
         tools: [
-          { label: '✂️ Split Consignment (Mass Balance)', icon: '⚖️', action: 'splitWholesaleLot()' },
-          { label: '❄️ Assign Cold Storage Chamber', icon: '🌡️', action: 'assignColdStorage()' },
-          { label: '🚛 Dispatch to Regional Distributor', icon: '🚚', action: 'dispatchToDistributor()' }
+          {
+            id: 'terminalInward',
+            label: 'Terminal Market Inward Receipt',
+            icon: '🏢',
+            tag: 'Hub Inward',
+            desc: 'Verify e-NAM electronic transit manifest, inspect Mandi seals and accept terminal custody.',
+            fields: [
+              { name: 'passNo', label: 'e-NAM Transit Pass Number', type: 'text', value: 'ENAM-WB-2026-9912' },
+              { name: 'sourceMandi', label: 'Origin Mandi Yard', type: 'text', value: 'Hooghly APMC Aggregation Yard' },
+              { name: 'weightVerify', label: 'Verified Arrival Weight (Kg)', type: 'number', value: '500.0' }
+            ]
+          },
+          {
+            id: 'coldChamber',
+            label: 'Cold Storage Bay Allocation',
+            icon: '❄️',
+            tag: 'Preservation',
+            desc: 'Allocate consignments to humidity and temperature controlled cold bays with rack QR.',
+            fields: [
+              { name: 'bayId', label: 'Cold Storage Chamber Bay', type: 'text', value: 'Bay C-12 (Rack 4)' },
+              { name: 'targetTemp', label: 'Target Temperature (°C)', type: 'number', value: '4.2' },
+              { name: 'humidity', label: 'Target Relative Humidity %', type: 'number', value: '92.0' }
+            ]
+          },
+          {
+            id: 'sensorLog',
+            label: 'IoT Temperature & Sensor Log',
+            icon: '🌡️',
+            tag: 'Sensor Telemetry',
+            desc: 'Audit continuous telemetry logger for cold-chain excursion thresholds.',
+            fields: [
+              { name: 'sensorId', label: 'IoT Sensor Node ID', type: 'text', value: 'IOT-TEMP-BAY-C12' },
+              { name: 'currTemp', label: 'Current Ambient Temp (°C)', type: 'number', value: '4.1' },
+              { name: 'excursions', label: 'Thermal Excursion Flag', type: 'text', value: 'NORMAL (0 Breaches)' }
+            ]
+          },
+          {
+            id: 'bulkRepack',
+            label: 'Bulk Pallet Re-pack & Splitting',
+            icon: '📦',
+            tag: 'Distributor Pack',
+            desc: 'Re-pack bulk auction lots into standardized 50kg distributor pallets with new QR codes.',
+            fields: [
+              { name: 'sourceLot', label: 'Source Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+              { name: 'palletSize', label: 'Pallet Unit Size (Kg)', type: 'number', value: '50.0' },
+              { name: 'palletCount', label: 'Pallets Produced', type: 'number', value: '10' }
+            ]
+          },
+          {
+            id: 'taxInvoice',
+            label: 'Commercial Invoice Attestation',
+            icon: '📑',
+            tag: 'GST & E-Way Bill',
+            desc: 'Generate commercial B2B tax invoice and GST e-way bill linking directly to produce origin.',
+            fields: [
+              { name: 'buyerGstin', label: 'Distributor GSTIN', type: 'text', value: '19AABCB1234F1Z5' },
+              { name: 'invoiceValue', label: 'Taxable Consignment Value (₹)', type: 'number', value: '18500.0' },
+              { name: 'ewayBill', label: 'National E-Way Bill Number', type: 'text', value: 'EWB-191029384756' }
+            ]
+          },
+          {
+            id: 'distributorDispatch',
+            label: 'Dispatch to Logistics Fleet',
+            icon: '🚛',
+            tag: 'Reefer Outward',
+            desc: 'Handover palletized produce to refrigerated distributor vehicle with sign-off.',
+            fields: [
+              { name: 'carrier', label: 'Distributor Fleet Name', type: 'text', value: 'Bengal Agro Cold-Chain Fleet' },
+              { name: 'truckNo', label: 'Reefer Truck Registration', type: 'text', value: 'WB-19-AX-4402' },
+              { name: 'driverOtp', label: 'Driver Verification OTP Token', type: 'text', value: 'DRV-7841' }
+            ]
+          }
         ],
         batches: [
-          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • 500.0 kg • Allocated to Cold Bay C-12', status: 'Chamber Custody (4.2°C)' },
-          { code: '9K4L2MXP7Q1A', desc: 'Capsicum (Green) • 800.0 kg • Split into 4 commercial sub-lots', status: 'Bulk Warehouse Stock' }
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 kg • Chamber Bay C-12 (4.2°C)', status: 'Chamber Custody' },
+          { code: '9K4L2MXP7Q1A', desc: 'Capsicum (Green) • 800.0 kg • Split into 4 commercial sub-lots', status: 'Bulk Warehouse Stock' },
+          { code: 'WHOLE-ON-0091', desc: 'Onion (Nashik Red) • 1,500.0 kg • Palletized for dispatch', status: 'Ready for Fleet Handover' }
         ]
       },
       'DISTRIBUTOR': {
-        title: 'Distributor Logistics Operations (Fleet & Transit)',
+        title: 'Distributor Logistics Console (Fleet & Transit)',
         org: 'Bengal Agro Cold-Chain Logistics Fleet (DIST-WB-88)',
+        station: 'Regional Fleet Operations Centre, Dankuni',
         tools: [
-          { label: '🚚 Accept Transit Custody', icon: '📦', action: 'acceptTransitCustody()' },
-          { label: '🌡️ Log Vehicle GPS & Temperature', icon: '📍', action: 'logTransitTemp()' },
-          { label: '🏪 Handover Consignment to Retailer', icon: '🛒', action: 'handoverToRetailer()' }
+          {
+            id: 'transitCustody',
+            label: 'Accept Transport Custody',
+            icon: '🚚',
+            tag: 'Fleet Inward',
+            desc: 'Scan Wholesaler dispatch manifest, verify truck reefer pre-cooling, and sign manifest.',
+            fields: [
+              { name: 'manifestNo', label: 'Dispatch Manifest ID', type: 'text', value: 'MNF-KOL-2026-881' },
+              { name: 'preCoolTemp', label: 'Reefer Pre-Cool Temperature (°C)', type: 'number', value: '4.0' },
+              { name: 'sealCheck', label: 'Physical Security Seal Status', type: 'text', value: 'VERIFIED & INTACT' }
+            ]
+          },
+          {
+            id: 'gpsTelemetry',
+            label: 'Vehicle Fleet GPS & Route Checkpoint',
+            icon: '📍',
+            tag: 'Live Telemetry',
+            desc: 'Log real-time highway checkpoint arrival, vehicle odometer, and route adherence.',
+            fields: [
+              { name: 'vehicleReg', label: 'Reefer Truck Registration', type: 'text', value: 'WB-19-AX-4402' },
+              { name: 'checkpoint', label: 'Current Highway Checkpoint', type: 'text', value: 'NH-19 Dankuni Toll Gate' },
+              { name: 'etaMinutes', label: 'Estimated Retail Arrival (Mins)', type: 'number', value: '45' }
+            ]
+          },
+          {
+            id: 'tempMonitor',
+            label: 'In-Transit Cold-Chain Telemetry',
+            icon: '🧊',
+            tag: 'Thermal Monitor',
+            desc: 'Record live cargo container temperature and trigger alert if excursion exceeds threshold.',
+            fields: [
+              { name: 'currTemp', label: 'Cargo Container Temp (°C)', type: 'number', value: '4.3' },
+              { name: 'compressor', label: 'Reefer Unit Power Status', type: 'text', value: 'RUNNING (Optimal)' },
+              { name: 'doorEvents', label: 'Unauthorized Door Openings', type: 'number', value: '0' }
+            ]
+          },
+          {
+            id: 'depotSplit',
+            label: 'Regional Depot Route Re-allocation',
+            icon: '🔀',
+            tag: 'Last-Mile Route',
+            desc: 'Break down trunk container at secondary transit depot and allocate to city retail delivery vans.',
+            fields: [
+              { name: 'depotId', label: 'Secondary Depot Location', type: 'text', value: 'New Town Secondary Depot' },
+              { name: 'vanRoute1', label: 'Delivery Van #1 (South Kolkata)', type: 'number', value: '250.0' },
+              { name: 'vanRoute2', label: 'Delivery Van #2 (North Kolkata)', type: 'number', value: '250.0' }
+            ]
+          },
+          {
+            id: 'incidentLog',
+            label: 'Transit Delay & Spoilage Log',
+            icon: '⚠️',
+            tag: 'Exception Log',
+            desc: 'Record transit incident, highway delay, or thermal breach with damage deduction.',
+            fields: [
+              { name: 'incidentType', label: 'Reported Incident Nature', type: 'text', value: 'None / Routine Transit' },
+              { name: 'delayMinutes', label: 'Unforeseen Traffic Delay (Mins)', type: 'number', value: '0' },
+              { name: 'spoilageEst', label: 'Estimated Produce Damage (Kg)', type: 'number', value: '0.0' }
+            ]
+          },
+          {
+            id: 'retailDelivery',
+            label: 'Retail Store Delivery Sign-Off',
+            icon: '🏪',
+            tag: 'Store Dropoff',
+            desc: 'Perform dual-signature custody handover to store manager at retail supermarket/kirana.',
+            fields: [
+              { name: 'retailOutlet', label: 'Receiving Store Name', type: 'text', value: 'Maa Durga Retail Fresh Mart' },
+              { name: 'deliveredKg', label: 'Delivered Net Quantity (Kg)', type: 'number', value: '250.0' },
+              { name: 'managerSign', label: 'Store Manager Digital Ack ID', type: 'text', value: 'MGR-ACK-7729' }
+            ]
+          }
         ],
         batches: [
-          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • 500.0 kg • Reefer Truck WB-19-AX-4402', status: 'In Transit (Kolkata Route)' },
-          { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 kg • En route to New Town Retail Depot', status: 'In Transit' }
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 kg • Reefer Truck WB-19-AX-4402', status: 'In Transit (Kolkata Route)' },
+          { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 kg • En route to New Town Retail Depot', status: 'In Transit' },
+          { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) • 450.0 kg • Cold-chain verified', status: 'Arrival at Depot' }
         ]
       },
       'RETAILER': {
-        title: 'Retailer Point-of-Sale Operations (Consumer & Shelf)',
+        title: 'Retailer Point-of-Sale Console (Supermarket & Kirana)',
         org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
+        station: 'Main Store Produce Aisle, Lake Gardens, Kolkata',
         tools: [
-          { label: '📦 Receive Inbound Retail Crates', icon: '✓', action: 'receiveRetailCrates()' },
-          { label: '🖨️ Print Consumer Shelf QR Standee', icon: '🏷️', action: 'printConsumerShelfQr()' },
-          { label: '🛒 Record Consumer Retail Sale', icon: '💳', action: 'recordRetailSale()' }
+          {
+            id: 'storeReceipt',
+            label: 'Store Inbound Receipt Sign-Off',
+            icon: '🛒',
+            tag: 'Retail Inward',
+            desc: 'Scan delivery van QR, inspect fresh produce crates, and confirm retail inventory receipt.',
+            fields: [
+              { name: 'deliveryVan', label: 'Arrived Delivery Van Reg #', type: 'text', value: 'WB-19-AX-4402' },
+              { name: 'acceptedQty', label: 'Accepted Store Quantity (Kg)', type: 'number', value: '250.0' },
+              { name: 'freshnessScore', label: 'Visual Freshness & Crispness Score', type: 'text', value: 'Grade A - Excellent' }
+            ]
+          },
+          {
+            id: 'shelfQr',
+            label: 'Print Consumer Shelf QR Standee',
+            icon: '🖨️',
+            tag: 'Consumer Trace',
+            desc: 'Print customer-facing QR cards and price standees enabling consumer smartphone verification.',
+            fields: [
+              { name: 'lotCode', label: 'Active Retail Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+              { name: 'shelfBay', label: 'Store Shelf Display Bay', type: 'text', value: 'Organic Veg Rack #3' },
+              { name: 'retailPrice', label: 'Retail Price (₹ / Kg)', type: 'number', value: '42.0' }
+            ]
+          },
+          {
+            id: 'posSale',
+            label: 'Record Point-of-Sale (POS) Sale',
+            icon: '🧾',
+            tag: 'POS Checkout',
+            desc: 'Log customer purchase transaction, deducting sold produce quantity from active shelf stock.',
+            fields: [
+              { name: 'posTerminal', label: 'POS Checkout Counter #', type: 'text', value: 'Counter #2 (Main Cashier)' },
+              { name: 'soldQty', label: 'Billed Produce Quantity (Kg)', type: 'number', value: '2.5' },
+              { name: 'receiptNo', label: 'Store Tax Invoice / Bill #', type: 'text', value: 'POS-REC-2026-4401' }
+            ]
+          },
+          {
+            id: 'wasteDeficit',
+            label: 'Record Shelf Waste & Spoilage',
+            icon: '🗑️',
+            tag: 'Deficit Ledger',
+            desc: 'Log damaged, unsaleable, or discarded produce with automatic ledger inventory write-off.',
+            fields: [
+              { name: 'discardQty', label: 'Damaged / Discarded Weight (Kg)', type: 'number', value: '3.2' },
+              { name: 'reason', label: 'Discard Primary Reason', type: 'text', value: 'Natural Over-ripening / Bruising' },
+              { name: 'compostLog', label: 'Eco-Friendly Bio-Waste Handover', type: 'text', value: 'Municipal Wet Waste Composting' }
+            ]
+          },
+          {
+            id: 'packageAudit',
+            label: 'Scan & Verify Shelf Authenticity',
+            icon: '📱',
+            tag: 'Provenance Audit',
+            desc: 'Audit packages on the retail floor to display full farm-to-shelf cryptographic timeline.',
+            fields: [
+              { name: 'auditCode', label: 'Shelf Lot Code Under Audit', type: 'text', value: '7K3Q9XMD4T2B' },
+              { name: 'verificationResult', label: 'Cryptographic Chain Status', type: 'text', value: '100% UNBROKEN (Genesis to Retail)' },
+              { name: 'provenanceOrigin', label: 'Attested Farm Origin', type: 'text', value: 'Bardhaman Organic FPO Cluster A-4' }
+            ]
+          },
+          {
+            id: 'recallFeedback',
+            label: 'Consumer Feedback & Recall Log',
+            icon: '⭐',
+            tag: 'Customer Trust',
+            desc: 'Capture consumer quality feedback ratings and process instant batch safety recall notice.',
+            fields: [
+              { name: 'consumerRating', label: 'Average Consumer Rating', type: 'text', value: '4.9 / 5.0 Stars (84 Ratings)' },
+              { name: 'safetyStatus', label: 'Food Safety Status Flag', type: 'text', value: 'ACTIVE / SAFE (No Recalls)' },
+              { name: 'action', label: 'Batch Safety Lockdown', type: 'text', value: 'Normal Operations (Unlocked)' }
+            ]
+          }
         ],
         batches: [
-          { code: '7K3Q9XMD4T2B', desc: 'Tomato (hybrid) • On Shelf: 120.0 kg • Grade A Organic', status: 'Active on Retail Shelf' },
-          { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • On Shelf: 80.0 kg • 24 Verified Customer Scans', status: 'Active on Retail Shelf' }
+          { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • On Shelf: 120.0 kg • Grade A Organic', status: 'Active on Retail Shelf' },
+          { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • On Shelf: 80.0 kg • 24 Verified Customer Scans', status: 'Active on Retail Shelf' },
+          { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) • On Shelf: 45.0 kg • Premium Crisp Grade', status: 'Active on Retail Shelf' }
         ]
       }
     };
 
     let currentLang = 'en';
     let currentRole = 'PRODUCER';
+    let activeTool = null;
 
     function setLanguage(lang) {
       if (!i18n[lang]) lang = 'en';
@@ -1541,11 +2017,6 @@
       document.documentElement.style.fontSize = sizes[current] || '15px';
     }
 
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      return match ? match[2] : null;
-    }
-
     function fillSearch(code) {
       const input = document.getElementById('searchInput');
       input.value = code;
@@ -1554,18 +2025,20 @@
 
     function focusSearch() {
       const el = document.getElementById('searchSection');
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      document.getElementById('searchInput').focus();
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('searchInput').focus();
+      }
     }
 
     function scrollToEntitySection() {
       const el = document.getElementById('entitySection');
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function scrollToWorkspace() {
       const el = document.getElementById('confinedWorkspace');
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function openLoginModal(role) {
@@ -1592,7 +2065,136 @@
       if (e.target.classList.contains('modal-overlay')) {
         closeLoginModal();
         closeDpdpModal();
+        closeOperationModal();
       }
+    }
+
+    /* INTERACTIVE OPERATION MODAL HANDLERS */
+    function openOperationModal(toolId) {
+      const def = roleDefinitions[currentRole];
+      const tool = def.tools.find(t => t.id === toolId);
+      if (!tool) return;
+      activeTool = tool;
+
+      document.getElementById('opModalIcon').innerText = tool.icon;
+      document.getElementById('opModalTitle').innerText = tool.label;
+      document.getElementById('opModalSubtitle').innerText = tool.tag + ' • ' + def.station;
+
+      const container = document.getElementById('opModalFormContainer');
+      container.innerHTML = `
+        <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.45;">${tool.desc}</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          ${tool.fields.map(f => `
+            <div>
+              <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">${f.label}</label>
+              <input type="${f.type}" class="modal-input" style="margin-bottom: 0;" id="input_${f.name}" value="${f.value}" />
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      document.getElementById('opResultCard').style.display = 'none';
+      document.getElementById('btnOpSubmit').innerText = 'Commit to Ledger';
+      document.getElementById('btnOpSubmit').disabled = false;
+      document.getElementById('operationModal').style.display = 'flex';
+    }
+
+    function closeOperationModal() {
+      document.getElementById('operationModal').style.display = 'none';
+      activeTool = null;
+    }
+
+    async function commitCurrentOperation() {
+      if (!activeTool) return;
+      const def = roleDefinitions[currentRole];
+      const btn = document.getElementById('btnOpSubmit');
+      btn.innerText = 'Calculating SHA-256...';
+      btn.disabled = true;
+
+      // Collect field values
+      const vals = {};
+      activeTool.fields.forEach(f => {
+        const inp = document.getElementById('input_' + f.name);
+        if (inp) vals[f.name] = inp.value;
+      });
+
+      // Generate realistic SHA-256
+      const payloadStr = JSON.stringify({
+        role: currentRole,
+        tool: activeTool.id,
+        timestamp: new Date().toISOString(),
+        data: vals
+      });
+
+      let hexHash = '';
+      try {
+        const msgUint8 = new TextEncoder().encode(payloadStr);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        hexHash = '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (e) {
+        hexHash = '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      }
+
+      // Display result
+      document.getElementById('opResultTitle').innerText = activeTool.label + ' Attested';
+      document.getElementById('opResultTx').innerText = 'Tx Hash: ' + hexHash;
+      document.getElementById('opResultDesc').innerText = 'Block verified under immutable triggers. Ownership attested for ' + def.org;
+      document.getElementById('opResultCard').style.display = 'block';
+      btn.innerText = '✓ Committed to Chain';
+
+      // Dynamically add a new batch entry if applicable
+      const newLotCode = vals.lotCode || vals.crop ? ('AS-' + currentRole.slice(0,3) + '-' + Math.floor(1000 + Math.random()*9000)) : hexHash.slice(2, 14).toUpperCase();
+      const newDesc = (vals.crop || activeTool.label) + ' • ' + (vals.qty ? vals.qty + ' Kg • ' : '') + 'Attested just now';
+      def.batches.unshift({
+        code: newLotCode,
+        desc: newDesc,
+        status: 'Attested (' + activeTool.tag + ')'
+      });
+      renderWorkspaceBatches(def);
+    }
+
+    function renderWorkspaceTools(def) {
+      const toolsContainer = document.getElementById('workspaceTools');
+      toolsContainer.innerHTML = '';
+      def.tools.forEach(tool => {
+        const card = document.createElement('div');
+        card.className = 'tool-action-card';
+        card.onclick = () => openOperationModal(tool.id);
+        card.innerHTML = `
+          <div>
+            <div class="tool-card-head">
+              <div class="tool-icon-circle">${tool.icon}</div>
+              <div>
+                <div class="tool-card-title">${tool.label}</div>
+                <span class="tool-card-tag">${tool.tag}</span>
+              </div>
+            </div>
+            <div class="tool-card-desc">${tool.desc}</div>
+          </div>
+          <button class="btn-card-launch" onclick="event.stopPropagation(); openOperationModal('${tool.id}')">
+            Execute Action ➔
+          </button>
+        `;
+        toolsContainer.appendChild(card);
+      });
+    }
+
+    function renderWorkspaceBatches(def) {
+      const batchesContainer = document.getElementById('workspaceBatchesList');
+      batchesContainer.innerHTML = '';
+      def.batches.forEach(b => {
+        const item = document.createElement('div');
+        item.className = 'batch-item-card';
+        item.innerHTML = `
+          <div>
+            <span class="batch-code-tag">${b.code}</span>
+            <span style="font-size: 13px; color: #334155; margin-left: 8px;">${b.desc}</span>
+          </div>
+          <span style="font-size: 11.5px; font-weight: 700; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 20px;">${b.status}</span>
+        `;
+        batchesContainer.appendChild(item);
+      });
     }
 
     /* STRICT ROLE CONFINEMENT LOGIC */
@@ -1604,76 +2206,47 @@
       document.getElementById('navLoginBtn').style.display = 'none';
       const userPill = document.getElementById('userPill');
       userPill.style.display = 'inline-flex';
-      document.getElementById('activeUserName').innerText = currentRole + ' (Active)';
+      document.getElementById('activeUserName').innerText = currentRole + ' (' + def.org.split(' ')[0] + ')';
 
-      // Render Strict Confined Workspace
+      // 1. HIDE ALL PUBLIC HOME PAGE SECTIONS
+      ['heroSection', 'flowShowcaseSection', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
+      // 2. SHOW CONFINED WORKSPACE
+      const ws = document.getElementById('confinedWorkspace');
+      ws.style.display = 'block';
+
+      // 3. Render Header, Tools, and Batches
       document.getElementById('confinedBadgeText').innerText = 
         '🔒 ROLE CONFINED: Operating strictly within authorized [' + currentRole + '] boundary.';
       document.getElementById('workspaceTitle').innerText = def.title;
-      document.getElementById('workspaceSubtitle').innerText = 'Verified Organization: ' + def.org;
+      document.getElementById('workspaceSubtitle').innerText = 'Verified Organization: ' + def.org + ' • ' + def.station;
 
-      // Inject Role-Specific Tools Only
-      const toolsContainer = document.getElementById('workspaceTools');
-      toolsContainer.innerHTML = '';
-      def.tools.forEach(tool => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-workspace-tool';
-        btn.innerText = tool.label;
-        btn.onclick = () => eval(tool.action);
-        toolsContainer.appendChild(btn);
-      });
+      renderWorkspaceTools(def);
+      renderWorkspaceBatches(def);
 
-      // Inject Role-Specific Batches Only
-      const batchesContainer = document.getElementById('workspaceBatchesList');
-      batchesContainer.innerHTML = '';
-      def.batches.forEach(b => {
-        const item = document.createElement('div');
-        item.className = 'batch-item-card';
-        item.innerHTML = `
-          <div>
-            <span class="batch-code-tag">${b.code}</span>
-            <span style="font-size: 13px; color: #334155; margin-left: 8px;">${b.desc}</span>
-          </div>
-          <span style="font-size: 12px; font-weight: 700; color: #15803d; background: #f0fdf4; padding: 4px 10px; border-radius: 20px;">${b.status}</span>
-        `;
-        batchesContainer.appendChild(item);
-      });
-
-      // Reveal Workspace and Hide Entity Chooser
-      const ws = document.getElementById('confinedWorkspace');
-      ws.style.display = 'block';
-      document.getElementById('entitySection').style.display = 'none';
       ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function logoutEntity() {
+      // 1. Restore Navbar Login, Hide User Pill
       document.getElementById('navLoginBtn').style.display = 'inline-flex';
       document.getElementById('userPill').style.display = 'none';
-      document.getElementById('confinedWorkspace').style.display = 'none';
-      document.getElementById('entitySection').style.display = 'block';
-      scrollToEntitySection();
+
+      // 2. HIDE WORKSPACE
+      const ws = document.getElementById('confinedWorkspace');
+      if (ws) ws.style.display = 'none';
+
+      // 3. RESTORE ALL PUBLIC HOME PAGE SECTIONS
+      ['heroSection', 'flowShowcaseSection', 'searchSection', 'trustSection', 'entitySection'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'block';
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    /* SPECIFIC CONFINED ACTIONS */
-    function createNewLot() { alert('PRODUCER ACTION: Launching Farm Harvest Registration dialog.'); }
-    function printQrTags() { alert('PRODUCER ACTION: Generating serialized crate QR labels.'); }
-    function dispatchToAggregator() { alert('PRODUCER ACTION: Consignment dispatch handover to Mandi Aggregator.'); }
-
-    function acceptProducerHandover() { alert('AGGREGATOR ACTION: Mandi gatekeeper custody receipt logged.'); }
-    function gradeLot() { alert('AGGREGATOR ACTION: Agmarknet Grade inspection form opened.'); }
-    function dispatchToWholesaler() { alert('AGGREGATOR ACTION: Consignment dispatch to Terminal Wholesaler.'); }
-
-    function splitWholesaleLot() { alert('WHOLESALER ACTION: Mass-balance lot splitting dialog.'); }
-    function assignColdStorage() { alert('WHOLESALER ACTION: Chamber bay and temperature log updated.'); }
-    function dispatchToDistributor() { alert('WHOLESALER ACTION: Bulk dispatch to Distributor fleet.'); }
-
-    function acceptTransitCustody() { alert('DISTRIBUTOR ACTION: Transit custody accepted from Wholesaler.'); }
-    function logTransitTemp() { alert('DISTRIBUTOR ACTION: IoT Reefer temperature and GPS log captured.'); }
-    function handoverToRetailer() { alert('DISTRIBUTOR ACTION: Last-mile handover to Retail store.'); }
-
-    function receiveRetailCrates() { alert('RETAILER ACTION: Inward retail verification accepted.'); }
-    function printConsumerShelfQr() { alert('RETAILER ACTION: Consumer shelf standee QR generated.'); }
-    function recordRetailSale() { alert('RETAILER ACTION: Consumer point-of-sale receipt deducted from batch.'); }
 
     // -------------------------------------------------------------
     // LIVE WEATHER (IP GEOLOCATION) & LIVE DATE/TIME ENGINE
