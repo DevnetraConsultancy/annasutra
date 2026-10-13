@@ -1046,28 +1046,6 @@
       padding: 0 32px;
       text-align: center;
     }
-    .trust-sovereign-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #fde047;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    .trust-tag-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 8px #22c55e;
-    }
     .trust-standards-container h3 {
       font-size: 34px;
       font-weight: 900;
@@ -1359,19 +1337,10 @@
       margin-top: 36px;
       padding-top: 20px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
+      justify-content: center;
+      text-align: center;
       font-size: 11.5px;
       color: #94a3b8;
-    }
-    .ataraxis-live-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #86efac;
-      font-weight: 700;
     }
 
     /* MODAL BASE */
@@ -1776,7 +1745,7 @@
 
   <!-- 2. MAIN NAVBAR -->
   <header class="navbar">
-    <a href="/" class="brand-group" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+    <a href="/" class="brand-group" title="AnnaSutra - National Agri-Produce Traceability">
       <img 
         src="{{ brand_logo }}" 
         alt="AnnaSutra" 
@@ -2042,10 +2011,6 @@
   <!-- 8. NATIONAL TRUST & VERIFICATION STANDARDS - GOD-LEVEL FULL-WIDTH SHOWCASE -->
   <section class="trust-standards-section" id="trustSection">
     <div class="trust-standards-container">
-      <div class="trust-sovereign-tag">
-        <span class="trust-tag-dot"></span>
-        <span id="trustKicker">NATIONAL INTEGRITY PROTOCOL</span>
-      </div>
       <h3 id="trustTitle">National Trust & Verification Standards</h3>
       <p class="trust-subtitle" id="trustSubtitle">
         Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.
@@ -2143,9 +2108,9 @@
         
         <!-- Col 1: Brand, Mission, Helplines & Maker -->
         <div class="ataraxis-brand-col">
-          <div class="ataraxis-brand-head">
+          <a href="/" class="ataraxis-brand-head" title="AnnaSutra - National Agri-Produce Traceability">
             <img src="{{ brand_logo }}" alt="AnnaSutra" class="ataraxis-brand-logo" />
-          </div>
+          </a>
           <p class="ataraxis-mission-text" id="footerMissionText">
             National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.
           </p>
@@ -2185,7 +2150,7 @@
           <h4 class="ataraxis-col-title" id="footerColExploreTitle">EXPLORE & OPERATE</h4>
           <ul class="ataraxis-link-list">
             <li>
-              <a href="/" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+              <a href="/" title="National Homepage">
                 <span class="ataraxis-link-arrow">›</span>
                 <span id="footerLinkHome">National Homepage</span>
               </a>
@@ -2266,9 +2231,6 @@
       <div class="ataraxis-bottom-ribbon">
         <div id="footerLegalNotice">
           © 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.
-        </div>
-        <div class="ataraxis-live-status">
-          <span>🟢</span> <span id="footerNodeStatus">Append-Only Ledger Active • Sovereign Cloud Protected</span>
         </div>
       </div>
     </div>
@@ -2621,7 +2583,6 @@
         footerOrgTitle: "Centre for Development of Advanced Computing (C-DAC)",
         footerGovTitle: "Ministry of Electronics & Information Technology, Government of India",
         footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
-        footerNodeStatus: "Append-Only Ledger Active • Sovereign Cloud Protected",
         modalRoleTitle: "Entity Login",
         modalSubtitle: "Role-Confined Authentication on AnnaSutra",
         demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
@@ -2659,7 +2620,6 @@
         portalModalTitle: "Who Are You?",
         portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
         portalSecurityNote: "Cryptographic role confinement active. Unauthorized access attempts logged to immutable audit ledger.",
-        trustKicker: "NATIONAL INTEGRITY PROTOCOL",
         trustTitle: "National Trust & Verification Standards",
         trustSubtitle: "Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.",
         trustRibbonLedger: "Append-Only SHA-256 Ledger",
@@ -2741,7 +2701,6 @@
         footerOrgTitle: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
         footerGovTitle: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
         footerLegalNotice: "© 2026 अन्नसूत्र • सी-डैक, इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY), भारत सरकार द्वारा विकसित एवं अनुरक्षित।",
-        footerNodeStatus: "केवल-जोड़ लेज़र सक्रिय • संप्रभु क्लाउड सुरक्षित",
         modalRoleTitle: "संस्थागत लॉगिन",
         modalSubtitle: "अन्नसूत्र पर भूमिका-सीमित प्रमाणीकरण",
         demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
@@ -2779,7 +2738,6 @@
         portalModalTitle: "आप कौन हैं?",
         portalModalSubtitle: "अपने अधिकृत परिचालन नोड तक पहुँचने के लिए आपूर्ति श्रृंखला में अपनी भूमिका चुनें।",
         portalSecurityNote: "क्रिप्टोग्राफ़िक भूमिका सीमा सक्रिय। अनधिकृत प्रयास अपरिवर्तनीय लेज़र में दर्ज किए जाते हैं।",
-        trustKicker: "राष्ट्रीय अखंडता प्रोटोकॉल",
         trustTitle: "राष्ट्रीय विश्वास और सत्यापन मानक",
         trustSubtitle: "खाद्य सुरक्षा, किसान गोपनीयता और छेड़छाड़-मुक्त व्यापार को बनाए रखने वाली संप्रभु क्रिप्टोग्राफ़िक गारंटी।",
         trustRibbonLedger: "केवल-जोड़ SHA-256 लेज़र",
@@ -2861,7 +2819,6 @@
         footerOrgTitle: "প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC)",
         footerGovTitle: "ইলেকট্রনিক্স এবং তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার",
         footerLegalNotice: "© ২০২৬ অন্নসূত্র • সি-ড্যাক, ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয় (MeitY), ভারত সরকার দ্বারা নির্মিত ও পরিচালিত।",
-        footerNodeStatus: "অপরিবর্তনীয় লেজার সক্রিয় • সার্বভৌম ক্লাউড সুরক্ষিত",
         modalRoleTitle: "সংস্থা লগইন",
         modalSubtitle: "অন্নসূত্রে ভূমিকা-সীমাবদ্ধ প্রমাণীকরণ",
         demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",
@@ -2899,7 +2856,6 @@
         portalModalTitle: "আপনি কে?",
         portalModalSubtitle: "আপনার অনুমোদিত অপারেশনাল নোড ব্যবহারের জন্য কৃষি সরবরাহ শৃঙ্খলে আপনার ভূমিকা নির্বাচন করুন।",
         portalSecurityNote: "ক্রিপ্টোগ্রাফিক ভূমিকা সীমাবদ্ধতা সক্রিয়। অননুমোদিত চেষ্টা অপরিবর্তনীয় লেজারে নথিভুক্ত হয়।",
-        trustKicker: "জাতীয় বিশ্বস্ততা প্রোটোকল",
         trustTitle: "জাতীয় বিশ্বাস ও যাচাইকরণ মানদণ্ড",
         trustSubtitle: "খাদ্য নিরাপত্তা, কৃষক গোপনীয়তা এবং পরিবর্তন-রোধী বাণিজ্য রক্ষাকারী জাতীয় ক্রিপ্টোগ্রাফিক সুরক্ষা।",
         trustRibbonLedger: "অপরিবর্তনীয় SHA-256 লেজার",
@@ -4679,7 +4635,6 @@
       setTxt('flowStep5Desc', t.flowStep5Desc);
 
       // Trust Standards Showcase
-      setTxt('trustKicker', t.trustKicker);
       setTxt('trustTitle', t.trustTitle);
       setTxt('trustSubtitle', t.trustSubtitle);
       setTxt('trust1Title', t.trust1Title);
@@ -4715,7 +4670,6 @@
       setTxt('footerOrgTitle', t.footerOrgTitle);
       setTxt('footerGovTitle', t.footerGovTitle);
       setTxt('footerLegalNotice', t.footerLegalNotice);
-      setTxt('footerNodeStatus', t.footerNodeStatus);
 
       // Login & DPDP Modals
       setTxt('modalSubtitle', t.modalSubtitle);
