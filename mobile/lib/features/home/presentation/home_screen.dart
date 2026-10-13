@@ -19,6 +19,133 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   late TabController _tabController;
   String _selectedLang = 'en';
 
+  static const Map<String, Map<String, String>> _strings = {
+    'en': {
+      'topDev': 'Developed by C-DAC | MeitY, Govt. of India',
+      'brandTitle': 'AnnaSutra',
+      'brandSubtitle': 'National Agri-Produce Traceability Platform',
+      'navLogin': 'Entity Login',
+      'heroTag': 'NATIONAL REPOSITORY • 100% IMMUTABLE LEDGER',
+      'heroHead': 'Empowering Farmers.\nProtecting Consumers.',
+      'heroSub': 'Direct cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable tables and offline-ready verification.',
+      'scanQrHero': 'Scan QR Code',
+      'newBatchHero': 'New Harvest Lot',
+      'stat1': 'Immutable Ledger',
+      'stat2': 'Append-Only Triggers',
+      'stat3': 'Resilient Field Sync',
+      'stat4': 'Consent Protected',
+      'entityTitle': 'Universal Entity Access',
+      'entitySub': 'Select your supply-chain tier for dedicated operations and custody tools',
+      'roleFarmer': 'Farmer / FPO Producer',
+      'roleFarmerDesc': 'Harvest lot creation, farm bag QR codes, dispatch to mandi.',
+      'roleMandi': 'Mandi Aggregator / APMC',
+      'roleMandiDesc': 'Inbound receipt, lot grading, lot splitting & auction dispatch.',
+      'roleCold': 'Cold Storage / Warehouse',
+      'roleColdDesc': 'Inward custody receipt, temperature log, cold-chain outward.',
+      'roleProcessor': 'Packhouse & Processor',
+      'roleProcessorDesc': 'Raw intake, milling/sorting, retail pack QR generation.',
+      'roleRetailer': 'Wholesaler & Retailer',
+      'roleRetailerDesc': 'Point-of-sale verification, batch sales recording, consumer audit.',
+      'loginBtn': 'Login as',
+      'receiveBatch': 'Receive Batch',
+      'dispatchBatch': 'Dispatch Batch',
+      'splitLot': 'Split Lot',
+      'inspectQuality': 'Inspect Quality',
+      'recordWaste': 'Record Waste',
+      'recordSale': 'Record Retail Sale',
+      'scanQr': 'Scan QR',
+      'createBatch': 'Create Batch',
+      'footerDev': 'Developed by Centre for Development of Advanced Computing (C-DAC)',
+      'footerGov': 'Ministry of Electronics & Information Technology, Government of India',
+      'disclaimer': 'Notice: Records are based on information entered by supply-chain participants. They do not prove physical package contents.',
+      'dpdpLink': 'DPDP Act 2023 Compliance & Grievance Redressal Officer: grievance@annasutra.in',
+    },
+    'hi': {
+      'topDev': 'सी-डैक (C-DAC) द्वारा विकसित | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार',
+      'brandTitle': 'अन्नसूत्र',
+      'brandSubtitle': 'राष्ट्रीय कृषि-उत्पाद ट्रैसेबिलिटी प्लेटफॉर्म',
+      'navLogin': 'संस्थागत प्रवेश',
+      'heroTag': 'राष्ट्रीय भंडार • 100% अपरिवर्तनीय लेज़र',
+      'heroHead': 'किसानों का सशक्तिकरण।\nउपभोक्ताओं की सुरक्षा।',
+      'heroSub': 'खेत से थाली तक संपूर्ण डिजिटल कस्टडी। अपरिवर्तनीय डेटाबेस द्वारा सुरक्षित बैच ट्रैकिंग।',
+      'scanQrHero': 'क्यूआर कोड स्कैन करें',
+      'newBatchHero': 'नया फसल लॉट बनाएं',
+      'stat1': 'अपरिवर्तनीय लेज़र',
+      'stat2': 'केवल-जोड़ ट्रिगर्स',
+      'stat3:': 'ऑफ़लाइन फील्ड सिंक',
+      'stat4': 'सहमति सुरक्षित',
+      'entityTitle': 'यूनिवर्सल संस्थागत पहुंच',
+      'entitySub': 'समर्पित संचालन और कस्टडी टूल के लिए अपनी आपूर्ति-श्रृंखला श्रेणी चुनें',
+      'roleFarmer': 'किसान / एफपीओ',
+      'roleFarmerDesc': 'फसल लॉट निर्माण, क्रेट टैग, मंडी प्रेषण।',
+      'roleMandi': 'मंडी आढ़ती / एपीएमसी',
+      'roleMandiDesc': 'आवक प्राप्ति, गुणवत्ता ग्रेडिंग, लॉट विभाजन व नीलामी।',
+      'roleCold': 'शीत गृह / गोदाम',
+      'roleColdDesc': 'कस्टडी रसीद, तापमान निगरानी, शीत-श्रृंखला प्रेषण।',
+      'roleProcessor': 'प्रसंस्करण इकाई',
+      'roleProcessorDesc': 'कच्चा माल प्राप्ति, छंटाई, खुदरा पैकेजिंग।',
+      'roleRetailer': 'थोक व खुदरा विक्रेता',
+      'roleRetailerDesc': 'बिक्री केंद्र सत्यापन, खुदरा बिलिंग।',
+      'loginBtn': 'के रूप में लॉगिन करें',
+      'receiveBatch': 'बैच प्राप्त करें',
+      'dispatchBatch': 'बैच प्रेषित करें',
+      'splitLot': 'लॉट विभाजित करें',
+      'inspectQuality': 'गुणवत्ता जांचें',
+      'recordWaste': 'नुकसान दर्ज करें',
+      'recordSale': 'बिक्री दर्ज करें',
+      'scanQr': 'क्यूआर स्कैन',
+      'createBatch': 'बैच बनाएं',
+      'footerDev': 'प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC) द्वारा विकसित',
+      'footerGov': 'इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार',
+      'disclaimer': 'सूचना: रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज की गई जानकारी पर आधारित हैं। वे भौतिक पैकेज सामग्री को साबित नहीं करते हैं।',
+      'dpdpLink': 'DPDP अधिनियम 2023 अनुपालन एवं शिकायत निवारण अधिकारी: grievance@annasutra.in',
+    },
+    'bn': {
+      'topDev': 'সি-ড্যাক (C-DAC) দ্বারা তৈরি | ইলেকট্রনিক্স ও তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার',
+      'brandTitle': 'অন্নসূত্র',
+      'brandSubtitle': 'জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম',
+      'navLogin': 'সংস্থা প্রবেশ',
+      'heroTag': 'জাতীয় ভাণ্ডার • ১০০% অপরিবর্তনীয় খতিয়ান',
+      'heroHead': 'কৃষকের ক্ষমতায়ন।\nভোক্তার সুরক্ষা।',
+      'heroSub': 'মাটি থেকে থালা পর্যন্ত ক্রিপ্টোগ্রাফিক সুরক্ষা। অপরিবর্তনীয় ডাটাবেসে ব্যাচ ট্র্যাকিং।',
+      'scanQrHero': 'কিউআর কোড স্ক্যান',
+      'newBatchHero': 'নতুন ফসল লট',
+      'stat1': 'অপরিবর্তনীয় খতিয়ান',
+      'stat2': 'কেবল-সংযোজন ট্রিগার',
+      'stat3': 'অফলাইন ফিল্ড সিঙ্ক',
+      'stat4': 'সম্মতি সুরক্ষিত',
+      'entityTitle': 'সার্বজনীন সংস্থা প্রবেশাধিকার',
+      'entitySub': 'কাস্টডি কার্যক্রমের জন্য আপনার সরবরাহ-শৃঙ্খল স্তরটি নির্বাচন করুন',
+      'roleFarmer': 'কৃষক / সমবায়',
+      'roleFarmerDesc': 'ফসল লট তৈরি, ক্রেট ট্যাগ, মাণ্ডিতে প্রেরণ।',
+      'roleMandi': 'মাণ্ডি ব্যবসায়ী',
+      'roleMandiDesc': 'পণ্য গ্রহণ, গুণমান পরীক্ষা, লট ভাগ ও নিলাম।',
+      'roleCold': 'হিমাগার / গুদাম',
+      'roleColdDesc': 'সংরক্ষণ রসিদ, তাপমাত্রা নজরদারি, প্রেরণ।',
+      'roleProcessor': 'খাদ্য প্রক্রিয়াকরণ',
+      'roleProcessorDesc': 'কাঁচামাল গ্রহণ, বাছাই ও প্যাকেটজাতকরণ।',
+      'roleRetailer': 'খুচরা বিক্রেতা',
+      'roleRetailerDesc': 'বিক্রয় কেন্দ্র যাচাইকরণ, খুচরা বিক্রয় নথিভুক্ত।',
+      'loginBtn': 'হিসেবে প্রবেশ করুন',
+      'receiveBatch': 'ব্যাচ গ্রহণ করুন',
+      'dispatchBatch': 'ব্যাচ প্রেরণ করুন',
+      'splitLot': 'লট ভাগ করুন',
+      'inspectQuality': 'গুণমান পরীক্ষা করুন',
+      'recordWaste': 'ক্ষতি নথিভুক্ত করুন',
+      'recordSale': 'বিক্রি নথিভুক্ত করুন',
+      'scanQr': 'কিউআর স্ক্যান',
+      'createBatch': 'ব্যাচ তৈরি',
+      'footerDev': 'সেন্টার ফর ডেভেলপমেন্ট অব অ্যাডভান্সড কম্পিউটিং (C-DAC) দ্বারা তৈরি',
+      'footerGov': 'ইলেকট্রনিক্স ও তথ্য প্রযুক্তি মন্ত্রক, ভারত সরকার',
+      'disclaimer': 'বিজ্ঞপ্তি: রেকর্ডগুলি সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দেওয়া তথ্যের উপর ভিত্তি করে তৈরি। এটি প্যাকেজের সামগ্রী প্রমাণ করে না।',
+      'dpdpLink': 'DPDP আইন ২০২৩ অনুপালন ও অভিযোগ নিষ্পত্তি কর্মকর্তা: grievance@annasutra.in',
+    },
+  };
+
+  String _t(String key) {
+    return _strings[_selectedLang]?[key] ?? _strings['en']![key] ?? key;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -44,13 +171,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       body: SafeArea(
         child: Column(
           children: [
-            // 1. TOP UTILITY HEADER (NPCI / Govt. of India Style)
+            // 1. TOP UTILITY HEADER
             _buildTopUtilityBar(context),
 
             // 2. MAIN BRAND NAVIGATION BAR
             _buildMainNavBar(context, authState),
 
-            // 3. SCROLLABLE MAIN CONTENT (Hero + Entity Login + Console + Footer)
+            // 3. SCROLLABLE MAIN CONTENT
             Expanded(
               child: SingleChildScrollView(
                 child: Center(
@@ -59,28 +186,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Cinematic Hero Banner with Live Stats
                         _buildHeroBanner(context, isDesktop),
-
-                        // Offline Sync & Org Verification Alert Bar
                         _buildSyncAndVerificationAlerts(context, authState, syncState),
-
-                        // Universal Entity Access & Login Section (Right on Home Page)
                         _buildUniversalEntityLoginSection(context, authState),
-
                         const SizedBox(height: 12),
-
-                        // Ground-level Live Custody & Inventory Console
                         _buildOperationalConsole(context, theme),
-
                         const SizedBox(height: 16),
-
-                        // Quick Accessible Action Bar (Scan QR + Create Batch)
                         _buildAccessibleActionButtons(context),
-
                         const SizedBox(height: 16),
-
-                        // Official C-DAC Developer Footer & Statutory Disclaimers
                         _buildOfficialFooter(context),
                       ],
                     ),
@@ -94,19 +207,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 1: TOP UTILITY BAR (C-DAC Tech Partner & Language Switcher Dropdown)
-  // ===========================================================================
   Widget _buildTopUtilityBar(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: const BoxDecoration(
-        color: Color(0xFF07271D), // Deep dark green utility bar
+        color: Color(0xFF07271D),
         border: Border(bottom: BorderSide(color: Color(0xFF144D3B), width: 1)),
       ),
       child: Row(
         children: [
-          // Developer Badge
           Image.asset(
             'assets/images/cdac_logo.png',
             height: 18,
@@ -114,10 +223,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             errorBuilder: (_, __, ___) => const Icon(Icons.memory, color: Colors.white70, size: 16),
           ),
           const SizedBox(width: 8),
-          const Expanded(
+          Expanded(
             child: Text(
-              'Developed by C-DAC | MeitY, Govt. of India',
-              style: TextStyle(
+              _t('topDev'),
+              style: const TextStyle(
                 color: Color(0xFFE2E8F0),
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -126,8 +235,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               overflow: TextOverflow.ellipsis,
             ),
           ),
-
-          // Small Language Switch Dropdown (EN / HI / BN)
           Container(
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -143,9 +250,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 dropdownColor: const Color(0xFF0B3D2E),
                 style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                 items: const [
-                  DropdownMenuItem(value: 'en', child: Text('🌐 EN')),
-                  DropdownMenuItem(value: 'hi', child: Text('🌐 हिन्दी')),
-                  DropdownMenuItem(value: 'bn', child: Text('🌐 বাংলা')),
+                  DropdownMenuItem(value: 'en', child: Text('English (EN)')),
+                  DropdownMenuItem(value: 'hi', child: Text('हिन्दी (HI)')),
+                  DropdownMenuItem(value: 'bn', child: Text('বাংলা (BN)')),
                 ],
                 onChanged: (String? val) {
                   if (val != null) {
@@ -157,11 +264,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ),
           ),
           const SizedBox(width: 8),
-
-          // DPDP Act Privacy Shield Icon
           IconButton(
             icon: const Icon(Icons.shield_outlined, color: Color(0xFFF59E0B), size: 18),
-            tooltip: 'DPDP Act Privacy & Consent',
+            tooltip: 'DPDP 2023',
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
@@ -172,21 +277,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 2: MAIN BRAND NAVIGATION BAR (AnnaSutra Brand Emblem + Login Status)
-  // ===========================================================================
   Widget _buildMainNavBar(BuildContext context, AuthState authState) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: const BoxDecoration(
-        color: Color(0xFF0B3D2E), // Primary National Forest Green
+        color: Color(0xFF0B3D2E),
         boxShadow: [
           BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Row(
         children: [
-          // AnnaSutra Main Brand Emblem
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(
@@ -207,38 +308,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ),
           ),
           const SizedBox(width: 12),
-
-          // AnnaSutra Brand Name & Multilingual Subtitle
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      'AnnaSutra',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    SizedBox(width: 6),
-                    Text(
-                      'অন্নসূত্র / अन्नसूत्र',
-                      style: TextStyle(
-                        color: Color(0xFFFCD34D),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                Text(
+                  _t('brandTitle'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.3,
+                  ),
                 ),
                 Text(
-                  'National Agri-Produce Traceability Platform',
-                  style: TextStyle(
+                  _t('brandSubtitle'),
+                  style: const TextStyle(
                     color: Color(0xFFCBD5E1),
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
@@ -247,8 +333,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ],
             ),
           ),
-
-          // User Account or Direct Login Button
           if (authState.isAuthenticated) ...[
             InkWell(
               onTap: () => _showAccountDialog(context),
@@ -266,7 +350,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     const Icon(Icons.verified_user, color: Color(0xFF86EFAC), size: 16),
                     const SizedBox(width: 6),
                     Text(
-                      authState.orgType ?? 'Entity User',
+                      authState.orgType ?? 'User',
                       style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -277,14 +361,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ElevatedButton.icon(
               onPressed: () => context.push('/login'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE67E22), // Saffron Accent
+                backgroundColor: const Color(0xFFE67E22),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 minimumSize: const Size(80, 36),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               icon: const Icon(Icons.login, size: 16),
-              label: const Text('Login / প্রবেশ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              label: Text(_t('navLogin'), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ),
           ],
         ],
@@ -292,9 +376,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 3: CINEMATIC NPCI-STYLE HERO BANNER WITH LIVE STATS RIBBON
-  // ===========================================================================
   Widget _buildHeroBanner(BuildContext context, bool isDesktop) {
     return Container(
       margin: EdgeInsets.all(isDesktop ? 16.0 : 12.0),
@@ -308,7 +389,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
-            // Photographic Backdrop: Farmer + Agri-officer in field
             Positioned.fill(
               child: Image.asset(
                 'assets/images/hero_farm.jpg',
@@ -317,8 +397,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0B3D2E)),
               ),
             ),
-
-            // NPCI-Inspired Gradient Overlay (Dark forest green on left for high readability)
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -336,8 +414,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 ),
               ),
             ),
-
-            // Hero Text Content & Live Stats
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: isDesktop ? 32.0 : 20.0,
@@ -346,7 +422,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Verification Seal Pill
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
@@ -354,14 +429,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: const Color(0xFFF59E0B), width: 1),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.verified, color: Color(0xFFFCD34D), size: 14),
-                        SizedBox(width: 6),
+                        const Icon(Icons.verified, color: Color(0xFFFCD34D), size: 14),
+                        const SizedBox(width: 6),
                         Text(
-                          'NATIONAL REPOSITORY • 100% IMMUTABLE LEDGER',
-                          style: TextStyle(
+                          _t('heroTag'),
+                          style: const TextStyle(
                             color: Color(0xFFFEF3C7),
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
@@ -372,10 +447,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     ),
                   ),
                   const SizedBox(height: 12),
-
-                  // Headline
                   Text(
-                    'Empowering Farmers.\nProtecting Consumers.',
+                    _t('heroHead'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: isDesktop ? 32 : 24,
@@ -385,14 +458,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     ),
                   ),
                   const SizedBox(height: 8),
-
-                  // Multilingual Subtitle
                   ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: isDesktop ? 600 : double.infinity),
-                    child: const Text(
-                      'Direct cryptographic custody from seed to plate. Tamper-evident batch tracking '
-                      'guaranteed by immutable MySQL tables and local SQLite offline sync.',
-                      style: TextStyle(
+                    child: Text(
+                      _t('heroSub'),
+                      style: const TextStyle(
                         color: Color(0xFFE2E8F0),
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
@@ -401,8 +471,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     ),
                   ),
                   const SizedBox(height: 18),
-
-                  // Quick Action Buttons
                   Wrap(
                     spacing: 12,
                     runSpacing: 10,
@@ -412,14 +480,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                           context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE67E22), // Saffron Gold
+                          backgroundColor: const Color(0xFFE67E22),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                           elevation: 2,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         icon: const Icon(Icons.qr_code_scanner, size: 18),
-                        label: const Text('Scan QR Code', style: TextStyle(fontWeight: FontWeight.bold)),
+                        label: Text(_t('scanQrHero'), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       OutlinedButton.icon(
                         onPressed: () {
@@ -432,14 +500,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         icon: const Icon(Icons.add_box, size: 18),
-                        label: const Text('New Harvest Lot', style: TextStyle(fontWeight: FontWeight.bold)),
+                        label: Text(_t('newBatchHero'), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Live Stats Strip (NPCI Homepage Metric Style)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
@@ -452,10 +517,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                       runSpacing: 12,
                       alignment: WrapAlignment.spaceBetween,
                       children: [
-                        _buildStatMetric('26 Tables', 'Immutable Ledger'),
-                        _buildStatMetric('100%', 'Append-Only Triggers'),
-                        _buildStatMetric('Offline SQLite', 'Resilient Field Sync'),
-                        _buildStatMetric('DPDP 2023', 'Consent Protected'),
+                        _buildStatMetric('26', _t('stat1')),
+                        _buildStatMetric('100%', _t('stat2')),
+                        _buildStatMetric('SQLite', _t('stat3')),
+                        _buildStatMetric('DPDP 2023', _t('stat4')),
                       ],
                     ),
                   ),
@@ -493,13 +558,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 4: OFFLINE SYNC STATUS & UNVERIFIED ORG BANNER
-  // ===========================================================================
   Widget _buildSyncAndVerificationAlerts(BuildContext context, AuthState authState, SyncState syncState) {
     return Column(
       children: [
-        // Pending verification banner
         if (authState.isAuthenticated && authState.orgVerification == 'PENDING')
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -526,8 +587,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ],
             ),
           ),
-
-        // Live Offline Outbox Counter & Manual Sync Trigger
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -550,7 +609,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 child: Text(
                   syncState.pendingCount > 0
                       ? 'Offline Queue: ${syncState.pendingCount} events waiting to sync'
-                      : 'Sync Status: All events synced with Aiven Cloud',
+                      : 'Sync Status: All events synced',
                   style: TextStyle(
                     color: syncState.pendingCount > 0 ? Colors.amber.shade900 : Colors.green.shade900,
                     fontWeight: FontWeight.w600,
@@ -581,9 +640,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 5: UNIVERSAL ENTITY LOGIN (ALL ENTITIES LOGIN FROM HOME PAGE)
-  // ===========================================================================
   Widget _buildUniversalEntityLoginSection(BuildContext context, AuthState authState) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -610,21 +666,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 child: const Icon(Icons.hub_outlined, color: Color(0xFF0B3D2E), size: 20),
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Universal Entity Access / সংস্থা প্রবেশাধিকার',
-                      style: TextStyle(
+                      _t('entityTitle'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         color: Color(0xFF0F172A),
                       ),
                     ),
                     Text(
-                      'Select your supply-chain tier for dedicated operations and custody tools',
-                      style: TextStyle(
+                      _t('entitySub'),
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xFF64748B),
                       ),
@@ -635,8 +691,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ],
           ),
           const SizedBox(height: 14),
-
-          // 5 Supply-Chain Entity Cards
           LayoutBuilder(
             builder: (context, constraints) {
               final isWide = constraints.maxWidth > 700;
@@ -648,9 +702,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context: context,
                     roleKey: 'FARMER',
                     icon: Icons.grass,
-                    title: 'Farmer / FPO Producer',
-                    subtitle: 'কৃষক / কৃষক উৎপাদক',
-                    description: 'Harvest lot creation, farm bag QR codes, dispatch to mandi.',
+                    title: _t('roleFarmer'),
+                    description: _t('roleFarmerDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
                     sampleOrg: 'Bardhaman Farmer Coop (FPO-WB-0492)',
@@ -659,9 +712,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context: context,
                     roleKey: 'MANDI',
                     icon: Icons.storefront,
-                    title: 'Mandi Aggregator / APMC',
-                    subtitle: 'মাণ্ডি ব্যবসায়ী / मंडी',
-                    description: 'Inbound receipt, lot grading, lot splitting & auction dispatch.',
+                    title: _t('roleMandi'),
+                    description: _t('roleMandiDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
                     sampleOrg: 'Kolkata Central APMC Traders Ltd',
@@ -670,9 +722,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context: context,
                     roleKey: 'COLD_STORAGE',
                     icon: Icons.ac_unit,
-                    title: 'Cold Storage / Warehouse',
-                    subtitle: 'হিমাগার / কোল্ড স্টোরেজ',
-                    description: 'Inward custody receipt, temperature log, cold-chain outward.',
+                    title: _t('roleCold'),
+                    description: _t('roleColdDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
                     sampleOrg: 'Hooghly Cold Chain Logistics Ltd',
@@ -681,9 +732,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context: context,
                     roleKey: 'PROCESSOR',
                     icon: Icons.precision_manufacturing,
-                    title: 'Packhouse & Processor',
-                    subtitle: 'খাদ্য প্রক্রিয়াকরণ ইউনিট',
-                    description: 'Raw intake, milling/sorting, retail pack QR generation.',
+                    title: _t('roleProcessor'),
+                    description: _t('roleProcessorDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
                     sampleOrg: 'Bengal Agro Processing Works Pvt Ltd',
@@ -692,9 +742,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context: context,
                     roleKey: 'RETAILER',
                     icon: Icons.shopping_basket,
-                    title: 'Wholesaler & Retailer',
-                    subtitle: 'খুচরা বিক্রেতা / কিরানা',
-                    description: 'Point-of-sale verification, batch sales recording, consumer audit.',
+                    title: _t('roleRetailer'),
+                    description: _t('roleRetailerDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
                     sampleOrg: 'Maa Durga Retail Fresh Mart',
@@ -713,7 +762,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     required String roleKey,
     required IconData icon,
     required String title,
-    required String subtitle,
     required String description,
     required double width,
     required String? currentRole,
@@ -747,18 +795,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                    Text(
-                      subtitle,
-                      style: TextStyle(color: Colors.amber.shade900, fontSize: 11, fontWeight: FontWeight.w600),
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),
               if (isActive)
@@ -793,7 +832,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ),
               icon: Icon(isActive ? Icons.check_circle : Icons.login, size: 16),
               label: Text(
-                isActive ? 'Logged In as $roleKey' : 'Login as $roleKey',
+                '${_t('loginBtn')} $roleKey',
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ),
@@ -803,12 +842,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 6: DIRECT ENTITY LOGIN MODAL (PHONE OTP OR 1-CLICK FIELD TEST)
-  // ===========================================================================
   void _showDirectEntityLoginModal(BuildContext context, String roleKey, String roleTitle, String sampleOrg) {
-    final phoneController = TextEditingController(text: '+919876543210');
-
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -848,7 +882,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        'Direct Entity Portal Access',
+                        'AnnaSutra Authentication',
                         style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                       ),
                     ],
@@ -861,8 +895,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ],
             ),
             const Divider(height: 24),
-
-            // Option 1: One-Click Instant Demo Login (For Field Workers / Quick Testing)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -878,14 +910,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                       const Icon(Icons.flash_on, color: Color(0xFF15803D), size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        'Quick Field Test Access (1-Tap)',
+                        '1-Tap Fast Field Access',
                         style: TextStyle(color: Colors.green.shade900, fontWeight: FontWeight.bold, fontSize: 13),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Authenticates as $sampleOrg instantly without waiting for SMS.',
+                    'Authenticates as $sampleOrg instantly.',
                     style: TextStyle(color: Colors.green.shade800, fontSize: 11),
                   ),
                   const SizedBox(height: 10),
@@ -903,7 +935,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Successfully authenticated as $roleTitle ($sampleOrg)'),
+                              content: Text('Authenticated as $roleTitle ($sampleOrg)'),
                               backgroundColor: const Color(0xFF0B3D2E),
                             ),
                           );
@@ -920,42 +952,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Option 2: Live Mobile Phone OTP
-            const Text('Or Enter Mobile Number for OTP Verification:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Mobile (+91)',
-                prefixIcon: Icon(Icons.phone),
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 44,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  context.push('/login');
-                },
-                icon: const Icon(Icons.sms, size: 18),
-                label: const Text('Proceed to OTP Verification'),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  // ===========================================================================
-  // SECTION 7: OPERATIONAL CUSTODY CONSOLE (INCOMING / MY STOCK / WAITING TABS)
-  // ===========================================================================
   Widget _buildOperationalConsole(BuildContext context, ThemeData theme) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -969,7 +971,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       ),
       child: Column(
         children: [
-          // Tab bar header with accessible contrast
           Container(
             decoration: const BoxDecoration(
               color: Color(0xFF0B3D2E),
@@ -989,20 +990,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ],
             ),
           ),
-
-          // Tab content view (fixed height container or auto scrollable)
           SizedBox(
             height: 380,
             child: TabBarView(
               controller: _tabController,
               children: [
-                // 1. Incoming Tab
                 _buildIncomingTabContent(context),
-
-                // 2. My Stock Tab
                 _buildMyStockTabContent(context),
-
-                // 3. Waiting Tab
                 _buildWaitingTabContent(context),
               ],
             ),
@@ -1056,7 +1050,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
                   },
                   icon: const Icon(Icons.download_done, size: 18),
-                  label: const Text('Receive Batch / গ্রহণ করুন'),
+                  label: Text(_t('receiveBatch')),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(44),
                     backgroundColor: const Color(0xFF0B3D2E),
@@ -1115,10 +1109,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     context.push('/dispatch?code=7K3Q9XMD4T2B');
                   },
                   icon: const Icon(Icons.upload, size: 18),
-                  label: const Text('Dispatch Batch / প্রেরণ করুন'),
+                  label: Text(_t('dispatchBatch')),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(44),
-                    backgroundColor: const Color(0xFF1E3A8A), // Navy Blue
+                    backgroundColor: const Color(0xFF1E3A8A),
                     foregroundColor: Colors.white,
                   ),
                 ),
@@ -1132,66 +1126,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         context.push('/split?code=7K3Q9XMD4T2B&qty=500.0');
                       },
                       icon: const Icon(Icons.call_split, size: 14),
-                      label: const Text('Split Lot / লট ভাগ করুন', style: TextStyle(fontSize: 12)),
+                      label: Text(_t('splitLot'), style: const TextStyle(fontSize: 12)),
                     ),
                     OutlinedButton.icon(
                       onPressed: () {
                         context.push('/inspection?code=7K3Q9XMD4T2B');
                       },
                       icon: const Icon(Icons.verified, size: 14),
-                      label: const Text('Inspect Quality / গুণমান পরীক্ষা', style: TextStyle(fontSize: 12)),
+                      label: Text(_t('inspectQuality'), style: const TextStyle(fontSize: 12)),
                     ),
                     OutlinedButton.icon(
                       onPressed: () {
                         context.push('/waste?code=7K3Q9XMD4T2B&qty=500.0');
                       },
                       icon: const Icon(Icons.delete_outline, size: 14),
-                      label: const Text('Record Waste / ক্ষতি নথিভুক্ত করুন', style: TextStyle(fontSize: 12)),
+                      label: Text(_t('recordWaste'), style: const TextStyle(fontSize: 12)),
                     ),
                     OutlinedButton.icon(
                       onPressed: () {
                         context.push('/sale?code=7K3Q9XMD4T2B&qty=500.0');
                       },
                       icon: const Icon(Icons.point_of_sale, size: 14),
-                      label: const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন', style: TextStyle(fontSize: 12)),
+                      label: Text(_t('recordSale'), style: const TextStyle(fontSize: 12)),
                     ),
                   ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-
-        // Statutory Recall Notice Alert Card
-        Card(
-          color: Colors.red.shade50,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.red.shade400, width: 1.5),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.warning, color: Colors.red, size: 24),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'RECALL ALERT: LOT-RECALL-001',
-                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'WARNING: This lot has an active RECALL notice. Do not distribute / এই লটটির প্রত্যাহার বিজ্ঞপ্তি রয়েছে।',
-                        style: TextStyle(color: Colors.red, fontSize: 11),
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
@@ -1231,9 +1189,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 8: ACCESSIBLE TOUCH TARGET ACTION BUTTONS (SCAN QR & CREATE BATCH)
-  // ===========================================================================
   Widget _buildAccessibleActionButtons(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -1245,13 +1200,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
               },
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(120, 52), // Meets ≥48x48dp accessible requirement
+                minimumSize: const Size(120, 52),
                 backgroundColor: const Color(0xFF0B3D2E),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               icon: const Icon(Icons.qr_code_scanner, size: 22),
-              label: const Text('Scan QR', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              label: Text(_t('scanQr'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(width: 12),
@@ -1267,7 +1222,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               icon: const Icon(Icons.add_box, size: 22),
-              label: const Text('Create Batch', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              label: Text(_t('createBatch'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -1275,20 +1230,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // ===========================================================================
-  // SECTION 9: OFFICIAL GOVERNMENT & C-DAC FOOTER & STATUTORY DISCLAIMER
-  // ===========================================================================
   Widget _buildOfficialFooter(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: const BoxDecoration(
-        color: Color(0xFF07271D), // Dark Government Emerald
+        color: Color(0xFF07271D),
         border: Border(top: BorderSide(color: Color(0xFF144D3B), width: 1.5)),
       ),
       child: Column(
         children: [
-          // Partner logos in footer
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1302,9 +1253,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
-                'AnnaSutra',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+              Text(
+                _t('brandTitle'),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(width: 20),
               Container(width: 1, height: 24, color: Colors.white24),
@@ -1317,20 +1268,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ],
           ),
           const SizedBox(height: 12),
-
-          const Text(
-            'Developed by Centre for Development of Advanced Computing (C-DAC)',
-            style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 12, fontWeight: FontWeight.w600),
+          Text(
+            _t('footerDev'),
+            style: const TextStyle(color: Color(0xFFE2E8F0), fontSize: 12, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
-          const Text(
-            'Ministry of Electronics & Information Technology, Government of India',
-            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
+          Text(
+            _t('footerGov'),
+            style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 14),
-
-          // Mandatory Disclaimer required by docs/00_MASTER_BRIEF.md
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -1338,21 +1286,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.white12),
             ),
-            child: const Text(
-              'Notice: Records are based on information entered by supply-chain participants. '
-              'They do not prove physical package contents.',
-              style: TextStyle(fontSize: 11, color: Color(0xFFCBD5E1), height: 1.3),
+            child: Text(
+              _t('disclaimer'),
+              style: const TextStyle(fontSize: 11, color: Color(0xFFCBD5E1), height: 1.3),
               textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(height: 10),
-
-          // DPDP grievance link
           TextButton(
             onPressed: () => DpdpConsentDialog.show(context),
-            child: const Text(
-              'DPDP Act 2023 Compliance & Grievance Redressal Officer: grievance@annasutra.in',
-              style: TextStyle(color: Color(0xFFFCD34D), fontSize: 11),
+            child: Text(
+              _t('dpdpLink'),
+              style: const TextStyle(color: Color(0xFFFCD34D), fontSize: 11),
               textAlign: TextAlign.center,
             ),
           ),

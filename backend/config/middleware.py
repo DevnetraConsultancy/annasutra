@@ -35,7 +35,7 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         # 1. Content Security Policy: strict origin, no unsafe-inline scripts
         csp_directives = [
             "default-src 'self'",
-            "script-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: https:",
             "font-src 'self'",
