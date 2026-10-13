@@ -13,6 +13,8 @@ class AuthState {
   final String? accessToken;
   final String? refreshToken;
   final String? orgVerification; // 'PENDING', 'VERIFIED'
+  final String? orgName;
+  final String? orgType;
   final String? errorMessage;
   final int cooldownSeconds;
 
@@ -22,6 +24,8 @@ class AuthState {
     this.accessToken,
     this.refreshToken,
     this.orgVerification,
+    this.orgName,
+    this.orgType,
     this.errorMessage,
     this.cooldownSeconds = 0,
   });
@@ -35,6 +39,8 @@ class AuthState {
     String? accessToken,
     String? refreshToken,
     String? orgVerification,
+    String? orgName,
+    String? orgType,
     String? errorMessage,
     int? cooldownSeconds,
   }) {
@@ -44,6 +50,8 @@ class AuthState {
       accessToken: accessToken ?? this.accessToken,
       refreshToken: refreshToken ?? this.refreshToken,
       orgVerification: orgVerification ?? this.orgVerification,
+      orgName: orgName ?? this.orgName,
+      orgType: orgType ?? this.orgType,
       errorMessage: errorMessage ?? this.errorMessage,
       cooldownSeconds: cooldownSeconds ?? this.cooldownSeconds,
     );

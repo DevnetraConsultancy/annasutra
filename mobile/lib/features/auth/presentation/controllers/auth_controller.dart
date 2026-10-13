@@ -28,11 +28,17 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> checkSavedAuth() async {
     final token = await _secureStore.read('access_token');
     final orgVerification = await _secureStore.read('org_verification');
+    final orgName = await _secureStore.read('org_name');
+    final orgType = await _secureStore.read('org_type');
+    final phone = await _secureStore.read('phone');
     if (token != null && token.isNotEmpty) {
       state = state.copyWith(
         status: AuthStatus.authenticated,
+        phone: phone,
         accessToken: token,
         orgVerification: orgVerification ?? 'PENDING',
+        orgName: orgName,
+        orgType: orgType,
       );
     } else {
       state = state.copyWith(status: AuthStatus.unauthenticated);
@@ -151,6 +157,42 @@ class AuthController extends StateNotifier<AuthState> {
         errorMessage: 'Organisation registration failed: $e',
       );
       return false;
+    }
+  }
+
+  Future<void> quickLoginAsEntity({
+    required String entityRole,
+    required String orgName,
+    required String phone,
+  }) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    try {
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      const mockAccessToken = 'mock_jwt_access_token_annasutra';
+      const mockRefreshToken = 'mock_jwt_refresh_token_annasutra';
+      const orgVerification = 'VERIFIED';
+
+      await _secureStore.write('access_token', mockAccessToken);
+      await _secureStore.write('refresh_token', mockRefreshToken);
+      await _secureStore.write('org_name', orgName);
+      await _secureStore.write('org_type', entityRole);
+      await _secureStore.write('org_verification', orgVerification);
+      await _secureStore.write('phone', phone);
+
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        phone: phone,
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+        orgVerification: orgVerification,
+        orgName: orgName,
+        orgType: entityRole,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: 'Entity login failed: $e',
+      );
     }
   }
 

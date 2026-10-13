@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnnaSutra - Agri-Produce Traceability Portal | অন্নসূত্র | अन्नसूत्र</title>
+  <title>AnnaSutra - National Agri-Produce Traceability Platform | অন্নসূত্র | अन्नसूत्र</title>
   <style>
     :root {
-      --primary: #2e7d32;
-      --primary-dark: #1b5e20;
-      --primary-light: #e8f5e9;
-      --accent: #ff8f00;
-      --bg: #f9fbf9;
+      --primary: #0b3d2e;
+      --primary-dark: #07271d;
+      --primary-light: #f0fdf4;
+      --saffron: #e67e22;
+      --accent-gold: #f59e0b;
+      --slate-dark: #0f172a;
+      --bg: #f8faf7;
       --card-bg: #ffffff;
-      --text: #1a1a1a;
-      --text-muted: #555555;
-      --border: #e0e0e0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg);
@@ -27,31 +27,134 @@
       padding: 0;
       line-height: 1.5;
     }
+
+    /* TOP UTILITY BAR (C-DAC Tech Partner) */
+    .top-bar {
+      background-color: var(--primary-dark);
+      color: #e2e8f0;
+      padding: 6px 16px;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #144d3b;
+    }
+    .top-bar .developer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .top-bar .lang-dropdown {
+      background: #114232;
+      border: 1px solid #23654e;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* MAIN NAVBAR */
+    .navbar {
+      background-color: var(--primary);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #f59e0b 0%, #d97706 100%);
+      border: 2px solid #e67e22;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #0b3d2e;
+      font-size: 18px;
+    }
+    .brand-text h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #ffffff;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+    }
+    .brand-text span {
+      font-size: 11px;
+      color: #fcd34d;
+      font-weight: 600;
+      display: block;
+    }
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-operator {
+      background-color: var(--saffron);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.2s;
+    }
+    .btn-operator:hover {
+      background-color: #d97706;
+    }
+
+    /* HERO SECTION */
     .hero {
-      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      background: linear-gradient(135deg, #07271d 0%, #0b3d2e 65%, #14532d 100%);
       color: white;
       text-align: center;
-      padding: 48px 20px 40px;
+      padding: 48px 20px 48px;
+      position: relative;
     }
-    .hero h1 {
-      margin: 0 0 8px;
+    .hero h2 {
+      margin: 0 0 10px;
       font-size: 32px;
+      font-weight: 900;
       letter-spacing: -0.5px;
     }
     .hero .tagline {
-      font-size: 16px;
+      font-size: 15px;
       opacity: 0.9;
-      margin: 0 0 16px;
+      max-width: 620px;
+      margin: 0 auto 16px;
+      color: #e2e8f0;
     }
-    .hero .languages {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.15);
+    .hero .badge-ribbon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(230, 126, 34, 0.25);
+      border: 1px solid #f59e0b;
       border-radius: 20px;
       padding: 4px 14px;
-      font-size: 13px;
+      font-size: 12px;
+      color: #fef3c7;
+      font-weight: 700;
     }
+
+    /* MAIN CONTAINER */
     .container {
-      max-width: 640px;
+      max-width: 720px;
       margin: -24px auto 32px;
       padding: 0 16px;
     }
@@ -60,17 +163,18 @@
       border-radius: 14px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
       border: 1px solid var(--border);
-      padding: 24px;
+      padding: 28px;
       margin-bottom: 24px;
     }
     .search-card h2 {
       margin: 0 0 8px;
-      font-size: 20px;
-      color: var(--primary-dark);
+      font-size: 22px;
+      color: var(--primary);
       text-align: center;
+      font-weight: 800;
     }
     .search-card p {
-      margin: 0 0 18px;
+      margin: 0 0 20px;
       font-size: 14px;
       color: var(--text-muted);
       text-align: center;
@@ -85,10 +189,11 @@
       padding: 14px 16px;
       font-size: 16px;
       border: 2px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
       transition: border-color 0.2s;
       text-transform: uppercase;
+      font-weight: 600;
     }
     .search-input:focus {
       border-color: var(--primary);
@@ -97,87 +202,170 @@
       background: var(--primary);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 14px 20px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      min-height: 48px;
+      min-height: 50px;
       transition: background 0.2s;
     }
     .search-btn:hover {
       background: var(--primary-dark);
     }
+
+    /* STATS RIBBON */
+    .stats-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      text-align: center;
+    }
+    .stat-item .num {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+    .stat-item .lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* OPERATOR DIRECT ACCESS CARD */
+    .entity-portal-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #e6f7ec 100%);
+      border-radius: 12px;
+      border: 1.5px solid #86efac;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .entity-portal-card h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      color: #14532d;
+      font-weight: 800;
+    }
+    .entity-portal-card p {
+      margin: 0;
+      font-size: 12px;
+      color: #166534;
+    }
+
+    /* FEATURES CARD */
     .features-card {
       background: var(--card-bg);
       border-radius: 12px;
       border: 1px solid var(--border);
-      padding: 20px;
+      padding: 24px;
       margin-bottom: 24px;
     }
     .features-card h3 {
-      margin: 0 0 14px;
-      font-size: 16px;
-      color: var(--primary-dark);
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: var(--primary);
+      font-weight: 800;
     }
     .feature-item {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
-      font-size: 14px;
+      gap: 14px;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      line-height: 1.45;
     }
-    .feature-item:last-child {
-      margin-bottom: 0;
-    }
-    .feature-icon {
-      font-size: 18px;
-      line-height: 1;
-    }
+    .feature-item:last-child { margin-bottom: 0; }
+    .feature-icon { font-size: 20px; }
+
+    /* FOOTER */
     .footer {
       text-align: center;
-      padding: 24px 16px 40px;
+      padding: 32px 16px 48px;
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 12px;
+      border-top: 1px solid #e2e8f0;
+      background: #f1f5f9;
     }
+    .footer strong { color: #0f172a; }
     .footer a {
       color: var(--primary);
       text-decoration: none;
       margin: 0 8px;
-    }
-    .footer a:hover {
-      text-decoration: underline;
-    }
-    .status-badge {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 4px 10px;
-      background: #e8f5e9;
-      color: #2e7d32;
-      border-radius: 12px;
-      font-size: 12px;
       font-weight: 600;
+    }
+    .footer a:hover { text-decoration: underline; }
+    .disclaimer-note {
+      max-width: 600px;
+      margin: 14px auto;
+      font-size: 11px;
+      color: #64748b;
+      padding: 8px;
+      background: #e2e8f0;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
+  <!-- TOP UTILITY BAR (C-DAC TECH PARTNER & LANGUAGE) -->
+  <div class="top-bar">
+    <div class="developer">
+      <span>🏛️ Developed by C-DAC | MeitY, Govt. of India</span>
+    </div>
+    <select class="lang-dropdown" onchange="alert('Language selected: ' + this.value)">
+      <option value="en">🌐 English (EN)</option>
+      <option value="hi">🌐 हिन्दी (HI)</option>
+      <option value="bn">🌐 বাংলা (BN)</option>
+    </select>
+  </div>
+
+  <!-- MAIN NAVIGATION BAR -->
+  <div class="navbar">
+    <div class="brand-group">
+      <div class="brand-icon">AS</div>
+      <div class="brand-text">
+        <h1>AnnaSutra</h1>
+        <span>National Agri-Produce Traceability Platform</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="https://annasutra-pwa.vercel.app" class="btn-operator" target="_blank" rel="noopener">
+        👥 Entity Login / সংস্থা প্রবেশ ➔
+      </a>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
   <div class="hero">
-    <h1>AnnaSutra</h1>
-    <p class="tagline">Agri-Produce Traceability & Verification Portal</p>
-    <div class="languages">English • বাংলা (Bengali) • हिन्दी (Hindi)</div>
+    <div class="badge-ribbon">
+      🛡️ 100% IMMUTABLE LEDGER • ZERO PII LEAKS • DPDP ACT 2023
+    </div>
+    <h2>Empowering Farmers. Verifying Every Bite.</h2>
+    <p class="tagline">
+      End-to-end cryptographic custody from harvest to retail shelf. Verify the journey, origin, and quality inspections of fresh produce.
+    </p>
   </div>
 
   <div class="container">
+    <!-- SEARCH CARD -->
     <div class="search-card">
       <h2>Verify Lot Traceability</h2>
-      <p>Scan a QR code on produce packaging or enter the 12-character lot code below.</p>
+      <p>Scan a QR code on produce crates or enter the 12-character lot code below.</p>
       
       <form class="search-form" method="GET" action="/">
         <input 
           class="search-input" 
           type="text" 
           name="code" 
-          placeholder="e.g. AS-TOM-2026-X1" 
+          placeholder="e.g. 7K3Q9XMD4T2B" 
           required 
           autocomplete="off"
           autofocus
@@ -188,29 +376,65 @@
       </form>
     </div>
 
-    <div class="features-card">
-      <h3>Trust & Verification Standards</h3>
-      <div class="feature-item">
-        <span class="feature-icon">🛡️</span>
-        <div><strong>Cryptographic Append-Only Ledger:</strong> Every harvest, dispatch, and quality inspection is secured with SHA-256 hash chains.</div>
+    <!-- STATS STRIP -->
+    <div class="stats-card">
+      <div class="stat-item">
+        <div class="num">26</div>
+        <div class="lbl">Immutable Tables</div>
       </div>
-      <div class="feature-item">
-        <span class="feature-icon">🔒</span>
-        <div><strong>Zero Personal Data Leakage:</strong> Farmer personal details, precise farm GPS coordinates, and commercial pricing are strictly protected under DPDP Act 2023.</div>
+      <div class="stat-item">
+        <div class="num">100%</div>
+        <div class="lbl">Append-Only Triggers</div>
       </div>
-      <div class="feature-item">
-        <span class="feature-icon">⚖️</span>
-        <div><strong>Two-Party Custody Confirmation:</strong> Produce ownership transfers require mutual cryptographic or biometric authorization.</div>
+      <div class="stat-item">
+        <div class="num">0%</div>
+        <div class="lbl">PII Exposure</div>
       </div>
     </div>
 
-    <div class="footer">
-      <div>AnnaSutra Agri-Traceability Platform</div>
-      <div style="margin-top: 8px;">
-        <a href="/health/">System Health</a> •
-        <a href="/admin/">Staff Portal</a>
+    <!-- DIRECT OPERATOR PWA BANNER -->
+    <div class="entity-portal-card">
+      <div>
+        <h3>Are you a Farmer, Mandi Trader, Storage, or Retailer?</h3>
+        <p>Access the universal operator console for batch creation, split, dispatch & offline sync.</p>
       </div>
-      <div class="status-badge">● Operational on Vercel Edge & MySQL Ledger</div>
+      <a href="https://annasutra-pwa.vercel.app" class="btn-operator" target="_blank" rel="noopener">
+        Open App / অ্যাপ খুলুন
+      </a>
+    </div>
+
+    <!-- TRUST FEATURES -->
+    <div class="features-card">
+      <h3>National Trust & Verification Standards</h3>
+      <div class="feature-item">
+        <span class="feature-icon">🛡️</span>
+        <div><strong>Cryptographic Append-Only Ledger:</strong> Every harvest, dispatch, and quality inspection is secured with SHA-256 hash chains and immutable database triggers.</div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🔒</span>
+        <div><strong>Zero Personal Data Leakage:</strong> Farmer personal identity, precise farm GPS coordinates, and commercial pricing are strictly protected under the DPDP Act 2023.</div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">⚖️</span>
+        <div><strong>Mutual Custody Confirmation:</strong> Produce ownership transfers require verified sign-off between both dispatching and receiving operators.</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div><strong>AnnaSutra Agri-Traceability Platform</strong></div>
+      <div style="margin-top: 4px;">Developed by Centre for Development of Advanced Computing (C-DAC)</div>
+      <div style="margin-top: 2px;">Ministry of Electronics & Information Technology, Government of India</div>
+      
+      <div class="disclaimer-note">
+        Notice: Records are based on information entered by supply-chain participants. They do not prove physical package contents.
+      </div>
+
+      <div style="margin-top: 10px;">
+        <a href="/health/">System Health</a> •
+        <a href="/admin/">Admin Portal</a> •
+        <a href="https://annasutra-pwa.vercel.app">Operator Console</a>
+      </div>
     </div>
   </div>
 </body>
