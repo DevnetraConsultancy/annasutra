@@ -1,7 +1,11 @@
 import base64
+import os
+import re
+import mimetypes
 from pathlib import Path
 from django.conf import settings
 from django.shortcuts import render
+from django.http import HttpResponse, StreamingHttpResponse, Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +15,83 @@ from rest_framework.permissions import AllowAny
 from apps.publicview.models import PublicView
 from apps.alerts.models import ScanLog
 from rest_framework.throttling import ScopedRateThrottle, AnonRateThrottle
+
+
+def serve_static_asset(request, path: str):
+    """Serve static assets with HTTP 206 byte-range streaming for background & promo videos."""
+    clean_path = Path(path).as_posix().lstrip("/")
+    if ".." in clean_path:
+        raise Http404("Invalid path")
+
+    candidates = [
+        settings.BASE_DIR.parent / "static" / clean_path,
+        settings.BASE_DIR / "staticfiles" / clean_path,
+        settings.BASE_DIR / "apps" / "publicview" / "static" / clean_path,
+    ]
+    file_path = None
+    for c in candidates:
+        if c.exists() and c.is_file():
+            file_path = c
+            break
+
+    if not file_path:
+        raise Http404(f"Asset not found: {clean_path}")
+
+    file_size = file_path.stat().st_size
+    content_type, _ = mimetypes.guess_type(str(file_path))
+    content_type = content_type or "application/octet-stream"
+
+    range_header = request.headers.get("Range", "")
+    range_match = re.match(r"bytes=(\d+)-(\d*)", range_header)
+
+    if range_match:
+        first_byte = int(range_match.group(1))
+        last_byte = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+        if first_byte >= file_size:
+            return HttpResponse(status=416)
+        last_byte = min(last_byte, file_size - 1)
+        length = last_byte - first_byte + 1
+
+        def range_iterator(start, length, chunk_size=65536):
+            with open(file_path, "rb") as f:
+                f.seek(start)
+                remaining = length
+                while remaining > 0:
+                    read_len = min(chunk_size, remaining)
+                    data = f.read(read_len)
+                    if not data:
+                        break
+                    remaining -= len(data)
+                    yield data
+
+        resp = StreamingHttpResponse(
+            range_iterator(first_byte, length),
+            status=206,
+            content_type=content_type,
+        )
+        resp["Content-Range"] = f"bytes {first_byte}-{last_byte}/{file_size}"
+        resp["Accept-Ranges"] = "bytes"
+        resp["Content-Length"] = str(length)
+        resp["Cache-Control"] = "public, max-age=86400"
+        return resp
+
+    def file_iterator(chunk_size=65536):
+        with open(file_path, "rb") as f:
+            while True:
+                data = f.read(chunk_size)
+                if not data:
+                    break
+                yield data
+
+    resp = StreamingHttpResponse(
+        file_iterator(),
+        status=200,
+        content_type=content_type,
+    )
+    resp["Accept-Ranges"] = "bytes"
+    resp["Content-Length"] = str(file_size)
+    resp["Cache-Control"] = "public, max-age=86400"
+    return resp
 
 
 def _get_logo_data_uri(relative_path: str) -> str:
@@ -107,5 +188,8 @@ def landing_page_view(request):
         "user_lang": user_lang,
         "brand_logo": ANNASUTRA_LOGO_URI,
         "cdac_logo": CDAC_LOGO_URI,
+        "hero_video_url": "/static/publicview/videos/hero_bg.mp4",
+        "promo_video_url": "/static/publicview/videos/annasutra_promo.mp4",
     })
+
 

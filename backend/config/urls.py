@@ -1,9 +1,9 @@
 """AnnaSutra URL Configuration."""
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from django.http import JsonResponse
 from django.db import connection
-from apps.publicview.views import landing_page_view, public_lot_html_view
+from apps.publicview.views import landing_page_view, public_lot_html_view, serve_static_asset
 
 
 def health_check(request):
@@ -52,4 +52,6 @@ urlpatterns = [
 
     path("v1/public/", include("apps.publicview.urls")),
     path("L/<str:code>", include("apps.publicview.short_urls")),
+    re_path(r"^static/(?P<path>.*)$", serve_static_asset, name="static_asset"),
 ]
+
