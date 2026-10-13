@@ -12,13 +12,10 @@ from apps.labels.models import QrBlock, QrLabel
 from apps.ledger.models import TraceEvent, HashAnchor
 from apps.lots.models import Lot, Product
 from apps.organisations.models import Organisation, PartnerLink
-from apps.custody.models import Handover
 from apps.alerts.models import Alert, ScanLog
-from apps.publicview.models import PublicView
 from apps.ledger.services.hash_chain import (
     canonical_json_bytes,
     compute_event_hash,
-    verify_lot_hash_chain,
 )
 from apps.ledger.services.anchor_service import run_daily_anchoring
 

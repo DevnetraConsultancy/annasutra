@@ -8,7 +8,6 @@ Enforces:
 """
 
 from decimal import Decimal
-import pytest
 from hypothesis import given, strategies as st, settings
 
 from apps.inventory.models import LotBalance

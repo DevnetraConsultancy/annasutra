@@ -12,23 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres:16
+      mysql:
+        image: mysql:8.0
         env:
-          POSTGRES_DB: annasutra_test
-          POSTGRES_USER: annasutra_user
-          POSTGRES_PASSWORD: test_password
+          MYSQL_DATABASE: annasutra_test
+          MYSQL_USER: annasutra_user
+          MYSQL_PASSWORD: test_password
+          MYSQL_ROOT_PASSWORD: root_test_password
         ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     env:
       DJANGO_SETTINGS_MODULE: config.settings.test
-      DATABASE_URL: postgresql://annasutra_user:test_password@localhost:5432/annasutra_test
+      DATABASE_URL: mysql://annasutra_user:test_password@127.0.0.1:3306/annasutra_test
       SECRET_KEY: ci-test-secret-key-1234567890-minimum-32-chars-long
 
     steps:
@@ -52,7 +49,7 @@ jobs:
           ruff check --fix --config pyproject.toml backend/ || true
           ruff check --config pyproject.toml backend/
 
-      - name: Run Django migrations on PostgreSQL 16
+      - name: Run Django migrations on MySQL 8.0
         run: |
           python backend/manage.py migrate
 

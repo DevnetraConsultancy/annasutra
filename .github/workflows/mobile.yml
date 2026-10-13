@@ -40,6 +40,8 @@ jobs:
           sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/g' android/app/build.gradle || true
           sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 35/g' android/app/build.gradle || true
           sed -i 's/compileSdk flutter.compileSdkVersion/compileSdk 35/g' android/app/build.gradle || true
+          sed -i 's/package in.example.annasutra/package `in`.example.annasutra/g' android/app/src/main/kotlin/in/example/annasutra/MainActivity.kt || true
+          sed -i 's/package="in.example.annasutra"//g' android/app/src/main/AndroidManifest.xml || true
 
       - name: Install dependencies
         run: flutter pub get

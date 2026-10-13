@@ -3,6 +3,12 @@ import os
 from pathlib import Path
 import environ
 
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except Exception:
+    pass
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env(
@@ -77,13 +83,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Database defaults
+# Database defaults (MySQL 8.0+)
 DATABASES = {
     "default": env.db(
         "DATABASE_URL",
-        default="postgresql://annasutra:annasutra@localhost:5432/annasutra_db",
+        default="mysql://annasutra:annasutra@localhost:3306/annasutra_db",
     )
 }
+
+if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"].update({
+        "charset": "utf8mb4",
+        "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
+    })
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

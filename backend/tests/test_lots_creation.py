@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 from apps.identity.models import AppUser
 from apps.identity.services.token import TokenService
 from apps.inventory.models import LotBalance
-from apps.labels.models import QrBlock, QrLabel
+from apps.labels.models import QrLabel
 from apps.ledger.models import TraceEvent
 from apps.lots.models import Lot
 from apps.organisations.models import Organisation

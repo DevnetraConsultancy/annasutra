@@ -1,4 +1,4 @@
-package in.example.annasutra
+package `in`.example.annasutra
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

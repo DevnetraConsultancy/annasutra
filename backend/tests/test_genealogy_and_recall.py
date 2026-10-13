@@ -15,11 +15,10 @@ Tests:
 import uuid
 from decimal import Decimal
 import pytest
-from django.db import connection, transaction
+from django.db import connection
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.alerts.models import Alert
 from apps.inventory.models import LotBalance
 from apps.labels.models import QrBlock, QrLabel
 from apps.ledger.models import TraceEvent
@@ -27,7 +26,6 @@ from apps.lots.models import Lot, Product
 from apps.identity.models import AppUser
 from apps.organisations.models import Organisation
 from apps.quality.models import Inspection
-from apps.reporting.models import Recall
 from apps.ledger.admin import TraceEventAdmin
 
 
@@ -507,7 +505,7 @@ def test_admin_cannot_edit_trace_event(test_setup):
 
 @pytest.mark.django_db
 def test_database_trigger_forbids_update_trace_event(test_setup):
-    """Direct PostgreSQL UPDATE on trace_event is blocked by trigger forbid_change()."""
+    """Direct database UPDATE on trace_event is blocked by trigger."""
     ws_user = test_setup["wholesaler_user"]
     ws_org = test_setup["wholesaler_org"]
     tomato = test_setup["tomato"]

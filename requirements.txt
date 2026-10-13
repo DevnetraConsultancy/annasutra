@@ -1,7 +1,7 @@
-# Core backend dependencies for AnnaSutra
 Django>=5.1.2,<5.2.0
 djangorestframework>=3.15.2,<3.16.0
-psycopg[binary]>=3.2.3,<3.3.0
+mysqlclient>=2.2.4,<2.3.0
+pymysql>=1.1.1,<1.2.0
 django-environ>=0.11.2,<0.12.0
 cryptography>=43.0.1,<44.0.0
 webauthn>=2.1.0,<2.6.0

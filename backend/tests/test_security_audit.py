@@ -1,7 +1,6 @@
 """Security hardening, header audit, zero-PII leak, and rate-limiting tests for AnnaSutra."""
 
 import os
-from decimal import Decimal
 import pytest
 from django.conf import settings
 from django.core.cache import cache
