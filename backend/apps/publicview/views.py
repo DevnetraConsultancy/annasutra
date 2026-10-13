@@ -188,8 +188,7 @@ def landing_page_view(request):
         "user_lang": user_lang,
         "brand_logo": ANNASUTRA_LOGO_URI,
         "cdac_logo": CDAC_LOGO_URI,
-        "hero_video_url": "/static/publicview/videos/hero_bg.mp4",
-        "promo_video_url": "/static/publicview/videos/annasutra_promo.mp4",
+        "hero_video_url": "/static/publicview/videos/annasutra-bg-optimized.mp4",
     })
 
 
