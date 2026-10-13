@@ -36,15 +36,20 @@ urlpatterns = [
     path("q/<str:code>/", public_lot_html_view, name="qr_short_link_slash"),
     # API v1 routes conforming to api/openapi.yaml
     path("v1/auth/", include("apps.identity.urls")),
+    path("v1/organisations/", include("apps.organisations.org_urls")),
     path("v1/organisations", include("apps.organisations.org_urls")),
+    path("v1/partners/", include("apps.organisations.partner_urls")),
     path("v1/partners", include("apps.organisations.partner_urls")),
     path("v1/labels/", include("apps.labels.urls")),
+    path("v1/lots/", include("apps.lots.urls")),
     path("v1/lots", include("apps.lots.urls")),
     path("v1/handovers/", include("apps.custody.urls")),
     path("v1/evidence/", include("apps.quality.urls")),
     path("v1/events/", include("apps.ledger.event_urls")),
     path("v1/sync/", include("apps.ledger.sync_urls")),
+    path("v1/recalls/", include("apps.reporting.urls")),
     path("v1/recalls", include("apps.reporting.urls")),
+
     path("v1/public/", include("apps.publicview.urls")),
     path("L/<str:code>", include("apps.publicview.short_urls")),
 ]

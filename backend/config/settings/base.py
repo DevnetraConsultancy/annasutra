@@ -92,11 +92,14 @@ DATABASES = {
 }
 
 if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
-    DATABASES["default"].setdefault("OPTIONS", {})
-    DATABASES["default"]["OPTIONS"].update({
-        "charset": "utf8mb4",
-        "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
-    })
+    options = DATABASES["default"].setdefault("OPTIONS", {})
+    if "ssl-mode" in options or "ssl_mode" in options:
+        ssl_val = options.pop("ssl-mode", None) or options.pop("ssl_mode", None)
+        if ssl_val and "ssl" not in options:
+            options["ssl"] = {"ssl_mode": ssl_val}
+    options.setdefault("charset", "utf8mb4")
+    options.setdefault("init_command", "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'")
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
