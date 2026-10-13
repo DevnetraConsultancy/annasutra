@@ -39,6 +39,7 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "img-src 'self' data: https:",
             "font-src 'self' data: https://fonts.gstatic.com",
+            "connect-src 'self' https://ipwho.is https://ipapi.co https://api.open-meteo.com",
             "object-src 'none'",
             "frame-ancestors 'none'",
             "base-uri 'self'",

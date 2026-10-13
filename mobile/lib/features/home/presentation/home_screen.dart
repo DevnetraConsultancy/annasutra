@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../auth/domain/auth_state.dart';
 import '../../auth/presentation/dpdp_consent_dialog.dart';
@@ -18,6 +21,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _selectedLang = 'en';
+  String _weatherText = '🌤️ Detecting...';
+  String _dateTimeText = '';
+  Timer? _clockTimer;
 
   static const Map<String, Map<String, String>> _strings = {
     'en': {
@@ -150,12 +156,71 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _updateClock();
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
+    _fetchWeather();
   }
 
   @override
   void dispose() {
+    _clockTimer?.cancel();
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _updateClock() {
+    final now = DateTime.now();
+    final timeStr = DateFormat('hh:mm a').format(now);
+    final dateStr = DateFormat('EEE, dd MMM').format(now);
+    if (mounted) {
+      setState(() {
+        _dateTimeText = '$timeStr • $dateStr';
+      });
+    }
+  }
+
+  Future<void> _fetchWeather() async {
+    try {
+      final dio = Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 4),
+        receiveTimeout: const Duration(seconds: 4),
+      ));
+      final ipRes = await dio.get('https://ipwho.is/');
+      if (ipRes.statusCode == 200 && ipRes.data is Map) {
+        final data = ipRes.data as Map;
+        final lat = data['latitude'] ?? 22.57;
+        final lon = data['longitude'] ?? 88.36;
+        final city = data['city'] ?? 'Local';
+
+        final weatherRes = await dio.get(
+          'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code&timezone=auto',
+        );
+        if (weatherRes.statusCode == 200 && weatherRes.data is Map) {
+          final weatherData = weatherRes.data as Map;
+          final current = weatherData['current'];
+          final temp = current?['temperature_2m']?.round() ?? 28;
+          final code = current?['weather_code'] ?? 1;
+
+          String icon = '🌤️';
+          if (code == 0) icon = '☀️';
+          else if (code == 2) icon = '⛅';
+          else if (code >= 61 && code <= 65) icon = '🌧️';
+          else if (code >= 95) icon = '⛈️';
+
+          if (mounted) {
+            setState(() {
+              _weatherText = '$icon $temp°C $city';
+            });
+          }
+        }
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _weatherText = '🌤️ India';
+        });
+      }
+    }
   }
 
   @override
@@ -216,16 +281,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       ),
       child: Row(
         children: [
-          Image.asset(
-            'assets/images/cdac_logo.png',
-            height: 18,
-            fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => const Icon(Icons.memory, color: Colors.white70, size: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: Colors.white.withOpacity(0.14)),
+            ),
+            child: Text(
+              _weatherText,
+              style: const TextStyle(
+                color: Color(0xFFFDE047),
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              _t('topDev'),
+              _dateTimeText,
               style: const TextStyle(
                 color: Color(0xFFE2E8F0),
                 fontSize: 11,
