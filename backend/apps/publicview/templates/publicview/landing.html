@@ -2806,10 +2806,26 @@
         ── OR SIGN IN WITH MOBILE OTP ──
       </div>
 
-      <input type="tel" class="modal-input" id="phoneInput" value="+919876543210" placeholder="Mobile Number (+91)" />
-      <button class="btn-otp-submit" id="btnSendOtp" onclick="execute1TapLogin()">
-        Send Verification OTP
-      </button>
+      <div id="otpPhoneStep">
+        <input type="tel" class="modal-input" id="phoneInput" value="+919876543210" placeholder="Mobile Number (+91)" />
+        <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
+          Send Verification OTP
+        </button>
+      </div>
+
+      <div id="otpVerifyStep" style="display: none; margin-top: 10px;">
+        <div style="font-size: 12px; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;" id="otpStatusNotice">
+          ✓ OTP sent via Android SMS Gateway
+        </div>
+        <input type="text" class="modal-input" id="otpCodeInput" maxlength="6" placeholder="Enter 6-digit OTP" style="letter-spacing: 5px; font-size: 18px; font-weight: 700; text-align: center;" />
+        <button class="btn-otp-submit" id="btnVerifyOtp" onclick="verifyOtpLogin()" style="margin-top: 8px;">
+          Verify &amp; Enter Console
+        </button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px;">
+          <a href="javascript:void(0)" onclick="resetOtpLogin()" style="color: var(--text-muted); text-decoration: underline;">Change Phone</a>
+          <span id="otpCountdown" style="color: var(--text-muted); font-weight: 600;"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -5625,7 +5641,127 @@
       document.getElementById('govInfoModal').style.display = 'none';
     }
 
+    let otpCooldownTimer = null;
+
+    function resetOtpLogin() {
+      const pStep = document.getElementById('otpPhoneStep');
+      const vStep = document.getElementById('otpVerifyStep');
+      if (pStep) pStep.style.display = 'block';
+      if (vStep) vStep.style.display = 'none';
+      if (otpCooldownTimer) clearInterval(otpCooldownTimer);
+      const countEl = document.getElementById('otpCountdown');
+      if (countEl) countEl.innerText = '';
+      const btn = document.getElementById('btnSendOtp');
+      if (btn) {
+        btn.disabled = false;
+        const t = (typeof i18n !== 'undefined' && i18n[currentLang]) || (typeof i18n !== 'undefined' && i18n['en']) || {};
+        btn.innerText = t.btnSendOtp || 'Send Verification OTP';
+      }
+    }
+
+    async function requestOtpLogin() {
+      const phoneInp = document.getElementById('phoneInput');
+      const btn = document.getElementById('btnSendOtp');
+      if (!phoneInp || !btn) return;
+      const phone = phoneInp.value.trim();
+      if (!phone || !phone.startsWith('+')) {
+        alert(currentLang === 'hi' ? 'कृपया अंतर्राष्ट्रीय प्रारूप में मान्य मोबाइल नंबर दर्ज करें (उदा. +919876543210)' : currentLang === 'bn' ? 'অনুগ্রহ করে আন্তর্জাতিক ফরম্যাটে বৈধ মোবাইল নম্বর লিখুন (উদাঃ +919876543210)' : 'Please enter a valid international mobile number (e.g. +919876543210)');
+        return;
+      }
+      btn.disabled = true;
+      btn.innerText = (currentLang === 'hi' ? 'गेटवे से ओटीपी भेजा जा रहा है...' : currentLang === 'bn' ? 'গেটওয়ে থেকে ওটিপি পাঠানো হচ্ছে...' : 'Sending OTP via Gateway...');
+
+      try {
+        const res = await fetch('/api/v1/auth/otp/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: phone, language: currentLang })
+        });
+        const data = await res.json();
+        btn.disabled = false;
+        btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিপি পাঠান' : 'Send Verification OTP');
+
+        if (res.ok || res.status === 202) {
+          document.getElementById('otpPhoneStep').style.display = 'none';
+          const vStep = document.getElementById('otpVerifyStep');
+          vStep.style.display = 'block';
+          const notice = document.getElementById('otpStatusNotice');
+          if (notice) {
+            notice.innerText = (currentLang === 'hi' ? '✓ ' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway');
+          }
+          startOtpCountdown(60);
+          const codeInput = document.getElementById('otpCodeInput');
+          if (codeInput) {
+            codeInput.value = data.debug_code || '';
+            codeInput.focus();
+          }
+        } else {
+          alert(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি পাঠাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিপি পাঠান' : 'Send Verification OTP');
+        alert('Gateway communication error. Please check your network or try 1-Tap sign in.');
+      }
+    }
+
+    async function verifyOtpLogin() {
+      const phoneInp = document.getElementById('phoneInput');
+      const codeInp = document.getElementById('otpCodeInput');
+      const btn = document.getElementById('btnVerifyOtp');
+      if (!phoneInp || !codeInp || !btn) return;
+      const phone = phoneInp.value.trim();
+      const code = codeInp.value.trim();
+      if (!code || code.length < 4) {
+        alert(currentLang === 'hi' ? 'कृपया 6-अंकीय ओटीपी कोड दर्ज करें' : currentLang === 'bn' ? 'অনুগ্রহ করে ৬-সংখ্যার ওটিপি লিখুন' : 'Please enter the 6-digit OTP code.');
+        return;
+      }
+      btn.disabled = true;
+      btn.innerText = (currentLang === 'hi' ? 'सत्यापित हो रहा है...' : currentLang === 'bn' ? 'যাচাই করা হচ্ছে...' : 'Verifying...');
+
+      try {
+        const res = await fetch('/api/v1/auth/otp/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: phone, code: code })
+        });
+        const data = await res.json();
+        btn.disabled = false;
+        btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন এবং প্রবেশ করুন' : 'Verify & Enter Console');
+
+        if (res.ok) {
+          if (data.tokens && data.tokens.access) {
+            localStorage.setItem('annasutra_access_token', data.tokens.access);
+          }
+          execute1TapLogin();
+        } else {
+          alert(data.detail || (currentLang === 'hi' ? 'अमान्य ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ ওটিপি কোড' : 'Invalid or expired OTP code.'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন और प्रवेश करें' : 'Verify & Enter Console');
+        alert('Verification service temporarily unavailable.');
+      }
+    }
+
+    function startOtpCountdown(seconds) {
+      let remaining = seconds;
+      const countEl = document.getElementById('otpCountdown');
+      if (otpCooldownTimer) clearInterval(otpCooldownTimer);
+      countEl.innerText = 'Resend in ' + remaining + 's';
+      otpCooldownTimer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(otpCooldownTimer);
+          countEl.innerHTML = '<a href="javascript:void(0)" onclick="requestOtpLogin()" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Resend OTP</a>';
+        } else {
+          countEl.innerText = 'Resend in ' + remaining + 's';
+        }
+      }, 1000);
+    }
+
     function openLoginModal(role) {
+      resetOtpLogin();
       currentRole = role || 'PRODUCER';
       const langRoles = roleDefinitions[currentLang] || roleDefinitions['en'];
       const def = langRoles[currentRole] || roleDefinitions['en'][currentRole];
@@ -5638,6 +5774,7 @@
 
     function closeLoginModal() {
       document.getElementById('loginModal').style.display = 'none';
+      if (otpCooldownTimer) clearInterval(otpCooldownTimer);
     }
 
     function openDpdpModal() {

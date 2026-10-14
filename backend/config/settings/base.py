@@ -149,6 +149,15 @@ CACHES = {
     }
 }
 
+# OTP & SMS Gateway configuration (capcom6/android-sms-gateway)
+OTP_PROVIDER = env("OTP_PROVIDER", default="android_gateway" if env("SMS_GATEWAY_USER", default="") else "console")
+SMS_GATEWAY_URL = env("SMS_GATEWAY_URL", default="https://api.sms-gate.app/3rdparty/v1/messages")
+SMS_GATEWAY_USER = env("SMS_GATEWAY_USER", default="")
+SMS_GATEWAY_PASSWORD = env("SMS_GATEWAY_PASSWORD", default="")
+SMS_GATEWAY_SIM_NUMBER = env.int("SMS_GATEWAY_SIM_NUMBER", default=1)
+OTP_DEBUG = env.bool("OTP_DEBUG", default=False)
+
+
 # WebAuthn relying party configuration
 WEBAUTHN_RP_ID = env("WEBAUTHN_RP_ID", default="localhost")
 WEBAUTHN_RP_NAME = env("WEBAUTHN_RP_NAME", default="AnnaSutra")

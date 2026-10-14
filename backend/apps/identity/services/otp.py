@@ -62,11 +62,104 @@ class InboundCarrierOtpProvider(BaseOtpProvider):
         return True
 
 
+class AndroidSmsGatewayOtpProvider(BaseOtpProvider):
+    """
+    Open-source Android SMS Gateway provider (capcom6/android-sms-gateway).
+    Supports Cloud Relay (https://api.sms-gate.app) and Local/Private server modes.
+    """
+
+    def send_otp(self, phone: str, code: str, language: str = "en") -> bool:
+        import requests
+
+        base_url = getattr(settings, "SMS_GATEWAY_URL", "https://api.sms-gate.app/3rdparty/v1/messages").strip()
+        username = getattr(settings, "SMS_GATEWAY_USER", "").strip()
+        password = getattr(settings, "SMS_GATEWAY_PASSWORD", "").strip()
+        sim_number = getattr(settings, "SMS_GATEWAY_SIM_NUMBER", 1)
+
+        masked = mask_phone(phone)
+
+        # Fallback to simulated delivery if credentials not provided
+        if not username or not password:
+            logger.warning(
+                "SMS_GATEWAY_USER or SMS_GATEWAY_PASSWORD not configured. Simulated OTP for %s logged.",
+                masked,
+            )
+            logger.info("[SIMULATED SMS] To: %s | OTP: %s", masked, code)
+            return True
+
+        # Multilingual SMS templates
+        if language == "hi":
+            text = f"अन्नसूत्र (AnnaSutra) सत्यापन कोड: {code} है। यह 5 मिनट के लिए वैध है। कृपया यह ओटीपी साझा न करें।"
+        elif language == "bn":
+            text = f"অন্নসূত্র (AnnaSutra) যাচাইকরণ কোড হলো: {code}। এটি ৫ মিনিটের জন্য বৈধ। ওটিপি কারো সাথে শেয়ার করবেন না।"
+        else:
+            text = f"Your AnnaSutra verification code is: {code}. Valid for 5 minutes. Do not share this OTP."
+
+        # Normalize endpoint URL
+        endpoint = base_url
+        if not (endpoint.endswith("/message") or endpoint.endswith("/messages")):
+            if "3rdparty" in endpoint or "api.sms-gate.app" in endpoint:
+                endpoint = f"{endpoint.rstrip('/')}/messages"
+            elif endpoint.endswith(":8080") or "/message" not in endpoint:
+                endpoint = f"{endpoint.rstrip('/')}/message"
+
+        payload = {
+            "phoneNumbers": [phone],
+            "textMessage": {
+                "text": text,
+            },
+        }
+        if sim_number:
+            try:
+                payload["simNumber"] = int(sim_number)
+            except (ValueError, TypeError):
+                pass
+
+        try:
+            logger.info("Dispatching OTP via Android SMS Gateway to %s via %s", masked, endpoint)
+            response = requests.post(
+                endpoint,
+                json=payload,
+                auth=(username, password),
+                headers={"Content-Type": "application/json"},
+                timeout=12,
+            )
+
+            if response.status_code in [200, 201, 202]:
+                data = response.json() if response.content else {}
+                msg_id = data.get("id") or data.get("messageId") or "dispatched"
+                logger.info("SMS OTP dispatched successfully to %s (Gateway ID: %s)", masked, msg_id)
+                return True
+            else:
+                logger.error(
+                    "SMS Gateway returned HTTP %d for recipient %s: %s",
+                    response.status_code,
+                    masked,
+                    response.text[:200],
+                )
+                return False
+
+        except requests.exceptions.RequestException as exc:
+            logger.error("Failed to connect to Android SMS Gateway (%s): %s", endpoint, exc)
+            return False
+
+
 def get_otp_provider() -> BaseOtpProvider:
-    provider_name = getattr(settings, "OTP_PROVIDER", "console").lower()
+    provider_name = getattr(settings, "OTP_PROVIDER", "").lower()
+    user = getattr(settings, "SMS_GATEWAY_USER", "").strip()
+
+    if provider_name in ["android_gateway", "android-sms-gateway", "sms_gateway", "android", "gateway"]:
+        return AndroidSmsGatewayOtpProvider()
     if provider_name == "carrier":
         return InboundCarrierOtpProvider()
+    if provider_name == "console":
+        return ConsoleOtpProvider()
+    # If not explicitly forced to console/carrier, use gateway if credentials exist
+    if user:
+        return AndroidSmsGatewayOtpProvider()
     return ConsoleOtpProvider()
+
+
 
 
 class OtpService:
