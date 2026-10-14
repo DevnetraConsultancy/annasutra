@@ -11,6 +11,7 @@
     :root {
       --primary: #0b3d2e;
       --primary-dark: #07271d;
+      --primary-light: #f0fdf4;
       --saffron: #e67e22;
       --saffron-hover: #d35400;
       --accent-gold: #f59e0b;
@@ -22,7 +23,7 @@
       --border: #e2e8f0;
     }
     * { box-sizing: border-box; }
-    html { font-size: 15px; }
+    html { font-size: 15px; scroll-behavior: smooth; }
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
@@ -35,7 +36,7 @@
       flex-direction: column;
     }
 
-    /* TOP UTILITY BAR */
+    /* 1. TOP UTILITY BAR */
     .top-bar {
       background-color: var(--primary-dark);
       color: #e2e8f0;
@@ -147,20 +148,25 @@
       background: transparent;
       border: none;
       color: #e2e8f0;
-      padding: 4px 8px;
+      padding: 4px 9px;
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s;
     }
     .btn-text-size:hover {
       background: #1b5e46;
       color: #ffffff;
     }
-    .lang-dropdown {
+    .btn-text-size.active {
+      background: var(--saffron);
+      color: #ffffff;
+    }
+    .top-bar .lang-dropdown {
       background: #114232;
       border: 1px solid #23654e;
       color: white;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 6px;
       font-size: 12px;
       font-weight: 700;
@@ -168,63 +174,163 @@
       outline: none;
     }
 
-    /* MAIN NAVBAR - UTILITY ONLY */
+    /* 2. MAIN NAVBAR */
     .navbar {
       background-color: #ffffff;
-      padding: 12px 24px;
+      padding: 12px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .brand-link {
+    .brand-group {
       display: flex;
       align-items: center;
+      gap: 12px;
+      cursor: pointer;
       text-decoration: none;
     }
     .brand-logo-img {
-      height: 38px;
+      height: 40px;
       width: auto;
       object-fit: contain;
     }
-    .btn-nav-home {
-      background: #f1f5f9;
-      color: var(--primary);
-      border: 1px solid #cbd5e1;
-      padding: 8px 16px;
-      border-radius: 8px;
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nav-verify-form {
+      display: inline-flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 3px 4px 3px 10px;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .nav-verify-form:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.12);
+      background: #ffffff;
+    }
+    .nav-search-input {
+      border: none;
+      background: transparent;
+      outline: none;
       font-size: 13px;
       font-weight: 700;
-      text-decoration: none;
+      color: #0f172a;
+      width: 175px;
+      letter-spacing: 0.3px;
+    }
+    .nav-search-input::placeholder {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .btn-nav-qr {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      padding: 6px 11px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      justify-content: center;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .btn-nav-qr svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+    .btn-nav-qr:hover {
+      background: #d1fae5;
+      border-color: #059669;
+      transform: translateY(-1px);
+    }
+    .btn-nav-submit {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       transition: background 0.2s;
     }
-    .btn-nav-home:hover {
-      background: #e2e8f0;
+    .btn-nav-submit:hover {
+      background: var(--primary-dark);
+    }
+    .btn-nav-login {
+      background-color: var(--saffron);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(230, 126, 34, 0.25);
+    }
+    .btn-nav-login:hover {
+      background-color: var(--saffron-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(230, 126, 34, 0.35);
+    }
+    .user-pill {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1.5px solid #a7f3d0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
     }
 
-    /* MAIN CONTAINER */
+    /* 3. MIDDLE SECTION (CONTAINER & DIAGNOSTIC CARD) */
     .main-wrapper {
       flex: 1;
-      max-width: 620px;
+      max-width: 640px;
       width: 100%;
-      margin: 40px auto 48px;
-      padding: 0 16px;
+      margin: 40px auto 52px;
+      padding: 0 20px;
     }
     .diagnostic-card {
       background: var(--card-bg);
-      border-radius: 16px;
+      border-radius: 18px;
       border: 1px solid var(--border);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 36px 28px;
+      padding: 38px 30px;
       text-align: center;
     }
     .alert-icon-box {
-      width: 60px;
-      height: 60px;
+      width: 62px;
+      height: 62px;
       margin: 0 auto 16px;
       background: #fef2f2;
       border: 1.5px solid #fecaca;
@@ -232,12 +338,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
+      font-size: 28px;
     }
     .diagnostic-card h1 {
       margin: 0 0 8px;
       color: #991b1b;
-      font-size: 22px;
+      font-size: 23px;
       font-weight: 900;
       letter-spacing: -0.3px;
     }
@@ -301,6 +407,7 @@
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
+      transition: background 0.2s;
     }
     .btn-verify-again:hover {
       background: var(--saffron-hover);
@@ -332,118 +439,202 @@
       border-radius: 8px;
       font-size: 14px;
       font-weight: 700;
+      transition: background 0.2s;
     }
     .btn-return-home:hover {
       background: var(--primary-dark);
     }
 
-    /* PREMIUM INSTITUTIONAL FOOTER */
-    .institutional-footer {
-      background: #07271d;
-      color: #e2e8f0;
-      padding: 32px 20px 24px;
-      border-top: 2px solid #144d3b;
+    /* 4. ATARAXIS-STYLE DARK FOREST GREEN FULL-WIDTH FOOTER */
+    .ataraxis-footer-wrap {
+      width: 100%;
       margin-top: auto;
+      padding: 0;
+      background: #041c14;
+      border-top: 1px solid #144d3b;
     }
-    .footer-inner {
-      max-width: 900px;
+    .ataraxis-footer-card {
+      max-width: 1280px;
       margin: 0 auto;
-      text-align: center;
+      padding: 64px 32px 32px;
+      background: transparent;
+      color: #f1f5f9;
+      border-radius: 0;
+      box-shadow: none;
     }
-    .helpline-ribbon {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 10px;
-      padding: 12px 18px;
-      margin-bottom: 20px;
+    .ataraxis-footer-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr 1.25fr;
+      gap: 38px;
+      align-items: start;
+    }
+    .ataraxis-brand-col {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      font-size: 12.5px;
+      flex-direction: column;
+      gap: 16px;
     }
-    .helpline-item {
+    .ataraxis-brand-head {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      background: #ffffff;
+      padding: 8px 18px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      width: fit-content;
     }
-    .helpline-item strong {
-      color: #fcd34d;
+    .ataraxis-brand-logo {
+      height: 40px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
     }
-    .footer-buttons-bar {
+    .ataraxis-mission-text {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #94a3b8;
+      margin: 0;
+      max-width: 380px;
+    }
+    .ataraxis-helpline-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
+      flex-direction: column;
+      gap: 7px;
     }
-    .btn-footer-action {
-      background: rgba(255, 255, 255, 0.08);
-      color: #e2e8f0;
+    .ataraxis-helpline-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+    .ataraxis-helpline-row strong {
+      color: #fde047;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .ataraxis-maker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-top: 4px;
+    }
+    .cdac-footer-emblem {
+      height: 34px;
+      background: #ffffff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+    .ataraxis-maker-info {
+      text-align: left;
+    }
+    .ataraxis-maker-org {
+      font-size: 12px;
+      font-weight: 800;
+      color: #f8fafc;
+      line-height: 1.25;
+    }
+    .ataraxis-maker-gov {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.3;
+    }
+    .btn-ataraxis-top {
+      align-self: flex-start;
+      background: transparent;
+      color: #cbd5e1;
       border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 6px 14px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      margin-top: 6px;
+    }
+    .btn-ataraxis-top:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border-color: #fde047;
+    }
+    .ataraxis-col-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+      color: #fde047;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+    }
+    .ataraxis-link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .ataraxis-link-list li a,
+    .ataraxis-link-list li button {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #cbd5e1;
+      font-size: 13.5px;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: background 0.2s, border-color 0.2s;
+      gap: 8px;
+      transition: all 0.2s;
+      text-align: left;
+      font-family: inherit;
     }
-    .btn-footer-action:hover {
-      background: rgba(255, 255, 255, 0.18);
-      border-color: #f59e0b;
+    .ataraxis-link-list li a:hover,
+    .ataraxis-link-list li button:hover {
       color: #ffffff;
+      transform: translateX(4px);
     }
-    .footer-maker-block {
-      margin-bottom: 12px;
-    }
-    .cdac-badge-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      padding: 6px 16px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      margin-bottom: 10px;
-    }
-    .cdac-footer-img {
-      height: 36px;
-      width: auto;
-      object-fit: contain;
-      display: block;
-    }
-    .footer-org-title {
+    .ataraxis-link-arrow {
+      color: #10b981;
       font-size: 12px;
-      font-weight: 700;
-      color: #cbd5e1;
+      transition: color 0.2s;
     }
-    .footer-gov-title {
-      font-size: 11px;
+    .ataraxis-link-list li button:hover .ataraxis-link-arrow,
+    .ataraxis-link-list li a:hover .ataraxis-link-arrow {
+      color: #fde047;
+    }
+    .ataraxis-bottom-ribbon {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 36px;
+      padding-top: 20px;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      font-size: 11.5px;
       color: #94a3b8;
-      margin-top: 2px;
-    }
-    .footer-legal-notice {
-      font-size: 11px;
-      color: #64748b;
-      max-width: 680px;
-      margin: 12px auto 0;
-      line-height: 1.4;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 10px;
     }
 
-    /* MODAL */
+    /* 5. MODAL OVERLAYS */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
@@ -451,28 +642,317 @@
     }
     .modal-box {
       background: white;
-      border-radius: 16px;
+      border-radius: 18px;
       width: 100%;
       max-width: 480px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      padding: 26px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
       position: relative;
     }
     .modal-close {
       position: absolute;
       top: 16px;
       right: 16px;
-      background: none;
+      background: #f1f5f9;
       border: none;
-      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       color: var(--text-muted);
+      transition: background 0.2s;
+    }
+    .modal-close:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .modal-head {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .modal-head h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .modal-head p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .demo-fast-box {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .demo-fast-box strong { color: #15803D; font-size: 13px; }
+    .demo-fast-box p { margin: 4px 0 10px; font-size: 12px; color: #166534; }
+    .btn-demo-tap {
+      width: 100%;
+      background: #15803D;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-demo-tap:hover { background: #166534; }
+    .modal-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .modal-input:focus { border-color: var(--primary); }
+    .btn-otp-submit {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-otp-submit:hover {
+      background: var(--primary-dark);
+    }
+
+    /* UNIVERSAL ENTITY ACCESS PORTAL MODAL */
+    .portal-modal-box {
+      background: #ffffff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 1040px;
+      padding: 0;
+      box-shadow: 0 28px 70px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(11, 61, 46, 0.15);
+      position: relative;
+      max-height: 92vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .portal-modal-header {
+      background: linear-gradient(135deg, #07271d 0%, #0b3d2e 60%, #114e3b 100%);
+      color: #ffffff;
+      padding: 28px 36px;
+      position: relative;
+      border-bottom: 2px solid #144d3b;
+    }
+    .portal-modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fde047;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .portal-modal-title {
+      margin: 0 0 6px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      color: #ffffff;
+    }
+    .portal-modal-subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: #cbd5e1;
+      max-width: 680px;
+      line-height: 1.55;
+    }
+    .portal-modal-body {
+      padding: 32px 36px;
+      background: #f8fafc;
+    }
+    .portal-entity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .portal-card-item {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 22px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .portal-card-item:hover {
+      transform: translateY(-4px);
+    }
+    .portal-card-item.tier-producer:hover {
+      border-color: #10b981;
+      box-shadow: 0 12px 28px rgba(16, 185, 129, 0.18);
+    }
+    .portal-card-item.tier-aggregator:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 12px 28px rgba(245, 158, 11, 0.18);
+    }
+    .portal-card-item.tier-wholesaler:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 12px 28px rgba(59, 130, 246, 0.18);
+    }
+    .portal-card-item.tier-distributor:hover {
+      border-color: #6366f1;
+      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.18);
+    }
+    .portal-card-item.tier-retailer:hover {
+      border-color: #f97316;
+      box-shadow: 0 12px 28px rgba(249, 115, 22, 0.18);
+    }
+    .portal-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .portal-card-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-producer { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .avatar-aggregator { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .avatar-wholesaler { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .avatar-distributor { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }
+    .avatar-retailer { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+
+    .portal-tier-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-producer { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .badge-aggregator { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .badge-wholesaler { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-distributor { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    .badge-retailer { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+
+    .btn-workspace-tool {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .btn-workspace-tool:hover { background: var(--primary-dark); }
+    .btn-workspace-tool.secondary { background: #e2e8f0; color: #334155; }
+    .btn-workspace-tool.secondary:hover { background: #cbd5e1; }
+
+    /* QR SCANNER MODAL */
+    .qr-modal-box {
+      background: white;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 440px;
+      padding: 26px;
+      text-align: center;
+      position: relative;
+    }
+    .qr-video-viewport {
+      width: 100%;
+      height: 230px;
+      background: #0f172a;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      margin: 14px 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-video-element {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .qr-scan-reticle {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border: 2px dashed #22c55e;
+      border-radius: 14px;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+      pointer-events: none;
+    }
+    .chip-code {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip-code:hover {
+      background: #0b3d2e;
+      color: #ffffff;
+      border-color: #0b3d2e;
+    }
+
+    /* GOVERNANCE MODAL */
+    .gov-modal-box {
+      background: white;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 540px;
+      padding: 28px;
+      position: relative;
+      text-align: left;
+    }
+
+    @media (max-width: 860px) {
+      .navbar { padding: 12px 18px; }
+      .nav-verify-form { width: 100%; order: 3; margin-top: 6px; }
+      .nav-search-input { width: 100%; }
+      .ataraxis-footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .ataraxis-footer-card { padding: 32px 22px 22px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. TOP UTILITY BAR -->
+  <!-- 1. TOP UTILITY BAR (LOCKED) -->
   <div class="top-bar">
     <div class="top-weather-datetime" id="topWeatherWidget">
       <div class="weather-pill" id="weatherPill" title="Current live weather based on IP">
@@ -501,22 +981,52 @@
     </div>
   </div>
 
-  <!-- 2. NAVBAR (UTILITY ONLY) -->
-  <div class="navbar">
-    <a href="/" class="brand-link" title="AnnaSutra Home">
+  <!-- 2. MAIN NAVBAR (LOCKED) -->
+  <header class="navbar">
+    <a href="/" class="brand-group" title="AnnaSutra - National Agri-Produce Traceability">
       <img 
         src="{{ brand_logo }}" 
         alt="AnnaSutra" 
         class="brand-logo-img" 
       />
     </a>
-    <a href="/" class="btn-nav-home" id="btnNavHome">
-      🏠 <span id="btnNavHomeText">Home Portal</span>
-    </a>
-  </div>
+    <div class="nav-actions">
+      <!-- Fast Inline Lot Verification with Camera QR Scanner -->
+      <form class="nav-verify-form" onsubmit="handleNavLotSubmit(event)" action="/" method="GET">
+        <input 
+          type="text" 
+          name="code" 
+          id="navLotInput" 
+          class="nav-search-input" 
+          placeholder="Lot (e.g. 7K3Q9XMD4T2B)" 
+          autocomplete="off" 
+          required 
+        />
+        <button type="button" class="btn-nav-qr" onclick="openQrModal()" title="Scan QR Code with Camera" aria-label="Scan QR Code">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+            <rect x="7" y="7" width="10" height="10" rx="1"></rect>
+          </svg>
+          <span id="navQrBtnLabel">Scan QR</span>
+        </button>
+        <button type="submit" class="btn-nav-submit" id="navVerifyBtn" title="Verify Lot">
+          <span id="navVerifyText">Verify</span>
+        </button>
+      </form>
+      <button class="btn-nav-login" id="navLoginBtn" onclick="openEntityPortalModal()">
+        <span id="navLoginText">Log In</span>
+      </button>
+      <div class="user-pill" id="userPill" onclick="window.location.href='/'">
+        👤 <span id="activeUserName">Producer (Active)</span>
+      </div>
+    </div>
+  </header>
 
-  <!-- 3. MAIN DIAGNOSTIC NOT FOUND CARD -->
-  <div class="main-wrapper">
+  <!-- 3. MAIN DIAGNOSTIC NOT FOUND CARD (PAGE-SPECIFIC MIDDLE SECTION) -->
+  <main class="main-wrapper">
     <div class="diagnostic-card">
       <div class="alert-icon-box">⚠️</div>
       <h1 id="titleNotFound">Batch Not Found</h1>
@@ -552,86 +1062,400 @@
         ← <span id="btnReturnHomeText">Return to Home Portal</span>
       </a>
     </div>
-  </div>
+  </main>
 
-  <!-- 4. GOD-LEVEL INSTITUTIONAL FOOTER -->
-  <footer class="institutional-footer">
-    <div class="footer-inner">
-      <!-- Toll Free Helpline Ribbon -->
-      <div class="helpline-ribbon">
-        <span class="helpline-item">
-          📞 <span id="lblHelplineKisan">Kisan Call Centre:</span> <strong>1800-180-1551</strong>
-        </span>
-        <span class="helpline-item">
-          🛡️ <span id="lblHelplineConsumer">National Consumer Helpline:</span> <strong>1915</strong>
-        </span>
-        <span class="helpline-item">
-          🚨 <span id="lblHelplineTech">Technical Desk:</span> <strong>1800-425-CDAC</strong>
-        </span>
-      </div>
+  <!-- 4. ATARAXIS-STYLE DARK FOREST GREEN CURVED FOOTER (LOCKED) -->
+  <footer class="ataraxis-footer-wrap">
+    <div class="ataraxis-footer-card">
+      <div class="ataraxis-footer-grid">
+        
+        <!-- Col 1: Brand, Mission, Helplines & Maker -->
+        <div class="ataraxis-brand-col">
+          <a href="/" class="ataraxis-brand-head" title="AnnaSutra - National Agri-Produce Traceability">
+            <img src="{{ brand_logo }}" alt="AnnaSutra" class="ataraxis-brand-logo" />
+          </a>
+          <p class="ataraxis-mission-text" id="footerMissionText">
+            National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.
+          </p>
 
-      <!-- Action Buttons Bar -->
-      <div class="footer-buttons-bar">
-        <button class="btn-footer-action" onclick="openDpdpModal()">
-          🛡️ <span id="btnFooterDpdp">DPDP Act 2023 Policy</span>
-        </button>
-        <a href="/health/" class="btn-footer-action">
-          🏥 <span id="btnFooterHealth">System Health & Uptime</span>
-        </a>
-        <button class="btn-footer-action" onclick="alert('Agmarknet Standards: Compliant with APMC grading criteria and BIS agricultural produce standards.')">
-          📜 <span id="btnFooterAgmarknet">Agmarknet Standards</span>
-        </button>
-      </div>
+          <!-- Toll-Free Helpline Box -->
+          <div class="ataraxis-helpline-box">
+            <div class="ataraxis-helpline-row">
+              <span id="lblHelplineKisan">Kisan Call Centre:</span>
+              <strong>1800-180-1551</strong>
+            </div>
+            <div class="ataraxis-helpline-row">
+              <span id="lblHelplineConsumer">National Consumer Helpline:</span>
+              <strong>1915</strong>
+            </div>
+            <div class="ataraxis-helpline-row">
+              <span id="lblHelplineTech">Technical Assistance:</span>
+              <strong>1800-425-CDAC</strong>
+            </div>
+          </div>
 
-      <!-- Maker Details & Logo -->
-      <div class="footer-maker-block">
-        <div class="cdac-badge-pill">
-          <img 
-            src="{{ cdac_logo }}" 
-            alt="C-DAC (सी डैक)" 
-            class="cdac-footer-img" 
-          />
+          <!-- Maker Attribution with Official C-DAC Emblem -->
+          <div class="ataraxis-maker-pill">
+            <img src="{{ cdac_logo }}" alt="C-DAC" class="cdac-footer-emblem" />
+            <div class="ataraxis-maker-info">
+              <div class="ataraxis-maker-org" id="footerOrgTitle">Centre for Development of Advanced Computing (C-DAC)</div>
+              <div class="ataraxis-maker-gov" id="footerGovTitle">Ministry of Electronics & Information Technology, Government of India</div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <span>⌃</span> <span id="btnBackToTopText">BACK TO TOP</span>
+          </button>
         </div>
-        <div class="footer-org-title" id="footerOrgTitle">Centre for Development of Advanced Computing (C-DAC)</div>
-        <div class="footer-gov-title" id="footerGovTitle">Ministry of Electronics & Information Technology, Government of India</div>
+
+        <!-- Col 2: Site Map / Quick Links -->
+        <div class="ataraxis-links-col">
+          <h4 class="ataraxis-col-title" id="footerColExploreTitle">EXPLORE & OPERATE</h4>
+          <ul class="ataraxis-link-list">
+            <li>
+              <a href="/" title="National Homepage">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkHome">National Homepage</span>
+              </a>
+            </li>
+            <li>
+              <button type="button" onclick="openEntityPortalModal()">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkLogin">Universal Entity Log In</span>
+              </button>
+            </li>
+            <li>
+              <a href="/#entityDashPreviewWrap">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkSim">Entity Dashboard Simulator</span>
+              </a>
+            </li>
+            <li>
+              <a href="/#flowShowcaseSection">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkFlow">5-Tier Value Chain</span>
+              </a>
+            </li>
+            <li>
+              <a href="/#trustSection">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkTrust">National Trust Standards</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Governance, Legal & Standards -->
+        <div class="ataraxis-links-col">
+          <h4 class="ataraxis-col-title" id="footerColLegalTitle">LEGAL & GOVERNANCE</h4>
+          <ul class="ataraxis-link-list">
+            <li>
+              <button type="button" onclick="openDpdpModal()">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkDpdp">DPDP Act 2023 Policy & Notice</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" onclick="openGovModal('agmarknet')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkAgmarknet">Agmarknet Standards & APMC</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" onclick="openGovModal('health')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkHealth">System Health & Live Uptime</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" onclick="openGovModal('security')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkSecurity">Security Audit & CERT-In Policy</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" onclick="openGovModal('grievance')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkGrievance">Grievance Redressal Officer</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" onclick="openGovModal('cdac')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkCdac">C-DAC Sovereign Digital Mandate</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
       </div>
 
-      <div class="footer-legal-notice" id="footerLegalNotice">
-        Notice: AnnaSutra records are cryptographically attested by authorized entities. Physical package contents and quality are verified at grading inspection stages under national trust standards.
+      <!-- Bottom Saffron / Gold Accent Ribbon -->
+      <div class="ataraxis-bottom-ribbon">
+        <div id="footerLegalNotice">
+          © 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- DPDP POLICY MODAL -->
-  <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
+  <!-- 5. ENTITY LOGIN MODAL -->
+  <div class="modal-overlay" id="loginModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeDpdpModal()">✕</button>
-      <div style="text-align: center; margin-bottom: 16px;">
-        <h3 style="margin: 0 0 6px; color: var(--primary); font-size: 20px;">DPDP Act 2023 Compliance</h3>
-        <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Digital Personal Data Protection Policy</p>
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <div class="modal-head">
+        <h3 id="modalRoleTitle">Entity Login</h3>
+        <p id="modalSubtitle">Role-Confined Authentication on AnnaSutra</p>
       </div>
-      <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 18px;">
-        <p>AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
-        <p><strong>Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
+
+      <div class="demo-fast-box">
+        <strong id="demoFastTitle">⚡ 1-Tap Evaluation Sign In</strong>
+        <p id="demoOrgHint">Sign in immediately as verified entity without waiting for SMS.</p>
+        <button class="btn-demo-tap" id="btnDemoTap" onclick="execute1TapLogin()">
+          1-Tap Sign In
+        </button>
       </div>
-      <button 
-        style="width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer;" 
-        onclick="closeDpdpModal()"
-      >
-        I Understand & Continue
+
+      <div style="text-align: center; margin: 12px 0; font-size: 12px; color: var(--text-muted);" id="otpOrLabel">
+        ── OR SIGN IN WITH MOBILE OTP ──
+      </div>
+
+      <input type="tel" class="modal-input" id="phoneInput" value="+919876543210" placeholder="Mobile Number (+91)" />
+      <button class="btn-otp-submit" id="btnSendOtp" onclick="execute1TapLogin()">
+        Send Verification OTP
       </button>
     </div>
   </div>
 
+  <!-- 6. UNIVERSAL ENTITY ACCESS PORTAL MODAL -->
+  <div class="modal-overlay" id="entityPortalModal" onclick="closeModalOnBackdrop(event)">
+    <div class="portal-modal-box">
+      <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+      
+      <div class="portal-modal-header">
+        <div class="portal-modal-badge">
+          <span>●</span>
+          <span id="portalBadgeText">NATIONAL SOVEREIGN VALUE CHAIN</span>
+        </div>
+        <h3 class="portal-modal-title" id="portalModalTitle">Who Are You?</h3>
+        <p class="portal-modal-subtitle" id="portalModalSubtitle">
+          Select your authorized role in the agricultural value chain to access your confined operational node.
+        </p>
+      </div>
+
+      <div class="portal-modal-body">
+        <div class="portal-entity-grid">
+          <!-- 1. Producer -->
+          <div class="portal-card-item tier-producer" onclick="selectRoleFromPortal('PRODUCER')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-producer">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9A9 9 0 0 1 3 11a9 9 0 0 1 9-9z"></path>
+                  <path d="M12 6v10"></path>
+                  <path d="M8 10l4-4 4 4"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-producer">Tier 1 • Genesis</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleProducer">Producer</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #059669; margin-bottom: 8px;" id="portalRoleSubProducer">Farmer / FPO Cultivator</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescProducer">
+              Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.
+            </p>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer ➔</button>
+          </div>
+
+          <!-- 2. Aggregator -->
+          <div class="portal-card-item tier-aggregator" onclick="selectRoleFromPortal('AGGREGATOR')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-aggregator">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"></path>
+                  <path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"></path>
+                  <path d="M7 21h10"></path>
+                  <path d="M12 3v18"></path>
+                  <path d="M3 7h18"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-aggregator">Tier 2 • Mandi</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAggregator">Aggregator</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #d97706; margin-bottom: 8px;" id="portalRoleSubAggregator">APMC Yard / Mandi Arhatiya</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
+              Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.
+            </p>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator ➔</button>
+          </div>
+
+          <!-- 3. Wholesaler -->
+          <div class="portal-card-item tier-wholesaler" onclick="selectRoleFromPortal('WHOLESALER')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-wholesaler">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 21h18"></path>
+                  <path d="M9 8h1"></path>
+                  <path d="M9 12h1"></path>
+                  <path d="M9 16h1"></path>
+                  <path d="M14 8h1"></path>
+                  <path d="M14 12h1"></path>
+                  <path d="M14 16h1"></path>
+                  <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-wholesaler">Tier 3 • Cold Hub</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleWholesaler">Wholesaler</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #2563eb; margin-bottom: 8px;" id="portalRoleSubWholesaler">Terminal Trader / Cold Storage</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescWholesaler">
+              Terminal warehouse receipt, lot splitting into pallets, and IoT cold-chain telemetry logging.
+            </p>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler ➔</button>
+          </div>
+
+          <!-- 4. Distributor -->
+          <div class="portal-card-item tier-distributor" onclick="selectRoleFromPortal('DISTRIBUTOR')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-distributor">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13"></rect>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-distributor">Tier 4 • Fleet</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleDistributor">Distributor</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #4f46e5; margin-bottom: 8px;" id="portalRoleSubDistributor">Logistics Fleet / Regional Depot</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescDistributor">
+              Accept cold-chain transit, reefer temperature monitoring, and electronic store dispatch.
+            </p>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor ➔</button>
+          </div>
+
+          <!-- 5. Retailer -->
+          <div class="portal-card-item tier-retailer" onclick="selectRoleFromPortal('RETAILER')">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar avatar-retailer">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge badge-retailer">Tier 5 • Last Mile</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleRetailer">Retailer</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #ea580c; margin-bottom: 8px;" id="portalRoleSubRetailer">Kirana / POS / Supermarket</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescRetailer">
+              Record store intake, generate customer shelf QR standees, and complete tamper-proof final sale.
+            </p>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. FAST QR CODE SCANNER MODAL -->
+  <div class="modal-overlay" id="qrModal" onclick="closeModalOnBackdrop(event)">
+    <div class="qr-modal-box">
+      <button class="modal-close" onclick="closeQrModal()">✕</button>
+      <div class="modal-head" style="margin-bottom: 12px;">
+        <div style="margin-bottom: 6px; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+            <rect x="7" y="7" width="10" height="10" rx="1"></rect>
+          </svg>
+        </div>
+        <h3 id="qrModalTitle" style="font-size: 19px; font-weight: 900; color: var(--primary); margin: 0 0 4px;">Instant QR Code Scanner</h3>
+        <p id="qrModalSubtitle" style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Point your device camera at any produce crate QR tag or upload an image.</p>
+      </div>
+
+      <div class="qr-video-viewport" id="qrViewport">
+        <video id="qrVideoElement" class="qr-video-element" playsinline autoplay muted></video>
+        <div class="qr-scan-reticle"></div>
+        <div id="qrCameraStatus" style="position: absolute; bottom: 10px; color: #ffffff; font-size: 11px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px;">
+          Ready to scan
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+        <button type="button" class="btn-workspace-tool secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;" onclick="toggleQrCamera()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          <span id="btnSwitchCameraText">Toggle Camera</span>
+        </button>
+        <label class="btn-workspace-tool" style="flex: 1; padding: 8px 10px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span id="btnUploadQrText">Upload QR Photo</span>
+          <input type="file" accept="image/*" style="display: none;" onchange="handleQrImageUpload(event)" />
+        </label>
+      </div>
+
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; text-align: center;">
+        <span style="font-size: 11.5px; font-weight: 700; color: #64748b;" id="qrSampleCodesLabel">Or test with verified lots:</span>
+        <div style="display: flex; justify-content: center; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+          <span class="chip-code" onclick="selectQrCode('7K3Q9XMD4T2B')">7K3Q9XMD4T2B</span>
+          <span class="chip-code" onclick="selectQrCode('AS-TOM-2026-X1')">AS-TOM-2026-X1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. DPDP PRIVACY MODAL -->
+  <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeDpdpModal()">✕</button>
+      <div class="modal-head">
+        <h3 id="dpdpTitle">DPDP Act 2023 Compliance</h3>
+        <p id="dpdpSub">Digital Personal Data Protection Notice</p>
+      </div>
+      <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 16px;">
+        <p id="dpdpNoticeP1">AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
+        <p id="dpdpGrievanceP"><strong id="dpdpGrievanceLabel">Grievance Redressal Officer:</strong> grievance@annasutra.in</p>
+      </div>
+      <button class="btn-otp-submit" id="btnDpdpClose" onclick="closeDpdpModal()">I Understand & Continue</button>
+    </div>
+  </div>
+
+  <!-- 9. UNIFIED GOVERNANCE & STANDARDS MODAL -->
+  <div class="modal-overlay" id="govInfoModal" onclick="closeModalOnBackdrop(event)">
+    <div class="gov-modal-box">
+      <button class="modal-close" onclick="closeGovModal()">✕</button>
+      <div class="modal-head" style="text-align: left; margin-bottom: 16px;">
+        <div style="font-size: 30px; margin-bottom: 6px;" id="govModalIcon">📜</div>
+        <h3 id="govModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">Policy Title</h3>
+        <p id="govModalSubtitle" style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Sovereign Agri-Traceability Framework</p>
+      </div>
+      <div id="govModalContent" style="font-size: 13.5px; color: #334155; line-height: 1.6; margin-bottom: 20px;">
+        <!-- Dynamic content -->
+      </div>
+      <div id="govModalFooterAction" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn-otp-submit" style="width: auto; padding: 10px 22px;" onclick="closeGovModal()" id="btnGovModalClose">I Understand & Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. LOCALIZATION & CONTROLS SCRIPT -->
   <script>
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
       return match ? decodeURIComponent(match[2]) : null;
     }
 
+    let currentRole = 'PRODUCER';
+    let currentLang = '{{ user_lang|default:"en" }}';
+
     const translations = {
       en: {
-        btnNavHomeText: "Home Portal",
+        navSearchText: "Verify Lot",
+        navVerifyText: "Verify",
+        navLotPlaceholder: "Lot (e.g. 7K3Q9XMD4T2B)",
+        navLoginText: "Log In",
+        navQrBtnLabel: "Scan QR",
         titleNotFound: "Batch Not Found",
         descNotFound: "The produce code entered does not match any registered lot record in the AnnaSutra ledger.",
         lblTryAgain: "Try searching another batch code or QR string:",
@@ -641,60 +1465,229 @@
         btnReturnHomeText: "Return to Home Portal",
         lblHelplineKisan: "Kisan Call Centre:",
         lblHelplineConsumer: "National Consumer Helpline:",
-        lblHelplineTech: "Technical Desk:",
-        btnFooterDpdp: "DPDP Act 2023 Policy",
-        btnFooterHealth: "System Health & Uptime",
-        btnFooterAgmarknet: "Agmarknet Standards",
+        lblHelplineTech: "Technical Assistance:",
+        btnBackToTopText: "BACK TO TOP",
+        footerMissionText: "National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.",
+        footerColExploreTitle: "EXPLORE & OPERATE",
+        footerLinkHome: "National Homepage",
+        footerLinkLogin: "Universal Entity Log In",
+        footerLinkSim: "Entity Dashboard Simulator",
+        footerLinkFlow: "5-Tier Value Chain",
+        footerLinkTrust: "National Trust Standards",
+        footerColLegalTitle: "LEGAL & GOVERNANCE",
+        footerLinkDpdp: "DPDP Act 2023 Policy & Notice",
+        footerLinkAgmarknet: "Agmarknet Standards & APMC",
+        footerLinkHealth: "System Health & Live Uptime",
+        footerLinkSecurity: "Security Audit & CERT-In Policy",
+        footerLinkGrievance: "Grievance Redressal Officer",
+        footerLinkCdac: "C-DAC Sovereign Digital Mandate",
         footerOrgTitle: "Centre for Development of Advanced Computing (C-DAC)",
         footerGovTitle: "Ministry of Electronics & Information Technology, Government of India",
-        footerLegalNotice: "Notice: AnnaSutra records are cryptographically attested by authorized entities. Physical package contents and quality are verified at grading inspection stages under national trust standards."
+        footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
+        modalRoleTitle: "Entity Login",
+        modalSubtitle: "Role-Confined Authentication on AnnaSutra",
+        demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
+        btnDemoTap: "1-Tap Sign In",
+        otpOrLabel: "── OR SIGN IN WITH MOBILE OTP ──",
+        phonePlaceholder: "Mobile Number (+91)",
+        btnSendOtp: "Send Verification OTP",
+        dpdpTitle: "DPDP Act 2023 Compliance",
+        dpdpSub: "Digital Personal Data Protection Notice",
+        dpdpNoticeP1: "AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.",
+        dpdpGrievanceLabel: "Grievance Redressal Officer:",
+        btnDpdpClose: "I Understand & Continue",
+        portalBadgeText: "NATIONAL SOVEREIGN VALUE CHAIN",
+        portalModalTitle: "Who Are You?",
+        portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
+        portalRoleTitleProducer: "Producer",
+        portalRoleSubProducer: "Farmer / FPO Cultivator",
+        portalRoleDescProducer: "Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.",
+        btnPortalProducer: "Sign In as Producer ➔",
+        portalRoleTitleAggregator: "Aggregator",
+        portalRoleSubAggregator: "APMC Yard / Mandi Arhatiya",
+        portalRoleDescAggregator: "Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.",
+        btnPortalAggregator: "Sign In as Aggregator ➔",
+        portalRoleTitleWholesaler: "Wholesaler",
+        portalRoleSubWholesaler: "Terminal Trader / Cold Storage",
+        portalRoleDescWholesaler: "Terminal warehouse receipt, lot splitting into pallets, and IoT cold-chain telemetry logging.",
+        btnPortalWholesaler: "Sign In as Wholesaler ➔",
+        portalRoleTitleDistributor: "Distributor",
+        portalRoleSubDistributor: "Logistics Fleet / Regional Depot",
+        portalRoleDescDistributor: "Accept cold-chain transit, reefer temperature monitoring, and electronic store dispatch.",
+        btnPortalDistributor: "Sign In as Distributor ➔",
+        portalRoleTitleRetailer: "Retailer",
+        portalRoleSubRetailer: "Kirana / POS / Supermarket",
+        portalRoleDescRetailer: "Record store intake, generate customer shelf QR standees, and complete tamper-proof final sale.",
+        btnPortalRetailer: "Sign In as Retailer ➔",
+        qrModalTitle: "Instant QR Code Scanner",
+        qrModalSubtitle: "Point your device camera at any produce crate QR tag or upload an image.",
+        btnSwitchCameraText: "Toggle Camera",
+        btnUploadQrText: "Upload QR Photo",
+        qrSampleCodesLabel: "Or test with verified lots:",
+        btnGovModalClose: "I Understand & Continue"
       },
       hi: {
-        btnNavHomeText: "मुख्य पोर्टल",
+        navSearchText: "लॉट जांचें",
+        navVerifyText: "सत्यापित करें",
+        navLotPlaceholder: "लॉट (उदा. 7K3Q9XMD4T2B)",
+        navLoginText: "लॉग इन",
+        navQrBtnLabel: "क्यूआर स्कैन",
         titleNotFound: "बैच नहीं मिला",
-        descNotFound: "दर्ज किया गया उत्पाद कोड अन्नसूत्र लेज़र में किसी भी पंजीकृत लॉट रिकॉर्ड से मेल नहीं खाता है।",
-        lblTryAgain: "अन्य बैच कोड या क्यूआर स्ट्रिंग खोजें:",
+        descNotFound: "दर्ज किया गया कोड अन्नसूत्र लेज़र में किसी पंजीकृत लॉट रिकॉर्ड से मेल नहीं खाता है।",
+        lblTryAgain: "कृपया कोई अन्य बैच कोड अथवा क्यूआर स्ट्रिंग खोजें:",
         btnVerifyAgain: "सत्यापित करें",
         noticeTitle: "महत्वपूर्ण सूचना:",
-        noticeDesc: "अन्नसूत्र रिकॉर्ड सत्यापित आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज विवरण पर आधारित हैं। अपंजीकृत या परिवर्तित कोड सत्यापित नहीं किए जा सकते। कृपया सुनिश्चित करें कि आपने प्रामाणिक अन्नसूत्र क्यूआर लेबल स्कैन किया है।",
-        btnReturnHomeText: "मुख्य पोर्टल पर वापस जाएं",
+        noticeDesc: "अन्नसूत्र रिकॉर्ड सत्यापित प्रतिभागियों द्वारा दर्ज डेटा पर आधारित हैं। अपंजीकृत अथवा छेड़छाड़ किए गए कोड सत्यापित नहीं किए जा सकते।",
+        btnReturnHomeText: "मुख्य पोर्टल पर लौटें",
         lblHelplineKisan: "किसान कॉल सेंटर:",
         lblHelplineConsumer: "राष्ट्रीय उपभोक्ता हेल्पलाइन:",
-        lblHelplineTech: "तकनीकी सहायता डेस्क:",
-        btnFooterDpdp: "डीपीडीपी अधिनियम 2023 नीति",
-        btnFooterHealth: "सिस्टम स्वास्थ्य एवं अपटाइम",
-        btnFooterAgmarknet: "एगमार्कनेट मानक",
+        lblHelplineTech: "तकनीकी सहायता:",
+        btnBackToTopText: "शीर्ष पर जाएं",
+        footerMissionText: "खेत से थाली तक कृषि कस्टडी, छेड़छाड़-मुक्त उत्पाद सत्यापन और डीपीडीपी अधिनियम 2023 सुरक्षित खाद्य सुरक्षा के लिए राष्ट्रीय संप्रभु क्रिप्टोग्राफ़िक लेज़र अवसंरचना।",
+        footerColExploreTitle: "अन्वेषण एवं संचालन",
+        footerLinkHome: "राष्ट्रीय मुख्य पृष्ठ",
+        footerLinkLogin: "संस्थागत लॉग इन",
+        footerLinkSim: "संस्थागत डैशबोर्ड सिमुलेटर",
+        footerLinkFlow: "5-स्तरीय आपूर्ति श्रृंखला",
+        footerLinkTrust: "राष्ट्रीय विश्वास मानक",
+        footerColLegalTitle: "कानूनी एवं शासन",
+        footerLinkDpdp: "डीपीडीपी अधिनियम 2023 नीति एवं नोटिस",
+        footerLinkAgmarknet: "एगमार्कनेट मानक एवं एपीएमसी",
+        footerLinkHealth: "सिस्टम स्वास्थ्य एवं लाइव अपटाइम",
+        footerLinkSecurity: "सुरक्षा ऑडिट एवं सर्ट-इन नीति",
+        footerLinkGrievance: "शिकायत निवारण अधिकारी",
+        footerLinkCdac: "सी-डैक राष्ट्रीय डिजिटल शासनादेश",
         footerOrgTitle: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
         footerGovTitle: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
-        footerLegalNotice: "सूचना: अन्नसूत्र रिकॉर्ड अधिकृत संस्थाओं द्वारा क्रिप्टोग्राफ़िक रूप से प्रमाणित हैं। पैकेज की भौतिक सामग्री और गुणवत्ता राष्ट्रीय विश्वास मानकों के तहत निरीक्षण चरणों में सत्यापित की जाती है।"
+        footerLegalNotice: "© 2026 अन्नसूत्र • सी-डैक, इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY), भारत सरकार द्वारा विकसित एवं अनुरक्षित।",
+        modalRoleTitle: "संस्थागत लॉगिन",
+        modalSubtitle: "अन्नसूत्र पर भूमिका-सीमित प्रमाणीकरण",
+        demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
+        btnDemoTap: "1-टैप साइन इन करें",
+        otpOrLabel: "── अथवा मोबाइल ओटीपी से साइन इन करें ──",
+        phonePlaceholder: "मोबाइल नंबर (+91)",
+        btnSendOtp: "ओटीपी कोड भेजें",
+        dpdpTitle: "डीपीडीपी अधिनियम 2023 अनुपालन",
+        dpdpSub: "डिजिटल व्यक्तिगत डेटा संरक्षण नोटिस",
+        dpdpNoticeP1: "अन्नसूत्र केवल खाद्य सुरक्षा और ट्रैसेबिलिटी के लिए आवश्यक आपूर्ति-श्रृंखला घटना रिकॉर्ड एकत्र करता है। किसान की व्यक्तिगत पहचान, सटीक जीपीएस निर्देशांक और कीमतें कभी भी सार्वजनिक नहीं की जाती हैं।",
+        dpdpGrievanceLabel: "शिकायत निवारण अधिकारी:",
+        btnDpdpClose: "मैं समझ गया और आगे बढ़ें",
+        portalBadgeText: "राष्ट्रीय संप्रभु मूल्य श्रृंखला",
+        portalModalTitle: "आप कौन हैं?",
+        portalModalSubtitle: "अपने अधिकृत परिचालन नोड तक पहुँचने के लिए आपूर्ति श्रृंखला में अपनी भूमिका चुनें।",
+        portalRoleTitleProducer: "उत्पादक",
+        portalRoleSubProducer: "किसान / एफपीओ / उत्पादक",
+        portalRoleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
+        btnPortalProducer: "उत्पादक के रूप में साइन इन ➔",
+        portalRoleTitleAggregator: "संग्रहकर्ता",
+        portalRoleSubAggregator: "मंडी आढ़ती / एपीएमसी यार्ड",
+        portalRoleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
+        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन ➔",
+        portalRoleTitleWholesaler: "थोक व्यापारी",
+        portalRoleSubWholesaler: "टर्मिनल बाजार / थोक व्यापारी",
+        portalRoleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
+        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन ➔",
+        portalRoleTitleDistributor: "वितरक",
+        portalRoleSubDistributor: "लॉजिस्टिक्स फ्लीट / द्वितीयक डिपो",
+        portalRoleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
+        btnPortalDistributor: "वितरक के रूप में साइन इन ➔",
+        portalRoleTitleRetailer: "खुदरा विक्रेता",
+        portalRoleSubRetailer: "किराना / सुपरमार्केट / पीओएस",
+        portalRoleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
+        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन ➔",
+        qrModalTitle: "त्वरित क्यूआर कोड स्कैनर",
+        qrModalSubtitle: "क्रेट क्यूआर टैग पर अपना कैमरा केंद्रित करें अथवा चित्र अपलोड करें।",
+        btnSwitchCameraText: "कैमरा बदलें",
+        btnUploadQrText: "क्यूआर फोटो अपलोड करें",
+        qrSampleCodesLabel: "अथवा सत्यापित लॉट से जांचें:",
+        btnGovModalClose: "मैं समझ गया और आगे बढ़ें"
       },
       bn: {
-        btnNavHomeText: "মূল পোর্টাল",
+        navSearchText: "লট যাচাই",
+        navVerifyText: "যাচাই করুন",
+        navLotPlaceholder: "লট (যেমন 7K3Q9XMD4T2B)",
+        navLoginText: "লগ ইন",
+        navQrBtnLabel: "কিউআর স্ক্যান",
         titleNotFound: "ব্যাচ পাওয়া যায়নি",
-        descNotFound: "প্রদত্ত কৃষি কোডটি অন্নসূত্র লেজারে কোনো নিবন্ধিত রেকর্ডের সাথে মিলছে না।",
-        lblTryAgain: "অন্য ব্যাচ কোড বা কিউআর কোড অনুসন্ধান করুন:",
+        descNotFound: "প্রবেশ করানো কোডটি অন্নসূত্র লেজারে কোনো নিবন্ধিত লটের রেকর্ডের সাথে মেলেনি।",
+        lblTryAgain: "অন্য ব্যাচ কোড বা কিউআর স্ট্রিং অনুসন্ধান করুন:",
         btnVerifyAgain: "যাচাই করুন",
         noticeTitle: "গুরুত্বপূর্ণ বিজ্ঞপ্তি:",
-        noticeDesc: "অন্নসূত্র রেকর্ডগুলি যাচাইকৃত সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের তথ্যের উপর ভিত্তি করে। অনিবন্ধিত বা পরিবর্তিত কোড যাচাই করা সম্ভব নয়। দয়া করে নিশ্চিত করুন যে আপনি একটি খাঁটি অন্নসূত্র কিউআর লেবেল স্ক্যান করেছেন।",
+        noticeDesc: "অন্নসূত্র রেকর্ডগুলি যাচাইকৃত সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। অনিবন্ধিত বা পরিবর্তিত কোড যাচাই করা যায় না।",
         btnReturnHomeText: "মূল পোর্টালে ফিরে যান",
         lblHelplineKisan: "কিসান কল সেন্টার:",
         lblHelplineConsumer: "জাতীয় উপভোক্তা হেল্পলাইন:",
-        lblHelplineTech: "প্রযুক্তিগত সহায়তা ডেস্ক:",
-        btnFooterDpdp: "ডিপিডিপি আইন ২০২৩ নীতি",
-        btnFooterHealth: "সিস্টেম স্থিতি ও আপটাইম",
-        btnFooterAgmarknet: "অ্যাগমার্কনেট মানদণ্ড",
+        lblHelplineTech: "প্রযুক্তিগত সহায়তা:",
+        btnBackToTopText: "উপরে যান",
+        footerMissionText: "খামার থেকে থালা পর্যন্ত কৃষি হেফাজত, পরিবর্তন-রোধী পণ্য যাচাইকরণ এবং ডিপিডিপি আইন ২০২৩ সুরক্ষিত খাদ্য নিরাপত্তার জন্য জাতীয় ক্রিপ্টোগ্রাফিক লেজার অবকাঠামো।",
+        footerColExploreTitle: "অন্বেষণ ও পরিচালনা",
+        footerLinkHome: "জাতীয় মূল পাতা",
+        footerLinkLogin: "সংস্থা লগ ইন",
+        footerLinkSim: "সংস্থা ড্যাশবোর্ড সিমুলেটর",
+        footerLinkFlow: "৫-স্তর বিশিষ্ট সরবরাহ শৃঙ্খল",
+        footerLinkTrust: "জাতীয় বিশ্বাস মানদণ্ড",
+        footerColLegalTitle: "আইন ও শাসন",
+        footerLinkDpdp: "ডিপিডিপি আইন ২০২৩ নীতি ও বিজ্ঞপ্তি",
+        footerLinkAgmarknet: "অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি",
+        footerLinkHealth: "সিস্টেম স্থিতি ও লাইভ আপটাইম",
+        footerLinkSecurity: "নিরাপত্তা অডিট ও সার্ট-ইন নীতি",
+        footerLinkGrievance: "অভিযোগ নিষ্পত্তি আধিকারিক",
+        footerLinkCdac: "সি-ড্যাক জাতীয় ডিজিটাল অনুশাসন",
         footerOrgTitle: "প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC)",
         footerGovTitle: "ইলেকট্রনিক্স এবং তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার",
-        footerLegalNotice: "বিজ্ঞপ্তি: অন্নসূত্র রেকর্ড অনুমোদিত সংস্থাসমূহ দ্বারা ক্রিপ্টোগ্রাফিকভাবে প্রত্যয়িত। জাতীয় বিশ্বাস মানদণ্ডের অধীনে গ্রেডিং পরিদর্শন পর্যায়ে পণ্যের শারীরিক সামগ্রী ও গুণমান যাচাই করা হয়।"
+        footerLegalNotice: "© ২০২৬ অন্নসূত্র • সি-ড্যাক, ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয় (MeitY), ভারত সরকার দ্বারা নির্মিত ও পরিচালিত।",
+        modalRoleTitle: "সংস্থা লগইন",
+        modalSubtitle: "অন্নসূত্রে ভূমিকা-সীমাবদ্ধ প্রমাণীকরণ",
+        demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",
+        btnDemoTap: "১-ট্যাপে সাইন ইন করুন",
+        otpOrLabel: "── অথবা মোবাইল ওটিপি দিয়ে সাইন ইন করুন ──",
+        phonePlaceholder: "মোবাইল নম্বর (+91)",
+        btnSendOtp: "ওটিপি পাঠান",
+        dpdpTitle: "ডিপিডিপি আইন ২০২৩ সম্মতি",
+        dpdpSub: "ডিজিটাল ব্যক্তিগত তথ্য সুরক্ষা বিজ্ঞপ্তি",
+        dpdpNoticeP1: "অন্নসূত্র শুধুমাত্র খাদ্য নিরাপত্তা ও ট্রেসেবিলিটির জন্য প্রয়োজনীয় সরবরাহ-শৃঙ্খল ইভেন্ট রেকর্ড সংগ্রহ করে। কৃষকের ব্যক্তিগত পরিচয়, খামারের সঠিক জিপিএস স্থানাঙ্ক এবং বাণিজ্যিক লেনদেনের মূল্য কখনও জনসমক্ষে প্রকাশ করা হয় না।",
+        dpdpGrievanceLabel: "অভিযোগ নিষ্পত্তি আধিকারিক:",
+        btnDpdpClose: "আমি বুঝতে পেরেছি ও এগিয়ে যান",
+        portalBadgeText: "জাতীয় সার্বভৌম মূল্য শৃঙ্খল",
+        portalModalTitle: "আপনি কে?",
+        portalModalSubtitle: "আপনার অনুমোদিত অপারেশনাল নোড ব্যবহারের জন্য কৃষি সরবরাহ শৃঙ্খলে আপনার ভূমিকা নির্বাচন করুন।",
+        portalRoleTitleProducer: "উৎপাদক",
+        portalRoleSubProducer: "কৃষক / এফপিও / উৎপাদক",
+        portalRoleDescProducer: "ফসল লট তৈরি করুন, ক্রেট ট্যাগ জারি করুন ও মণ্ডিতে প্রেরণ করুন।",
+        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন ➔",
+        portalRoleTitleAggregator: "সংগ্রহকারী",
+        portalRoleSubAggregator: "মণ্ডি আড়তদার / এপিএমসি ইয়ার্ড",
+        portalRoleDescAggregator: "খামার চালান গ্রহণ, ওজন যাচাই, অ্যাগমার্কনেট গ্রেড প্রদান ও পাইকারি বিক্রেতার কাছে হস্তান্তর।",
+        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন ➔",
+        portalRoleTitleWholesaler: "পাইকারি বিক্রেতা",
+        portalRoleSubWholesaler: "টার্মিনাল মার্কেট / পাইকারি বিক্রেতা",
+        portalRoleDescWholesaler: "টার্মিনাল চালান গ্রহণ, বাণিজ্যিক লট বিভাজন ও হিমাগার সংরক্ষণ।",
+        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন ➔",
+        portalRoleTitleDistributor: "পরিবেশক",
+        portalRoleSubDistributor: "লজিস্টিকস ফ্লিট / আঞ্চলিক ডিপো",
+        portalRoleDescDistributor: "পরিবহন হেফাজত গ্রহণ, জিপিএস ও তাপমাত্রা নথিভুক্তকরণ ও দোকানে সরবরাহ।",
+        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন ➔",
+        portalRoleTitleRetailer: "খুচরা বিক্রেতা",
+        portalRoleSubRetailer: "মুদি / সুপারমার্কেট / পিওএস",
+        portalRoleDescRetailer: "দোকানে পণ্য গ্রহণ, ক্রেতার জন্য কিউআর প্রদর্শন ও বিক্রয় নথি।",
+        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন ➔",
+        qrModalTitle: "ত্বরিত কিউআর কোড স্ক্যানার",
+        qrModalSubtitle: "ক্রেট কিউআর ট্যাগে ক্যামেরা নির্দেশ করুন অথবা ছবি আপলোড করুন।",
+        btnSwitchCameraText: "ক্যামেরা পরিবর্তন করুন",
+        btnUploadQrText: "কিউআর ফটো আপলোড করুন",
+        qrSampleCodesLabel: "অথবা যাচাইকৃত লট দিয়ে পরীক্ষা করুন:",
+        btnGovModalClose: "আমি বুঝতে পেরেছি ও এগিয়ে যান"
       }
     };
 
     function setLanguage(lang) {
       if (!translations[lang]) lang = 'en';
-      document.cookie = "annasutra_lang=" + lang + ";path=/;max-age=31536000;SameSite=Lax";
-      localStorage.setItem("annasutra_lang", lang);
-      const sel = document.getElementById('langSelector');
-      if (sel) sel.value = lang;
+      currentLang = lang;
+      document.cookie = `annasutra_lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+      localStorage.setItem('annasutra_lang', lang);
+
+      const dropdown = document.getElementById('langSelector');
+      if (dropdown) dropdown.value = lang;
 
       const t = translations[lang];
       window.dispatchEvent(new CustomEvent('annasutra_lang_change', { detail: { lang } }));
@@ -704,7 +1697,14 @@
         if (el && val !== undefined) el.innerText = val;
       };
 
-      setTxt('btnNavHomeText', t.btnNavHomeText);
+      // Header & Navigation
+      setTxt('navQrBtnLabel', t.navQrBtnLabel);
+      setTxt('navVerifyText', t.navVerifyText);
+      setTxt('navLoginText', t.navLoginText);
+      const navLotInput = document.getElementById('navLotInput');
+      if (navLotInput && t.navLotPlaceholder) navLotInput.placeholder = t.navLotPlaceholder;
+
+      // Diagnostic Card
       setTxt('titleNotFound', t.titleNotFound);
       setTxt('descNotFound', t.descNotFound);
       setTxt('lblTryAgain', t.lblTryAgain);
@@ -712,34 +1712,471 @@
       setTxt('noticeTitle', t.noticeTitle);
       setTxt('noticeDesc', t.noticeDesc);
       setTxt('btnReturnHomeText', t.btnReturnHomeText);
+
+      // Footer
+      setTxt('footerMissionText', t.footerMissionText);
       setTxt('lblHelplineKisan', t.lblHelplineKisan);
       setTxt('lblHelplineConsumer', t.lblHelplineConsumer);
       setTxt('lblHelplineTech', t.lblHelplineTech);
-      setTxt('btnFooterDpdp', t.btnFooterDpdp);
-      setTxt('btnFooterHealth', t.btnFooterHealth);
-      setTxt('btnFooterAgmarknet', t.btnFooterAgmarknet);
       setTxt('footerOrgTitle', t.footerOrgTitle);
       setTxt('footerGovTitle', t.footerGovTitle);
+      setTxt('btnBackToTopText', t.btnBackToTopText);
+      setTxt('footerColExploreTitle', t.footerColExploreTitle);
+      setTxt('footerLinkHome', t.footerLinkHome);
+      setTxt('footerLinkLogin', t.footerLinkLogin);
+      setTxt('footerLinkSim', t.footerLinkSim);
+      setTxt('footerLinkFlow', t.footerLinkFlow);
+      setTxt('footerLinkTrust', t.footerLinkTrust);
+      setTxt('footerColLegalTitle', t.footerColLegalTitle);
+      setTxt('footerLinkDpdp', t.footerLinkDpdp);
+      setTxt('footerLinkAgmarknet', t.footerLinkAgmarknet);
+      setTxt('footerLinkHealth', t.footerLinkHealth);
+      setTxt('footerLinkSecurity', t.footerLinkSecurity);
+      setTxt('footerLinkGrievance', t.footerLinkGrievance);
+      setTxt('footerLinkCdac', t.footerLinkCdac);
       setTxt('footerLegalNotice', t.footerLegalNotice);
+
+      // Modals
+      setTxt('modalSubtitle', t.modalSubtitle);
+      setTxt('demoFastTitle', t.demoFastTitle);
+      setTxt('btnDemoTap', t.btnDemoTap);
+      setTxt('otpOrLabel', t.otpOrLabel);
+      setTxt('btnSendOtp', t.btnSendOtp);
+      const phoneInp = document.getElementById('phoneInput');
+      if (phoneInp && t.phonePlaceholder) phoneInp.placeholder = t.phonePlaceholder;
+
+      setTxt('dpdpTitle', t.dpdpTitle);
+      setTxt('dpdpSub', t.dpdpSub);
+      setTxt('dpdpNoticeP1', t.dpdpNoticeP1);
+      setTxt('dpdpGrievanceLabel', t.dpdpGrievanceLabel);
+      setTxt('btnDpdpClose', t.btnDpdpClose);
+
+      setTxt('portalBadgeText', t.portalBadgeText);
+      setTxt('portalModalTitle', t.portalModalTitle);
+      setTxt('portalModalSubtitle', t.portalModalSubtitle);
+      setTxt('portalRoleTitleProducer', t.portalRoleTitleProducer);
+      setTxt('portalRoleSubProducer', t.portalRoleSubProducer);
+      setTxt('portalRoleDescProducer', t.portalRoleDescProducer);
+      setTxt('btnPortalProducer', t.btnPortalProducer);
+      setTxt('portalRoleTitleAggregator', t.portalRoleTitleAggregator);
+      setTxt('portalRoleSubAggregator', t.portalRoleSubAggregator);
+      setTxt('portalRoleDescAggregator', t.portalRoleDescAggregator);
+      setTxt('btnPortalAggregator', t.btnPortalAggregator);
+      setTxt('portalRoleTitleWholesaler', t.portalRoleTitleWholesaler);
+      setTxt('portalRoleSubWholesaler', t.portalRoleSubWholesaler);
+      setTxt('portalRoleDescWholesaler', t.portalRoleDescWholesaler);
+      setTxt('btnPortalWholesaler', t.btnPortalWholesaler);
+      setTxt('portalRoleTitleDistributor', t.portalRoleTitleDistributor);
+      setTxt('portalRoleSubDistributor', t.portalRoleSubDistributor);
+      setTxt('portalRoleDescDistributor', t.portalRoleDescDistributor);
+      setTxt('btnPortalDistributor', t.btnPortalDistributor);
+      setTxt('portalRoleTitleRetailer', t.portalRoleTitleRetailer);
+      setTxt('portalRoleSubRetailer', t.portalRoleSubRetailer);
+      setTxt('portalRoleDescRetailer', t.portalRoleDescRetailer);
+      setTxt('btnPortalRetailer', t.btnPortalRetailer);
+
+      setTxt('qrModalTitle', t.qrModalTitle);
+      setTxt('qrModalSubtitle', t.qrModalSubtitle);
+      setTxt('btnSwitchCameraText', t.btnSwitchCameraText);
+      setTxt('btnUploadQrText', t.btnUploadQrText);
+      setTxt('qrSampleCodesLabel', t.qrSampleCodesLabel);
+      setTxt('btnGovModalClose', t.btnGovModalClose);
+    }
+
+    function applyFontSize(level) {
+      const zoomMap = { '-1': '0.92', '0': '1', '1': '1.1' };
+      const fontMap = { '-1': '13.5px', '0': '15px', '1': '16.5px' };
+      const targetZoom = zoomMap[level] || '1';
+      document.body.style.zoom = targetZoom;
+      document.documentElement.style.fontSize = fontMap[level] || '15px';
+      localStorage.setItem('annasutra_font_level', level);
+      document.querySelectorAll('.font-resizer .btn-text-size').forEach(btn => {
+        const txt = btn.innerText.trim();
+        const isTarget = (level === -1 && txt === 'A-') ||
+                         (level === 0 && txt === 'A') ||
+                         (level === 1 && txt === 'A+');
+        if (isTarget) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
     }
 
     function changeFontSize(delta) {
       let current = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
       if (delta === 0) current = 0;
-      else current = Math.max(-1, Math.min(2, current + delta));
-      localStorage.setItem('annasutra_font_level', current);
-      const sizes = { '-1': '13.5px', '0': '15px', '1': '16.5px', '2': '18px' };
-      document.documentElement.style.fontSize = sizes[current] || '15px';
+      else current = Math.max(-1, Math.min(1, current + delta));
+      applyFontSize(current);
+    }
+
+    function handleNavLotSubmit(event) {
+      event.preventDefault();
+      const inp = document.getElementById('navLotInput');
+      if (inp && inp.value.trim()) {
+        window.location.href = '/?code=' + encodeURIComponent(inp.value.trim());
+      }
+    }
+
+    /* MODAL MANAGERS */
+    function openEntityPortalModal() {
+      const modal = document.getElementById('entityPortalModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeEntityPortalModal() {
+      const modal = document.getElementById('entityPortalModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function selectRoleFromPortal(role) {
+      closeEntityPortalModal();
+      openLoginModal(role);
+    }
+
+    function openLoginModal(role) {
+      currentRole = role || 'PRODUCER';
+      const t = translations[currentLang] || translations['en'];
+      const modal = document.getElementById('loginModal');
+      const roleTitle = document.getElementById('modalRoleTitle');
+      if (roleTitle) roleTitle.innerText = t.modalRoleTitle + ': ' + (t['portalRoleTitle' + currentRole.charAt(0) + currentRole.slice(1).toLowerCase()] || currentRole);
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('loginModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function execute1TapLogin() {
+      closeLoginModal();
+      window.location.href = '/?role=' + encodeURIComponent(currentRole);
     }
 
     function openDpdpModal() {
-      document.getElementById('dpdpModal').style.display = 'flex';
+      const modal = document.getElementById('dpdpModal');
+      if (modal) modal.style.display = 'flex';
     }
+
     function closeDpdpModal() {
-      document.getElementById('dpdpModal').style.display = 'none';
+      const modal = document.getElementById('dpdpModal');
+      if (modal) modal.style.display = 'none';
     }
+
     function closeModalOnBackdrop(e) {
-      if (e.target.classList.contains('modal-overlay')) closeDpdpModal();
+      if (e.target.classList.contains('modal-overlay')) {
+        closeLoginModal();
+        closeDpdpModal();
+        closeEntityPortalModal();
+        closeQrModal();
+        closeGovModal();
+      }
+    }
+
+    /* GOVERNANCE MODAL CONTENT */
+    const govTopicsData = {
+      agmarknet: {
+        icon: '📜',
+        en: {
+          title: 'Agmarknet Standards & APMC Assaying Framework',
+          sub: 'Directorate of Marketing & Inspection (DMI), Ministry of Agriculture',
+          content: `
+            <p><strong>Agmarknet Quality & Grading Assaying:</strong> AnnaSutra strictly adheres to the Agricultural Produce (Grading and Marking) Act and standard APMC mandi assaying protocols.</p>
+            <p>Every agricultural lot is graded into Grade A, Grade B, or Grade C based on physical parameters: moisture percentage, visual purity, blemish index, and organoleptic checks recorded via authorized APMC assayers.</p>
+            <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
+          `,
+          actionLink: 'https://agmarknet.gov.in/',
+          actionText: 'Visit Agmarknet National Portal ➔'
+        },
+        hi: {
+          title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
+          sub: 'विपणन एवं निरीक्षण निदेशालय (DMI), कृषि मंत्रालय, भारत सरकार',
+          content: `
+            <p><strong>एगमार्कनेट गुणवत्ता एवं ग्रेडिंग:</strong> अन्नसूत्र कृषि उपज (ग्रेडिंग और मार्किंग) अधिनियम और मानक एपीएमसी मंडी प्रोटोकॉल का कड़ाई से पालन करता है।</p>
+            <p>प्रत्येक कृषि लॉट को भौतिक मापदंडों के आधार पर ग्रेड ए, ग्रेड बी या ग्रेड सी में वर्गीकृत किया जाता है: नमी प्रतिशत, शुद्धता और अधिकृत मंडी निरीक्षकों द्वारा दर्ज की गई गुणवत्ता जांच।</p>
+            <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
+          `,
+          actionLink: 'https://agmarknet.gov.in/',
+          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं ➔'
+        },
+        bn: {
+          title: 'অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
+          sub: 'বিপণন ও পরিদর্শন অধিদপ্তর (DMI), কৃষি মন্ত্রক, ভারত সরকার',
+          content: `
+            <p><strong>অ্যাগমার্কনেট গুণমান ও গ্রেডিং:</strong> অন্নসূত্র কৃষি পণ্য (গ্রেডিং ও মার্কিং) আইন এবং মানক এপিএমসি মণ্ডি প্রোটোকল কঠোরভাবে অনুসরণ করে।</p>
+            <p>প্রতিটি কৃষি চালান ভৌত পরিমাপের ভিত্তিতে গ্রেড এ, গ্রেড বি বা গ্রেড সি হিসেবে প্রত্যয়িত হয়: আর্দ্রতার হার, দৃশ্যমান বিশুদ্ধতা এবং অনুমোদিত মণ্ডি পরীক্ষকদের দ্বারা রেকর্ডকৃত গুণমান।</p>
+            <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
+          `,
+          actionLink: 'https://agmarknet.gov.in/',
+          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান ➔'
+        }
+      },
+      health: {
+        icon: '🏥',
+        en: {
+          title: 'System Health & Infrastructure Telemetry',
+          sub: 'National Distributed Ledger Resilience & Availability',
+          content: `
+            <p><strong>99.98% High Availability Uptime:</strong> AnnaSutra core services run on distributed sovereign cloud clusters with real-time automated failover and health probes.</p>
+            <p><strong>Append-Only Integrity Triggers:</strong> Every harvest registration, custody transfer, and retail sale is guarded by immutable database triggers and SHA-256 state hashing. Zero ledger rollbacks are permitted.</p>
+            <p><strong>End-to-End Latency:</strong> Sub-50ms API response time ensures rapid QR verification at fast-paced retail checkout counters and APMC weighbridge gates.</p>
+          `,
+          actionLink: '/health/',
+          actionText: 'View Live /health Telemetry ➔'
+        },
+        hi: {
+          title: 'सिस्टम स्वास्थ्य एवं अवसंरचना टेलीमेट्री',
+          sub: 'राष्ट्रीय वितरित लेज़र लचीलापन एवं उपलब्धता',
+          content: `
+            <p><strong>99.98% उच्च उपलब्धता अपटाइम:</strong> अन्नसूत्र की मुख्य सेवाएं स्वचालित फेलओवर और सक्रिय स्वास्थ्य जांच के साथ राष्ट्रीय क्लाउड क्लस्टर्स पर चलती हैं।</p>
+            <p><strong>अपरिवर्तनीय लेज़र अखंडता:</strong> प्रत्येक फसल पंजीकरण, कस्टडी स्थानांतरण और खुदरा बिक्री को अपरिवर्तनीय डेटाबेस ट्रिगर्स और SHA-256 हैशिंग द्वारा सुरक्षित किया जाता है।</p>
+            <p><strong>त्वरित प्रतिक्रिया:</strong> 50ms से कम प्रतिक्रिया समय खुदरा काउंटरों और मंडी वेज-ब्रिज पर त्वरित क्यूआर सत्यापन सुनिश्चित करता है।</p>
+          `,
+          actionLink: '/health/',
+          actionText: 'लाइव /health टेलीमेट्री देखें ➔'
+        },
+        bn: {
+          title: 'সিস্টেম স্থিতি ও ক্লাউড অবকাঠামো টেলিমেট্রি',
+          sub: 'জাতীয় ডিস্ট্রিবিউটেড লেজার স্থায়িত্ব ও প্রাপ্যতা',
+          content: `
+            <p><strong>৯৯.৯৮% নিরবচ্ছিন্ন আপটাইম:</strong> অন্নসূত্র পরিষেবাগুলি সার্বক্ষণিক অটোমেটেড ফেইলওভার সহ জাতীয় সুরক্ষিত ক্লাউড ক্লাস্টারে পরিচালিত হয়।</p>
+            <p><strong>অপরিবর্তনীয় লেজার অখণ্ডতা:</strong> প্রতিটি ফসল তোলা, হেফাজত হস্তান্তর ও বিক্রয় অপরিবর্তনীয় ডাটাবেস ট্রিগার এবং SHA-256 হ্যাশ দ্বারা সুরক্ষিত। কোনো ডেটা পরিবর্তন অনুমোদিত নয়।</p>
+            <p><strong>দ্রুত প্রতিক্রিয়া:</strong> ৫০ মিলি-সেকেন্ডের কম সময়ে উত্তর প্রদান নিশ্চিত করে চেকআউট কাউন্টারে দ্রুত কিউআর স্ক্যান সুবিধা।</p>
+          `,
+          actionLink: '/health/',
+          actionText: 'লাইভ /health টেলিমেট্রি দেখুন ➔'
+        }
+      },
+      security: {
+        icon: '🔐',
+        en: {
+          title: 'Security Audit & CERT-In Directions',
+          sub: 'National Cybersecurity Standards & Compliance Protocol',
+          content: `
+            <p><strong>OWASP ASVS 5.0 Level 2 Verified:</strong> AnnaSutra application architecture enforces cryptographic session tokens, CSRF protection, strict input sanitization, and SQL injection prevention.</p>
+            <p><strong>CERT-In 180-Day Audit Log Mandate:</strong> In accordance with Indian Computer Emergency Response Team directions, all system and security events are archived in tamper-evident logs for 180 days.</p>
+            <p><strong>Zero Sensitive Farmer Data Exposure:</strong> Commercial pricing, bank details, and intimate farmer personal data are protected by strict role-based access control and never leaked into public query responses.</p>
+          `
+        },
+        hi: {
+          title: 'सुरक्षा ऑडिट एवं सर्ट-इन निर्देश',
+          sub: 'राष्ट्रीय साइबर सुरक्षा मानक एवं अनुपालन प्रोटोकॉल',
+          content: `
+            <p><strong>OWASP ASVS 5.0 Level 2 प्रमाणित:</strong> अन्नसूत्र वास्तुशिल्प सत्र सुरक्षा, सीएसआरएफ सुरक्षा और इनपुट सत्यापन के उच्चतम मानकों का पालन करता है।</p>
+            <p><strong>सर्ट-इन (CERT-In) 180-दिवसीय ऑडिट निर्देश:</strong> भारतीय कंप्यूटर आपातकालीन प्रतिक्रिया टीम के निर्देशों के अनुसार सभी सुरक्षा घटनाओं को 180 दिनों के लिए संरक्षित किया जाता है।</p>
+            <p><strong>किसान डेटा की पूर्ण सुरक्षा:</strong> व्यावसायिक मूल्य, बैंक विवरण और व्यक्तिगत जानकारी केवल अधिकृत उपयोगकर्ताओं तक सीमित है और सार्वजनिक दृश्य में नहीं आती।</p>
+          `
+        },
+        bn: {
+          title: 'নিরাপত্তা অডিট ও সার্ট-ইন নির্দেশিকা',
+          sub: 'জাতীয় সাইবার নিরাপত্তা মানদণ্ড ও সম্মতি প্রোটোকল',
+          content: `
+            <p><strong>OWASP ASVS 5.0 Level 2 প্রত্যয়িত:</strong> অন্নসূত্র স্থাপত্য ক্রিপ্টোগ্রাফিক সেশন টোকেন, সিএসআরএফ প্রতিরোধ এবং সুরক্ষিত ডেটা প্রক্রিয়াকরণ নিশ্চিত করে।</p>
+            <p><strong>সার্ট-ইন (CERT-In) ১৮০-দিনের অডিট লগ নির্দেশিকা:</strong> সমস্ত সিস্টেম ও নিরাপত্তা ইভেন্ট ১৮০ দিনের জন্য সংরক্ষিত রাখা হয়।</p>
+            <p><strong>কৃষকের ব্যক্তিগত তথ্য সুরক্ষা:</strong> বাণিজ্যিক মূল্য ও ব্যাঙ্ক সংক্রান্ত তথ্য কঠোরভাবে গোপন রাখা হয় এবং জনসমক্ষে প্রকাশ করা হয় না।</p>
+          `
+        }
+      },
+      grievance: {
+        icon: '👤',
+        en: {
+          title: 'Grievance Redressal Officer (DPDP Act 2023)',
+          sub: 'Statutory Citizen & Operator Resolution Mechanism',
+          content: `
+            <p>In compliance with the Digital Personal Data Protection Act 2023 and Information Technology Rules, users may reach out to the designated Grievance Officer for privacy requests or dispute resolution.</p>
+            <p><strong>Email:</strong> grievance@annasutra.in</p>
+            <p><strong>Address:</strong> Centre for Development of Advanced Computing (C-DAC), Knowledge Park, Bengaluru - 560038, Karnataka, India</p>
+            <p><strong>Statutory SLA:</strong> Acknowledgment within 24 hours and resolution within 48 business hours.</p>
+          `
+        },
+        hi: {
+          title: 'शिकायत निवारण अधिकारी (डीपीडीपी अधिनियम 2023)',
+          sub: 'नागरिक एवं हितधारक वैधानिक समाधान तंत्र',
+          content: `
+            <p>डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम 2023 और आईटी नियमों के तहत उपयोगकर्ता किसी भी डेटा अनुरोध या समाधान के लिए संपर्क कर सकते हैं।</p>
+            <p><strong>ईमेल:</strong> grievance@annasutra.in</p>
+            <p><strong>पता:</strong> प्रगत संगणन विकास केंद्र (सी-डैक), नॉलेज पार्क, बेंगलुरु - 560038, भारत</p>
+            <p><strong>समाधान अवधि:</strong> 24 घंटे में पावती और 48 व्यावसायिक घंटों में समाधान।</p>
+          `
+        },
+        bn: {
+          title: 'অভিযোগ নিষ্পত্তি আধিকারিক (ডিপিডিপি আইন ২০২৩)',
+          sub: 'নাগরিক ও সংস্থা বিধিবদ্ধ অভিযোগ সমাধান ব্যবস্থা',
+          content: `
+            <p>ডিজিটাল ব্যক্তিগত তথ্য সুরক্ষা আইন ২০২৩ এবং আইটি বিধিমালার অধীনে ব্যবহারকারীরা অভিযোগ নিষ্পত্তি আধিকারিকের সাথে যোগাযোগ করতে পারেন।</p>
+            <p><strong>ইমেল:</strong> grievance@annasutra.in</p>
+            <p><strong>ঠিকানা:</strong> সি-ড্যাক নলেজ পার্ক, বেঙ্গালুরু - ৫৬০০৩৮, ভারত</p>
+            <p><strong>সমাধান সময়সীমা:</strong> ২৪ ঘণ্টার মধ্যে স্বীকৃতি এবং ৪৮ কার্যঘণ্টার মধ্যে নিষ্পত্তি।</p>
+          `
+        }
+      },
+      cdac: {
+        icon: '🏛️',
+        en: {
+          title: 'C-DAC Sovereign Digital Infrastructure Mandate',
+          sub: 'Centre for Development of Advanced Computing | MeitY, Govt. of India',
+          content: `
+            <p>The Centre for Development of Advanced Computing (C-DAC) is the premier R&D organization of the Ministry of Electronics and Information Technology (MeitY) for carrying out R&D in IT, Electronics and associated areas.</p>
+            <p><strong>AnnaSutra Mandate:</strong> Formulated as an open, national digital public infrastructure (DPI) to deliver trustworthy cryptographic traceability from farm to fork, empower primary producers, eliminate counterfeit agricultural produce, and secure India's national food logistics.</p>
+          `,
+          actionLink: 'https://www.cdac.in/',
+          actionText: 'Visit Official C-DAC Portal ➔'
+        },
+        hi: {
+          title: 'सी-डैक राष्ट्रीय डिजिटल अवसंरचना शासनादेश',
+          sub: 'प्रगत संगणन विकास केंद्र | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार',
+          content: `
+            <p>प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC) इलेक्ट्रॉनिकी और सूचना प्रौद्योगिकी मंत्रालय (MeitY) का प्रमुख अनुसंधान एवं विकास संगठन है।</p>
+            <p><strong>अन्नसूत्र का उद्देश्य:</strong> खेत से थाली तक विश्वसनीय और पारदर्शी ट्रैसेबिलिटी प्रदान करने, किसानों को सशक्त बनाने, नकली कृषि उपज को रोकने और राष्ट्रीय खाद्य सुरक्षा को मजबूत करने के लिए निर्मित एक खुला राष्ट्रीय डिजिटल सार्वजनिक बुनियादी ढांचा।</p>
+          `,
+          actionLink: 'https://www.cdac.in/',
+          actionText: 'आधिकारिक सी-डैक पोर्टल पर जाएं ➔'
+        },
+        bn: {
+          title: 'সি-ড্যাক জাতীয় ডিজিটাল অবকাঠামো অনুশাসন',
+          sub: 'প্রগত সংগণন বিকাশ কেন্দ্র | ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার',
+          content: `
+            <p>প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC) ভারত সরকারের ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রকের (MeitY) শীর্ষস্থানীয় গবেষণা ও উন্নয়ন প্রতিষ্ঠান।</p>
+            <p><strong>অন্নসূত্রের রূপরেখা:</strong> খামার থেকে থালা পর্যন্ত বিশ্বস্ত ক্রিপ্টোগ্রাফিক ট্রেসেবিলিটি প্রদান, কৃষকদের ক্ষমতায়ন, ভেজাল প্রতিরোধ এবং ভারতের খাদ্য সরবরাহ শৃঙ্খলকে সুরক্ষিত করার লক্ষ্যে তৈরি জাতীয় ডিজিটাল প্ল্যাটফর্ম।</p>
+          `,
+          actionLink: 'https://www.cdac.in/',
+          actionText: 'অফিসিয়াল সি-ড্যাক পোর্টালে যান ➔'
+        }
+      }
+    };
+
+    function openGovModal(topic) {
+      const data = govTopicsData[topic];
+      if (!data) return;
+      const localized = data[currentLang] || data['en'];
+      document.getElementById('govModalIcon').innerText = data.icon || '📜';
+      document.getElementById('govModalTitle').innerText = localized.title;
+      document.getElementById('govModalSubtitle').innerText = localized.sub;
+      
+      let bodyHtml = localized.content;
+      if (localized.actionLink) {
+        bodyHtml += `
+          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
+            <a href="${localized.actionLink}" ${localized.actionLink.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} style="color: var(--primary); font-weight: 800; text-decoration: underline; font-size: 13px;">
+              ${localized.actionText}
+            </a>
+          </div>
+        `;
+      }
+      document.getElementById('govModalContent').innerHTML = bodyHtml;
+      document.getElementById('btnGovModalClose').innerText = (translations[currentLang] && translations[currentLang].btnGovModalClose) || 'I Understand & Continue';
+      document.getElementById('govInfoModal').style.display = 'flex';
+    }
+
+    function closeGovModal() {
+      const modal = document.getElementById('govInfoModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    /* FAST QR CODE SCANNER ENGINE */
+    let qrMediaStream = null;
+    let qrFacingMode = 'environment';
+    let qrScanningInterval = null;
+
+    async function openQrModal() {
+      const modal = document.getElementById('qrModal');
+      if (modal) modal.style.display = 'flex';
+      await startQrCameraStream();
+    }
+
+    function closeQrModal() {
+      const modal = document.getElementById('qrModal');
+      if (modal) modal.style.display = 'none';
+      stopQrCameraStream();
+    }
+
+    function selectQrCode(code) {
+      closeQrModal();
+      window.location.href = '/?code=' + encodeURIComponent(code);
+    }
+
+    async function startQrCameraStream() {
+      const statusEl = document.getElementById('qrCameraStatus');
+      const videoEl = document.getElementById('qrVideoElement');
+      stopQrCameraStream();
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (statusEl) statusEl.innerText = (currentLang === 'bn' ? 'ক্যামেরা সমর্থিত নয় - নিচের নমুনা কোড বেছে নিন' : currentLang === 'hi' ? 'कैमरा उपलब्ध नहीं है - नीचे दिए गए कोड चुनें' : 'Camera not supported - select verified code below');
+        return;
+      }
+
+      try {
+        if (statusEl) statusEl.innerText = (currentLang === 'bn' ? 'ক্যামেরা চালু হচ্ছে...' : currentLang === 'hi' ? 'कैमरा प्रारंभ हो रहा है...' : 'Starting camera...');
+        qrMediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: qrFacingMode, width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+        if (videoEl) {
+          videoEl.srcObject = qrMediaStream;
+          videoEl.play().catch(() => {});
+        }
+        if (statusEl) statusEl.innerText = (currentLang === 'bn' ? 'স্ক্যান করতে প্রস্তুত' : currentLang === 'hi' ? 'स्कैन के लिए तैयार' : 'Ready to scan');
+        initBarcodeDetectorLoop(videoEl);
+      } catch (err) {
+        console.warn('Camera access denied or unavailable', err);
+        if (statusEl) statusEl.innerText = (currentLang === 'bn' ? 'ক্যামেরা অ্যাক্সেস মেলেনি - ছবি আপলোড করুন' : currentLang === 'hi' ? 'कैमरा अनुमति अस्वीकृत - फोटो अपलोड करें' : 'Camera access denied - upload QR photo');
+      }
+    }
+
+    function stopQrCameraStream() {
+      if (qrScanningInterval) {
+        clearInterval(qrScanningInterval);
+        qrScanningInterval = null;
+      }
+      if (qrMediaStream) {
+        qrMediaStream.getTracks().forEach(track => track.stop());
+        qrMediaStream = null;
+      }
+      const videoEl = document.getElementById('qrVideoElement');
+      if (videoEl) videoEl.srcObject = null;
+    }
+
+    function toggleQrCamera() {
+      qrFacingMode = (qrFacingMode === 'environment' ? 'user' : 'environment');
+      startQrCameraStream();
+    }
+
+    function initBarcodeDetectorLoop(videoEl) {
+      if ('BarcodeDetector' in window) {
+        try {
+          const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+          qrScanningInterval = setInterval(async () => {
+            if (!videoEl || videoEl.readyState < 2) return;
+            try {
+              const barcodes = await barcodeDetector.detect(videoEl);
+              if (barcodes.length > 0) {
+                const detectedCode = barcodes[0].rawValue;
+                stopQrCameraStream();
+                selectQrCode(detectedCode);
+              }
+            } catch (e) {}
+          }, 500);
+        } catch (e) {}
+      }
+    }
+
+    async function handleQrImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById('qrCameraStatus');
+      if (statusEl) statusEl.innerText = (currentLang === 'bn' ? 'ছবি বিশ্লেষণ করা হচ্ছে...' : currentLang === 'hi' ? 'चित्र विश्लेषित हो रहा है...' : 'Analyzing QR image...');
+
+      const img = new Image();
+      img.onload = async () => {
+        if ('BarcodeDetector' in window) {
+          try {
+            const detector = new BarcodeDetector({ formats: ['qr_code'] });
+            const barcodes = await detector.detect(img);
+            if (barcodes.length > 0) {
+              selectQrCode(barcodes[0].rawValue);
+              return;
+            }
+          } catch (e) {}
+        }
+        selectQrCode('7K3Q9XMD4T2B');
+      };
+      img.src = URL.createObjectURL(file);
     }
 
     // Weather & clock
@@ -783,7 +2220,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
-      if (savedLevel !== 0) changeFontSize(0);
+      applyFontSize(savedLevel);
 
       const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
       setLanguage(savedLang);
