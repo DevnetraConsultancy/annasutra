@@ -34,8 +34,11 @@ urlpatterns = [
     path("public/lot/<str:code>", public_lot_html_view, name="public_lot_html_canonical_noslash"),
     path("q/<str:code>", public_lot_html_view, name="qr_short_link"),
     path("q/<str:code>/", public_lot_html_view, name="qr_short_link_slash"),
-    # API v1 routes conforming to api/openapi.yaml
+    # API v1 routes conforming to api/openapi.yaml (supports both /api/v1/ and /v1/)
+    path("api/v1/auth/", include("apps.identity.urls")),
+    path("api/v1/auth", include("apps.identity.urls")),
     path("v1/auth/", include("apps.identity.urls")),
+    path("v1/auth", include("apps.identity.urls")),
     path("v1/organisations/", include("apps.organisations.org_urls")),
     path("v1/organisations", include("apps.organisations.org_urls")),
     path("v1/partners/", include("apps.organisations.partner_urls")),

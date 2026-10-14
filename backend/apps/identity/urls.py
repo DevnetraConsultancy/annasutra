@@ -13,7 +13,10 @@ from .views import (
 
 urlpatterns = [
     path("otp/request", OtpRequestView.as_view(), name="auth_otp_request"),
+    path("otp/request/", OtpRequestView.as_view(), name="auth_otp_request_slash"),
     path("otp/verify", OtpVerifyView.as_view(), name="auth_otp_verify"),
+    path("otp/verify/", OtpVerifyView.as_view(), name="auth_otp_verify_slash"),
+
     path("refresh", RefreshTokenView.as_view(), name="auth_refresh"),
     path("passkeys/register/options", PasskeyRegisterOptionsView.as_view(), name="auth_passkeys_register_options"),
     path("passkeys/register/verify", PasskeyRegisterVerifyView.as_view(), name="auth_passkeys_register_verify"),

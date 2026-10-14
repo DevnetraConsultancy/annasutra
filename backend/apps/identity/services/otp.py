@@ -230,7 +230,12 @@ class OtpService:
 
         # Send via provider
         provider = get_otp_provider()
-        provider.send_otp(phone, code, language)
+        sent = provider.send_otp(phone, code, language)
+        if not sent:
+            return {
+                "status": "GATEWAY_ERROR",
+                "message": "Unable to dispatch SMS. Please ensure the SMS Gateway app on your phone is running with Cloud Server enabled.",
+            }
 
         result = {
             "status": "SENT",

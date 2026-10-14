@@ -661,28 +661,33 @@
       font-size: 13px;
       color: var(--text-muted);
     }
-    .demo-fast-box {
-      background: #f0fdf4;
-      border: 1.5px solid #86efac;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 18px;
-      text-align: center;
+    .phone-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: stretch;
     }
-    .demo-fast-box strong { color: #15803D; font-size: 13px; }
-    .demo-fast-box p { margin: 4px 0 10px; font-size: 12px; color: #166534; }
-    .btn-demo-tap {
-      width: 100%;
-      background: #15803D;
-      color: white;
-      border: none;
-      padding: 12px;
+    .country-code-select {
+      width: 140px;
+      flex-shrink: 0;
+      padding: 12px 10px;
+      border: 1.5px solid var(--border);
       border-radius: 8px;
-      font-weight: 800;
-      font-size: 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      background: #ffffff;
       cursor: pointer;
+      outline: none;
+      color: var(--text);
     }
-    .btn-demo-tap:hover { background: #166534; }
+    .country-code-select:focus { border-color: var(--primary); }
+    .phone-number-input {
+      flex: 1;
+      margin-bottom: 0 !important;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
     .modal-input {
       width: 100%;
       padding: 12px 14px;
@@ -1197,36 +1202,44 @@
         <p id="modalSubtitle">Role-Confined Authentication on AnnaSutra</p>
       </div>
 
-      <div class="demo-fast-box">
-        <strong id="demoFastTitle">⚡ 1-Tap Evaluation Sign In</strong>
-        <p id="demoOrgHint">Sign in immediately as verified entity without waiting for SMS.</p>
-        <button class="btn-demo-tap" id="btnDemoTap" onclick="execute1TapLogin()">
-          1-Tap Sign In
-        </button>
-      </div>
-
-      <div style="text-align: center; margin: 12px 0; font-size: 12px; color: var(--text-muted);" id="otpOrLabel">
-        ── OR SIGN IN WITH MOBILE OTP ──
-      </div>
-
       <div id="otpPhoneStep">
-        <input type="tel" class="modal-input" id="phoneInput" value="+919876543210" placeholder="Mobile Number (+91)" />
+        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;" id="phoneStepLabel">
+          Official Mobile Authentication
+        </label>
+        <div class="phone-input-row">
+          <select id="countryCodeSelect" class="country-code-select">
+            <option value="+91" selected>🇮🇳 +91 (IN)</option>
+            <option value="+1">🇺🇸 +1 (US)</option>
+            <option value="+44">🇬🇧 +44 (UK)</option>
+            <option value="+880">🇧🇩 +880 (BD)</option>
+            <option value="+971">🇦🇪 +971 (AE)</option>
+            <option value="+65">🇸🇬 +65 (SG)</option>
+            <option value="+977">🇳🇵 +977 (NP)</option>
+          </select>
+          <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="Mobile number (e.g. 8444997803)" maxlength="15" />
+        </div>
         <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
           Send Verification OTP
         </button>
+        <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;">
+          🔒 An OTP will be dispatched via official SMS Gateway to your device.
+        </p>
       </div>
 
       <div id="otpVerifyStep" style="display: none; margin-top: 10px;">
-        <div style="font-size: 12px; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;" id="otpStatusNotice">
+        <div style="font-size: 12.5px; color: #166534; background: #f0fdf4; border: 1.5px solid #86efac; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-weight: 600;" id="otpStatusNotice">
           ✓ OTP sent via Android SMS Gateway
         </div>
-        <input type="text" class="modal-input" id="otpCodeInput" maxlength="6" placeholder="Enter 6-digit OTP" style="letter-spacing: 5px; font-size: 18px; font-weight: 700; text-align: center;" />
-        <button class="btn-otp-submit" id="btnVerifyOtp" onclick="verifyOtpLogin()" style="margin-top: 8px;">
+        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;">
+          Enter 6-Digit Code
+        </label>
+        <input type="text" class="modal-input" id="otpCodeInput" maxlength="6" placeholder="• • • • • •" style="letter-spacing: 8px; font-size: 20px; font-weight: 800; text-align: center; padding: 12px;" />
+        <button class="btn-otp-submit" id="btnVerifyOtp" onclick="verifyOtpLogin()" style="margin-top: 4px;">
           Verify &amp; Enter Console
         </button>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px;">
-          <a href="javascript:void(0)" onclick="resetOtpLogin()" style="color: var(--text-muted); text-decoration: underline;">Change Phone</a>
-          <span id="otpCountdown" style="color: var(--text-muted); font-weight: 600;"></span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 12px;">
+          <a href="javascript:void(0)" onclick="resetOtpLogin()" style="color: var(--text-muted); text-decoration: underline; font-weight: 600;">Change Phone Number</a>
+          <span id="otpCountdown" style="color: var(--text-muted); font-weight: 700;"></span>
         </div>
       </div>
     </div>
@@ -1755,9 +1768,6 @@
 
       // Modals
       setTxt('modalSubtitle', t.modalSubtitle);
-      setTxt('demoFastTitle', t.demoFastTitle);
-      setTxt('btnDemoTap', t.btnDemoTap);
-      setTxt('otpOrLabel', t.otpOrLabel);
       setTxt('btnSendOtp', t.btnSendOtp);
       const phoneInp = document.getElementById('phoneInput');
       if (phoneInp && t.phonePlaceholder) phoneInp.placeholder = t.phonePlaceholder;
@@ -1850,6 +1860,17 @@
 
     let otpCooldownTimer = null;
 
+    function getFullPhoneNumber() {
+      const codeEl = document.getElementById('countryCodeSelect');
+      const numEl = document.getElementById('phoneInput');
+      const code = codeEl ? codeEl.value : '+91';
+      let num = numEl ? numEl.value.trim() : '';
+      num = num.replace(/[\s\-\(\)]/g, '');
+      if (num.startsWith('+')) return num;
+      if (num.startsWith('0')) num = num.substring(1);
+      return code + num;
+    }
+
     function resetOtpLogin() {
       const pStep = document.getElementById('otpPhoneStep');
       const vStep = document.getElementById('otpVerifyStep');
@@ -1867,24 +1888,36 @@
     }
 
     async function requestOtpLogin() {
-      const phoneInp = document.getElementById('phoneInput');
+      const phone = getFullPhoneNumber();
       const btn = document.getElementById('btnSendOtp');
-      if (!phoneInp || !btn) return;
-      const phone = phoneInp.value.trim();
-      if (!phone || !phone.startsWith('+')) {
-        alert(currentLang === 'hi' ? 'कृपया अंतर्राष्ट्रीय प्रारूप में मान्य मोबाइल नंबर दर्ज करें (उदा. +919876543210)' : currentLang === 'bn' ? 'অনুগ্রহ করে আন্তর্জাতিক ফরম্যাটে বৈধ মোবাইল নম্বর লিখুন (উদাঃ +919876543210)' : 'Please enter a valid international mobile number (e.g. +919876543210)');
+      if (!phone || phone.length < 9) {
+        alert(currentLang === 'hi' ? 'कृपया एक वैध मोबाइल नंबर दर्ज करें' : currentLang === 'bn' ? 'অনুগ্রহ করে একটি বৈধ মোবাইল নম্বর লিখুন' : 'Please enter a valid mobile number.');
         return;
       }
       btn.disabled = true;
       btn.innerText = (currentLang === 'hi' ? 'गेटवे से ओटीपी भेजा जा रहा है...' : currentLang === 'bn' ? 'গেটওয়ে থেকে ওটিপি পাঠানো হচ্ছে...' : 'Sending OTP via Gateway...');
 
       try {
-        const res = await fetch('/api/v1/auth/otp/request', {
+        let res = await fetch('/api/v1/auth/otp/request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone: phone, language: currentLang })
         });
-        const data = await res.json();
+        if (res.status === 404) {
+          res = await fetch('/v1/auth/otp/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: phone, language: currentLang })
+          });
+        }
+
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = { detail: 'Gateway response error' };
+        }
+
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিপি পাঠান' : 'Send Verification OTP');
 
@@ -1908,16 +1941,15 @@
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিপি পাঠান' : 'Send Verification OTP');
-        alert('Gateway communication error. Please check your network or try 1-Tap sign in.');
+        alert('Gateway communication error. Please check your network connection.');
       }
     }
 
     async function verifyOtpLogin() {
-      const phoneInp = document.getElementById('phoneInput');
+      const phone = getFullPhoneNumber();
       const codeInp = document.getElementById('otpCodeInput');
       const btn = document.getElementById('btnVerifyOtp');
-      if (!phoneInp || !codeInp || !btn) return;
-      const phone = phoneInp.value.trim();
+      if (!codeInp || !btn) return;
       const code = codeInp.value.trim();
       if (!code || code.length < 4) {
         alert(currentLang === 'hi' ? 'कृपया 6-अंकीय ओटीपी कोड दर्ज करें' : currentLang === 'bn' ? 'অনুগ্রহ করে ৬-সংখ্যার ওটিপি লিখুন' : 'Please enter the 6-digit OTP code.');
@@ -1927,12 +1959,26 @@
       btn.innerText = (currentLang === 'hi' ? 'सत्यापित हो रहा है...' : currentLang === 'bn' ? 'যাচাই করা হচ্ছে...' : 'Verifying...');
 
       try {
-        const res = await fetch('/api/v1/auth/otp/verify', {
+        let res = await fetch('/api/v1/auth/otp/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone: phone, code: code })
         });
-        const data = await res.json();
+        if (res.status === 404) {
+          res = await fetch('/v1/auth/otp/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: phone, code: code })
+          });
+        }
+
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = {};
+        }
+
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন এবং প্রবেশ করুন' : 'Verify & Enter Console');
 
@@ -1940,7 +1986,7 @@
           if (data.tokens && data.tokens.access) {
             localStorage.setItem('annasutra_access_token', data.tokens.access);
           }
-          execute1TapLogin();
+          completeOtpLogin(phone);
         } else {
           alert(data.detail || (currentLang === 'hi' ? 'अमान्य ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ ওটিপি কোড' : 'Invalid or expired OTP code.'));
         }
@@ -1983,10 +2029,11 @@
       if (otpCooldownTimer) clearInterval(otpCooldownTimer);
     }
 
-    function execute1TapLogin() {
+    function completeOtpLogin(verifiedPhone) {
       closeLoginModal();
       window.location.href = '/?role=' + encodeURIComponent(currentRole);
     }
+    const execute1TapLogin = completeOtpLogin;
 
     function openDpdpModal() {
       const modal = document.getElementById('dpdpModal');
