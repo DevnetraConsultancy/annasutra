@@ -1894,6 +1894,110 @@
       text-align: left;
     }
 
+    /* ANNASUTRA SYSTEM TOAST NOTIFICATIONS (BOTTOM RIGHT) */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+      width: calc(100% - 48px);
+      pointer-events: none;
+    }
+    .annasutra-toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18), 0 3px 10px rgba(15, 23, 42, 0.08);
+      border-left: 5px solid #ef4444;
+      border-top: 1px solid rgba(226, 232, 240, 0.9);
+      border-right: 1px solid rgba(226, 232, 240, 0.9);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+      color: #1e293b;
+      font-family: inherit;
+      font-size: 13.5px;
+      line-height: 1.45;
+      transform: translateY(20px) scale(0.96);
+      opacity: 0;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    }
+    .annasutra-toast.show {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .annasutra-toast.toast-error {
+      border-left-color: #ef4444;
+      background: #fffafa;
+    }
+    .annasutra-toast.toast-success {
+      border-left-color: #10b981;
+      background: #f0fdf4;
+    }
+    .annasutra-toast.toast-warning {
+      border-left-color: #f59e0b;
+      background: #fffdf5;
+    }
+    .annasutra-toast.toast-info {
+      border-left-color: #3b82f6;
+      background: #f8faff;
+    }
+    .toast-icon {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .toast-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .toast-title {
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 3px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toast-body {
+      font-size: 12.5px;
+      color: #475569;
+      font-weight: 500;
+      word-break: break-word;
+    }
+    .toast-close {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 2px;
+      margin-left: 6px;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .toast-close:hover {
+      color: #1e293b;
+    }
+    @media (max-width: 600px) {
+      .toast-container {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        max-width: none;
+        width: auto;
+      }
+    }
+
     @media (max-width: 860px) {
       .ataraxis-footer-grid { grid-template-columns: 1fr; gap: 32px; }
       .ataraxis-footer-card { padding: 32px 22px 22px; }
@@ -5653,6 +5757,58 @@
 
     let otpCooldownTimer = null;
 
+    function showToast(message, type = 'error', title = null, duration = 4500) {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+      }
+
+      const icons = {
+        error: '❌',
+        success: '✅',
+        warning: '⚠️',
+        info: 'ℹ️'
+      };
+
+      const defaultTitles = {
+        error: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'त्रुटि (Error)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'ত্রুটি (Error)' : 'Attention Required',
+        success: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सफल (Success)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'সফল (Success)' : 'Success',
+        warning: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सूचना (Notice)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'বিজ্ঞপ্তি (Notice)' : 'Notice',
+        info: 'AnnaSutra'
+      };
+
+      const toast = document.createElement('div');
+      toast.className = 'annasutra-toast toast-' + type;
+      toast.innerHTML = 
+        '<div class="toast-icon">' + (icons[type] || 'ℹ️') + '</div>' +
+        '<div class="toast-content">' +
+          '<div class="toast-title">' + (title || defaultTitles[type] || 'Notice') + '</div>' +
+          '<div class="toast-body">' + message + '</div>' +
+        '</div>' +
+        '<button class="toast-close" type="button" aria-label="Close">&times;</button>';
+
+      const closeBtn = toast.querySelector('.toast-close');
+      const dismiss = () => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 300);
+      };
+      if (closeBtn) closeBtn.onclick = dismiss;
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+
+      if (duration > 0) {
+        setTimeout(dismiss, duration);
+      }
+    }
+
     function getFullPhoneNumber() {
       const codeEl = document.getElementById('countryCodeSelect');
       const numEl = document.getElementById('phoneInput');
@@ -5684,7 +5840,7 @@
       const phone = getFullPhoneNumber();
       const btn = document.getElementById('btnSendOtp');
       if (!phone || phone.length < 9) {
-        alert(currentLang === 'hi' ? 'कृपया एक वैध मोबाइल नंबर दर्ज करें' : currentLang === 'bn' ? 'অনুগ্রহ করে একটি বৈধ মোবাইল নম্বর লিখুন' : 'Please enter a valid mobile number.');
+        showToast(currentLang === 'hi' ? 'कृपया एक मान्य मोबाइल नंबर दर्ज करें (उदा. 9876543210)' : currentLang === 'bn' ? 'অনুগ্রহ করে একটি বৈধ মোবাইল নম্বর লিখুন (উদাঃ 9876543210)' : 'Please enter a valid mobile number (e.g. 9876543210).', 'warning');
         return;
       }
       btn.disabled = true;
@@ -5723,18 +5879,23 @@
             notice.innerText = (currentLang === 'hi' ? '✓ ' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway');
           }
           startOtpCountdown(60);
+          showToast((currentLang === 'hi' ? '✓ ' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
           const codeInput = document.getElementById('otpCodeInput');
           if (codeInput) {
             codeInput.value = data.debug_code || '';
             codeInput.focus();
           }
+        } else if (res.status === 429) {
+          showToast(data.detail || 'Too many OTP requests. Please wait a moment before trying again.', 'warning', 'Rate Limited');
+        } else if (res.status === 502 || data.code === 'GATEWAY_ERROR') {
+          showToast(data.detail || 'Unable to dispatch SMS. Please ensure the Android SMS Gateway is running on your phone.', 'error', 'SMS Gateway Error');
         } else {
-          alert(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি পাঠাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'));
+          showToast(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি পাঠাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'), 'error', 'Dispatch Error');
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিপি পাঠান' : 'Send Verification OTP');
-        alert('Gateway communication error. Please check your network connection.');
+        showToast('Gateway communication error. Please check your network connection.', 'error', 'Connection Error');
       }
     }
 
@@ -5745,7 +5906,7 @@
       if (!codeInp || !btn) return;
       const code = codeInp.value.trim();
       if (!code || code.length < 4) {
-        alert(currentLang === 'hi' ? 'कृपया 6-अंकीय ओटीपी कोड दर्ज करें' : currentLang === 'bn' ? 'অনুগ্রহ করে ৬-সংখ্যার ওটিপি লিখুন' : 'Please enter the 6-digit OTP code.');
+        showToast(currentLang === 'hi' ? 'कृपया 6-अंकीय ओटीपी कोड दर्ज करें' : currentLang === 'bn' ? 'অনুগ্রহ করে ৬-সংখ্যার ওটিপি লিখুন' : 'Please enter the 6-digit OTP code.', 'warning');
         return;
       }
       btn.disabled = true;
@@ -5779,17 +5940,17 @@
           if (data.tokens && data.tokens.access) {
             localStorage.setItem('annasutra_access_token', data.tokens.access);
           }
+          showToast((currentLang === 'hi' ? '✓ पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? '✓ পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : '✓ Identity verified! Launching operational console...'), 'success', 'Access Granted');
           completeOtpLogin(phone);
         } else {
-          alert(data.detail || (currentLang === 'hi' ? 'अमान्य ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ ওটিপি কোড' : 'Invalid or expired OTP code.'));
+          showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error', 'Verification Failed');
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন और प्रवेश करें' : 'Verify & Enter Console');
-        alert('Verification service temporarily unavailable.');
+        showToast('Verification service temporarily unavailable. Please check your network connection.', 'error', 'Connection Error');
       }
     }
-
 
     function startOtpCountdown(seconds) {
       let remaining = seconds;
@@ -5810,17 +5971,26 @@
     function openLoginModal(role) {
       resetOtpLogin();
       currentRole = role || 'PRODUCER';
-      const langRoles = roleDefinitions[currentLang] || roleDefinitions['en'];
-      const def = langRoles[currentRole] || roleDefinitions['en'][currentRole];
-      const t = i18n[currentLang] || i18n['en'];
-
-      document.getElementById('modalRoleTitle').innerText = t.modalRoleTitle + ': ' + (t['roleTitle' + currentRole.charAt(0) + currentRole.slice(1).toLowerCase()] || currentRole);
-      document.getElementById('demoOrgHint').innerText = def.org;
-      document.getElementById('loginModal').style.display = 'flex';
+      const t = (typeof i18n !== 'undefined' && (i18n[currentLang] || i18n['en'])) || {};
+      const roleTitle = document.getElementById('modalRoleTitle');
+      const roleKey = 'roleTitle' + currentRole.charAt(0) + currentRole.slice(1).toLowerCase();
+      const rName = t[roleKey] || (t['portalRoleTitle' + currentRole.charAt(0) + currentRole.slice(1).toLowerCase()]) || currentRole;
+      if (roleTitle) {
+        roleTitle.innerText = (t.modalRoleTitle || 'Entity Login') + ': ' + rName;
+      }
+      const modal = document.getElementById('loginModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      const phoneInp = document.getElementById('phoneInput');
+      if (phoneInp) {
+        phoneInp.focus();
+      }
     }
 
     function closeLoginModal() {
-      document.getElementById('loginModal').style.display = 'none';
+      const modal = document.getElementById('loginModal');
+      if (modal) modal.style.display = 'none';
       if (otpCooldownTimer) clearInterval(otpCooldownTimer);
     }
 
@@ -6527,10 +6697,13 @@
       const urlParams = new URLSearchParams(window.location.search);
       const roleParam = urlParams.get('login') || urlParams.get('role');
       if (roleParam) {
-        selectRoleFromPortal(roleParam.toUpperCase());
-        execute1TapLogin();
+        currentRole = roleParam.toUpperCase();
+        completeOtpLogin();
       }
     });
   </script>
+
+  <!-- TOAST NOTIFICATION CONTAINER (BOTTOM RIGHT) -->
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>
