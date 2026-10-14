@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" onerror="this.onerror=null;this.src='/static/publicview/js/gsap.min.js';"></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -782,33 +783,123 @@
       }
     }
 
-    /* 7. 5-TIER ARCHITECTURE SHOWCASE - FULL-WIDTH EDGE TO EDGE */
+    /* 7. 5-TIER ARCHITECTURE SHOWCASE - ANIMATED AGRICULTURAL SUPPLY-CHAIN WORKFLOW */
     .flow-showcase-section {
       width: 100%;
       margin: 0;
-      padding: 64px 0;
-      background: #f8fafc;
+      padding: 72px 0 80px;
+      background: linear-gradient(180deg, #f8fafc 0%, #f0fdf4 50%, #f8fafc 100%);
       border-bottom: 1px solid var(--border);
+      position: relative;
     }
     .flow-showcase-container {
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
-      padding: 0 32px;
+      padding: 0 28px;
     }
     .flow-showcase-container h3 {
-      margin: 0 0 8px;
-      font-size: 24px;
+      margin: 0 0 10px;
+      font-size: clamp(26px, 2.5vw, 34px);
       color: var(--slate-dark);
       font-weight: 900;
       text-align: center;
-      letter-spacing: -0.4px;
+      letter-spacing: -0.6px;
     }
     .flow-showcase-container p.sub {
-      margin: 0 0 32px;
-      font-size: 14px;
+      margin: 0 auto 28px;
+      max-width: 720px;
+      font-size: 15px;
       color: var(--text-muted);
       text-align: center;
+      line-height: 1.6;
     }
+
+    /* Workflow Telemetry & Stage Control Strip */
+    .flow-telemetry-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 50px;
+      padding: 6px 14px 6px 18px;
+      margin: 0 auto 36px;
+      max-width: 980px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+    .flow-live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .flow-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+      animation: flowDotPulse 1.8s infinite ease-in-out;
+    }
+    @keyframes flowDotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+    .flow-telemetry-chips {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .flow-stage-chip {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .flow-stage-chip:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+    .flow-stage-chip.active {
+      background: #0b3d2e;
+      border-color: #0b3d2e;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(11, 61, 46, 0.25);
+    }
+    .flow-ctrl-btn {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .flow-ctrl-btn:hover {
+      background: #0b3d2e;
+      color: #ffffff;
+      border-color: #0b3d2e;
+    }
+
+    /* 5-Step Pipeline Grid with Inter-Stage Connectors */
     .flow-steps-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -818,40 +909,224 @@
     .flow-step-box {
       background: #ffffff;
       border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 16px;
+      border-radius: 16px;
+      padding: 18px 14px 20px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
     }
     .flow-step-box:hover {
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(11, 61, 46, 0.08);
+      border-color: #22c55e;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(11, 61, 46, 0.1);
+    }
+
+    /* Active Stage Glowing Halo & Top Accent */
+    .flow-step-box.is-active-stage {
+      border-color: #16a34a;
+      box-shadow: 0 16px 36px -6px rgba(22, 163, 74, 0.24), 0 0 0 2px #22c55e;
+      transform: translateY(-6px);
+      background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+    }
+    .flow-step-box.is-active-stage::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #15803d, #22c55e, #15803d);
+    }
+    .flow-step-box.is-completed-stage {
+      border-color: #86efac;
+    }
+
+    .flow-step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
     .flow-step-num {
-      width: 26px;
-      height: 26px;
-      background: var(--primary);
+      width: 28px;
+      height: 28px;
+      background: #0b3d2e;
       color: white;
       border-radius: 50%;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .flow-step-box.is-active-stage .flow-step-num {
+      background: #16a34a;
+      box-shadow: 0 0 12px rgba(22, 163, 74, 0.6);
+      transform: scale(1.1);
+    }
+    .flow-step-box.is-completed-stage .flow-step-num {
+      background: #15803d;
+    }
+    .flow-stage-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      color: #64748b;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .flow-step-box.is-active-stage .flow-stage-badge {
+      background: #dcfce7;
+      color: #15803d;
+      font-weight: 900;
+    }
+    .flow-step-box.is-completed-stage .flow-stage-badge {
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    /* SVG Illustration Canvas */
+    .flow-step-visual {
+      width: 100%;
+      height: 136px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 10px;
+      position: relative;
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.02);
+      transition: border-color 0.3s;
     }
+    .flow-step-box.is-active-stage .flow-step-visual {
+      border-color: #86efac;
+    }
+    .stage-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
     .flow-step-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 800;
       color: var(--slate-dark);
       margin-bottom: 6px;
+      transition: color 0.3s;
+    }
+    .flow-step-box.is-active-stage .flow-step-title {
+      color: #0b3d2e;
     }
     .flow-step-desc {
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--text-muted);
-      line-height: 1.45;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      flex-grow: 1;
+    }
+    .flow-step-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px dashed #e2e8f0;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .meta-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 2px 7px;
+      border-radius: 6px;
+      color: #475569;
+    }
+    .meta-code {
+      font-family: monospace;
+      color: #15803d;
+      font-weight: 800;
+    }
+
+    /* Directional Pipeline Connectors (Between Cards) */
+    .flow-connector {
+      display: none;
+    }
+    .flow-step-arrow {
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      color: #16a34a;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .flow-step-arrow svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.4;
+    }
+    .flow-step-box.is-active-stage .flow-step-arrow {
+      background: #16a34a;
+      border-color: #16a34a;
+      color: #ffffff;
+      transform: translateY(-50%) scale(1.15) translateX(3px);
+      box-shadow: 0 0 12px rgba(22, 163, 74, 0.55);
+    }
+    @media (max-width: 1120px) {
+      .flow-step-arrow { display: none; }
+    }
+
+    @media (max-width: 1120px) {
+      .flow-steps-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .flow-telemetry-bar {
+        border-radius: 20px;
+        justify-content: center;
+      }
+    }
+    @media (max-width: 720px) {
+      .flow-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .flow-step-box {
+        max-width: 460px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .flow-telemetry-chips {
+        display: none;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flow-live-dot { animation: none; }
+      .flow-step-box { transition: none; }
+      .stage-svg * { animation: none !important; transition: none !important; }
     }
 
 
@@ -1878,31 +2153,412 @@
       <h3 id="flowTitle">Unified 5-Tier Supply-Chain Architecture</h3>
       <p class="sub" id="flowSubtitle">Direct cryptographic custody transfer across all agricultural decision-makers</p>
       
+      <!-- Live Protocol Telemetry & Stage Controller Strip -->
+      <div class="flow-telemetry-bar">
+        <div class="flow-live-indicator">
+          <span class="flow-live-dot"></span>
+          <span>Live Protocol: Batch <strong style="color: #15803d;">#AS-2026-X1</strong></span>
+        </div>
+        <div class="flow-telemetry-chips">
+          <button type="button" class="flow-stage-chip active" id="chipStage1" onclick="jumpToFlowStage(1)">1. Producer (Harvest &amp; QR)</button>
+          <button type="button" class="flow-stage-chip" id="chipStage2" onclick="jumpToFlowStage(2)">2. Aggregator (Weigh &amp; Grade)</button>
+          <button type="button" class="flow-stage-chip" id="chipStage3" onclick="jumpToFlowStage(3)">3. Wholesaler (Storage &amp; Split)</button>
+          <button type="button" class="flow-stage-chip" id="chipStage4" onclick="jumpToFlowStage(4)">4. Distributor (Reefer Fleet)</button>
+          <button type="button" class="flow-stage-chip" id="chipStage5" onclick="jumpToFlowStage(5)">5. Retailer (Shelf &amp; POS)</button>
+        </div>
+        <button type="button" class="flow-ctrl-btn" id="flowPlayPauseBtn" onclick="toggleFlowAnimation()" title="Pause/Resume Simulation">
+          <span id="flowPlayPauseIcon">⏸</span>
+          <span id="flowPlayPauseText">Pause</span>
+        </button>
+      </div>
+
       <div class="flow-steps-grid">
-        <div class="flow-step-box">
-          <div class="flow-step-num">1</div>
+        <!-- Stage 1: Producer -->
+        <div class="flow-step-box is-active-stage" id="flowStepBox1" onclick="jumpToFlowStage(1)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flow-step-header">
+            <div class="flow-step-num">1</div>
+            <div class="flow-stage-badge" id="flowBadge1">Tier 1 • Farm Origin</div>
+          </div>
+          <div class="flow-step-visual">
+            <svg id="svgStage1" class="stage-svg" viewBox="0 0 220 135" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="s1ScanGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#22c55e" stop-opacity="0.8"/>
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Soil bed / horizon -->
+              <ellipse cx="110" cy="122" rx="98" ry="7" fill="#e2e8f0" opacity="0.7"/>
+              <path d="M 12 120 Q 60 114 110 120 Q 160 124 208 120" stroke="#cbd5e1" stroke-width="1.5" fill="none"/>
+              <!-- Tomato vine stems and leaves -->
+              <path id="s1Stem" d="M 45 120 Q 42 85 50 65 Q 58 45 65 30" fill="none" stroke="#15803d" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M 47 88 Q 32 82 25 80" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M 52 68 Q 66 62 76 60" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Lush leaves -->
+              <g id="s1Leaves">
+                <path id="s1Leaf1" d="M 47 90 C 28 85 22 75 30 70 C 38 70 44 80 47 90 Z" fill="#22c55e"/>
+                <path id="s1Leaf2" d="M 52 70 C 66 64 76 68 72 78 C 62 82 54 75 52 70 Z" fill="#16a34a"/>
+                <path id="s1Leaf3" d="M 60 48 C 45 40 40 30 50 28 C 58 28 62 40 60 48 Z" fill="#22c55e"/>
+                <path id="s1Leaf4" d="M 64 34 C 76 24 86 28 82 38 C 74 42 68 38 64 34 Z" fill="#15803d"/>
+              </g>
+              <!-- Growing & Dropping Tomatoes -->
+              <g id="s1Tomato1" transform="translate(34, 76)">
+                <circle cx="0" cy="0" r="7.5" fill="#dc2626"/>
+                <circle cx="-2.5" cy="-2.5" r="2" fill="#f87171" opacity="0.75"/>
+                <path d="M -3 -6 Q 0 -4 3 -6 Q 0 -8 -3 -6 Z" fill="#16a34a"/>
+              </g>
+              <g id="s1Tomato2" transform="translate(74, 58)">
+                <circle cx="0" cy="0" r="8" fill="#ef4444"/>
+                <circle cx="-2.5" cy="-2.5" r="2.2" fill="#fca5a5" opacity="0.8"/>
+                <path d="M -3 -7 Q 0 -5 3 -7 Q 0 -9 -3 -7 Z" fill="#15803d"/>
+              </g>
+              <g id="s1Tomato3" transform="translate(56, 32)">
+                <circle cx="0" cy="0" r="6.5" fill="#dc2626"/>
+                <circle cx="-2" cy="-2" r="1.8" fill="#f87171" opacity="0.75"/>
+                <path d="M -2.5 -5 Q 0 -3 2.5 -5 Q 0 -7 -2.5 -5 Z" fill="#22c55e"/>
+              </g>
+              <!-- Produce Crate -->
+              <g id="s1Crate" transform="translate(118, 76)">
+                <rect x="0" y="0" width="82" height="42" rx="4" fill="#166534" stroke="#0d3b1e" stroke-width="1.5"/>
+                <!-- Slats -->
+                <rect x="6" y="7" width="70" height="4" rx="2" fill="#0d4025"/>
+                <rect x="6" y="16" width="70" height="4" rx="2" fill="#0d4025"/>
+                <rect x="6" y="25" width="70" height="4" rx="2" fill="#0d4025"/>
+                <!-- Handle -->
+                <rect x="29" y="5" width="24" height="6" rx="3" fill="#ffffff" opacity="0.25"/>
+                <!-- Harvested Produce inside crate -->
+                <g id="s1HarvestProduce">
+                  <circle cx="16" cy="-2" r="7" fill="#ef4444"/>
+                  <circle cx="30" cy="-4" r="8" fill="#dc2626"/>
+                  <circle cx="45" cy="-3" r="7.5" fill="#ef4444"/>
+                  <circle cx="60" cy="-2" r="7" fill="#dc2626"/>
+                  <circle cx="23" cy="-7" r="6.5" fill="#ef4444"/>
+                  <circle cx="38" cy="-8" r="7" fill="#f87171"/>
+                  <circle cx="52" cy="-7" r="6.5" fill="#dc2626"/>
+                  <!-- Green leafy caps -->
+                  <path d="M 28 -12 C 32 -15 36 -14 34 -10 C 31 -8 28 -10 28 -12 Z" fill="#22c55e"/>
+                  <path d="M 44 -12 C 48 -15 52 -13 50 -9 C 46 -8 44 -10 44 -12 Z" fill="#16a34a"/>
+                </g>
+                <!-- QR Label Attached to Crate -->
+                <g id="s1QrTag" transform="translate(18, 12)">
+                  <rect x="0" y="0" width="46" height="24" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                  <!-- Miniature QR Pattern -->
+                  <rect x="3" y="3" width="6" height="6" fill="#0f172a"/><rect x="4" y="4" width="4" height="4" fill="#ffffff"/><rect x="5" y="5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="12" y="3" width="6" height="6" fill="#0f172a"/><rect x="13" y="4" width="4" height="4" fill="#ffffff"/><rect x="14" y="5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="3" y="12" width="6" height="6" fill="#0f172a"/><rect x="4" y="13" width="4" height="4" fill="#ffffff"/><rect x="5" y="14" width="2" height="2" fill="#0f172a"/>
+                  <rect x="11" y="11" width="2" height="2" fill="#0f172a"/><rect x="15" y="13" width="2" height="4" fill="#0f172a"/><rect x="13" y="15" width="2" height="2" fill="#0f172a"/>
+                  <!-- QR Label Text -->
+                  <text x="21" y="9" font-size="4.5" font-weight="900" fill="#0b3d2e" font-family="system-ui, sans-serif">ANNASUTRA</text>
+                  <text x="21" y="16" font-size="4.2" font-family="monospace" font-weight="700" fill="#15803d">#AS-2026-X1</text>
+                  <circle cx="41" cy="7" r="2" fill="#22c55e"/>
+                  <!-- Laser scanning beam line -->
+                  <line id="s1Laser" x1="-2" y1="2" x2="48" y2="2" stroke="#22c55e" stroke-width="1.8" opacity="0"/>
+                </g>
+              </g>
+              <!-- Status Pill top right -->
+              <g id="s1StatusBadge" opacity="0">
+                <rect x="132" y="10" width="76" height="18" rx="9" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+                <text x="170" y="22" font-size="7.5" font-weight="800" fill="#15803d" text-anchor="middle">✓ HARVEST LOGGED</text>
+              </g>
+            </svg>
+          </div>
           <div class="flow-step-title" id="flowStep1Title">Producer</div>
           <div class="flow-step-desc" id="flowStep1Desc">Farmer / FPO logs harvest & generates QR crate labels.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill">TAG: <strong class="meta-code">#AS-2026-X1</strong></span>
+            <span class="meta-pill">GEO: <strong class="meta-code">23.24°N</strong></span>
+          </div>
         </div>
-        <div class="flow-step-box">
-          <div class="flow-step-num">2</div>
+
+        <!-- Stage 2: Aggregator -->
+        <div class="flow-step-box" id="flowStepBox2" onclick="jumpToFlowStage(2)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flow-step-header">
+            <div class="flow-step-num">2</div>
+            <div class="flow-stage-badge" id="flowBadge2">Tier 2 • APMC Mandi</div>
+          </div>
+          <div class="flow-step-visual">
+            <svg id="svgStage2" class="stage-svg" viewBox="0 0 220 135" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="s2BeamGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#22c55e" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0.05"/>
+                </linearGradient>
+              </defs>
+              <!-- Mandi Scale Base -->
+              <rect x="36" y="115" width="148" height="7" rx="2" fill="#64748b"/>
+              <rect x="48" y="122" width="16" height="4" rx="1" fill="#334155"/>
+              <rect x="156" y="122" width="16" height="4" rx="1" fill="#334155"/>
+              <!-- Scale Platform Plate -->
+              <rect id="s2ScalePlate" x="44" y="109" width="132" height="6" rx="2" fill="#94a3b8" stroke="#475569" stroke-width="1"/>
+              <!-- Digital Weight Column & Terminal Head -->
+              <rect x="16" y="52" width="8" height="64" fill="#475569"/>
+              <rect x="6" y="32" width="30" height="24" rx="4" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+              <rect x="9" y="35" width="24" height="13" rx="2" fill="#052e16"/>
+              <text id="s2WeightText" x="21" y="45" font-size="6.8" font-weight="900" font-family="monospace" fill="#22c55e" text-anchor="middle">000.0 KG</text>
+              <text x="21" y="52" font-size="3" font-weight="700" fill="#94a3b8" text-anchor="middle">APMC WEIGH</text>
+              <!-- Crate on Scale -->
+              <g id="s2Crate" transform="translate(70, 70)">
+                <rect x="0" y="0" width="80" height="39" rx="4" fill="#166534" stroke="#0d3b1e" stroke-width="1.5"/>
+                <rect x="6" y="6" width="68" height="4" rx="2" fill="#0d4025"/>
+                <rect x="6" y="14" width="68" height="4" rx="2" fill="#0d4025"/>
+                <rect x="6" y="22" width="68" height="4" rx="2" fill="#0d4025"/>
+                <rect x="28" y="4" width="24" height="6" rx="3" fill="#ffffff" opacity="0.25"/>
+                <!-- Produce inside -->
+                <circle cx="16" cy="-2" r="6.5" fill="#ef4444"/>
+                <circle cx="30" cy="-3" r="7" fill="#dc2626"/>
+                <circle cx="44" cy="-3" r="7" fill="#ef4444"/>
+                <circle cx="58" cy="-2" r="6.5" fill="#dc2626"/>
+                <circle cx="24" cy="-6" r="6" fill="#f87171"/>
+                <circle cx="38" cy="-7" r="6.5" fill="#ef4444"/>
+                <circle cx="50" cy="-6" r="6" fill="#dc2626"/>
+                <!-- QR Tag on crate -->
+                <g id="s2QrTag" transform="translate(18, 11)">
+                  <rect x="0" y="0" width="44" height="22" rx="2.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                  <rect x="3" y="3" width="5" height="5" fill="#0f172a"/><rect x="4" y="4" width="3" height="3" fill="#ffffff"/><rect x="4.5" y="4.5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="10" y="3" width="5" height="5" fill="#0f172a"/><rect x="11" y="4" width="3" height="3" fill="#ffffff"/><rect x="11.5" y="4.5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="3" y="10" width="5" height="5" fill="#0f172a"/><rect x="4" y="11" width="3" height="3" fill="#ffffff"/><rect x="4.5" y="11.5" width="2" height="2" fill="#0f172a"/>
+                  <text x="18" y="9" font-size="4" font-weight="900" fill="#0b3d2e" font-family="system-ui, sans-serif">ANNASUTRA</text>
+                  <text x="18" y="15" font-size="3.8" font-family="monospace" font-weight="700" fill="#15803d">#AS-2026-X1</text>
+                </g>
+              </g>
+              <!-- Optical Sorting Beam Scanner Head -->
+              <polygon points="90,8 130,8 124,18 96,18" fill="#334155"/>
+              <polygon id="s2ScanBeam" points="96,18 124,18 162,109 58,109" fill="url(#s2BeamGrad)" opacity="0"/>
+              <!-- Agmarknet Grade-A Seal Stamp -->
+              <g id="s2GradeSeal" transform="translate(176, 42) scale(0)">
+                <circle cx="0" cy="0" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="2 1"/>
+                <circle cx="0" cy="0" r="15" fill="#15803d"/>
+                <text x="0" y="-3" font-size="4.8" font-weight="900" fill="#fef08a" text-anchor="middle">AGMARKNET</text>
+                <text x="0" y="5" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">GRADE A</text>
+                <path d="M -4 9 L -1 11 L 4 7" fill="none" stroke="#fef08a" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
           <div class="flow-step-title" id="flowStep2Title">Aggregator</div>
           <div class="flow-step-desc" id="flowStep2Desc">Mandi collection, weight verification, Agmarknet grading.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill">NET: <strong class="meta-code" id="metaWeightVal">450.0 KG</strong></span>
+            <span class="meta-pill">GRADE: <strong class="meta-code">A+ PASS</strong></span>
+          </div>
         </div>
-        <div class="flow-step-box">
-          <div class="flow-step-num">3</div>
+
+        <!-- Stage 3: Wholesaler -->
+        <div class="flow-step-box" id="flowStepBox3" onclick="jumpToFlowStage(3)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flow-step-header">
+            <div class="flow-step-num">3</div>
+            <div class="flow-stage-badge" id="flowBadge3">Tier 3 • Cold Hub</div>
+          </div>
+          <div class="flow-step-visual">
+            <svg id="svgStage3" class="stage-svg" viewBox="0 0 220 135" xmlns="http://www.w3.org/2000/svg">
+              <!-- Cold Storage Warehouse Uprights -->
+              <line x1="22" y1="18" x2="22" y2="124" stroke="#cbd5e1" stroke-width="3"/>
+              <line x1="198" y1="18" x2="198" y2="124" stroke="#cbd5e1" stroke-width="3"/>
+              <line x1="20" y1="116" x2="200" y2="116" stroke="#94a3b8" stroke-width="3.5"/>
+              <!-- Cold Ambient Hue -->
+              <rect x="24" y="20" width="172" height="96" fill="#f0fdfa" opacity="0.6" rx="4"/>
+              <!-- Cold Storage Telemetry Gauge -->
+              <g id="s3TelemetryGauge" transform="translate(28, 14)">
+                <rect x="0" y="0" width="50" height="23" rx="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+                <circle cx="7" cy="8" r="2.5" fill="#38bdf8"/>
+                <text x="13" y="10" font-size="4.5" font-weight="800" fill="#7dd3fc">COLD HUB</text>
+                <text id="s3TempText" x="25" y="19" font-size="7" font-weight="900" font-family="monospace" fill="#38bdf8" text-anchor="middle">+3.8°C</text>
+              </g>
+              <!-- Master Lot incoming -->
+              <g id="s3MasterCrate" transform="translate(74, 48)">
+                <rect x="0" y="0" width="72" height="34" rx="3.5" fill="#166534" stroke="#0d3b1e" stroke-width="1.2"/>
+                <rect x="6" y="5" width="60" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="6" y="12" width="60" height="3" rx="1.5" fill="#0d4025"/>
+                <text x="36" y="24" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">MASTER LOT: 450 KG</text>
+              </g>
+              <!-- Splitting Curve Lineages -->
+              <path id="s3LineageA" d="M 85 70 Q 55 78 48 88" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="3 2" opacity="0"/>
+              <path id="s3LineageB" d="M 135 70 Q 165 78 172 88" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="3 2" opacity="0"/>
+              <!-- Child Sub-Lot A (250 KG) -->
+              <g id="s3SubLotA" transform="translate(18, 76)" opacity="0">
+                <rect x="0" y="0" width="68" height="34" rx="3" fill="#15803d" stroke="#0b3d2e" stroke-width="1.2"/>
+                <rect x="5" y="5" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="5" y="12" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <!-- QR Sub-tag -->
+                <rect x="8" y="18" width="12" height="12" rx="1.5" fill="#ffffff"/>
+                <rect x="10" y="20" width="8" height="8" fill="#0f172a"/>
+                <text x="24" y="24" font-size="4.5" font-weight="900" fill="#ffffff">Sub-Lot A</text>
+                <text x="24" y="29" font-size="3.8" font-family="monospace" fill="#bbf7d0">250.0 KG</text>
+              </g>
+              <!-- Child Sub-Lot B (200 KG) -->
+              <g id="s3SubLotB" transform="translate(134, 76)" opacity="0">
+                <rect x="0" y="0" width="68" height="34" rx="3" fill="#15803d" stroke="#0b3d2e" stroke-width="1.2"/>
+                <rect x="5" y="5" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="5" y="12" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <!-- QR Sub-tag -->
+                <rect x="8" y="18" width="12" height="12" rx="1.5" fill="#ffffff"/>
+                <rect x="10" y="20" width="8" height="8" fill="#0f172a"/>
+                <text x="24" y="24" font-size="4.5" font-weight="900" fill="#ffffff">Sub-Lot B</text>
+                <text x="24" y="29" font-size="3.8" font-family="monospace" fill="#bbf7d0">200.0 KG</text>
+              </g>
+            </svg>
+          </div>
           <div class="flow-step-title" id="flowStep3Title">Wholesaler</div>
           <div class="flow-step-desc" id="flowStep3Desc">Terminal market intake, lot splitting, cold storage.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill">TEMP: <strong class="meta-code">+3.8°C</strong></span>
+            <span class="meta-pill">SPLIT: <strong class="meta-code">2 SUB-LOTS</strong></span>
+          </div>
         </div>
-        <div class="flow-step-box">
-          <div class="flow-step-num">4</div>
+
+        <!-- Stage 4: Distributor -->
+        <div class="flow-step-box" id="flowStepBox4" onclick="jumpToFlowStage(4)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flow-step-header">
+            <div class="flow-step-num">4</div>
+            <div class="flow-stage-badge" id="flowBadge4">Tier 4 • Cold Chain Fleet</div>
+          </div>
+          <div class="flow-step-visual">
+            <svg id="svgStage4" class="stage-svg" viewBox="0 0 220 135" xmlns="http://www.w3.org/2000/svg">
+              <!-- Roadway & Animated Dashes -->
+              <rect x="8" y="114" width="204" height="13" rx="2" fill="#334155"/>
+              <line id="s4RoadDashes" x1="12" y1="120" x2="208" y2="120" stroke="#f8fafc" stroke-width="2" stroke-dasharray="10 8"/>
+              <!-- Logistics Delivery Reefer Truck -->
+              <g id="s4Truck" transform="translate(24, 38)">
+                <!-- Reefer Container Body -->
+                <rect x="0" y="14" width="94" height="56" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <rect x="0" y="38" width="94" height="6" fill="#16a34a"/>
+                <!-- Front Refrigerator Motor -->
+                <rect x="94" y="8" width="12" height="12" rx="2" fill="#64748b"/>
+                <text x="47" y="32" font-size="6" font-weight="900" fill="#0b3d2e" text-anchor="middle">ANNASUTRA LOGISTICS</text>
+                <text x="47" y="54" font-size="4.5" font-weight="700" fill="#64748b" text-anchor="middle">❄️ REEFER +4.0°C</text>
+                <!-- Cab -->
+                <path d="M 94 24 L 122 24 Q 138 38 141 54 L 141 70 L 94 70 Z" fill="#0b3d2e"/>
+                <path d="M 116 27 L 132 38 Q 135 46 135 50 L 114 50 L 114 27 Z" fill="#7dd3fc"/>
+                <circle cx="139" cy="62" r="2.8" fill="#fef08a"/>
+                <!-- IoT Telematics Antenna & Radar Waves -->
+                <line x1="50" y1="14" x2="50" y2="2" stroke="#0b3d2e" stroke-width="2"/>
+                <circle cx="50" cy="2" r="2.5" fill="#22c55e"/>
+                <circle id="s4RadarWave1" cx="50" cy="2" r="6" fill="none" stroke="#22c55e" stroke-width="1.2" opacity="0"/>
+                <circle id="s4RadarWave2" cx="50" cy="2" r="12" fill="none" stroke="#22c55e" stroke-width="1.2" opacity="0"/>
+                <!-- Produce Crate Loading Animation -->
+                <g id="s4CrateLoad" transform="translate(-18, 28)">
+                  <rect x="0" y="0" width="28" height="18" rx="2" fill="#15803d" stroke="#0d3b1e" stroke-width="1"/>
+                  <rect x="3" y="4" width="7" height="7" fill="#ffffff"/>
+                  <text x="12" y="10" font-size="3" fill="#ffffff" font-weight="bold">LOT-A</text>
+                </g>
+                <!-- Wheels (spoke rotation) -->
+                <g id="s4Wheel1" transform="translate(122, 72)">
+                  <circle cx="0" cy="0" r="9.5" fill="#1e293b"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#94a3b8"/>
+                  <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#ffffff" stroke-width="1.2"/>
+                  <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#ffffff" stroke-width="1.2"/>
+                </g>
+                <g id="s4Wheel2" transform="translate(26, 72)">
+                  <circle cx="0" cy="0" r="9.5" fill="#1e293b"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#94a3b8"/>
+                  <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#ffffff" stroke-width="1.2"/>
+                  <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#ffffff" stroke-width="1.2"/>
+                </g>
+                <g id="s4Wheel3" transform="translate(48, 72)">
+                  <circle cx="0" cy="0" r="9.5" fill="#1e293b"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#94a3b8"/>
+                  <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#ffffff" stroke-width="1.2"/>
+                  <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#ffffff" stroke-width="1.2"/>
+                </g>
+              </g>
+            </svg>
+          </div>
           <div class="flow-step-title" id="flowStep4Title">Distributor</div>
           <div class="flow-step-desc" id="flowStep4Desc">Fleet logistics, transit temp logging, regional delivery.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill">GPS: <strong class="meta-code">LIVE TRANSIT</strong></span>
+            <span class="meta-pill">REEFER: <strong class="meta-code">+4.0°C</strong></span>
+          </div>
         </div>
-        <div class="flow-step-box">
-          <div class="flow-step-num">5</div>
+
+        <!-- Stage 5: Retailer -->
+        <div class="flow-step-box" id="flowStepBox5" onclick="jumpToFlowStage(5)">
+          <div class="flow-step-header">
+            <div class="flow-step-num">5</div>
+            <div class="flow-stage-badge" id="flowBadge5">Tier 5 • Last Mile / POS</div>
+          </div>
+          <div class="flow-step-visual">
+            <svg id="svgStage5" class="stage-svg" viewBox="0 0 220 135" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="s5ScanGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Wooden Retail Shelf -->
+              <rect x="14" y="86" width="112" height="7" rx="1.5" fill="#b45309"/>
+              <polygon points="18,93 18,102 28,93" fill="#78350f"/>
+              <polygon points="120,93 120,102 110,93" fill="#78350f"/>
+              <line x1="10" y1="123" x2="210" y2="123" stroke="#cbd5e1" stroke-width="1.5"/>
+              <!-- Produce Crate on Shelf -->
+              <g id="s5ShelfProduce" transform="translate(20, 68)">
+                <rect x="0" y="0" width="56" height="18" rx="2.5" fill="#15803d" stroke="#0d3b1e" stroke-width="1"/>
+                <circle cx="10" cy="-2" r="5" fill="#ef4444"/>
+                <circle cx="20" cy="-3" r="5.5" fill="#dc2626"/>
+                <circle cx="30" cy="-2" r="5" fill="#ef4444"/>
+                <circle cx="40" cy="-3" r="5.5" fill="#dc2626"/>
+                <circle cx="48" cy="-2" r="5" fill="#ef4444"/>
+                <circle cx="25" cy="-6" r="4.5" fill="#f87171"/>
+                <circle cx="35" cy="-6" r="5" fill="#ef4444"/>
+              </g>
+              <!-- Shelf Acrylic QR Standee -->
+              <g id="s5Standee" transform="translate(80, 52)">
+                <path d="M 0 0 L 36 0 L 39 34 L -3 34 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+                <!-- Miniature QR Pattern -->
+                <rect x="5" y="4" width="7" height="7" fill="#0f172a"/><rect x="6.5" y="5.5" width="4" height="4" fill="#ffffff"/><rect x="7.5" y="6.5" width="2" height="2" fill="#0f172a"/>
+                <rect x="15" y="4" width="7" height="7" fill="#0f172a"/><rect x="16.5" y="5.5" width="4" height="4" fill="#ffffff"/><rect x="17.5" y="6.5" width="2" height="2" fill="#0f172a"/>
+                <rect x="5" y="14" width="7" height="7" fill="#0f172a"/><rect x="6.5" y="15.5" width="4" height="4" fill="#ffffff"/><rect x="7.5" y="16.5" width="2" height="2" fill="#0f172a"/>
+                <text x="18" y="27" font-size="3.5" font-weight="900" fill="#0b3d2e" text-anchor="middle">SCAN ORIGIN</text>
+              </g>
+              <!-- Scan Beam from Phone to Standee -->
+              <polygon id="s5ScanCone" points="138,48 138,88 116,74 116,58" fill="url(#s5ScanGrad)" opacity="0"/>
+              <!-- Consumer Smartphone Scanning Mockup -->
+              <g id="s5Phone" transform="translate(138, 22)">
+                <rect x="0" y="0" width="60" height="96" rx="9" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+                <rect x="3" y="6" width="54" height="84" rx="6" fill="#f8fafc"/>
+                <rect x="22" y="2" width="16" height="3" rx="1.5" fill="#334155"/>
+                <!-- Screen Camera Reticle -->
+                <g id="s5Reticle">
+                  <path d="M 12 24 L 18 24 M 12 24 L 12 30" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <path d="M 48 24 L 42 24 M 48 24 L 48 30" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <path d="M 12 56 L 18 56 M 12 56 L 12 50" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <path d="M 48 56 L 42 56 M 48 56 L 48 50" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <line id="s5PhoneScanLine" x1="12" y1="40" x2="48" y2="40" stroke="#22c55e" stroke-width="1.5" opacity="0.8"/>
+                </g>
+                <!-- Verification Pop-up Card on Phone Screen -->
+                <g id="s5VerifyCard" transform="translate(6, 16)" opacity="0">
+                  <rect x="0" y="0" width="48" height="52" rx="5" fill="#ffffff" stroke="#86efac" stroke-width="1.2"/>
+                  <circle cx="24" cy="14" r="8" fill="#22c55e"/>
+                  <path d="M 20 14 L 23 17 L 29 11" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                  <text x="24" y="29" font-size="4.8" font-weight="900" fill="#15803d" text-anchor="middle">100% AUTHENTIC</text>
+                  <text x="24" y="37" font-size="3.8" font-weight="700" fill="#475569" text-anchor="middle">Farmer: R. Soren</text>
+                  <text x="24" y="44" font-size="3.5" font-family="monospace" font-weight="700" fill="#0b3d2e" text-anchor="middle">#AS-2026-X1</text>
+                </g>
+                <!-- Final Sale POS Confirmation Badge -->
+                <g id="s5SaleStamp" transform="translate(30, 78) scale(0)">
+                  <rect x="-24" y="-8" width="48" height="16" rx="4" fill="#15803d"/>
+                  <text x="0" y="3.5" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">✓ SOLD &amp; SEALED</text>
+                </g>
+              </g>
+            </svg>
+          </div>
           <div class="flow-step-title" id="flowStep5Title">Retailer</div>
           <div class="flow-step-desc" id="flowStep5Desc">Kirana / POS intake, consumer shelf QR, final sale logging.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill">CUSTODY: <strong class="meta-code">CONSUMER</strong></span>
+            <span class="meta-pill">LEDGER: <strong class="meta-code">SEALED ✓</strong></span>
+          </div>
         </div>
       </div>
     </div>
@@ -5445,12 +6101,284 @@
       fetchWeatherByIp();
     })();
 
+    /* =========================================================================
+       5-TIER SUPPLY-CHAIN WORKFLOW GSAP ANIMATION ENGINE
+       ========================================================================= */
+    let flowTimeline = null;
+    let currentFlowStage = 1;
+    let isFlowPaused = false;
+
+    function setFlowActiveStageUI(stageNum) {
+      currentFlowStage = stageNum;
+      for (let i = 1; i <= 5; i++) {
+        const box = document.getElementById('flowStepBox' + i);
+        const chip = document.getElementById('chipStage' + i);
+        if (box) {
+          box.classList.remove('is-active-stage', 'is-completed-stage');
+          if (i === stageNum) {
+            box.classList.add('is-active-stage');
+          } else if (i < stageNum) {
+            box.classList.add('is-completed-stage');
+          }
+        }
+        if (chip) {
+          if (i === stageNum) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        }
+      }
+    }
+
+    function jumpToFlowStage(stageNum) {
+      if (!flowTimeline) {
+        setFlowActiveStageUI(stageNum);
+        return;
+      }
+      setFlowActiveStageUI(stageNum);
+      const label = 'stage' + stageNum;
+      flowTimeline.seek(label);
+      if (!isFlowPaused) {
+        flowTimeline.play();
+      }
+    }
+
+    function toggleFlowAnimation() {
+      if (!flowTimeline) return;
+      const icon = document.getElementById('flowPlayPauseIcon');
+      const text = document.getElementById('flowPlayPauseText');
+      if (flowTimeline.paused()) {
+        flowTimeline.play();
+        isFlowPaused = false;
+        if (icon) icon.textContent = '⏸';
+        if (text) text.textContent = 'Pause';
+      } else {
+        flowTimeline.pause();
+        isFlowPaused = true;
+        if (icon) icon.textContent = '▶';
+        if (text) text.textContent = 'Play';
+      }
+    }
+
+    function initSupplyChainFlowAnimation() {
+      const section = document.getElementById('flowShowcaseSection');
+      if (!section) return;
+
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion || typeof window.gsap === 'undefined') {
+        setFlowActiveStageUI(1);
+        try {
+          const wText = document.getElementById('s2WeightText');
+          if (wText) wText.textContent = '450.0 KG';
+          const gradeSeal = document.getElementById('s2GradeSeal');
+          if (gradeSeal) gradeSeal.setAttribute('transform', 'translate(176, 42) scale(1)');
+          const s3Master = document.getElementById('s3MasterCrate');
+          if (s3Master) s3Master.style.opacity = '0.3';
+          const s3SubA = document.getElementById('s3SubLotA');
+          if (s3SubA) s3SubA.style.opacity = '1';
+          const s3SubB = document.getElementById('s3SubLotB');
+          if (s3SubB) s3SubB.style.opacity = '1';
+          const s3LinA = document.getElementById('s3LineageA');
+          if (s3LinA) s3LinA.style.opacity = '1';
+          const s3LinB = document.getElementById('s3LineageB');
+          if (s3LinB) s3LinB.style.opacity = '1';
+          const s5Card = document.getElementById('s5VerifyCard');
+          if (s5Card) s5Card.style.opacity = '1';
+          const s5Stamp = document.getElementById('s5SaleStamp');
+          if (s5Stamp) s5Stamp.setAttribute('transform', 'translate(30, 78) scale(1)');
+        } catch (e) {}
+        return;
+      }
+
+      flowTimeline = gsap.timeline({
+        repeat: -1,
+        repeatDelay: 1.5,
+        defaults: { ease: 'power2.out' }
+      });
+
+      function resetStageVisuals() {
+        gsap.set('#s1Leaves, #s1Tomato1, #s1Tomato2, #s1Tomato3', { transformOrigin: 'center bottom', scale: 0.1, opacity: 0 });
+        gsap.set('#s1HarvestProduce, #s1QrTag, #s1StatusBadge', { opacity: 0 });
+        gsap.set('#s1Laser', { opacity: 0, attr: { y1: 2, y2: 2 } });
+        gsap.set('#s2Crate', { x: 0, opacity: 0 });
+        gsap.set('#s2ScalePlate', { y: 0 });
+        const wText = document.getElementById('s2WeightText');
+        if (wText) wText.textContent = '000.0 KG';
+        gsap.set('#s2ScanBeam', { opacity: 0 });
+        gsap.set('#s2GradeSeal', { scale: 0, opacity: 0, transformOrigin: 'center center' });
+        gsap.set('#s3MasterCrate', { opacity: 1, scale: 1, transformOrigin: 'center center' });
+        gsap.set('#s3LineageA, #s3LineageB', { opacity: 0 });
+        gsap.set('#s3SubLotA, #s3SubLotB', { opacity: 0 });
+        gsap.set('#s4CrateLoad', { x: -25, opacity: 0 });
+        gsap.set('#s4Truck', { y: 38 });
+        gsap.set('#s4RadarWave1, #s4RadarWave2', { opacity: 0 });
+        gsap.set('#s5ShelfProduce', { opacity: 1 });
+        gsap.set('#s5Phone', { x: 175, opacity: 0 });
+        gsap.set('#s5ScanCone', { opacity: 0 });
+        gsap.set('#s5VerifyCard', { scale: 0.7, opacity: 0, transformOrigin: 'center center' });
+        gsap.set('#s5SaleStamp', { scale: 0, opacity: 0, transformOrigin: 'center center' });
+      }
+
+      resetStageVisuals();
+
+      // Stage 1: Producer
+      flowTimeline.addLabel('stage1');
+      flowTimeline.call(() => setFlowActiveStageUI(1));
+      flowTimeline.to('#s1Leaves', { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.7)' });
+      flowTimeline.to('#s1Tomato1, #s1Tomato2, #s1Tomato3', {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: 'back.out(2)'
+      }, '-=0.35');
+      flowTimeline.to('#s1Tomato1', { x: 132, y: 72, duration: 0.55, ease: 'power2.in' }, '+=0.2');
+      flowTimeline.to('#s1Tomato2', { x: 148, y: 70, duration: 0.55, ease: 'power2.in' }, '-=0.4');
+      flowTimeline.to('#s1Tomato3', { x: 164, y: 72, duration: 0.55, ease: 'power2.in' }, '-=0.4');
+      flowTimeline.to('#s1HarvestProduce', { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.5)' }, '-=0.15');
+      flowTimeline.to('#s1Tomato1, #s1Tomato2, #s1Tomato3', { opacity: 0, duration: 0.2 }, '-=0.2');
+      flowTimeline.fromTo('#s1QrTag', 
+        { y: -12, opacity: 0, scale: 0.8 }, 
+        { y: 12, opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(1.5)' }
+      );
+      flowTimeline.to('#s1Laser', { opacity: 1, duration: 0.12 });
+      flowTimeline.to('#s1Laser', { attr: { y1: 22, y2: 22 }, duration: 0.4, ease: 'power1.inOut' });
+      flowTimeline.to('#s1Laser', { attr: { y1: 3, y2: 3 }, duration: 0.4, ease: 'power1.inOut' });
+      flowTimeline.to('#s1Laser', { opacity: 0, duration: 0.15 });
+      flowTimeline.to('#s1StatusBadge', { opacity: 1, duration: 0.3 }, '-=0.1');
+
+      // Stage 2: Aggregator
+      flowTimeline.addLabel('stage2');
+      flowTimeline.call(() => setFlowActiveStageUI(2));
+      flowTimeline.fromTo('#s2Crate', 
+        { x: 0, y: 60, opacity: 0 }, 
+        { x: 70, y: 70, opacity: 1, duration: 0.65, ease: 'power2.out' }
+      );
+      flowTimeline.to('#s2ScalePlate', { y: 2, duration: 0.18, yoyo: true, repeat: 1, ease: 'sine.inOut' });
+      const weightCounter = { kg: 0 };
+      flowTimeline.to(weightCounter, {
+        kg: 450.0,
+        duration: 0.85,
+        ease: 'power2.out',
+        onUpdate: () => {
+          const w = document.getElementById('s2WeightText');
+          if (w) w.textContent = weightCounter.kg.toFixed(1) + ' KG';
+        }
+      }, '-=0.1');
+      flowTimeline.to('#s2ScanBeam', { opacity: 0.8, duration: 0.25 });
+      flowTimeline.to('#s2ScanBeam', { opacity: 0.25, duration: 0.3, yoyo: true, repeat: 2 });
+      flowTimeline.to('#s2ScanBeam', { opacity: 0, duration: 0.2 });
+      flowTimeline.fromTo('#s2GradeSeal', 
+        { scale: 0, rotation: -35, opacity: 0 }, 
+        { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'back.out(2)' }
+      );
+
+      // Stage 3: Wholesaler
+      flowTimeline.addLabel('stage3');
+      flowTimeline.call(() => setFlowActiveStageUI(3));
+      flowTimeline.fromTo('#s3MasterCrate', 
+        { opacity: 0, scale: 0.85 }, 
+        { opacity: 1, scale: 1, duration: 0.5 }
+      );
+      flowTimeline.fromTo('#s3TelemetryGauge', { opacity: 0.7 }, { opacity: 1, duration: 0.35, yoyo: true, repeat: 1 });
+      flowTimeline.to('#s3LineageA, #s3LineageB', { opacity: 1, duration: 0.35 });
+      flowTimeline.to('#s3MasterCrate', { opacity: 0.25, scale: 0.9, duration: 0.4 });
+      flowTimeline.to('#s3SubLotA', { opacity: 1, duration: 0.55, ease: 'power2.out' }, '-=0.25');
+      flowTimeline.to('#s3SubLotB', { opacity: 1, duration: 0.55, ease: 'power2.out' }, '-=0.55');
+
+      // Stage 4: Distributor
+      flowTimeline.addLabel('stage4');
+      flowTimeline.call(() => setFlowActiveStageUI(4));
+      flowTimeline.fromTo('#s4CrateLoad', 
+        { x: -25, opacity: 0 }, 
+        { x: 10, opacity: 1, duration: 0.55, ease: 'power2.inOut' }
+      );
+      flowTimeline.to('#s4CrateLoad', { opacity: 0, duration: 0.25 });
+      flowTimeline.to('#s4Wheel1, #s4Wheel2, #s4Wheel3', {
+        rotation: '+=720',
+        transformOrigin: 'center center',
+        duration: 1.8,
+        ease: 'none'
+      }, '-=0.1');
+      flowTimeline.fromTo('#s4RoadDashes', 
+        { strokeDashoffset: 0 }, 
+        { strokeDashoffset: -54, duration: 1.8, ease: 'none' }, 
+        '<'
+      );
+      flowTimeline.to('#s4Truck', {
+        y: 36,
+        duration: 0.22,
+        yoyo: true,
+        repeat: 7,
+        ease: 'sine.inOut'
+      }, '<');
+      flowTimeline.fromTo('#s4RadarWave1', 
+        { attr: { r: 4 }, opacity: 0.9 }, 
+        { attr: { r: 16 }, opacity: 0, duration: 0.8, repeat: 2 }, 
+        '<'
+      );
+      flowTimeline.fromTo('#s4RadarWave2', 
+        { attr: { r: 8 }, opacity: 0.9 }, 
+        { attr: { r: 24 }, opacity: 0, duration: 0.8, repeat: 2 }, 
+        '<+0.2'
+      );
+
+      // Stage 5: Retailer
+      flowTimeline.addLabel('stage5');
+      flowTimeline.call(() => setFlowActiveStageUI(5));
+      flowTimeline.fromTo('#s5ShelfProduce', 
+        { opacity: 0, y: 74 }, 
+        { opacity: 1, y: 68, duration: 0.45, ease: 'power2.out' }
+      );
+      flowTimeline.fromTo('#s5Phone', 
+        { x: 175, opacity: 0 }, 
+        { x: 138, opacity: 1, duration: 0.6, ease: 'power2.out' }
+      );
+      flowTimeline.to('#s5ScanCone', { opacity: 0.65, duration: 0.3 });
+      flowTimeline.fromTo('#s5PhoneScanLine', 
+        { attr: { y1: 26, y2: 26 } }, 
+        { attr: { y1: 54, y2: 54 }, duration: 0.5, repeat: 1, yoyo: true, ease: 'power1.inOut' }
+      );
+      flowTimeline.to('#s5ScanCone', { opacity: 0, duration: 0.2 });
+      flowTimeline.fromTo('#s5VerifyCard', 
+        { scale: 0.7, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(1.8)' }
+      );
+      flowTimeline.fromTo('#s5SaleStamp', 
+        { scale: 0, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(2)' }, 
+        '+=0.15'
+      );
+      flowTimeline.to({}, { duration: 1.5 });
+
+      // Pause when section out of viewport to preserve CPU/battery
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              if (!isFlowPaused && flowTimeline.paused()) {
+                flowTimeline.play();
+              }
+            } else {
+              if (!flowTimeline.paused()) {
+                flowTimeline.pause();
+              }
+            }
+          });
+        }, { threshold: 0.15 });
+        observer.observe(section);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const savedLevel = parseInt(localStorage.getItem('annasutra_font_level') || '0', 10);
       applyFontSize(savedLevel);
 
       const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
       setLanguage(savedLang);
+
+      initSupplyChainFlowAnimation();
     });
   </script>
 </body>
