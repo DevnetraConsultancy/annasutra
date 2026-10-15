@@ -1230,7 +1230,11 @@
 
           try {
             const token = localStorage.getItem('annasutra_access_token');
-            const h = token ? { 'Authorization': 'Bearer ' + token } : {};
+            if (!token) {
+              showToast('Please sign in with your mobile OTP before uploading your photograph.', 'warning', 'Authentication Required');
+              return;
+            }
+            const h = { 'Authorization': 'Bearer ' + token };
             const upRes = await fetch('/api/v1/me/photo', {
               method: 'POST',
               headers: h,

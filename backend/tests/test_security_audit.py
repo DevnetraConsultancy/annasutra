@@ -173,3 +173,132 @@ def test_landing_query_code_sanitized_against_injection(api_client):
     assert ">" not in resp["Location"]
     assert "(" not in resp["Location"]
 
+
+@pytest.mark.django_db
+def test_serve_static_asset_path_traversal_blocked(api_client):
+    """Path traversal, drive letters, and null bytes in static assets must return 404."""
+    # Windows drive letter injection
+    r1 = api_client.get("/static/C:/Windows/System32/drivers/etc/hosts")
+    assert r1.status_code == 404
+
+    # Traversal sequence
+    r2 = api_client.get("/static/../../../../etc/passwd")
+    assert r2.status_code == 404
+
+    # Null byte injection
+    r3 = api_client.get("/static/publicview/images/favicon.ico%00.png")
+    assert r3.status_code == 404
+
+
+@pytest.mark.django_db
+def test_admin_auth_constant_time_comparison(api_client):
+    """Admin endpoints using X-Admin-Key must perform constant-time comparison."""
+    # Valid admin key
+    resp_valid = api_client.get(
+        "/api/v1/admin/reviews",
+        HTTP_X_ADMIN_KEY=getattr(settings, "ADMIN_API_KEY", settings.SECRET_KEY),
+    )
+    assert resp_valid.status_code in (200, 204)
+
+    # Invalid admin key
+    resp_invalid = api_client.get(
+        "/api/v1/admin/reviews",
+        HTTP_X_ADMIN_KEY="incorrect_token_timing_probe",
+    )
+    assert resp_invalid.status_code in (401, 403)
+
+
+@pytest.mark.django_db
+def test_entity_profile_phone_relink_resilience(api_client):
+    """A returning user whose AppUser was recreated gracefully re-links to their existing EntityProfile."""
+    import uuid
+    from apps.organisations.models import Organisation
+    from apps.identity.models import EntityProfile
+    from apps.identity.views_registration import _get_entity_profile_for_user
+
+    phone = "+919876543210"
+    org = Organisation.objects.create(name="Patel Farm Org", org_type="FARMER", verification="VERIFIED")
+    user_orig = AppUser.objects.create(
+        user_id=uuid.uuid4(),
+        org=org,
+        phone_e164=phone,
+        role="OWNER",
+        status="ACTIVE",
+    )
+    profile_orig = EntityProfile.objects.create(
+        entity_id=uuid.uuid4(),
+        user_id=user_orig.user_id,
+        role="PRODUCER",
+        phone_e164=phone,
+        first_name="Ramesh",
+        last_name="Patel",
+        organisation_name="Patel Organic Farms",
+        village_town="Bardhaman",
+        district="Purba Bardhaman",
+        state="West Bengal",
+        address_line1="Field Road",
+        pincode="713101",
+        photo_object_key="photos/test.jpg",
+        status="DRAFT",
+    )
+
+    # Create a new AppUser for the same phone (e.g. re-login or fresh device enrollment)
+    user_new = AppUser.objects.create(
+        user_id=uuid.uuid4(),
+        org=org,
+        phone_e164="+919876543211",  # Temporary distinct to allow creation
+        role="OWNER",
+        status="ACTIVE",
+    )
+    user_new.phone_e164 = phone  # Matches profile phone
+
+    resolved_profile = _get_entity_profile_for_user(user_new, auto_create=True)
+    assert resolved_profile.entity_id == profile_orig.entity_id
+    assert resolved_profile.user_id == user_new.user_id
+
+
+@pytest.mark.django_db
+def test_dual_api_v1_and_v1_routes_exist():
+    """Verify that both /api/v1/ and /v1/ routes resolve cleanly in Django."""
+    from django.urls import resolve
+
+    routes_to_check = [
+        "/v1/auth/otp/request",
+        "/api/v1/auth/otp/request",
+        "/v1/auth/otp/verify",
+        "/api/v1/auth/otp/verify",
+        "/v1/me/profile",
+        "/api/v1/me/profile",
+        "/v1/me/plots",
+        "/api/v1/me/plots",
+        "/v1/lots/",
+        "/api/v1/lots/",
+        "/v1/organisations/",
+        "/api/v1/organisations/",
+    ]
+    for r in routes_to_check:
+        match = resolve(r)
+        assert match is not None, f"Failed to resolve route: {r}"
+
+
+@pytest.mark.django_db
+def test_otp_verify_database_failure_returns_503(api_client, monkeypatch):
+    """When the database is unreachable during OTP verification, an HTTP 503 is returned, never a fake token."""
+    from apps.identity.services.otp import OtpService
+    from apps.identity.services.token import TokenService
+    from django.db import DatabaseError
+
+    phone = "+919999988888"
+    monkeypatch.setattr(OtpService, "verify_otp", lambda *args, **kwargs: True)
+
+    def mock_issue(*args, **kwargs):
+        raise DatabaseError("MySQL connection timed out or unreachable")
+
+    monkeypatch.setattr(TokenService, "issue_token_pair", mock_issue)
+
+    resp = api_client.post("/api/v1/auth/otp/verify", {"phone": phone, "code": "123456"})
+    assert resp.status_code == 503
+    assert resp.json().get("code") == "DATABASE_ERROR"
+    assert "demo_access_token" not in resp.content.decode("utf-8")
+
+

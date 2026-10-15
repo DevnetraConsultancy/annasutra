@@ -42,6 +42,13 @@ MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
 def _get_entity_profile_for_user(user, auto_create=False, initial_role="PRODUCER"):
     """Fetch EntityProfile bound to user, optionally creating a DRAFT."""
     profile = EntityProfile.objects.filter(user_id=user.user_id).first()
+    if not profile:
+        # Check if an existing profile was previously created for this phone
+        profile = EntityProfile.objects.filter(phone_e164=user.phone_e164).first()
+        if profile and profile.user_id != user.user_id:
+            profile.user_id = user.user_id
+            profile.save(update_fields=["user_id"])
+
     if not profile and auto_create:
         role = getattr(user, "role", initial_role) or initial_role
         profile = EntityProfile.objects.create(
@@ -129,6 +136,12 @@ class MyProfileView(APIView):
 
     def get(self, request):
         profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
+        if not profile:
+            profile = EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first()
+            if profile and profile.user_id != request.user.user_id:
+                profile.user_id = request.user.user_id
+                profile.save(update_fields=["user_id"])
+
         if not profile:
             return Response(
                 {

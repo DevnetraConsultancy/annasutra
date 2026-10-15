@@ -2,6 +2,7 @@
 Conforms to Handover Sections 9, 10, 11 and DPDP 2023 audit standards.
 """
 
+import hmac
 import json
 import uuid
 
@@ -39,10 +40,12 @@ class IsAdminOrStaff(permissions.BasePermission):
     """Permission allowing access only to OWNER/STAFF platform operators or admin secret header."""
 
     def has_permission(self, request, view):
-        # Allow via secure administrative key header
+        # Allow via secure administrative key header with constant-time comparison
         admin_key = request.headers.get("X-Admin-Key")
-        if admin_key and admin_key == getattr(settings, "ADMIN_API_KEY", settings.SECRET_KEY):
-            return True
+        if admin_key:
+            expected_key = getattr(settings, "ADMIN_API_KEY", settings.SECRET_KEY)
+            if expected_key and hmac.compare_digest(str(admin_key), str(expected_key)):
+                return True
 
         if not request.user or not request.user.is_authenticated:
             return False

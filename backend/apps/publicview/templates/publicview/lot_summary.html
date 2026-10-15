@@ -2145,7 +2145,7 @@
 
         let verifySuccess = false;
         if (res.ok) {
-          const token = data.access_token || (data.tokens && data.tokens.access);
+          const token = data.access_token || data.access || (data.tokens && data.tokens.access);
           if (token) {
             localStorage.setItem('annasutra_access_token', token);
           }

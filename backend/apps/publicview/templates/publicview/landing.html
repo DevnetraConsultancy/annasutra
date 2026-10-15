@@ -6822,13 +6822,13 @@
       const urlParams = new URLSearchParams(window.location.search);
       const roleParam = urlParams.get('login') || urlParams.get('role');
 
-      if (roleParam) {
-        currentRole = roleParam.toUpperCase();
+      if (savedToken) {
+        if (roleParam) currentRole = roleParam.toUpperCase();
+        else if (savedRole) currentRole = savedRole.toUpperCase();
         localStorage.setItem('annasutra_role', currentRole);
         completeOtpLogin(savedPhone || null);
-      } else if (savedToken) {
-        if (savedRole) currentRole = savedRole.toUpperCase();
-        completeOtpLogin(savedPhone || null);
+      } else if (roleParam) {
+        openLoginModal(roleParam.toUpperCase());
       }
     });
   </script>

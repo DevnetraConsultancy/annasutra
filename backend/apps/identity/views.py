@@ -133,14 +133,28 @@ class OtpVerifyView(APIView):
                     )
 
             token_pair = TokenService.issue_token_pair(user)
+            # Provide compatibility keys for both standard OAuth/JWT and OpenAPI clients
+            token_pair["access"] = token_pair["access_token"]
+            token_pair["refresh"] = token_pair["refresh_token"]
+            token_pair["user"] = {
+                "user_id": str(user.user_id),
+                "phone": user.phone_e164,
+                "role": user.role,
+                "status": user.status,
+            }
         except Exception as exc:
             import logging
-            logging.getLogger("annasutra.identity").warning("Database session bypass during OTP verify: %s", exc)
-            token_pair = {
-                "access": f"demo_access_token_{uuid.uuid4().hex}",
-                "refresh": f"demo_refresh_token_{uuid.uuid4().hex}",
-                "user": {"phone": phone, "role": "PRODUCER", "status": "ACTIVE"}
-            }
+            logging.getLogger("annasutra.identity").error("Authentication database session error: %s", exc, exc_info=True)
+            return Response(
+                {
+                    "type": "urn:problem:database-unavailable",
+                    "title": "Service Unavailable",
+                    "status": 503,
+                    "detail": "Authentication service is currently unable to reach the database. Please try again shortly.",
+                    "code": "DATABASE_ERROR",
+                },
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         return Response(token_pair, status=status.HTTP_200_OK)
 

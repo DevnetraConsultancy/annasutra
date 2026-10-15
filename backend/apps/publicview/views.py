@@ -18,23 +18,36 @@ from rest_framework.throttling import ScopedRateThrottle, AnonRateThrottle
 
 def serve_static_asset(request, path: str):
     """Serve static assets with HTTP 206 byte-range streaming for background & promo videos."""
-    clean_path = Path(path).as_posix().lstrip("/")
-    if ".." in clean_path:
+    if not path:
         raise Http404("Invalid path")
 
-    candidates = [
-        settings.BASE_DIR.parent / "static" / clean_path,
-        settings.BASE_DIR / "staticfiles" / clean_path,
-        settings.BASE_DIR / "apps" / "publicview" / "static" / clean_path,
-        getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media") / clean_path,
-        Path("/tmp") / "media" / clean_path,
-        Path("/tmp") / clean_path,
+    # Guard against null bytes, traversal sequences, Windows drive letters/streams, and leading slashes
+    if "\x00" in path or ".." in path or ":" in path or path.startswith("/") or path.startswith("\\"):
+        raise Http404("Invalid path")
+
+    clean_path = Path(path).as_posix().lstrip("/")
+    if ".." in clean_path or "\x00" in clean_path or ":" in clean_path:
+        raise Http404("Invalid path")
+
+    candidate_roots = [
+        (settings.BASE_DIR.parent / "static").resolve(),
+        (settings.BASE_DIR / "staticfiles").resolve(),
+        (settings.BASE_DIR / "apps" / "publicview" / "static").resolve(),
+        getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media").resolve(),
+        Path("/tmp/media").resolve(),
+        Path("/tmp").resolve(),
     ]
     file_path = None
-    for c in candidates:
-        if c.exists() and c.is_file():
-            file_path = c
-            break
+    for root in candidate_roots:
+        if not root.exists():
+            continue
+        try:
+            target = (root / clean_path).resolve()
+            if target.is_relative_to(root) and target.is_file():
+                file_path = target
+                break
+        except (ValueError, OSError):
+            continue
 
     if not file_path:
         raise Http404(f"Asset not found: {clean_path}")
