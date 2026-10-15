@@ -1191,7 +1191,6 @@
               <strong>grievance@annasutra.in (72h SLA)</strong>
             </div>
           </div>
-          </div>
 
           <!-- Maker Attribution with Independent Initiative Badge -->
           <div class="ataraxis-maker-pill">
@@ -1200,7 +1199,6 @@
               <div class="ataraxis-maker-org" id="footerOrgTitle">AnnaSutra Independent Initiative</div>
               <div class="ataraxis-maker-gov" id="footerGovTitle">Produce Traceability & Value Chain Pilot</div>
             </div>
-          </div>
           </div>
 
           <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
@@ -2151,6 +2149,12 @@
           if (token) {
             localStorage.setItem('annasutra_access_token', token);
           }
+          if (currentRole) {
+            localStorage.setItem('annasutra_role', currentRole);
+          }
+          if (phone) {
+            localStorage.setItem('annasutra_phone', phone);
+          }
           showToast((currentLang === 'hi' ? '✓ पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? '✓ পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : '✓ Identity verified! Launching operational console...'), 'success', 'Access Granted');
           verifySuccess = true;
         } else {
@@ -2591,6 +2595,21 @@
 
       const savedLang = getCookie('annasutra_lang') || localStorage.getItem('annasutra_lang') || '{{ user_lang|default:"en" }}';
       setLanguage(savedLang);
+
+      const savedToken = localStorage.getItem('annasutra_access_token');
+      const savedRole = localStorage.getItem('annasutra_role') || 'PRODUCER';
+      const savedPhone = localStorage.getItem('annasutra_phone');
+      if (savedToken) {
+        const navBtn = document.getElementById('navLoginBtn');
+        if (navBtn) navBtn.style.display = 'none';
+        const userPill = document.getElementById('userPill');
+        if (userPill) userPill.style.display = 'inline-flex';
+        const nameEl = document.getElementById('activeUserName');
+        if (nameEl) {
+          const suffix = savedPhone ? '•' + savedPhone.slice(-4) : 'Active';
+          nameEl.innerText = savedRole + ' (' + suffix + ')';
+        }
+      }
     });
   </script>
 

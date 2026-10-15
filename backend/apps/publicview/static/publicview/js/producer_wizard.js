@@ -1202,6 +1202,14 @@
     }
 
     try {
+      if (wizardState.leafletMap) {
+        try { wizardState.leafletMap.remove(); } catch (err) {}
+        wizardState.leafletMap = null;
+      }
+      if (mapDiv._leaflet_id) {
+        delete mapDiv._leaflet_id;
+      }
+
       const defaultLat = 23.24;
       const defaultLng = 87.86; // Purba Bardhaman default
 

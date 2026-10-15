@@ -2796,7 +2796,6 @@
               <strong>grievance@annasutra.in (72h SLA)</strong>
             </div>
           </div>
-          </div>
 
           <!-- Maker Attribution with Independent Initiative Badge -->
           <div class="ataraxis-maker-pill">
@@ -2805,7 +2804,6 @@
               <div class="ataraxis-maker-org" id="footerOrgTitle">AnnaSutra Independent Initiative</div>
               <div class="ataraxis-maker-gov" id="footerGovTitle">Produce Traceability & Value Chain Pilot</div>
             </div>
-          </div>
           </div>
 
           <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
@@ -5958,6 +5956,12 @@
           if (token) {
             localStorage.setItem('annasutra_access_token', token);
           }
+          if (currentRole) {
+            localStorage.setItem('annasutra_role', currentRole);
+          }
+          if (phone) {
+            localStorage.setItem('annasutra_phone', phone);
+          }
           showToast((currentLang === 'hi' ? '✓ पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? '✓ পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : '✓ Identity verified! Launching operational console...'), 'success', 'Access Granted');
           verifySuccess = true;
         } else {
@@ -6233,12 +6237,24 @@
 
     function completeOtpLogin(verifiedPhone) {
       closeLoginModal();
-      const langRoles = roleDefinitions[currentLang] || roleDefinitions['en'];
-      const def = langRoles[currentRole] || roleDefinitions['en'][currentRole];
+      if (!verifiedPhone) {
+        verifiedPhone = localStorage.getItem('annasutra_phone');
+      } else {
+        localStorage.setItem('annasutra_phone', verifiedPhone);
+      }
+      if (currentRole) {
+        localStorage.setItem('annasutra_role', currentRole);
+      } else {
+        currentRole = localStorage.getItem('annasutra_role') || 'PRODUCER';
+      }
 
-      document.getElementById('navLoginBtn').style.display = 'none';
+      const langRoles = (typeof roleDefinitions !== 'undefined' && (roleDefinitions[currentLang] || roleDefinitions['en'])) || {};
+      const def = langRoles[currentRole] || (roleDefinitions && roleDefinitions['en'] && roleDefinitions['en'][currentRole]) || null;
+
+      const navBtn = document.getElementById('navLoginBtn');
+      if (navBtn) navBtn.style.display = 'none';
       const userPill = document.getElementById('userPill');
-      userPill.style.display = 'inline-flex';
+      if (userPill) userPill.style.display = 'inline-flex';
 
       const roleMap = {
         en: { PRODUCER: 'Producer', AGGREGATOR: 'Aggregator', WHOLESALER: 'Wholesaler', DISTRIBUTOR: 'Distributor', RETAILER: 'Retailer' },
@@ -6247,7 +6263,8 @@
       };
       const rName = (roleMap[currentLang] && roleMap[currentLang][currentRole]) || currentRole;
       const phoneSuffix = verifiedPhone ? '•' + verifiedPhone.slice(-4) : (currentRole === 'PRODUCER' ? (currentLang === 'bn' ? 'বর্ধমান' : currentLang === 'hi' ? 'बर्धमान' : 'Bardhaman') : 'Active');
-      document.getElementById('activeUserName').innerText = rName + ' (' + phoneSuffix + ')';
+      const activeUserName = document.getElementById('activeUserName');
+      if (activeUserName) activeUserName.innerText = rName + ' (' + phoneSuffix + ')';
 
       ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
@@ -6270,10 +6287,15 @@
       if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-
     function logoutEntity() {
-      document.getElementById('navLoginBtn').style.display = 'inline-flex';
-      document.getElementById('userPill').style.display = 'none';
+      localStorage.removeItem('annasutra_access_token');
+      localStorage.removeItem('annasutra_role');
+      localStorage.removeItem('annasutra_phone');
+
+      const navBtn = document.getElementById('navLoginBtn');
+      if (navBtn) navBtn.style.display = 'inline-flex';
+      const userPill = document.getElementById('userPill');
+      if (userPill) userPill.style.display = 'none';
 
       const ws = document.getElementById('confinedWorkspace');
       if (ws) ws.style.display = 'none';
@@ -6288,6 +6310,7 @@
         bgVid.play().catch(() => {});
       }
 
+      showToast((currentLang === 'hi' ? 'सत्र समाप्त हुआ। सार्वजनिक दृश्य पर वापस।' : currentLang === 'bn' ? 'সেশন শেষ হয়েছে। সর্বজনীন দৃশ্যে ফেরত।' : 'Logged out. Returned to public view.'), 'info', 'Session Ended');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -6793,11 +6816,19 @@
 
       initSupplyChainFlowAnimation();
 
+      const savedToken = localStorage.getItem('annasutra_access_token');
+      const savedRole = localStorage.getItem('annasutra_role');
+      const savedPhone = localStorage.getItem('annasutra_phone');
       const urlParams = new URLSearchParams(window.location.search);
       const roleParam = urlParams.get('login') || urlParams.get('role');
+
       if (roleParam) {
         currentRole = roleParam.toUpperCase();
-        completeOtpLogin();
+        localStorage.setItem('annasutra_role', currentRole);
+        completeOtpLogin(savedPhone || null);
+      } else if (savedToken) {
+        if (savedRole) currentRole = savedRole.toUpperCase();
+        completeOtpLogin(savedPhone || null);
       }
     });
   </script>
