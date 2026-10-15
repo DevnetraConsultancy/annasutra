@@ -622,10 +622,14 @@ class UploadPhotoView(APIView):
                 clean_image = rgb_image
 
             filename = f"producer_{profile.entity_id}_{uuid.uuid4().hex[:8]}.jpg"
-            dest_dir = getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media") / "photos"
-            dest_dir.mkdir(parents=True, exist_ok=True)
-            dest_path = dest_dir / filename
+            dest_dir = getattr(settings, "MEDIA_ROOT", Path("/tmp") / "media") / "photos"
+            try:
+                dest_dir.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                dest_dir = Path("/tmp") / "media" / "photos"
+                dest_dir.mkdir(parents=True, exist_ok=True)
 
+            dest_path = dest_dir / filename
             clean_image.save(dest_path, "JPEG", quality=85, optimize=True)
 
             object_key = f"photos/{filename}"
@@ -674,8 +678,13 @@ class UploadDocumentView(APIView):
             ext = ".bin"
 
         filename = f"doc_{profile.entity_id}_{uuid.uuid4().hex[:8]}{ext}"
-        dest_dir = getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media") / "documents"
-        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest_dir = getattr(settings, "MEDIA_ROOT", Path("/tmp") / "media") / "documents"
+        try:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            dest_dir = Path("/tmp") / "media" / "documents"
+            dest_dir.mkdir(parents=True, exist_ok=True)
+
         dest_path = dest_dir / filename
 
         with open(dest_path, "wb") as f:

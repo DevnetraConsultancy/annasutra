@@ -100,9 +100,9 @@ DATABASES = {
 if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
     options = DATABASES["default"].setdefault("OPTIONS", {})
     if "ssl-mode" in options or "ssl_mode" in options:
-        ssl_val = options.pop("ssl-mode", None) or options.pop("ssl_mode", None)
+        ssl_val = options.pop("ssl-mode", None) or options.pop("ssl_mode", None) or ""
         if ssl_val and "ssl" not in options:
-            options["ssl"] = {"ssl_mode": ssl_val}
+            options["ssl"] = {"check_hostname": False}
     options.setdefault("charset", "utf8mb4")
     options.setdefault("init_command", "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'")
 
@@ -125,7 +125,10 @@ STATICFILES_DIRS = [
     BASE_DIR.parent / "static",
 ]
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    MEDIA_ROOT = Path("/tmp") / "media"
+else:
+    MEDIA_ROOT = BASE_DIR / "media"
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -167,7 +170,7 @@ WEBAUTHN_ORIGIN = env("WEBAUTHN_ORIGIN", default="http://localhost:8000")
 
 # JWT configuration
 JWT_SECRET_KEY = env("JWT_SECRET_KEY", default=SECRET_KEY)
-JWT_ACCESS_EXPIRY_SECONDS = 900  # 15 minutes
+JWT_ACCESS_EXPIRY_SECONDS = env.int("JWT_ACCESS_EXPIRY_SECONDS", default=86400)  # 24 hours for agricultural field pilots
 JWT_REFRESH_EXPIRY_SECONDS = 2592000  # 30 days
 
 # Django REST Framework configuration

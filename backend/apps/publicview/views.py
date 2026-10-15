@@ -27,6 +27,8 @@ def serve_static_asset(request, path: str):
         settings.BASE_DIR / "staticfiles" / clean_path,
         settings.BASE_DIR / "apps" / "publicview" / "static" / clean_path,
         getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media") / clean_path,
+        Path("/tmp") / "media" / clean_path,
+        Path("/tmp") / clean_path,
     ]
     file_path = None
     for c in candidates:
@@ -179,8 +181,10 @@ def landing_page_view(request):
     """AnnaSutra public portal landing page."""
     query_code = request.GET.get("code", "").strip()
     if query_code:
-        from django.shortcuts import redirect
-        return redirect("public_lot_html_canonical", code=query_code)
+        clean_code = re.sub(r"[^A-Za-z0-9\-_]", "", query_code)
+        if clean_code:
+            from django.shortcuts import redirect
+            return redirect("public_lot_html_canonical", code=clean_code)
     user_lang = request.COOKIES.get("annasutra_lang", "en")
     if user_lang not in ["en", "hi", "bn"]:
         user_lang = "en"

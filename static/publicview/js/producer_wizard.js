@@ -178,6 +178,16 @@
     leafletAvailable: false
   };
 
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function getLang() {
     return (typeof currentLang !== 'undefined' ? currentLang : 'en');
   }
@@ -303,29 +313,29 @@
         <div class="status-badge-submitted">
           <span>⏳</span> <span>${t.underReviewTitle}</span>
         </div>
-        <h3 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">${p.organisation_name || 'Farm Enterprise'}</h3>
+        <h3 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">${escapeHtml(p.organisation_name || 'Farm Enterprise')}</h3>
         <p style="color: #64748b; font-size: 14px; max-width: 620px; margin: 0 auto; line-height: 1.5;">${t.underReviewSub}</p>
 
         <div class="submitted-details-grid">
           <div class="detail-item-box">
             <div class="detail-item-label">${t.firstName} & ${t.lastName}</div>
-            <div class="detail-item-value">${p.first_name || ''} ${p.last_name || ''}</div>
+            <div class="detail-item-value">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')}</div>
           </div>
           <div class="detail-item-box">
             <div class="detail-item-label">${t.district} & ${t.state}</div>
-            <div class="detail-item-value">${p.district || ''}, ${p.state || ''} (${p.pincode || ''})</div>
+            <div class="detail-item-value">${escapeHtml(p.district || '')}, ${escapeHtml(p.state || '')} (${escapeHtml(p.pincode || '')})</div>
           </div>
           <div class="detail-item-box">
             <div class="detail-item-label">Verified Land Mapped</div>
-            <div class="detail-item-value">${p.total_land_acres || (wizardState.plots.length * 1.5).toFixed(2)} Acres (${wizardState.plots.length} Plots)</div>
+            <div class="detail-item-value">${escapeHtml(String(p.total_land_acres || (wizardState.plots.length * 1.5).toFixed(2)))} Acres (${wizardState.plots.length} Plots)</div>
           </div>
           <div class="detail-item-box">
             <div class="detail-item-label">Masked PAN Identity</div>
-            <div class="detail-item-value">${sens.pan_masked || (sens.aadhaar_last4 ? 'Aadhaar •••• ' + sens.aadhaar_last4 : 'Encrypted')}</div>
+            <div class="detail-item-value">${escapeHtml(sens.pan_masked || (sens.aadhaar_last4 ? 'Aadhaar •••• ' + sens.aadhaar_last4 : 'Encrypted'))}</div>
           </div>
           <div class="detail-item-box">
             <div class="detail-item-label">Settlement Bank</div>
-            <div class="detail-item-value">${sens.bank_name || 'Verified Bank'} (${sens.bank_account_masked || '••••'})</div>
+            <div class="detail-item-value">${escapeHtml(sens.bank_name || 'Verified Bank')} (${escapeHtml(sens.bank_account_masked || '••••')})</div>
           </div>
           <div class="detail-item-box">
             <div class="detail-item-label">Submission Date</div>
@@ -335,7 +345,7 @@
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 20px; display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: #475569;">
           <span>🔒</span>
-          <span>Entity Reference Token: <strong style="font-family: monospace; color: #0b3d2e;">${p.entity_id || 'PENDING'}</strong></span>
+          <span>Entity Reference Token: <strong style="font-family: monospace; color: #0b3d2e;">${escapeHtml(p.entity_id || 'PENDING')}</strong></span>
         </div>
       </div>
     `;
@@ -355,12 +365,12 @@
             <div style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px;">
               <span>✓</span> <span>VERIFIED PRODUCER NODE</span>
             </div>
-            <h3 style="margin: 0; font-size: 20px; color: #0f172a;">${p.organisation_name || 'Producer Console'}</h3>
-            <span style="font-size: 12.5px; color: #64748b;">${p.first_name} ${p.last_name} • ${p.village_town}, ${p.district}</span>
+            <h3 style="margin: 0; font-size: 20px; color: #0f172a;">${escapeHtml(p.organisation_name || 'Producer Console')}</h3>
+            <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')} • ${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}</span>
           </div>
           <div style="text-align: right;">
             <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Permanent Sovereign Code</div>
-            <div style="font-family: monospace; font-size: 20px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${eCode}</div>
+            <div style="font-family: monospace; font-size: 20px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
           </div>
         </div>
 
@@ -741,11 +751,12 @@
         <div class="form-grid-2">
           <div class="form-group">
             <label class="form-label">${t.bankName} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_bank_name" value="${sens.bank_name || ''}" placeholder="e.g. State Bank of India / Bangiya Gramin Vikash Bank" />
+            <input type="text" class="form-input" id="inp_bank_name" value="${escapeHtml(sens.bank_name || '')}" placeholder="e.g. State Bank of India / Bangiya Gramin Vikash Bank" />
           </div>
           <div class="form-group">
             <label class="form-label">Bank Branch IFSC Code <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_ifsc" maxlength="11" placeholder="e.g. SBIN0001234" value="${sens.ifsc_masked ? '' : ''}" style="text-transform: uppercase;" />
+            <input type="text" class="form-input" id="inp_ifsc" maxlength="11" placeholder="e.g. SBIN0001234" value="" style="text-transform: uppercase;" />
+            <div id="ifscMaskPreview" class="form-preview-masked">${sens.ifsc_masked ? 'Current: ' + escapeHtml(sens.ifsc_masked) : 'Format: SBIN0001234'}</div>
           </div>
         </div>
 
@@ -871,6 +882,10 @@
         showToast('Please enter a valid 6-digit postal PIN code.', 'warning', 'Invalid PIN');
         return false;
       }
+      if (!p.photo_object_key) {
+        showToast('Please upload your farmer profile photograph before proceeding.', 'warning', 'Photo Required');
+        return false;
+      }
       return true;
     }
 
@@ -892,29 +907,69 @@
 
     if (step === 4) {
       const panInp = document.getElementById('inp_pan');
+      const a4Inp = document.getElementById('inp_aadhaar_last4');
       const accInp = document.getElementById('inp_account_no');
       const confirmAccInp = document.getElementById('inp_confirm_account_no');
       const ifscInp = document.getElementById('inp_ifsc');
       const bankInp = document.getElementById('inp_bank_name');
 
       const panVal = panInp ? panInp.value.trim().toUpperCase() : '';
+      const a4Val = a4Inp ? a4Inp.value.trim() : '';
       const accVal = accInp ? accInp.value.trim() : '';
       const confirmVal = confirmAccInp ? confirmAccInp.value.trim() : '';
       const ifscVal = ifscInp ? ifscInp.value.trim().toUpperCase() : '';
       const bankVal = bankInp ? bankInp.value.trim() : '';
 
+      // 1. Identity attestation (PAN or Aadhaar last 4)
+      const hasIdentity = (sens && (sens.pan_masked || sens.aadhaar_last4)) || panVal || a4Val;
+      if (!hasIdentity) {
+        showToast('Either PAN or voluntary Aadhaar last 4 digits is required for identity attestation.', 'warning', 'Identity Required');
+        return false;
+      }
       if (panVal && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panVal)) {
         showToast('Invalid PAN format. Must be 5 letters, 4 numbers, 1 letter (e.g. ABCDE1234F).', 'error', 'Invalid PAN');
         return false;
       }
-      if (accVal && accVal !== confirmVal) {
-        showToast('Bank account numbers do not match. Please re-enter carefully.', 'error', 'Account Mismatch');
+      if (a4Val && !/^[0-9]{4}$/.test(a4Val)) {
+        showToast('Aadhaar last 4 must be exactly 4 digits.', 'error', 'Invalid Aadhaar');
+        return false;
+      }
+
+      // 2. Bank Name
+      const hasBank = (sens && sens.bank_name) || bankVal;
+      if (!hasBank) {
+        showToast('Bank name is required for custody settlement.', 'warning', 'Bank Name Required');
+        return false;
+      }
+
+      // 3. Bank Account Number
+      const hasAccount = (sens && sens.bank_account_masked) || accVal;
+      if (!hasAccount) {
+        showToast('Bank account number is required for transaction settlement.', 'warning', 'Account Required');
+        return false;
+      }
+      if (accVal) {
+        if (accVal.length < 6 || !/^\d+$/.test(accVal)) {
+          showToast('Bank account must be numeric (minimum 6 digits).', 'error', 'Invalid Account');
+          return false;
+        }
+        if (accVal !== confirmVal) {
+          showToast('Bank account numbers do not match. Please re-enter carefully.', 'error', 'Account Mismatch');
+          return false;
+        }
+      }
+
+      // 4. Bank IFSC
+      const hasIfsc = (sens && sens.ifsc_masked) || ifscVal;
+      if (!hasIfsc) {
+        showToast('Bank branch IFSC code is required.', 'warning', 'IFSC Required');
         return false;
       }
       if (ifscVal && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscVal)) {
         showToast('Invalid IFSC format. Must be 4 letters, 0, then 6 alphanumeric characters (e.g. SBIN0001234).', 'error', 'Invalid IFSC');
         return false;
       }
+
       return true;
     }
 
@@ -1011,6 +1066,11 @@
       if (profRes.ok) {
         const updated = await profRes.json();
         wizardState.profile = updated;
+      } else if (profRes.status === 401 || profRes.status === 403) {
+        if (showToastNotification) {
+          showToast('Your session has expired. Please sign in again to save your draft.', 'warning', 'Session Expired');
+        }
+        return;
       }
 
       // 2. Save sensitive details if entered
@@ -1095,6 +1155,10 @@
           btn.disabled = false;
           btn.innerText = '🚀 Submit Application for Verification';
         }
+        if (res.status === 401 || res.status === 403) {
+          showToast('Your session has expired. Please sign in again to submit your application.', 'warning', 'Session Expired');
+          return;
+        }
         if (data.errors) {
           const firstErr = Object.values(data.errors)[0];
           showToast(firstErr, 'error', 'Validation Incomplete');
@@ -1124,8 +1188,14 @@
     }
 
     const reader = new FileReader();
+    reader.onerror = function () {
+      showToast('Failed to read image file.', 'error', 'File Error');
+    };
     reader.onload = function (e) {
       const img = new Image();
+      img.onerror = function () {
+        showToast('Unable to decode image file. Please select a valid JPEG, PNG, or WebP photo.', 'error', 'Invalid Image');
+      };
       img.onload = function () {
         // Scrub EXIF by rendering to fresh HTML5 canvas
         const canvas = document.createElement('canvas');
@@ -1147,6 +1217,11 @@
         ctx.drawImage(img, 0, 0, w, h);
 
         canvas.toBlob(async function (blob) {
+          if (!blob) {
+            showToast('Failed to generate image buffer from canvas.', 'error', 'Canvas Error');
+            return;
+          }
+
           const previewImg = document.getElementById('farmerPhotoPreview');
           if (previewImg) previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
 
@@ -1170,10 +1245,22 @@
               if (badge) badge.style.display = 'inline-block';
               showToast('✓ Photo uploaded and EXIF metadata scrubbed.', 'success', 'Photo Verified');
             } else {
-              showToast('Failed to save photo to server.', 'error');
+              let errMsg = 'Failed to save photo to server.';
+              try {
+                const errData = await upRes.json();
+                if (errData && errData.detail) {
+                  errMsg = errData.detail;
+                } else if (errData && typeof errData === 'object') {
+                  errMsg = Object.values(errData).flat().join(' ');
+                }
+              } catch (_) {}
+              if (upRes.status === 401 || upRes.status === 403) {
+                errMsg = 'Your session has expired. Please log in again to upload photos.';
+              }
+              showToast(errMsg, 'error', 'Upload Notice');
             }
           } catch (err) {
-            showToast('Network error uploading photo.', 'error');
+            showToast('Network error uploading photo. Please check connection.', 'error', 'Network Error');
           }
         }, 'image/jpeg', 0.85);
       };

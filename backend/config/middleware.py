@@ -32,11 +32,11 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
             response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
             response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Idempotency-Key"
 
-        # 1. Content Security Policy: strict origin, no unsafe-inline scripts
+        # 1. Content Security Policy: strict origin with allowed CDNs for UI tools
         csp_directives = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
             "img-src 'self' data: https:",
             "font-src 'self' data: https://fonts.gstatic.com",
             "connect-src 'self' https://ipwho.is https://ipapi.co https://api.open-meteo.com",
@@ -62,8 +62,8 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
-        # 4. Prevent caching on sensitive API and auth routes
-        if request.path.startswith("/v1/"):
+        # 4. Prevent caching on sensitive API and auth routes (/v1/ and /api/v1/)
+        if request.path.startswith("/v1/") or request.path.startswith("/api/v1/"):
             response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
             response.headers["Pragma"] = "no-cache"
 

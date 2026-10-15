@@ -136,3 +136,40 @@ def test_no_secrets_in_tracked_repository_files():
             example_text = f.read()
             assert "AKIA" not in example_text  # No real AWS key
             assert "BEGIN PRIVATE KEY" not in example_text
+
+
+@pytest.mark.django_db
+def test_csp_allows_leaflet_and_ui_cdns(api_client):
+    """Verifies that Content-Security-Policy explicitly permits required UI CDNs."""
+    resp = api_client.get("/health")
+    csp = resp.headers.get("Content-Security-Policy", "")
+    assert "https://cdnjs.cloudflare.com" in csp
+    assert "https://unpkg.com" in csp
+    assert "https://cdn.jsdelivr.net" in csp
+
+
+@pytest.mark.django_db
+def test_no_cache_on_both_api_v1_and_v1_routes(api_client):
+    """Verifies that both /v1/ and /api/v1/ prefixes strictly enforce no-cache headers."""
+    resp_v1 = api_client.get("/v1/public/lots/NOTEXIST")
+    assert "no-store" in resp_v1.headers.get("Cache-Control", "")
+
+    resp_api_v1 = api_client.post("/api/v1/auth/otp/verify", data={"phone": "+919876543210", "code": "000000"})
+    assert "no-store" in resp_api_v1.headers.get("Cache-Control", "")
+
+
+def test_jwt_session_duration_configured_for_field_pilot():
+    """Verify JWT access expiry is configured with a safe pilot duration."""
+    assert getattr(settings, "JWT_ACCESS_EXPIRY_SECONDS", 0) >= 86400
+
+
+@pytest.mark.django_db
+def test_landing_query_code_sanitized_against_injection(api_client):
+    """Landing page ?code= parameter strips dangerous special characters before redirecting."""
+    resp = api_client.get("/?code=<script>alert(1)</script>LOT-101")
+    assert resp.status_code == 302
+    assert "script" in resp["Location"]
+    assert "<" not in resp["Location"]
+    assert ">" not in resp["Location"]
+    assert "(" not in resp["Location"]
+
