@@ -9,20 +9,23 @@ from apps.publicview.views import landing_page_view, public_lot_html_view, serve
 def health_check(request):
     """Liveness and readiness health check probe."""
     db_ok = True
+    err_msg = None
     try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
-    except Exception:
+    except Exception as e:
         db_ok = False
+        err_msg = str(e)
 
     status_code = 200 if db_ok else 503
-    return JsonResponse(
-        {
-            "status": "healthy" if db_ok else "unhealthy",
-            "database": "connected" if db_ok else "disconnected",
-        },
-        status=status_code,
-    )
+    res_payload = {
+        "status": "healthy" if db_ok else "unhealthy",
+        "database": "connected" if db_ok else "disconnected",
+    }
+    if err_msg:
+        res_payload["error"] = err_msg
+
+    return JsonResponse(res_payload, status=status_code)
 
 
 urlpatterns = [
