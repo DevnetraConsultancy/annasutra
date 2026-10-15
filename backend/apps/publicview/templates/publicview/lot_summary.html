@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AnnaSutra - Produce Traceability Record</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/publicview/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/publicview/images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/publicview/images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1068,7 +1072,7 @@
 
   <!-- 2. MAIN NAVBAR (LOCKED) -->
   <header class="navbar">
-    <a href="/" class="brand-group" title="AnnaSutra - National Agri-Produce Traceability">
+    <a href="/" class="brand-group" title="AnnaSutra: produce traceability (pilot)">
       <img 
         src="{{ brand_logo }}" 
         alt="AnnaSutra" 
@@ -1169,36 +1173,34 @@
         
         <!-- Col 1: Brand, Mission, Helplines & Maker -->
         <div class="ataraxis-brand-col">
-          <a href="/" class="ataraxis-brand-head" title="AnnaSutra - National Agri-Produce Traceability">
+          <a href="/" class="ataraxis-brand-head" title="AnnaSutra: produce traceability (pilot)">
             <img src="{{ brand_logo }}" alt="AnnaSutra" class="ataraxis-brand-logo" />
           </a>
           <p class="ataraxis-mission-text" id="footerMissionText">
-            National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.
+            Farm-to-fork agricultural custody, tamper-evident produce verification, and data-protection conscious traceability across the value chain.
           </p>
 
           <!-- Toll-Free Helpline Box -->
           <div class="ataraxis-helpline-box">
             <div class="ataraxis-helpline-row">
-              <span id="lblHelplineKisan">Kisan Call Centre:</span>
-              <strong>1800-180-1551</strong>
+              <span id="lblHelplineEmail">Project Support:</span>
+              <strong>support@annasutra.in</strong>
             </div>
             <div class="ataraxis-helpline-row">
-              <span id="lblHelplineConsumer">National Consumer Helpline:</span>
-              <strong>1915</strong>
-            </div>
-            <div class="ataraxis-helpline-row">
-              <span id="lblHelplineTech">Technical Assistance:</span>
-              <strong>1800-425-CDAC</strong>
+              <span id="lblHelplineGrievance">Grievance Officer:</span>
+              <strong>grievance@annasutra.in (72h SLA)</strong>
             </div>
           </div>
+          </div>
 
-          <!-- Maker Attribution with Official C-DAC Emblem -->
+          <!-- Maker Attribution with Independent Initiative Badge -->
           <div class="ataraxis-maker-pill">
-            <img src="{{ cdac_logo }}" alt="C-DAC" class="cdac-footer-emblem" />
+            <img src="{{ app_icon|default:'/static/publicview/images/favicon.png' }}" alt="AnnaSutra" class="cdac-footer-emblem" style="border-radius: 8px; width: 36px; height: 36px; object-fit: contain;" />
             <div class="ataraxis-maker-info">
-              <div class="ataraxis-maker-org" id="footerOrgTitle">Centre for Development of Advanced Computing (C-DAC)</div>
-              <div class="ataraxis-maker-gov" id="footerGovTitle">Ministry of Electronics & Information Technology, Government of India</div>
+              <div class="ataraxis-maker-org" id="footerOrgTitle">AnnaSutra Independent Initiative</div>
+              <div class="ataraxis-maker-gov" id="footerGovTitle">Produce Traceability & Value Chain Pilot</div>
             </div>
+          </div>
           </div>
 
           <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
@@ -1213,7 +1215,7 @@
             <li>
               <a href="/" title="National Homepage">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkHome">National Homepage</span>
+                <span id="footerLinkHome">Portal Home</span>
               </a>
             </li>
             <li>
@@ -1237,7 +1239,7 @@
             <li>
               <a href="/#trustSection">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkTrust">National Trust Standards</span>
+                <span id="footerLinkTrust">Trust & Traceability Principles</span>
               </a>
             </li>
           </ul>
@@ -1268,7 +1270,7 @@
             <li>
               <button type="button" onclick="openGovModal('security')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkSecurity">Security Audit & CERT-In Policy</span>
+                <span id="footerLinkSecurity">Security Architecture & Audit Policy</span>
               </button>
             </li>
             <li>
@@ -1280,7 +1282,7 @@
             <li>
               <button type="button" onclick="openGovModal('cdac')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkCdac">C-DAC Sovereign Digital Mandate</span>
+                <span id="footerLinkCdac">Project Architecture & Principles</span>
               </button>
             </li>
           </ul>
@@ -1291,7 +1293,7 @@
       <!-- Bottom Saffron / Gold Accent Ribbon -->
       <div class="ataraxis-bottom-ribbon">
         <div id="footerLegalNotice">
-          © 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.
+          © 2026 AnnaSutra • AnnaSutra is an independent project. It is not a government service.
         </div>
       </div>
     </div>
@@ -1357,7 +1359,7 @@
       <div class="portal-modal-header">
         <div class="portal-modal-badge">
           <span>●</span>
-          <span id="portalBadgeText">NATIONAL SOVEREIGN VALUE CHAIN</span>
+          <span id="portalBadgeText">PRODUCE TRACEABILITY PILOT</span>
         </div>
         <h3 class="portal-modal-title" id="portalModalTitle">Who Are You?</h3>
         <p class="portal-modal-subtitle" id="portalModalSubtitle">
@@ -1592,7 +1594,7 @@
         lblHelplineConsumer: "National Consumer Helpline:",
         lblHelplineTech: "Technical Assistance:",
         btnBackToTopText: "BACK TO TOP",
-        footerMissionText: "National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.",
+        footerMissionText: "Farm-to-fork agricultural custody, tamper-evident produce verification, and data-protection conscious traceability across the value chain.",
         footerColExploreTitle: "EXPLORE & OPERATE",
         footerLinkHome: "National Homepage",
         footerLinkLogin: "Universal Entity Log In",
@@ -1605,10 +1607,10 @@
         footerLinkHealth: "System Health & Live Uptime",
         footerLinkSecurity: "Security Audit & CERT-In Policy",
         footerLinkGrievance: "Grievance Redressal Officer",
-        footerLinkCdac: "C-DAC Sovereign Digital Mandate",
-        footerOrgTitle: "Centre for Development of Advanced Computing (C-DAC)",
-        footerGovTitle: "Ministry of Electronics & Information Technology, Government of India",
-        footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
+        footerLinkCdac: "Project Architecture & Principles",
+        footerOrgTitle: "AnnaSutra Independent Initiative",
+        footerGovTitle: "Produce Traceability & Value Chain Pilot",
+        footerLegalNotice: "© 2026 AnnaSutra • AnnaSutra is an independent project. It is not a government service.",
         modalRoleTitle: "Entity Login",
         modalSubtitle: "Role-Confined Authentication on AnnaSutra",
         demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
@@ -1621,7 +1623,7 @@
         dpdpNoticeP1: "AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.",
         dpdpGrievanceLabel: "Grievance Redressal Officer:",
         btnDpdpClose: "I Understand & Continue",
-        portalBadgeText: "NATIONAL SOVEREIGN VALUE CHAIN",
+        portalBadgeText: "PRODUCE TRACEABILITY PILOT",
         portalModalTitle: "Who Are You?",
         portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
         portalRoleTitleProducer: "Producer",
@@ -1684,10 +1686,10 @@
         footerLinkHealth: "सिस्टम स्वास्थ्य एवं लाइव अपटाइम",
         footerLinkSecurity: "सुरक्षा ऑडिट एवं सर्ट-इन नीति",
         footerLinkGrievance: "शिकायत निवारण अधिकारी",
-        footerLinkCdac: "सी-डैक राष्ट्रीय डिजिटल शासनादेश",
-        footerOrgTitle: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
-        footerGovTitle: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
-        footerLegalNotice: "© 2026 अन्नसूत्र • सी-डैक, इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY), भारत सरकार द्वारा विकसित एवं अनुरक्षित।",
+        footerLinkCdac: "परियोजना वास्तुकला एवं सिद्धांत",
+        footerOrgTitle: "अन्नसूत्र स्वतंत्र पहल",
+        footerGovTitle: "कृषि उत्पाद ट्रैसेबिलिटी पायलट",
+        footerLegalNotice: "© 2026 अन्नसूत्र • अन्नसूत्र एक स्वतंत्र परियोजना है। यह कोई सरकारी सेवा नहीं है।।",
         modalRoleTitle: "संस्थागत लॉगिन",
         modalSubtitle: "अन्नसूत्र पर भूमिका-सीमित प्रमाणीकरण",
         demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
@@ -1700,7 +1702,7 @@
         dpdpNoticeP1: "अन्नसूत्र केवल खाद्य सुरक्षा और ट्रैसेबिलिटी के लिए आवश्यक आपूर्ति-श्रृंखला घटना रिकॉर्ड एकत्र करता है। किसान की व्यक्तिगत पहचान, सटीक जीपीएस निर्देशांक और कीमतें कभी भी सार्वजनिक नहीं की जाती हैं।",
         dpdpGrievanceLabel: "शिकायत निवारण अधिकारी:",
         btnDpdpClose: "मैं समझ गया और आगे बढ़ें",
-        portalBadgeText: "राष्ट्रीय संप्रभु मूल्य श्रृंखला",
+        portalBadgeText: "कृषि उत्पाद ट्रैसेबिलिटी पायलट",
         portalModalTitle: "आप कौन हैं?",
         portalModalSubtitle: "अपने अधिकृत परिचालन नोड तक पहुँचने के लिए आपूर्ति श्रृंखला में अपनी भूमिका चुनें।",
         portalRoleTitleProducer: "उत्पादक",
@@ -1763,10 +1765,10 @@
         footerLinkHealth: "সিস্টেম স্থিতি ও লাইভ আপটাইম",
         footerLinkSecurity: "নিরাপত্তা অডিট ও সার্ট-ইন নীতি",
         footerLinkGrievance: "অভিযোগ নিষ্পত্তি আধিকারিক",
-        footerLinkCdac: "সি-ড্যাক জাতীয় ডিজিটাল অনুশাসন",
-        footerOrgTitle: "প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC)",
-        footerGovTitle: "ইলেকট্রনিক্স এবং তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার",
-        footerLegalNotice: "© ২০২৬ অন্নসূত্র • সি-ড্যাক, ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয় (MeitY), ভারত সরকার দ্বারা নির্মিত ও পরিচালিত।",
+        footerLinkCdac: "প্রকল্প স্থাপত্য ও রূপরেখা",
+        footerOrgTitle: "অন্নসূত্র স্বাধীন উদ্যোগ",
+        footerGovTitle: "কৃষি পণ্য ট্রেসেবিলিটি পাইলট",
+        footerLegalNotice: "© ২০২৬ অন্নসূত্র • অন্নসূত্র একটি স্বাধীন প্রকল্প। এটি কোনো সরকারি পরিষেবা নয়।",
         modalRoleTitle: "সংস্থা লগইন",
         modalSubtitle: "অন্নসূত্রে ভূমিকা-সীমাবদ্ধ প্রমাণীকরণ",
         demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",
@@ -2143,19 +2145,31 @@
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন এবং প্রবেশ করুন' : 'Verify & Enter Console');
 
+        let verifySuccess = false;
         if (res.ok) {
-          if (data.tokens && data.tokens.access) {
-            localStorage.setItem('annasutra_access_token', data.tokens.access);
+          const token = data.access_token || (data.tokens && data.tokens.access);
+          if (token) {
+            localStorage.setItem('annasutra_access_token', token);
           }
           showToast((currentLang === 'hi' ? '✓ पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? '✓ পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : '✓ Identity verified! Launching operational console...'), 'success', 'Access Granted');
-          completeOtpLogin(phone);
+          verifySuccess = true;
         } else {
           showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error', 'Verification Failed');
+          return;
         }
       } catch (err) {
         btn.disabled = false;
-        btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন और प्रवेश करें' : 'Verify & Enter Console');
+        btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন এবং প্রবেশ করুন' : 'Verify & Enter Console');
         showToast('Verification service temporarily unavailable. Please check your network connection.', 'error', 'Connection Error');
+        return;
+      }
+
+      if (verifySuccess) {
+        try {
+          completeOtpLogin(phone);
+        } catch (uiErr) {
+          console.error('Error during post-login UI transition:', uiErr);
+        }
       }
     }
 
@@ -2199,7 +2213,6 @@
       closeLoginModal();
       window.location.href = '/?role=' + encodeURIComponent(currentRole);
     }
-    const execute1TapLogin = completeOtpLogin;
 
     function openDpdpModal() {
       const modal = document.getElementById('dpdpModal');
@@ -2333,7 +2346,7 @@
           content: `
             <p>In compliance with the Digital Personal Data Protection Act 2023 and Information Technology Rules, users may reach out to the designated Grievance Officer for privacy requests or dispute resolution.</p>
             <p><strong>Email:</strong> grievance@annasutra.in</p>
-            <p><strong>Address:</strong> Centre for Development of Advanced Computing (C-DAC), Knowledge Park, Bengaluru - 560038, Karnataka, India</p>
+            <p><strong>Address:</strong> AnnaSutra Digital Project Secretariat, Support & Grievance Wing</p>
             <p><strong>Statutory SLA:</strong> Acknowledgment within 24 hours and resolution within 48 business hours.</p>
           `
         },
@@ -2343,7 +2356,7 @@
           content: `
             <p>डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम 2023 और आईटी नियमों के तहत उपयोगकर्ता किसी भी डेटा अनुरोध या समाधान के लिए संपर्क कर सकते हैं।</p>
             <p><strong>ईमेल:</strong> grievance@annasutra.in</p>
-            <p><strong>पता:</strong> प्रगत संगणन विकास केंद्र (सी-डैक), नॉलेज पार्क, बेंगलुरु - 560038, भारत</p>
+            <p><strong>पता:</strong> अन्नसूत्र डिजिटल प्रोजेक्ट सचिवालय, सहायता एवं शिकायत निवारण प्रभाग</p>
             <p><strong>समाधान अवधि:</strong> 24 घंटे में पावती और 48 व्यावसायिक घंटों में समाधान।</p>
           `
         },
@@ -2353,42 +2366,45 @@
           content: `
             <p>ডিজিটাল ব্যক্তিগত তথ্য সুরক্ষা আইন ২০২৩ এবং আইটি বিধিমালার অধীনে ব্যবহারকারীরা অভিযোগ নিষ্পত্তি আধিকারিকের সাথে যোগাযোগ করতে পারেন।</p>
             <p><strong>ইমেল:</strong> grievance@annasutra.in</p>
-            <p><strong>ঠিকানা:</strong> সি-ড্যাক নলেজ পার্ক, বেঙ্গালুরু - ৫৬০০৩৮, ভারত</p>
+            <p><strong>ঠিকানা:</strong> অন্নসূত্র ডিজিটাল প্রজেক্ট সেক্রেটারিয়েট, সহায়তা ও অভিযোগ নিষ্পত্তিকরণ বিভাগ</p>
             <p><strong>সমাধান সময়সীমা:</strong> ২৪ ঘণ্টার মধ্যে স্বীকৃতি এবং ৪৮ কার্যঘণ্টার মধ্যে নিষ্পত্তি।</p>
           `
         }
       },
       cdac: {
-        icon: '🏛️',
+        icon: '🌱',
         en: {
-          title: 'C-DAC Sovereign Digital Infrastructure Mandate',
-          sub: 'Centre for Development of Advanced Computing | MeitY, Govt. of India',
+          title: 'AnnaSutra Project Architecture & Principles',
+          sub: 'Independent Agricultural Produce Traceability Initiative',
           content: `
-            <p>The Centre for Development of Advanced Computing (C-DAC) is the premier R&D organization of the Ministry of Electronics and Information Technology (MeitY) for carrying out R&D in IT, Electronics and associated areas.</p>
-            <p><strong>AnnaSutra Mandate:</strong> Formulated as an open, national digital public infrastructure (DPI) to deliver trustworthy cryptographic traceability from farm to fork, empower primary producers, eliminate counterfeit agricultural produce, and secure India's national food logistics.</p>
+            <p><strong>AnnaSutra is an independent project. It is not a government service.</strong></p>
+            <p><strong>Platform Mission:</strong> To provide open, verifiable produce traceability from farm to fork, empowering primary producers and enabling tamper-evident supply chain visibility.</p>
+            <p><strong>Decentralized & Role-Confined:</strong> Built on append-only event records, mutual custody confirmation, and data-protection design principles aligned with Indian agricultural ecosystems.</p>
           `,
-          actionLink: 'https://www.cdac.in/',
-          actionText: 'Visit Official C-DAC Portal ➔'
+          actionLink: '#',
+          actionText: 'Platform Architecture Notice ➔'
         },
         hi: {
-          title: 'सी-डैक राष्ट्रीय डिजिटल अवसंरचना शासनादेश',
-          sub: 'प्रगत संगणन विकास केंद्र | इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार',
+          title: 'अन्नसूत्र परियोजना वास्तुकला एवं सिद्धांत',
+          sub: 'स्वतंत्र कृषि उत्पाद ट्रैसेबिलिटी पहल',
           content: `
-            <p>प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC) इलेक्ट्रॉनिकी और सूचना प्रौद्योगिकी मंत्रालय (MeitY) का प्रमुख अनुसंधान एवं विकास संगठन है।</p>
-            <p><strong>अन्नसूत्र का उद्देश्य:</strong> खेत से थाली तक विश्वसनीय और पारदर्शी ट्रैसेबिलिटी प्रदान करने, किसानों को सशक्त बनाने, नकली कृषि उपज को रोकने और राष्ट्रीय खाद्य सुरक्षा को मजबूत करने के लिए निर्मित एक खुला राष्ट्रीय डिजिटल सार्वजनिक बुनियादी ढांचा।</p>
+            <p><strong>अन्नसूत्र एक स्वतंत्र परियोजना है। यह कोई सरकारी सेवा नहीं है।</strong></p>
+            <p><strong>मंच का उद्देश्य:</strong> खेत से थाली तक खुली, सत्यापन योग्य उत्पाद ट्रैसेबिलिटी प्रदान करना, प्राथमिक उत्पादकों को सशक्त बनाना और पारदर्शी आपूर्ति श्रृंखला सुनिश्चित करना।</p>
+            <p><strong>भूमिका-सीमित संरचना:</strong> अपरिवर्तनीय इवेंट रिकॉर्ड, पारस्परिक कस्टडी पुष्टि और डेटा सुरक्षा सिद्धांतों पर आधारित।</p>
           `,
-          actionLink: 'https://www.cdac.in/',
-          actionText: 'आधिकारिक सी-डैक पोर्टल पर जाएं ➔'
+          actionLink: '#',
+          actionText: 'परियोजना सूचना ➔'
         },
         bn: {
-          title: 'সি-ড্যাক জাতীয় ডিজিটাল অবকাঠামো অনুশাসন',
-          sub: 'প্রগত সংগণন বিকাশ কেন্দ্র | ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার',
+          title: 'অন্নসূত্র প্রকল্প স্থাপত্য ও রূপরেখা',
+          sub: 'স্বাধীন কৃষি পণ্য ট্রেসেবিলিটি উদ্যোগ',
           content: `
-            <p>প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC) ভারত সরকারের ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রকের (MeitY) শীর্ষস্থানীয় গবেষণা ও উন্নয়ন প্রতিষ্ঠান।</p>
-            <p><strong>অন্নসূত্রের রূপরেখা:</strong> খামার থেকে থালা পর্যন্ত বিশ্বস্ত ক্রিপ্টোগ্রাফিক ট্রেসেবিলিটি প্রদান, কৃষকদের ক্ষমতায়ন, ভেজাল প্রতিরোধ এবং ভারতের খাদ্য সরবরাহ শৃঙ্খলকে সুরক্ষিত করার লক্ষ্যে তৈরি জাতীয় ডিজিটাল প্ল্যাটফর্ম।</p>
+            <p><strong>অন্নসূত্র একটি স্বাধীন প্রকল্প। এটি কোনো সরকারি পরিষেবা নয়।</strong></p>
+            <p><strong>প্ল্যাটফর্মের রূপরেখা:</strong> খামার থেকে থালা পর্যন্ত উন্মুক্ত, যাচাইযোগ্য ট্রেসেবিলিটি প্রদান, প্রাথমিক উৎপাদকদের ক্ষমতায়ন এবং স্বচ্ছ সরবরাহ শৃঙ্খল নিশ্চিত করা।</p>
+            <p><strong>ভূমিকা-সীমাবদ্ধ কাঠামো:</strong> অপরিবর্তনীয় ইভেন্ট রেকর্ড, পারস্পরিক হেফাজত নিশ্চিতকরণ এবং ডেটা সুরক্ষা নীতির ভিত্তিতে নির্মিত।</p>
           `,
-          actionLink: 'https://www.cdac.in/',
-          actionText: 'অফিসিয়াল সি-ড্যাক পোর্টালে যান ➔'
+          actionLink: '#',
+          actionText: 'প্রকল্প তথ্য ➔'
         }
       }
     };

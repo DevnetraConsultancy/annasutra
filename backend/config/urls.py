@@ -26,6 +26,7 @@ def health_check(request):
 
 
 urlpatterns = [
+    path("favicon.ico", serve_static_asset, {"path": "publicview/images/favicon.ico"}, name="favicon"),
     path("", landing_page_view, name="landing_page"),
     path("admin/", admin.site.urls),
     path("health", health_check, name="health_root"),
@@ -39,6 +40,14 @@ urlpatterns = [
     path("api/v1/auth", include("apps.identity.urls")),
     path("v1/auth/", include("apps.identity.urls")),
     path("v1/auth", include("apps.identity.urls")),
+    path("api/v1/me/", include("apps.identity.urls_me")),
+    path("api/v1/me", include("apps.identity.urls_me")),
+    path("v1/me/", include("apps.identity.urls_me")),
+    path("v1/me", include("apps.identity.urls_me")),
+    path("api/v1/admin/", include("apps.identity.urls_admin")),
+    path("api/v1/admin", include("apps.identity.urls_admin")),
+    path("v1/admin/", include("apps.identity.urls_admin")),
+    path("v1/admin", include("apps.identity.urls_admin")),
     path("v1/organisations/", include("apps.organisations.org_urls")),
     path("v1/organisations", include("apps.organisations.org_urls")),
     path("v1/partners/", include("apps.organisations.partner_urls")),
@@ -56,5 +65,6 @@ urlpatterns = [
     path("v1/public/", include("apps.publicview.urls")),
     path("L/<str:code>", include("apps.publicview.short_urls")),
     re_path(r"^static/(?P<path>.*)$", serve_static_asset, name="static_asset"),
+    re_path(r"^media/(?P<path>.*)$", serve_static_asset, name="media_asset"),
 ]
 

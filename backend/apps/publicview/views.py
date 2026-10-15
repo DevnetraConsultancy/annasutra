@@ -1,5 +1,4 @@
 import base64
-import os
 import re
 import mimetypes
 from pathlib import Path
@@ -27,6 +26,7 @@ def serve_static_asset(request, path: str):
         settings.BASE_DIR.parent / "static" / clean_path,
         settings.BASE_DIR / "staticfiles" / clean_path,
         settings.BASE_DIR / "apps" / "publicview" / "static" / clean_path,
+        getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media") / clean_path,
     ]
     file_path = None
     for c in candidates:
@@ -112,7 +112,7 @@ def _get_logo_data_uri(relative_path: str) -> str:
 
 
 ANNASUTRA_LOGO_URI = _get_logo_data_uri("publicview/images/annasutra_logo.png")
-CDAC_LOGO_URI = _get_logo_data_uri("publicview/images/cdac_logo.png")
+APP_ICON_URI = _get_logo_data_uri("publicview/images/favicon.png")
 
 
 class PublicLotDetailView(APIView):
@@ -161,7 +161,7 @@ def public_lot_html_view(request, code: str):
     base_context = {
         "user_lang": user_lang,
         "brand_logo": ANNASUTRA_LOGO_URI,
-        "cdac_logo": CDAC_LOGO_URI,
+        "app_icon": APP_ICON_URI,
     }
 
     if not public_view:
@@ -187,7 +187,7 @@ def landing_page_view(request):
     return render(request, "publicview/landing.html", {
         "user_lang": user_lang,
         "brand_logo": ANNASUTRA_LOGO_URI,
-        "cdac_logo": CDAC_LOGO_URI,
+        "app_icon": APP_ICON_URI,
         "hero_video_url": "/static/publicview/videos/annasutra-bg-optimized.mp4",
     })
 

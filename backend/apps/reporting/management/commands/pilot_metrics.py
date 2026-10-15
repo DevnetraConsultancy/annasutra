@@ -42,10 +42,12 @@ class Command(BaseCommand):
             total_waste=Sum("qty_waste_kg"),
             total_sold=Sum("qty_sold_kg"),
         )
-        self.stdout.write("\nCumulative Produce (kg):")
-        self.stdout.write(f" - Total Ingested / Harvested: {balances['total_in'] or Decimal('0.000')} kg")
-        self.stdout.write(f" - Retail Sold: {balances['total_sold'] or Decimal('0.000')} kg")
-        self.stdout.write(f" - Waste / Spoilage: {balances['total_waste'] or Decimal('0.000')} kg")
+        total_in = Decimal(str(balances['total_in'] or '0.000'))
+        total_sold = Decimal(str(balances['total_sold'] or '0.000'))
+        total_waste = Decimal(str(balances['total_waste'] or '0.000'))
+        self.stdout.write(f" - Total Ingested / Harvested: {total_in:.3f} kg")
+        self.stdout.write(f" - Retail Sold: {total_sold:.3f} kg")
+        self.stdout.write(f" - Waste / Spoilage: {total_waste:.3f} kg")
 
         # 3. Handover Quality & Discrepancies
         handovers = Handover.objects.aggregate(

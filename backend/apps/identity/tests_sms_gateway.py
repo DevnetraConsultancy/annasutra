@@ -1,12 +1,10 @@
 """Unit tests for Android SMS Gateway OTP Provider."""
-import unittest
 from unittest.mock import patch, MagicMock
 
 from django.test import SimpleTestCase, override_settings
 from apps.identity.services.otp import (
     AndroidSmsGatewayOtpProvider,
     get_otp_provider,
-    OtpService,
 )
 
 

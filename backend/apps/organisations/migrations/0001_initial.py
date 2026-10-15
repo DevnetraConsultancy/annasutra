@@ -634,22 +634,40 @@ def apply_schema(apps, schema_editor):
         else:
             # Fallback for SQLite / test environments
             # SQLite supports standard table creation without schemas
+            import re
             for statement in MYSQL_STATEMENTS:
                 clean = statement.strip()
                 if clean and not clean.startswith("DROP TRIGGER") and not clean.startswith("CREATE TRIGGER"):
                     # Strip engine and charset options for SQLite
-                    clean_sqlite = clean.replace(
-                        "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
-                        ";"
-                    )
-                    clean_sqlite = clean_sqlite.replace("AUTO_INCREMENT", "AUTOINCREMENT")
+                    clean_sqlite = re.sub(r"ENGINE=InnoDB.*?;", ";", clean)
+                    clean_sqlite = re.sub(r"UNIQUE\s+KEY\s+\w+\s*\(", "UNIQUE (", clean_sqlite, flags=re.IGNORECASE)
+                    clean_sqlite = re.sub(r"^\s*KEY\s+\w+\s*\(.*?\),?", "", clean_sqlite, flags=re.MULTILINE)
+                    clean_sqlite = re.sub(r"BIGINT\s+AUTO_INCREMENT\s+PRIMARY\s+KEY", "INTEGER PRIMARY KEY AUTOINCREMENT", clean_sqlite, flags=re.IGNORECASE)
+                    clean_sqlite = re.sub(r"AUTO_INCREMENT", "AUTOINCREMENT", clean_sqlite, flags=re.IGNORECASE)
                     clean_sqlite = clean_sqlite.replace("LONGBLOB", "BLOB")
-                    clean_sqlite = clean_sqlite.replace("VARBINARY(255)", "BLOB")
+                    clean_sqlite = re.sub(r"VARBINARY\(\d+\)", "BLOB", clean_sqlite)
                     clean_sqlite = clean_sqlite.replace("DATETIME(6)", "TIMESTAMP")
+                    clean_sqlite = clean_sqlite.replace("CURRENT_TIMESTAMP(6)", "CURRENT_TIMESTAMP")
+                    clean_sqlite = re.sub(r",\s*\)", ")", clean_sqlite)
                     try:
                         cursor.execute(clean_sqlite)
-                    except Exception:
+                    except Exception as e:
                         pass
+            try:
+                cursor.execute("""
+                    CREATE TRIGGER IF NOT EXISTS trace_event_no_update BEFORE UPDATE ON trace_event
+                    BEGIN
+                        SELECT RAISE(ABORT, 'trace_event is append-only');
+                    END;
+                """)
+                cursor.execute("""
+                    CREATE TRIGGER IF NOT EXISTS trace_event_no_delete BEFORE DELETE ON trace_event
+                    BEGIN
+                        SELECT RAISE(ABORT, 'trace_event is append-only');
+                    END;
+                """)
+            except Exception:
+                pass
 
 
 def reverse_schema(apps, schema_editor):
