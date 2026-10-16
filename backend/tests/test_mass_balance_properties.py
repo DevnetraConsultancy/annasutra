@@ -8,12 +8,12 @@ Enforces:
 """
 
 from decimal import Decimal
-from hypothesis import given, strategies as st, settings
+from hypothesis import given, strategies as st, settings, HealthCheck
 
 from apps.inventory.models import LotBalance
 
 
-@settings(max_examples=100)
+@settings(max_examples=100, suppress_health_check=[HealthCheck.too_slow])
 @given(
     initial_qty=st.decimals(min_value=Decimal("10.0"), max_value=Decimal("10000.0"), places=3),
     steps=st.lists(

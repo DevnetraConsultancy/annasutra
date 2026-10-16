@@ -160,6 +160,9 @@ class PublicLotDetailView(APIView):
         return Response(payload, status=status.HTTP_200_OK)
 
 
+SUPPORTED_LANGS = ("en", "bn", "gu", "hi", "kn", "ml", "mr", "or", "pa", "ta", "te")
+
+
 def public_lot_html_view(request, code: str):
     """Server-rendered consumer public page with zero JavaScript framework."""
     public_view = PublicView.objects.filter(public_code=code).first()
@@ -171,7 +174,7 @@ def public_lot_html_view(request, code: str):
     )
 
     user_lang = request.COOKIES.get("annasutra_lang", "en")
-    if user_lang not in ["en", "hi", "bn"]:
+    if user_lang not in SUPPORTED_LANGS:
         user_lang = "en"
 
     base_context = {
@@ -201,7 +204,7 @@ def landing_page_view(request):
             from django.shortcuts import redirect
             return redirect("public_lot_html_canonical", code=clean_code)
     user_lang = request.COOKIES.get("annasutra_lang", "en")
-    if user_lang not in ["en", "hi", "bn"]:
+    if user_lang not in SUPPORTED_LANGS:
         user_lang = "en"
     return render(request, "publicview/landing.html", {
         "user_lang": user_lang,

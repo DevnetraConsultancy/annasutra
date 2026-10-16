@@ -62,6 +62,26 @@ class InboundCarrierOtpProvider(BaseOtpProvider):
         return True
 
 
+def get_localized_otp_message(language: str, code: str) -> str:
+    """Generate localized OTP verification SMS text for all 11 supported languages."""
+    sms_templates = {
+        "bn": f"অন্নসূত্র (AnnaSutra) যাচাইকরণ কোড হলো: {code}। এটি ৫ মিনিটের জন্য বৈধ। ওটিপি কারো সাথে শেয়ার করবেন না।",
+        "gu": f"અન્નસૂત્ર (AnnaSutra) ચકાસણી કોડ: {code} છે. તે 5 મિનિટ માટે માન્ય છે. આ OTP કોઈની સાથે શેર કરશો નહીં.",
+        "hi": f"अन्नसूत्र (AnnaSutra) सत्यापन कोड: {code} है। यह 5 मिनट के लिए वैध है। कृपया यह ओटीपी साझा न करें।",
+        "kn": f"ಅನ್ನಸೂತ್ರ (AnnaSutra) ಪರಿಶೀಲನಾ ಕೋಡ್: {code}. ಇದು 5 ನಿಮಿಷಗಳವರೆಗೆ ಮಾನ್ಯವಾಗಿರುತ್ತದೆ. ಈ OTP ಹಂಚಿಕೊಳ್ಳಬೇಡಿ.",
+        "ml": f"അന്നസൂത്ര (AnnaSutra) പരിശോധനാ കോഡ്: {code}. ഇത് 5 മിനിറ്റ് സാധുവാണ്. ഈ OTP പങ്കിടരുത്.",
+        "mr": f"अन्नसूत्र (AnnaSutra) पडताळणी कोड: {code} आहे. हा ५ मिनिटांसाठी वैध आहे. कृपया हा OTP शेअर करू नका.",
+        "or": f"ଅନ୍ନସୂତ୍ର (AnnaSutra) ଯାଞ୍ଚ কোଡ୍ ହେଉଛି: {code}। ଏହା 5 ମିନିଟ୍ ପାଇଁ ବୈଧ ଅଟେ। ଏହି OTP କାହା ସହ ସେୟାର କରନ୍ତୁ ନାହିଁ।",
+        "pa": f"ਅੰਨਸੂਤਰ (AnnaSutra) ਤਸਦੀਕ ਕੋਡ: {code} ਹੈ। ਇਹ 5 ਮਿੰਟਾਂ ਲਈ ਵੈਧ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਇਹ OTP ਸਾਂਝਾ ਨਾ ਕਰੋ।",
+        "ta": f"அன்னசூத்ரா (AnnaSutra) சரிபார்ப்பு குறியீடு: {code}. இது 5 நிமிடங்களுக்கு செல்லுபடியாகும். இந்த OTP-ஐ பகிர வேண்டாம்.",
+        "te": f"అన్నసూత్ర (AnnaSutra) ధృవీకరణ కోడ్: {code}. ఇది 5 నిమిషాల పాటు చెల్లుతుంది. ఈ OTPని ఎవరితోనూ పంచుకోవద్దు.",
+    }
+    return sms_templates.get(
+        language,
+        f"Your AnnaSutra verification code is: {code}. Valid for 5 minutes. Do not share this OTP.",
+    )
+
+
 class AndroidSmsGatewayOtpProvider(BaseOtpProvider):
     """
     Open-source Android SMS Gateway provider (capcom6/android-sms-gateway).
@@ -87,13 +107,7 @@ class AndroidSmsGatewayOtpProvider(BaseOtpProvider):
             logger.info("[SIMULATED SMS] To: %s | OTP: %s", masked, code)
             return True
 
-        # Multilingual SMS templates
-        if language == "hi":
-            text = f"अन्नसूत्र (AnnaSutra) सत्यापन कोड: {code} है। यह 5 मिनट के लिए वैध है। कृपया यह ओटीपी साझा न करें।"
-        elif language == "bn":
-            text = f"অন্নসূত্র (AnnaSutra) যাচাইকরণ কোড হলো: {code}। এটি ৫ মিনিটের জন্য বৈধ। ওটিপি কারো সাথে শেয়ার করবেন না।"
-        else:
-            text = f"Your AnnaSutra verification code is: {code}. Valid for 5 minutes. Do not share this OTP."
+        text = get_localized_otp_message(language, code)
 
         # Normalize endpoint URL
         endpoint = base_url

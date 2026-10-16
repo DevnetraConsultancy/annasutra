@@ -194,7 +194,7 @@
 
   function getI18n() {
     const l = getLang();
-    return WIZARD_I18N[l] || WIZARD_I18N.en;
+    return WIZARD_I18N[l] || (window.ANNASUTRA_WIZARD_I18N && window.ANNASUTRA_WIZARD_I18N[l]) || WIZARD_I18N.en;
   }
 
   function getAuthHeader() {

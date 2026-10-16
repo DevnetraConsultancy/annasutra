@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="/static/publicview/js/annasutra_i18n.js"></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -176,6 +177,101 @@
       font-weight: 700;
       cursor: pointer;
       outline: none;
+    }
+    .btn-help-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #114232;
+      border: 1px solid #23654e;
+      color: #fde047;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .btn-help-top:hover {
+      background: #185a44;
+      border-color: #34d399;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.3);
+    }
+    .btn-help-icon {
+      font-size: 13px;
+      line-height: 1;
+    }
+    .country-code-wrapper {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 0 8px;
+      width: 140px;
+      flex-shrink: 0;
+      gap: 6px;
+      transition: border-color 0.2s;
+    }
+    .country-code-wrapper:focus-within {
+      border-color: var(--primary);
+    }
+    .country-flag-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 16px;
+      flex-shrink: 0;
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+    .country-flag-badge svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .country-code-wrapper .country-code-select {
+      width: 100%;
+      border: none;
+      padding: 10px 0;
+      font-size: 13.5px;
+      font-weight: 700;
+      background: transparent;
+      cursor: pointer;
+      outline: none;
+      color: var(--text);
+    }
+    .help-modal-box {
+      max-width: 620px;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 20px;
+      border-top: 4px solid var(--saffron);
+    }
+    .help-section-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+    .help-section-card h4 {
+      margin: 0 0 6px;
+      color: var(--primary);
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .help-section-card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #475569;
     }
 
     /* 2. MAIN NAVBAR */
@@ -1085,10 +1181,22 @@
         <button type="button" class="btn-text-size" onclick="changeFontSize(0)" title="Default font size">A</button>
         <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
       </div>
+      <button type="button" class="btn-help-top" id="btnHelpTop" onclick="if(window.openHelpModal) window.openHelpModal();" title="Help & User Guide">
+        <span class="btn-help-icon">ℹ️</span>
+        <span id="btnHelpTopText">Help</span>
+      </button>
       <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
         <option value="en" {% if user_lang == "en" %}selected{% endif %}>English (EN)</option>
-        <option value="hi" {% if user_lang == "hi" %}selected{% endif %}>हिन्दी (HI)</option>
         <option value="bn" {% if user_lang == "bn" %}selected{% endif %}>বাংলা (BN)</option>
+        <option value="gu" {% if user_lang == "gu" %}selected{% endif %}>ગુજરાતી (GU)</option>
+        <option value="hi" {% if user_lang == "hi" %}selected{% endif %}>हिन्दी (HI)</option>
+        <option value="kn" {% if user_lang == "kn" %}selected{% endif %}>ಕನ್ನಡ (KN)</option>
+        <option value="ml" {% if user_lang == "ml" %}selected{% endif %}>മലയാളം (ML)</option>
+        <option value="mr" {% if user_lang == "mr" %}selected{% endif %}>मराठी (MR)</option>
+        <option value="or" {% if user_lang == "or" %}selected{% endif %}>ଓଡ଼ିଆ (OR)</option>
+        <option value="pa" {% if user_lang == "pa" %}selected{% endif %}>ਪੰਜਾਬੀ (PA)</option>
+        <option value="ta" {% if user_lang == "ta" %}selected{% endif %}>தமிழ் (TA)</option>
+        <option value="te" {% if user_lang == "te" %}selected{% endif %}>తెలుగు (TE)</option>
       </select>
     </div>
   </div>
@@ -1325,21 +1433,24 @@
           Official Mobile Authentication
         </label>
         <div class="phone-input-row">
-          <select id="countryCodeSelect" class="country-code-select">
-            <option value="+91" selected>🇮🇳 +91 (IN)</option>
-            <option value="+1">🇺🇸 +1 (US)</option>
-            <option value="+44">🇬🇧 +44 (UK)</option>
-            <option value="+880">🇧🇩 +880 (BD)</option>
-            <option value="+971">🇦🇪 +971 (AE)</option>
-            <option value="+65">🇸🇬 +65 (SG)</option>
-            <option value="+977">🇳🇵 +977 (NP)</option>
-          </select>
+          <div class="country-code-wrapper">
+            <span class="country-flag-badge" id="countryFlagBadge"></span>
+            <select id="countryCodeSelect" class="country-code-select" onchange="if(window.updateCountryFlag) window.updateCountryFlag(this.value);">
+              <option value="+91" selected>+91</option>
+              <option value="+1">+1</option>
+              <option value="+44">+44</option>
+              <option value="+880">+880</option>
+              <option value="+971">+971</option>
+              <option value="+65">+65</option>
+              <option value="+977">+977</option>
+            </select>
+          </div>
           <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="Mobile number (e.g. 8444997803)" maxlength="15" />
         </div>
         <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
           Send Verification OTP
         </button>
-        <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;">
+        <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;" id="otpGatewayHint">
           🔒 An OTP will be dispatched via official SMS Gateway to your device.
         </p>
       </div>
@@ -1348,7 +1459,7 @@
         <div style="font-size: 12.5px; color: #166534; background: #f0fdf4; border: 1.5px solid #86efac; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-weight: 600;" id="otpStatusNotice">
           ✓ OTP sent via Android SMS Gateway
         </div>
-        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;">
+        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;" id="otpEnterCodeLabel">
           Enter 6-Digit Code
         </label>
         <input type="text" class="modal-input" id="otpCodeInput" maxlength="6" placeholder="• • • • • •" style="letter-spacing: 8px; font-size: 20px; font-weight: 800; text-align: center; padding: 12px;" />
@@ -1356,7 +1467,7 @@
           Verify &amp; Enter Console
         </button>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 12px;">
-          <a href="javascript:void(0)" onclick="resetOtpLogin()" style="color: var(--text-muted); text-decoration: underline; font-weight: 600;">Change Phone Number</a>
+          <a href="javascript:void(0)" onclick="resetOtpLogin()" style="color: var(--text-muted); text-decoration: underline; font-weight: 600;" id="btnChangePhone">Change Phone Number</a>
           <span id="otpCountdown" style="color: var(--text-muted); font-weight: 700;"></span>
         </div>
       </div>
@@ -1575,7 +1686,38 @@
     </div>
   </div>
 
-  <!-- 10. LOCALIZATION & CONTROLS SCRIPT -->
+  <!-- 10. LOCALIZED HELP & USER GUIDE MODAL -->
+  <div class="modal-overlay" id="helpModal" onclick="if(event.target===this && window.closeHelpModal) window.closeHelpModal();">
+    <div class="modal-box help-modal-box">
+      <button class="modal-close" onclick="if(window.closeHelpModal) window.closeHelpModal();">✕</button>
+      <div class="modal-head" style="text-align: left; margin-bottom: 20px;">
+        <div style="font-size: 30px; margin-bottom: 6px;">ℹ️</div>
+        <h3 id="helpModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">AnnaSutra — Help &amp; User Guide</h3>
+        <p id="helpModalSubtitle" style="margin: 0; font-size: 13px; color: var(--text-muted);">National Agri-Produce Traceability &amp; Verification Assistance</p>
+      </div>
+
+      <div class="help-section-card">
+        <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
+        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code (e.g. 7K3Q9XMD4T2B) into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
+      </div>
+
+      <div class="help-section-card">
+        <h4 id="helpSec2Title">2. Supply-Chain Entity Portal (5-Tier Access)</h4>
+        <p id="helpSec2Desc">Click 'Login' to choose your operational role (Producer, Aggregator, Wholesaler, Distributor, or Retailer) and sign in securely via official SMS OTP.</p>
+      </div>
+
+      <div class="help-section-card">
+        <h4 id="helpSec3Title">3. National Helplines &amp; Support</h4>
+        <p id="helpSec3Desc">Kisan Call Centre: 1800-180-1551 | National Consumer Helpline: 1915 | Technical Support: 1800-425-CDAC | Grievance: grievance@annasutra.in</p>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+        <button type="button" class="btn-otp-submit" style="width: auto; padding: 10px 24px;" onclick="if(window.closeHelpModal) window.closeHelpModal();" id="btnHelpModalClose">Close Help Guide</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. LOCALIZATION & CONTROLS SCRIPT -->
   <script>
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -1817,6 +1959,9 @@
     };
 
     function setLanguage(lang) {
+      if (window.EXTRA_I18N && window.EXTRA_I18N[lang]) {
+        translations[lang] = Object.assign({}, translations.en || {}, translations[lang] || {}, window.EXTRA_I18N[lang]);
+      }
       if (!translations[lang]) lang = 'en';
       currentLang = lang;
       document.cookie = `annasutra_lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
@@ -1826,6 +1971,11 @@
       if (dropdown) dropdown.value = lang;
 
       const t = translations[lang];
+
+      if (window.applyAnnaSutraI18n) {
+        window.applyAnnaSutraI18n(lang);
+      }
+
       window.dispatchEvent(new CustomEvent('annasutra_lang_change', { detail: { lang } }));
 
       const setTxt = (id, val) => {
@@ -2121,6 +2271,7 @@
       btn.disabled = true;
       btn.innerText = (currentLang === 'hi' ? 'सत्यापित हो रहा है...' : currentLang === 'bn' ? 'যাচাই করা হচ্ছে...' : 'Verifying...');
 
+      let verifySuccess = false;
       try {
         let res = await fetch('/api/v1/auth/otp/verify', {
           method: 'POST',
@@ -2145,7 +2296,6 @@
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন এবং প্রবেশ করুন' : 'Verify & Enter Console');
 
-        let verifySuccess = false;
         if (res.ok) {
           const token = data.access_token || data.access || (data.tokens && data.tokens.access);
           if (token) {
@@ -2198,6 +2348,7 @@
     function openLoginModal(role) {
       resetOtpLogin();
       currentRole = role || 'PRODUCER';
+      if (window.updateCountryFlag) window.updateCountryFlag();
       const t = (typeof translations !== 'undefined' && (translations[currentLang] || translations['en'])) || {};
       const modal = document.getElementById('loginModal');
       const roleTitle = document.getElementById('modalRoleTitle');
@@ -2237,6 +2388,7 @@
         closeEntityPortalModal();
         closeQrModal();
         closeGovModal();
+        if (window.closeHelpModal) window.closeHelpModal();
       }
     }
 

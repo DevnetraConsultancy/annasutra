@@ -3,6 +3,7 @@ import os
 from .base import *
 
 DEBUG = False
+ALLOWED_HOSTS = ["*"]
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 # Fallback to in-memory SQLite for isolated local test runs when no DATABASE_URL is set
