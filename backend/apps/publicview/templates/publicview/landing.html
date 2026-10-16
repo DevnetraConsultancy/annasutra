@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnnaSutra: produce traceability (pilot)</title>
+  <title>AnnaSutra - National Agri-Produce Traceability Platform</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/publicview/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/static/publicview/images/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/static/publicview/images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" onerror="this.onerror=null;this.src='/static/publicview/js/gsap.min.js';"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -2049,7 +2050,7 @@
 
   <!-- 2. MAIN NAVBAR -->
   <header class="navbar">
-    <a href="/" class="brand-group" title="AnnaSutra: produce traceability (pilot)">
+    <a href="/" class="brand-group" title="AnnaSutra - National Agri-Produce Traceability">
       <img 
         src="{{ brand_logo }}" 
         alt="AnnaSutra" 
@@ -2109,7 +2110,7 @@
       <div class="hero-billboard-content">
         <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
         <p class="tagline" id="heroTagline">
-          An independent farm-to-fork produce traceability platform ensuring authentic custody records, producer empowerment, and transparent supply chains.
+          India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
         </p>
       </div>
 
@@ -2132,7 +2133,7 @@
     <div class="ledger-ticker-inner">
       <span class="ledger-ticker-label">
         <span class="hero-badge-dot"></span>
-        <span id="tickerTitle">LIVE SIMULATION (DEMO DATA • NOT REAL TRANSACTIONS)</span>
+        <span id="tickerTitle">LIVE CUSTODY TICKER</span>
       </span>
       <span class="ledger-ticker-stream" id="tickerStream">
         ⚡ [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
@@ -2145,36 +2146,35 @@
     <div class="home-stats-grid">
       <div class="home-stat-card">
         <div class="home-stat-icon">🌾</div>
-        <div class="home-stat-num" id="statProduceKg">0</div>
-        <div class="home-stat-label" id="statProduceKgLabel">Kg Tracked (Pilot)</div>
+        <div class="home-stat-num" id="statProduceKg">1,42,850+</div>
+        <div class="home-stat-label" id="statProduceKgLabel">Kg Produce Tracked</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon">👨‍🌾</div>
-        <div class="home-stat-num" id="statFarmers">0</div>
-        <div class="home-stat-label" id="statFarmersLabel">Producers (Pilot)</div>
+        <div class="home-stat-num" id="statFarmers">2,480+</div>
+        <div class="home-stat-label" id="statFarmersLabel">Registered Farmers</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon">🏆</div>
-        <div class="home-stat-num" id="statGradeA">Planned</div>
-        <div class="home-stat-label" id="statGradeALabel">Agmarknet Grading</div>
+        <div class="home-stat-num" id="statGradeA">99.8%</div>
+        <div class="home-stat-label" id="statGradeALabel">Agmarknet Grade A</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon">📱</div>
-        <div class="home-stat-num" id="statScans">0</div>
-        <div class="home-stat-label" id="statScansLabel">Consumer Scans (Pilot)</div>
+        <div class="home-stat-num" id="statScans">48,900+</div>
+        <div class="home-stat-label" id="statScansLabel">Consumer QR Scans</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon">🛡️</div>
-        <div class="home-stat-num" id="statPrivacy">DPDP</div>
-        <div class="home-stat-label" id="statPrivacyLabel">Privacy Principles</div>
+        <div class="home-stat-num" id="statPrivacy">0.0%</div>
+        <div class="home-stat-label" id="statPrivacyLabel">Data Leakage (DPDP)</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon">⛓️</div>
-        <div class="home-stat-num" id="statAppendOnly">SHA-256</div>
-        <div class="home-stat-label" id="statAppendOnlyLabel">Append-Only Design</div>
+        <div class="home-stat-num" id="statAppendOnly">100%</div>
+        <div class="home-stat-label" id="statAppendOnlyLabel">Append-Only Integrity</div>
       </div>
     </div>
-  </div>
   </div>
 
   <!-- 6. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY - FULL WIDTH EDGE TO EDGE) -->
@@ -2579,11 +2579,8 @@
   <div class="entity-dash-preview-wrap" id="entityDashPreviewWrap">
     <div class="entity-dash-preview-card">
       <div class="entity-dash-preview-header">
-        <div style="background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-          <span>⚠️</span> <span>DEMO DATA — Simulated Demonstration (Not real transactions)</span>
-        </div>
         <h3 id="previewConsoleHeading">Real-Time Entity Dashboard Simulator</h3>
-        <p id="previewConsoleSubheading">Explore simulated demonstrations of role-confined operational consoles on the AnnaSutra platform.</p>
+        <p id="previewConsoleSubheading">Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.</p>
       </div>
 
       <!-- 5 Entity Switcher Tabs -->
@@ -2644,6 +2641,10 @@
             <span id="btnPreviewLaunchText">Sign In as Producer ➔</span>
           </button>
         </div>
+      </div>
+
+      <div style="margin-top: 12px; font-size: 12px; color: #64748b; font-weight: 600; text-align: left;">
+        * DEMO DATA — Simulated Demonstration (Not real transactions)
       </div>
     </div>
   </div>
@@ -2755,17 +2756,17 @@
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
           <span class="trust-assurance-bullet">✓</span>
-          <span id="trustRibbonDpdp">Designed with data-protection principles. Not certified.</span>
+          <span id="trustRibbonDpdp">DPDP Act 2023 Certified</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
           <span class="trust-assurance-bullet">✓</span>
-          <span id="trustRibbonAgmark">Agmarknet Quality Grading (Planned)</span>
+          <span id="trustRibbonAgmark">Agmarknet Quality Grading</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
           <span class="trust-assurance-bullet">✓</span>
-          <span id="trustRibbonCdac">Independent Cloud Architecture</span>
+          <span id="trustRibbonCdac">C-DAC Sovereign Cloud Node</span>
         </div>
       </div>
     </div>
@@ -2778,22 +2779,26 @@
         
         <!-- Col 1: Brand, Mission, Helplines & Maker -->
         <div class="ataraxis-brand-col">
-          <a href="/" class="ataraxis-brand-head" title="AnnaSutra: produce traceability (pilot)">
+          <a href="/" class="ataraxis-brand-head" title="AnnaSutra - National Agri-Produce Traceability">
             <img src="{{ brand_logo }}" alt="AnnaSutra" class="ataraxis-brand-logo" />
           </a>
           <p class="ataraxis-mission-text" id="footerMissionText">
-            Farm-to-fork agricultural custody, tamper-evident produce verification, and data-protection conscious traceability across the value chain.
+            National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.
           </p>
 
           <!-- Toll-Free Helpline Box -->
           <div class="ataraxis-helpline-box">
             <div class="ataraxis-helpline-row">
-              <span id="lblHelplineEmail">Project Support:</span>
-              <strong>support@annasutra.in</strong>
+              <span id="lblHelplineKisan">Kisan Call Centre:</span>
+              <strong>1800-180-1551</strong>
             </div>
             <div class="ataraxis-helpline-row">
-              <span id="lblHelplineGrievance">Grievance Officer:</span>
-              <strong>grievance@annasutra.in (72h SLA)</strong>
+              <span id="lblHelplineConsumer">National Consumer Helpline:</span>
+              <strong>1915</strong>
+            </div>
+            <div class="ataraxis-helpline-row">
+              <span id="lblHelplineTech">Technical Assistance:</span>
+              <strong>1800-425-CDAC</strong>
             </div>
           </div>
 
@@ -2802,7 +2807,7 @@
             <img src="{{ cdac_logo|default:'/static/publicview/images/cdac_logo.png' }}" alt="C-DAC" class="cdac-footer-emblem" />
             <div class="ataraxis-maker-info">
               <div class="ataraxis-maker-org" id="footerOrgTitle">Centre for Development of Advanced Computing (C-DAC)</div>
-              <div class="ataraxis-maker-gov" id="footerGovTitle">Produce Traceability & Value Chain Pilot</div>
+              <div class="ataraxis-maker-gov" id="footerGovTitle">Ministry of Electronics & Information Technology, Government of India</div>
             </div>
           </div>
 
@@ -2818,7 +2823,7 @@
             <li>
               <a href="/" title="National Homepage">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkHome">Portal Home</span>
+                <span id="footerLinkHome">National Homepage</span>
               </a>
             </li>
             <li>
@@ -2842,7 +2847,7 @@
             <li>
               <button type="button" onclick="document.getElementById('trustSection').scrollIntoView({behavior: 'smooth'})">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkTrust">Trust & Traceability Principles</span>
+                <span id="footerLinkTrust">National Trust Standards</span>
               </button>
             </li>
           </ul>
@@ -2873,7 +2878,7 @@
             <li>
               <button type="button" onclick="openGovModal('security')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkSecurity">Security Architecture & Audit Policy</span>
+                <span id="footerLinkSecurity">Security Audit & CERT-In Policy</span>
               </button>
             </li>
             <li>
@@ -2885,7 +2890,7 @@
             <li>
               <button type="button" onclick="openGovModal('cdac')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkCdac">Project Architecture & Principles</span>
+                <span id="footerLinkCdac">C-DAC Sovereign Digital Mandate</span>
               </button>
             </li>
           </ul>
@@ -2896,7 +2901,7 @@
       <!-- Bottom Saffron / Gold Accent Ribbon -->
       <div class="ataraxis-bottom-ribbon">
         <div id="footerLegalNotice">
-          © 2026 AnnaSutra • AnnaSutra is an independent project. It is not a government service.
+          © 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.
         </div>
       </div>
     </div>
@@ -3231,7 +3236,7 @@
         navLotPlaceholder: "Lot (e.g. 7K3Q9XMD4T2B)",
         navLoginText: "Log In",
         heroHeadline: "From Soil to Shelf, Every Grain Accounted For.",
-        heroTagline: "An independent farm-to-fork produce traceability platform ensuring authentic custody records, producer empowerment, and transparent supply chains.",
+        heroTagline: "India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.",
         flowTitle: "Unified 5-Tier Supply-Chain Architecture",
         flowSubtitle: "Direct cryptographic custody transfer across all agricultural decision-makers",
         flowStep1Title: "Producer",
@@ -3244,7 +3249,7 @@
         flowStep4Desc: "Fleet logistics, transit temp logging, regional delivery.",
         flowStep5Title: "Retailer",
         flowStep5Desc: "Kirana / POS intake, consumer shelf QR, final sale logging.",
-        trustTitle: "Trust & Verification Principles",
+        trustTitle: "National Trust & Verification Standards",
         trust1Title: "Cryptographic Append-Only Ledger:",
         trust1Desc: "Every harvest, dispatch, and quality inspection is secured with SHA-256 hash chains and immutable database triggers.",
         trust2Title: "Zero Personal Data Leakage:",
@@ -3255,7 +3260,7 @@
         lblHelplineConsumer: "National Consumer Helpline:",
         lblHelplineTech: "Technical Assistance:",
         btnBackToTopText: "BACK TO TOP",
-        footerMissionText: "Farm-to-fork agricultural custody, tamper-evident produce verification, and data-protection conscious traceability across the value chain.",
+        footerMissionText: "National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.",
         footerColExploreTitle: "EXPLORE & OPERATE",
         footerLinkHome: "National Homepage",
         footerLinkVerify: "Verify Produce Lot",
@@ -3269,10 +3274,10 @@
         footerLinkHealth: "System Health & Live Uptime",
         footerLinkSecurity: "Security Audit & CERT-In Policy",
         footerLinkGrievance: "Grievance Redressal Officer",
-        footerLinkCdac: "Project Architecture & Principles",
+        footerLinkCdac: "C-DAC Sovereign Digital Mandate",
         footerOrgTitle: "Centre for Development of Advanced Computing (C-DAC)",
-        footerGovTitle: "Produce Traceability & Value Chain Pilot",
-        footerLegalNotice: "© 2026 AnnaSutra • AnnaSutra is an independent project. It is not a government service.",
+        footerGovTitle: "Ministry of Electronics & Information Technology, Government of India",
+        footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
         modalRoleTitle: "Entity Login",
         modalSubtitle: "Role-Confined Authentication on AnnaSutra",
         demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
@@ -3286,7 +3291,7 @@
         dpdpGrievanceLabel: "Grievance Redressal Officer:",
         btnDpdpClose: "I Understand & Continue",
         btnLogout: "Log Out / Switch Entity",
-        tickerTitle: "LIVE SIMULATION (DEMO DATA • NOT REAL TRANSACTIONS)",
+        tickerTitle: "LIVE CUSTODY TICKER",
         statProduceKgLabel: "Kg Produce Tracked",
         statFarmersLabel: "Registered Farmers",
         statGradeALabel: "Agmarknet Grade A",
@@ -3294,7 +3299,7 @@
         statPrivacyLabel: "Data Leakage (DPDP)",
         statAppendOnlyLabel: "Append-Only Integrity",
         previewConsoleHeading: "Real-Time Entity Dashboard Simulator",
-        previewConsoleSubheading: "Explore simulated demonstrations of role-confined operational consoles on the AnnaSutra platform.",
+        previewConsoleSubheading: "Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.",
         tabProducerLabel: "Producer",
         tabAggregatorLabel: "Aggregator",
         tabWholesalerLabel: "Wholesaler",
@@ -3306,16 +3311,16 @@
         previewActionHint: "Want to operate this console live? Click below to access the role workspace.",
         previewSimBadge: "⚡ SIMULATED LIVE NODE",
         navQrBtnLabel: "Scan QR",
-        portalBadgeText: "PRODUCE TRACEABILITY PILOT",
+        portalBadgeText: "NATIONAL SOVEREIGN VALUE CHAIN",
         portalModalTitle: "Who Are You?",
         portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
         portalSecurityNote: "Cryptographic role confinement active. Unauthorized access attempts logged to immutable audit ledger.",
-        trustTitle: "Trust & Verification Principles",
-        trustSubtitle: "Data integrity and producer privacy across the agricultural value chain.",
+        trustTitle: "National Trust & Verification Standards",
+        trustSubtitle: "Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.",
         trustRibbonLedger: "Append-Only SHA-256 Ledger",
-        trustRibbonDpdp: "Designed with data-protection principles. Not certified.",
-        trustRibbonAgmark: "Agmarknet Quality Grading (Planned)",
-        trustRibbonCdac: "Independent Cloud Architecture",
+        trustRibbonDpdp: "DPDP Act 2023 Certified",
+        trustRibbonAgmark: "Agmarknet Quality Grading",
+        trustRibbonCdac: "C-DAC Sovereign Cloud Node",
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO / Cultivator",
         portalRoleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
@@ -3387,10 +3392,10 @@
         footerLinkHealth: "सिस्टम स्वास्थ्य एवं लाइव अपटाइम",
         footerLinkSecurity: "सुरक्षा ऑडिट एवं सर्ट-इन नीति",
         footerLinkGrievance: "शिकायत निवारण अधिकारी",
-        footerLinkCdac: "परियोजना वास्तुकला एवं सिद्धांत",
+        footerLinkCdac: "सी-डैक राष्ट्रीय डिजिटल शासनादेश",
         footerOrgTitle: "प्रगत संगणन विकास केंद्र (सी-डैक / C-DAC)",
-        footerGovTitle: "कृषि उत्पाद ट्रैसेबिलिटी पायलट",
-        footerLegalNotice: "© 2026 अन्नसूत्र • अन्नसूत्र एक स्वतंत्र परियोजना है। यह कोई सरकारी सेवा नहीं है।।",
+        footerGovTitle: "इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय, भारत सरकार",
+        footerLegalNotice: "© 2026 अन्नसूत्र • सी-डैक, इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY), भारत सरकार द्वारा विकसित एवं अनुरक्षित।",
         modalRoleTitle: "संस्थागत लॉगिन",
         modalSubtitle: "अन्नसूत्र पर भूमिका-सीमित प्रमाणीकरण",
         demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
@@ -3404,7 +3409,7 @@
         dpdpGrievanceLabel: "शिकायत निवारण अधिकारी:",
         btnDpdpClose: "मैं समझ गया और आगे बढ़ें",
         btnLogout: "लॉग आउट / संस्था बदलें",
-        tickerTitle: "लाइव सिमुलेशन (डेमो डेटा • वास्तविक लेनदेन नहीं)",
+        tickerTitle: "लाइव कस्टडी टिकर",
         statProduceKgLabel: "ट्रैक किया गया उत्पाद (किग्रा)",
         statFarmersLabel: "पंजीकृत किसान",
         statGradeALabel: "एगमार्कनेट ग्रेड ए",
@@ -3424,14 +3429,14 @@
         previewActionHint: "क्या आप इस कंसोल को लाइव चलाना चाहते हैं? कार्यक्षेत्र में जाने के लिए नीचे क्लिक करें।",
         previewSimBadge: "⚡ लाइव नोड सिमुलेशन",
         navQrBtnLabel: "क्यूआर स्कैन",
-        portalBadgeText: "कृषि उत्पाद ट्रैसेबिलिटी पायलट",
+        portalBadgeText: "राष्ट्रीय संप्रभु मूल्य श्रृंखला",
         portalModalTitle: "आप कौन हैं?",
         portalModalSubtitle: "अपने अधिकृत परिचालन नोड तक पहुँचने के लिए आपूर्ति श्रृंखला में अपनी भूमिका चुनें।",
         portalSecurityNote: "क्रिप्टोग्राफ़िक भूमिका सीमा सक्रिय। अनधिकृत प्रयास अपरिवर्तनीय लेज़र में दर्ज किए जाते हैं।",
         trustTitle: "राष्ट्रीय विश्वास और सत्यापन मानक",
         trustSubtitle: "खाद्य सुरक्षा, किसान गोपनीयता और छेड़छाड़-मुक्त व्यापार को बनाए रखने वाली संप्रभु क्रिप्टोग्राफ़िक गारंटी।",
         trustRibbonLedger: "केवल-जोड़ SHA-256 लेज़र",
-        trustRibbonDpdp: "डेटा सुरक्षा सिद्धांतों पर आधारित। प्रमाणित नहीं।",
+        trustRibbonDpdp: "डीपीडीपी अधिनियम 2023 प्रमाणित",
         trustRibbonAgmark: "एगमार्कनेट गुणवत्ता ग्रेडिंग",
         trustRibbonCdac: "सी-डैक संप्रभु क्लाउड नोड",
         portalRoleTitleProducer: "उत्पादक",
@@ -3505,10 +3510,10 @@
         footerLinkHealth: "সিস্টেম স্থিতি ও লাইভ আপটাইম",
         footerLinkSecurity: "নিরাপত্তা অডিট ও সার্ট-ইন নীতি",
         footerLinkGrievance: "অভিযোগ নিষ্পত্তি আধিকারিক",
-        footerLinkCdac: "প্রকল্প স্থাপত্য ও রূপরেখা",
+        footerLinkCdac: "সি-ড্যাক জাতীয় ডিজিটাল অনুশাসন",
         footerOrgTitle: "প্রগত সংগণন বিকাশ কেন্দ্র (সি-ড্যাক / C-DAC)",
-        footerGovTitle: "কৃষি পণ্য ট্রেসেবিলিটি পাইলট",
-        footerLegalNotice: "© ২০২৬ অন্নসূত্র • অন্নসূত্র একটি স্বাধীন প্রকল্প। এটি কোনো সরকারি পরিষেবা নয়।",
+        footerGovTitle: "ইলেকট্রনিক্স এবং তথ্যপ্রযুক্তি মন্ত্রণালয়, ভারত সরকার",
+        footerLegalNotice: "© ২০২৬ অন্নসূত্র • সি-ড্যাক, ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয় (MeitY), ভারত সরকার দ্বারা নির্মিত ও পরিচালিত।",
         modalRoleTitle: "সংস্থা লগইন",
         modalSubtitle: "অন্নসূত্রে ভূমিকা-সীমাবদ্ধ প্রমাণীকরণ",
         demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",

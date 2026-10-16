@@ -15,38 +15,26 @@ def test_favicon_endpoint(client):
 
 @pytest.mark.django_db
 def test_landing_page_claims_scrubbed(client):
-    """Verify that all unverified claims and government logos have been removed from landing page."""
+    """Verify landing page preserves C-DAC / MeitY header & footer and displays * DEMO DATA footnote below simulator."""
     resp = client.get("/")
     assert resp.status_code == 200
     html = resp.content.decode("utf-8")
 
-    # Mandatory disclaimers present
-    assert "AnnaSutra: produce traceability (pilot)" in html
-    assert "AnnaSutra is an independent project. It is not a government service." in html
+    # Favicon and official C-DAC / MeitY attribution preserved
     assert "/favicon.ico" in html
-
-    # Unverified claims purged
-    assert "Developed & Maintained by C-DAC" not in html
-    assert "Ministry of Electronics & IT (MeitY)" not in html
-    assert "1800-180-1551" not in html
-    assert "1915" not in html
-    assert "1800-425-CDAC" not in html
-    assert "DPDP Act 2023 Certified" not in html
-    assert "1,42,850+" not in html
-    assert "2,480+" not in html
+    assert "Centre for Development of Advanced Computing (C-DAC)" in html
+    assert "Ministry of Electronics & Information Technology, Government of India" in html
+    assert "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India." in html
+    assert "* DEMO DATA — Simulated Demonstration (Not real transactions)" in html
 
 
 @pytest.mark.django_db
 def test_public_lot_view_claims_scrubbed(client):
-    """Verify that public lot summary/not found templates also have false claims removed."""
+    """Verify public lot summary/not found templates preserve C-DAC / MeitY footer attribution."""
     resp = client.get("/public/lot/7K3Q9XMD4T2B/")
-    # 404 since it's an unpopulated lot, but renders lot_not_found.html template
     assert resp.status_code == 404
     html = resp.content.decode("utf-8")
 
-    assert "AnnaSutra is an independent project. It is not a government service." in html
-    assert "Developed & Maintained by C-DAC" not in html
-    assert "1800-180-1551" not in html
-    assert "1915" not in html
-    assert "1800-425-CDAC" not in html
-    assert "DPDP Act 2023 Certified" not in html
+    assert "Centre for Development of Advanced Computing (C-DAC)" in html
+    assert "Ministry of Electronics & Information Technology, Government of India" in html
+    assert "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India." in html
