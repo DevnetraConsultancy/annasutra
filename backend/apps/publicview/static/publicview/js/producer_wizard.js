@@ -5,6 +5,11 @@
 
 (function () {
   'use strict';
+  function getIcon(name, size, color, stroke) {
+    if (window.renderUniformIcon) return window.renderUniformIcon(name, size, color, stroke);
+    return '';
+  }
+
 
   const WIZARD_I18N = {
     en: {
@@ -28,8 +33,8 @@
       pincode: 'Postal PIN Code (6 digits)',
       address: 'Street Address / Plot Location',
       photoLabel: 'Verified Farmer Photograph',
-      photoUploadBtn: '📷 Upload Farm Photo',
-      photoScrubbed: '✓ Pixel Scrubbed & EXIF Cleared',
+      photoUploadBtn: 'Upload Farm Photo',
+      photoScrubbed: 'Pixel Scrubbed & EXIF Cleared',
       farmType: 'Cultivator Category',
       commodities: 'Primary Agricultural Crops',
       irrigation: 'Primary Irrigation Source',
@@ -45,10 +50,10 @@
       consent1: 'I grant purpose-limited consent under DPDP Act 2023 for my farm location and crop harvest data to be processed strictly for supply-chain traceability and trade integrity.',
       consent2: 'I voluntarily declare the last 4 digits of my Aadhaar for local identity attestation on the AnnaSutra platform. I acknowledge full Aadhaar is never requested.',
       consent3: 'I certify that all declared crop, plot acreage, and yield information accurately represent genuine agricultural production.',
-      btnSaveDraft: '💾 Save Draft',
-      btnNext: 'Next Step ➔',
+      btnSaveDraft: 'Save Draft',
+      btnNext: 'Next Step',
       btnPrev: '← Previous',
-      btnSubmit: '🚀 Submit Application for Verification',
+      btnSubmit: 'Submit Application for Verification',
       submitting: 'Submitting Application...',
       saving: 'Saving Draft...',
       underReviewTitle: 'Application Submitted — Under Verification Review',
@@ -75,8 +80,8 @@
       pincode: 'पिन कोड (6 अंक)',
       address: 'सड़क का पता / खेत का स्थान',
       photoLabel: 'सत्यापित किसान की तस्वीर',
-      photoUploadBtn: '📷 तस्वीर अपलोड करें',
-      photoScrubbed: '✓ पिक्सेल एवं मेटाडेटा साफ़',
+      photoUploadBtn: 'तस्वीर अपलोड करें',
+      photoScrubbed: 'पिक्सेल एवं मेटाडेटा साफ़',
       farmType: 'किसान श्रेणी',
       commodities: 'उगाई जाने वाली मुख्य फसलें',
       irrigation: 'मुख्य सिंचाई स्रोत',
@@ -92,10 +97,10 @@
       consent1: 'मैं DPDP अधिनियम 2023 के तहत अपनी कृषि और भूखंड डेटा को आपूर्ति-श्रृंखला ट्रेसबिलिटी के लिए संसाधित करने की सहमति देता हूँ।',
       consent2: 'मैं पहचान सत्यापन के लिए स्वेच्छा से अपने आधार के केवल अंतिम 4 अंक प्रदान कर रहा हूँ।',
       consent3: 'मैं प्रमाणित करता हूँ कि दर्ज की गई सभी फसल और रकबा जानकारी पूर्णतः सत्य और वास्तविक है।',
-      btnSaveDraft: '💾 ड्राफ्ट सहेजें',
-      btnNext: 'अगला चरण ➔',
+      btnSaveDraft: 'ड्राफ्ट सहेजें',
+      btnNext: 'अगला चरण',
       btnPrev: '← पिछला',
-      btnSubmit: '🚀 सत्यापन हेतु आवेदन जमा करें',
+      btnSubmit: 'सत्यापन हेतु आवेदन जमा करें',
       submitting: 'आवेदन जमा हो रहा है...',
       saving: 'सहेजा जा रहा है...',
       underReviewTitle: 'आवेदन जमा हो गया — सत्यापन समीक्षाधीन है',
@@ -122,8 +127,8 @@
       pincode: 'পিন কোড (৬ অঙ্ক)',
       address: 'ঠিকানা / খামারের অবস্থান',
       photoLabel: 'কৃষকের ছবি',
-      photoUploadBtn: '📷 ছবি আপলোড করুন',
-      photoScrubbed: '✓ মেটাডাটা ও এক্সিফ মুক্ত',
+      photoUploadBtn: 'ছবি আপলোড করুন',
+      photoScrubbed: 'মেটাডাটা ও এক্সিফ মুক্ত',
       farmType: 'কৃষক বিভাগ',
       commodities: 'প্রধান উৎপাদিত ফসল',
       irrigation: 'প্রধান সেচ ব্যবস্থা',
@@ -139,10 +144,10 @@
       consent1: 'আমি DPDP আইন ২০২৩ অনুযায়ী কৃষি ট্রেসেবিলিটি এবং হেফাজতের জন্য আমার খামারের তথ্য প্রক্রিয়াকরণে সম্মতি দিচ্ছি।',
       consent2: 'আমি পরিচয় প্রমাণের জন্য স্বেচ্ছায় আমার আধারের শেষ ৪টি সংখ্যা দিচ্ছি। সম্পূর্ণ আধার চাওয়া হয়নি।',
       consent3: 'আমি প্রত্যয়ন করছি যে ঘোষিত সকল ফসল ও জমির পরিমাণ সম্পূর্ণ বাস্তব এবং সঠিক।',
-      btnSaveDraft: '💾 খসড়া সংরক্ষণ করুন',
-      btnNext: 'পরবর্তী ধাপ ➔',
+      btnSaveDraft: 'খসড়া সংরক্ষণ করুন',
+      btnNext: 'পরবর্তী ধাপ',
       btnPrev: '← পূর্ববর্তী',
-      btnSubmit: '🚀 যাচাইকরণের জন্য জমা দিন',
+      btnSubmit: 'যাচাইকরণের জন্য জমা দিন',
       submitting: 'আবেদন জমা করা হচ্ছে...',
       saving: 'সংরক্ষণ চলছে...',
       underReviewTitle: 'আবেদন জমা হয়েছে — প্রশাসনিক পর্যালোচনা চলছে',
@@ -151,19 +156,19 @@
   };
 
   const CROPS_LIST = [
-    { id: 'Tomato', label: 'Tomato (টমেটো / टमाटर)', icon: '🍅' },
-    { id: 'Potato', label: 'Potato (আলু / आलू)', icon: '🥔' },
-    { id: 'Onion', label: 'Onion (পেঁয়াজ / प्याज)', icon: '🧅' },
-    { id: 'Chilli', label: 'Green Chilli (কাঁচা লঙ্কা / हरी मिर्च)', icon: '🌶️' },
-    { id: 'Cabbage', label: 'Cabbage (বাঁধাকপি / पत्तागोभी)', icon: '🥬' },
-    { id: 'Cauliflower', label: 'Cauliflower (ফুলকপি / फूलगोभी)', icon: '🥦' },
-    { id: 'Carrot', label: 'Carrot (গাজর / गाजर)', icon: '🥕' },
-    { id: 'Brinjal', label: 'Brinjal (বেগুন / बैंगन)', icon: '🍆' },
-    { id: 'Rice', label: 'Paddy / Rice (ধান / धान)', icon: '🌾' },
-    { id: 'Wheat', label: 'Wheat (গম / गेहूं)', icon: '🌾' },
-    { id: 'Mustard', label: 'Mustard (সর্ষে / सरसों)', icon: '🌼' },
-    { id: 'Banana', label: 'Banana (কলা / केला)', icon: '🍌' },
-    { id: 'Mango', label: 'Mango (আম / आम)', icon: '🥭' }
+    { id: 'Tomato', label: 'Tomato (টমেটো / टमाटर)', icon: 'sprout' },
+    { id: 'Potato', label: 'Potato (আলু / आलू)', icon: 'sprout' },
+    { id: 'Onion', label: 'Onion (পেঁয়াজ / प्याज)', icon: 'sprout' },
+    { id: 'Chilli', label: 'Green Chilli (কাঁচা লঙ্কা / हरी मिर्च)', icon: 'sprout' },
+    { id: 'Cabbage', label: 'Cabbage (বাঁধাকপি / पत्तागोभी)', icon: 'sprout' },
+    { id: 'Cauliflower', label: 'Cauliflower (ফুলকপি / फूलगोभी)', icon: 'sprout' },
+    { id: 'Carrot', label: 'Carrot (গাজর / गाजर)', icon: 'sprout' },
+    { id: 'Brinjal', label: 'Brinjal (বেগুন / बैंगन)', icon: 'sprout' },
+    { id: 'Rice', label: 'Paddy / Rice (ধান / धान)', icon: 'wheat' },
+    { id: 'Wheat', label: 'Wheat (গম / गेहूं)', icon: 'wheat' },
+    { id: 'Mustard', label: 'Mustard (সর্ষে / सरसों)', icon: 'sprout' },
+    { id: 'Banana', label: 'Banana (কলা / केला)', icon: 'sprout' },
+    { id: 'Mango', label: 'Mango (আম / आम)', icon: 'sprout' }
   ];
 
   let wizardState = {
@@ -311,7 +316,7 @@
     container.innerHTML = `
       <div class="status-review-card">
         <div class="status-badge-submitted">
-          <span>⏳</span> <span>${t.underReviewTitle}</span>
+          <span>${getIcon('clock', 16, '#f59e0b')}</span> <span>${t.underReviewTitle}</span>
         </div>
         <h3 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">${escapeHtml(p.organisation_name || 'Farm Enterprise')}</h3>
         <p style="color: #64748b; font-size: 14px; max-width: 620px; margin: 0 auto; line-height: 1.5;">${t.underReviewSub}</p>
@@ -344,7 +349,7 @@
         </div>
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 20px; display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: #475569;">
-          <span>🔒</span>
+          <span>${getIcon('lock', 16, '#047857')}</span>
           <span>Entity Reference Token: <strong style="font-family: monospace; color: #0b3d2e;">${escapeHtml(p.entity_id || 'PENDING')}</strong></span>
         </div>
       </div>
@@ -363,7 +368,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
           <div>
             <div style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px;">
-              <span>✓</span> <span>VERIFIED PRODUCER NODE</span>
+              <span>${getIcon('check', 14, '#15803d', 2.8)}</span> <span>VERIFIED PRODUCER NODE</span>
             </div>
             <h3 style="margin: 0; font-size: 20px; color: #0f172a;">${escapeHtml(p.organisation_name || 'Producer Console')}</h3>
             <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')} • ${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}</span>
@@ -394,10 +399,10 @@
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
           <button class="btn-wizard-action btn-wizard-next" onclick="showToast('Crate Genesis QR tool ready for pilot batches.', 'info')">
-            <span>🌾</span> <span>Register New Harvest Lot</span>
+            <span>${getIcon('sprout', 16, '#047857')}</span> <span>Register New Harvest Lot</span>
           </button>
           <button class="btn-wizard-action btn-wizard-draft" onclick="downloadMyQrPdfSheet()">
-            <span>🏷️</span> <span>Download Printable A4 Sticker Sheet (PDF)</span>
+            <span>${getIcon('printer', 16, '#047857')}</span> <span>Download Printable A4 Sticker Sheet (PDF)</span>
           </button>
         </div>
       </div>
@@ -428,7 +433,7 @@
         if (data.blocks && data.blocks.length > 0) {
           const block = data.blocks[0];
           window.open(block.download_pdf_url, '_blank');
-          showToast('✓ Opening printable A4 sticker sheet in new tab.', 'success');
+          showToast('Opening printable A4 sticker sheet in new tab.', 'success');
         } else {
           showToast('No QR blocks allocated yet. Contact secretariat.', 'warning');
         }
@@ -455,25 +460,25 @@
         <!-- 1. Stepper Bar -->
         <div class="wizard-stepper">
           <div class="step-node ${step === 1 ? 'active' : step > 1 ? 'completed' : ''}" onclick="goToStep(1)">
-            <div class="step-circle">${step > 1 ? '✓' : '1'}</div>
+            <div class="step-circle">${step > 1 ? getIcon('check', 12, '#ffffff', 2.8) : '1'}</div>
             <span class="step-label">1. Basic Info</span>
           </div>
           <div class="step-line ${step > 1 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 2 ? 'active' : step > 2 ? 'completed' : ''}" onclick="goToStep(2)">
-            <div class="step-circle">${step > 2 ? '✓' : '2'}</div>
+            <div class="step-circle">${step > 2 ? getIcon('check', 12, '#ffffff', 2.8) : '2'}</div>
             <span class="step-label">2. Farm Plots</span>
           </div>
           <div class="step-line ${step > 2 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 3 ? 'active' : step > 3 ? 'completed' : ''}" onclick="goToStep(3)">
-            <div class="step-circle">${step > 3 ? '✓' : '3'}</div>
+            <div class="step-circle">${step > 3 ? getIcon('check', 12, '#ffffff', 2.8) : '3'}</div>
             <span class="step-label">3. Cultivation</span>
           </div>
           <div class="step-line ${step > 3 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 4 ? 'active' : step > 4 ? 'completed' : ''}" onclick="goToStep(4)">
-            <div class="step-circle">${step > 4 ? '✓' : '4'}</div>
+            <div class="step-circle">${step > 4 ? getIcon('check', 12, '#ffffff', 2.8) : '4'}</div>
             <span class="step-label">4. Identity & Bank</span>
           </div>
           <div class="step-line ${step > 4 ? 'completed' : ''}"></div>
@@ -515,7 +520,7 @@
     if (step === 1) {
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>🌾</span> ${t.step1Title}</h3>
+          <h3 class="wizard-step-title"><span>${getIcon("sprout", 18, "#047857")}</span> ${t.step1Title}</h3>
           <p class="wizard-step-desc">${t.step1Desc}</p>
         </div>
 
@@ -604,7 +609,7 @@
 
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>🗺️</span> ${t.step2Title}</h3>
+          <h3 class="wizard-step-title"><span>${getIcon("map-pin", 18, "#047857")}</span> ${t.step2Title}</h3>
           <p class="wizard-step-desc">${t.step2Desc}</p>
         </div>
 
@@ -612,9 +617,9 @@
           <div id="plotLeafletMap"></div>
           <div class="map-controls-row">
             <div style="display: flex; gap: 8px;">
-              <button type="button" class="btn-map-tool" id="btnMapPin" onclick="startPolygonDraw()">✏️ Click to Mark Boundary Corner</button>
-              <button type="button" class="btn-map-tool" onclick="clearPolygonDraw()">✕ Reset Drawing</button>
-              <button type="button" class="btn-map-tool" onclick="addSamplePolygon()">📍 Add Plot Boundary Preset</button>
+              <button type="button" class="btn-map-tool" id="btnMapPin" onclick="startPolygonDraw()">${getIcon('map-pin', 14)} Click to Mark Boundary Corner</button>
+              <button type="button" class="btn-map-tool" onclick="clearPolygonDraw()">${getIcon('x', 14)} Reset Drawing</button>
+              <button type="button" class="btn-map-tool" onclick="addSamplePolygon()">${getIcon('map-pin', 14)} Add Plot Boundary Preset</button>
             </div>
             <div style="font-size: 12px; color: #0b3d2e; font-weight: 800;" id="liveAcreIndicator">
               Estimated Area: 0.00 Acres (Turf.js)
@@ -658,7 +663,7 @@
                   <td><strong>${p.plot_name}</strong></td>
                   <td>${p.district}</td>
                   <td><span style="font-weight: 700; color: #0b3d2e;">${parseFloat(p.area_acres).toFixed(2)} Acres</span></td>
-                  <td><span style="background: #ecfdf5; color: #065f46; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700;">✓ Encrypted Polygon</span></td>
+                  <td><span style="background: #ecfdf5; color: #065f46; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700;"> Encrypted Polygon</span></td>
                   <td><button type="button" onclick="removePlot(${idx})" style="background: none; border: none; color: #ef4444; font-weight: 700; cursor: pointer;">Delete</button></td>
                 </tr>
               `).join('')}
@@ -674,7 +679,7 @@
 
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>🌱</span> ${t.step3Title}</h3>
+          <h3 class="wizard-step-title"><span>${getIcon("sprout", 18, "#047857")}</span> ${t.step3Title}</h3>
           <p class="wizard-step-desc">${t.step3Desc}</p>
         </div>
 
@@ -726,12 +731,12 @@
     if (step === 4) {
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>🔒</span> ${t.step4Title}</h3>
+          <h3 class="wizard-step-title"><span>${getIcon('lock', 16, '#047857')}</span> ${t.step4Title}</h3>
           <p class="wizard-step-desc">${t.step4Desc}</p>
         </div>
 
         <div class="notice-box">
-          <strong>🛡️ Cryptographic Protection Guarantee (DPDP Act 2023)</strong><br />
+          <strong>${getIcon('shield-check', 14, '#15803d')} Cryptographic Protection Guarantee (DPDP Act 2023)</strong><br />
           All PAN, Aadhaar digits, and bank account numbers entered below are encrypted immediately at the application layer using <strong>AES-256-GCM</strong> with an isolated random initialization vector. Plaintext financial identifiers are never committed to disk unencrypted.
         </div>
 
@@ -786,7 +791,7 @@
 
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>⚖️</span> ${t.step5Title}</h3>
+          <h3 class="wizard-step-title"><span>${getIcon("scale", 18, "#047857")}</span> ${t.step5Title}</h3>
           <p class="wizard-step-desc">${t.step5Desc}</p>
         </div>
 
@@ -1092,7 +1097,7 @@
       }
 
       if (showToastNotification) {
-        showToast('✓ Draft application saved securely to registry.', 'success', 'Draft Saved');
+        showToast('Draft application saved securely to registry.', 'success', 'Draft Saved');
       }
     } catch (err) {
       console.error('Draft save failed:', err);
@@ -1146,14 +1151,14 @@
 
       const data = await res.json();
       if (res.ok) {
-        showToast('🎉 Application successfully submitted for verification!', 'success', 'Application Submitted');
+        showToast('Application successfully submitted for verification!', 'success', 'Application Submitted');
         wizardState.profile = data.profile;
         const contentArea = document.getElementById('workspaceDynamicContent');
         if (contentArea) renderUnderReviewCard(contentArea);
       } else {
         if (btn) {
           btn.disabled = false;
-          btn.innerText = '🚀 Submit Application for Verification';
+          btn.innerText = 'Submit Application for Verification';
         }
         if (res.status === 401 || res.status === 403) {
           showToast('Your session has expired. Please sign in again to submit your application.', 'warning', 'Session Expired');
@@ -1169,7 +1174,7 @@
     } catch (err) {
       if (btn) {
         btn.disabled = false;
-        btn.innerText = '🚀 Submit Application for Verification';
+        btn.innerText = 'Submit Application for Verification';
       }
       showToast('Network error during submission. Please check connection.', 'error', 'Network Error');
     }
@@ -1247,7 +1252,7 @@
               wizardState.profile.photo_object_key = resData.photo_object_key;
               const badge = document.getElementById('photoStatusBadge');
               if (badge) badge.style.display = 'inline-block';
-              showToast('✓ Photo uploaded and EXIF metadata scrubbed.', 'success', 'Photo Verified');
+              showToast('Photo uploaded and EXIF metadata scrubbed.', 'success', 'Photo Verified');
             } else {
               let errMsg = 'Failed to save photo to server.';
               try {
@@ -1284,7 +1289,7 @@
     if (typeof L === 'undefined') {
       mapDiv.innerHTML = `
         <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1f5f9; color: #475569; padding: 20px; text-align: center;">
-          <span style="font-size: 32px; margin-bottom: 8px;">🗺️</span>
+          <span style="display:inline-block; margin-bottom: 8px;">${getIcon("map-pin", 32, "#94a3b8")}</span>
           <strong style="font-size: 14px; color: #0b3d2e;">Interactive Satellite Plot Mapper Active</strong>
           <p style="font-size: 12px; max-width: 420px; margin: 4px 0 12px;">Satellite tiles loaded. Click "Add Plot Boundary Preset" below to generate verified GPS polygon boundaries.</p>
         </div>
@@ -1441,7 +1446,7 @@
     if (nameInp) nameInp.value = '';
     if (acresInp) acresInp.value = '';
 
-    showToast(`✓ Added '${name}' (${acres.toFixed(2)} Acres) to registry.`, 'success', 'Plot Added');
+    showToast(`Added '${name}' (${acres.toFixed(2)} Acres) to registry.`, 'success', 'Plot Added');
     goToStep(2);
   };
 

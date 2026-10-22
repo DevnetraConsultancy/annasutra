@@ -2105,13 +2105,13 @@
   <div class="top-bar">
     <div class="top-weather-datetime" id="topWeatherWidget">
       <div class="weather-pill" id="weatherPill" title="Current live weather based on IP">
-        <span class="weather-icon" id="weatherIcon">🌤️</span>
+        <span class="weather-icon" id="weatherIcon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fde047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></svg></span>
         <span class="weather-temp" id="weatherTemp">--°C</span>
         <span class="weather-loc" id="weatherLoc">Detecting location...</span>
       </div>
       <span class="top-bar-divider">•</span>
       <div class="datetime-pill" id="dateTimePill">
-        <span class="live-clock-icon">🕒</span>
+        <span class="live-clock-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
         <span class="time-live" id="liveTime">--:--:--</span>
         <span class="date-live" id="liveDate">--</span>
       </div>
@@ -2123,7 +2123,7 @@
         <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
       </div>
       <button type="button" class="btn-help-top" id="btnHelpTop" onclick="if(window.openHelpModal) window.openHelpModal();" title="Help & User Guide">
-        <span class="btn-help-icon">ℹ️</span>
+        <span class="btn-help-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
         <span id="btnHelpTopText">Help</span>
       </button>
       <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
@@ -2181,7 +2181,7 @@
         <span id="navLoginText">Log In</span>
       </button>
       <div class="user-pill" id="userPill" onclick="scrollToWorkspace()">
-        👤 <span id="activeUserName">Producer (Active)</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="activeUserName">Producer (Active)</span>
       </div>
     </div>
   </header>
@@ -2216,7 +2216,7 @@
           onclick="toggleHeroVideoPlay()" 
           title="Pause / Play Background Video" 
           aria-label="Pause Background Video">
-          <span id="videoPlayIcon">⏸️</span>
+          <span id="videoPlayIcon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></span>
         </button>
       </div>
     </div>
@@ -2230,7 +2230,7 @@
         <span id="tickerTitle">LIVE CUSTODY TICKER</span>
       </span>
       <span class="ledger-ticker-stream" id="tickerStream">
-        ⚡ [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
+        [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
       </span>
     </div>
   </div>
@@ -2239,32 +2239,32 @@
   <div class="home-stats-strip" id="homeStatsStrip">
     <div class="home-stats-grid">
       <div class="home-stat-card">
-        <div class="home-stat-icon">🌾</div>
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></div>
         <div class="home-stat-num" id="statProduceKg">1,42,850+</div>
         <div class="home-stat-label" id="statProduceKgLabel">Kg Produce Tracked</div>
       </div>
       <div class="home-stat-card">
-        <div class="home-stat-icon">👨‍🌾</div>
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
         <div class="home-stat-num" id="statFarmers">2,480+</div>
         <div class="home-stat-label" id="statFarmersLabel">Registered Farmers</div>
       </div>
       <div class="home-stat-card">
-        <div class="home-stat-icon">🏆</div>
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
         <div class="home-stat-num" id="statGradeA">99.8%</div>
         <div class="home-stat-label" id="statGradeALabel">Agmarknet Grade A</div>
       </div>
       <div class="home-stat-card">
-        <div class="home-stat-icon">📱</div>
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
         <div class="home-stat-num" id="statScans">48,900+</div>
         <div class="home-stat-label" id="statScansLabel">Consumer QR Scans</div>
       </div>
       <div class="home-stat-card">
-        <div class="home-stat-icon">🛡️</div>
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
         <div class="home-stat-num" id="statPrivacy">0.0%</div>
         <div class="home-stat-label" id="statPrivacyLabel">Data Leakage (DPDP)</div>
       </div>
       <div class="home-stat-card">
-        <div class="home-stat-icon">⛓️</div>
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
         <div class="home-stat-num" id="statAppendOnly">100%</div>
         <div class="home-stat-label" id="statAppendOnlyLabel">Append-Only Integrity</div>
       </div>
@@ -2368,7 +2368,7 @@
               <!-- Packed & Sealed Status Badge -->
               <g id="s1SealBadge" opacity="0">
                 <rect x="126" y="8" width="86" height="18" rx="9" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
-                <text x="169" y="20" font-size="6.8" font-weight="900" fill="#15803d" text-anchor="middle">✓ PACKED &amp; SEALED</text>
+                <text x="169" y="20" font-size="6.8" font-weight="900" fill="#15803d" text-anchor="middle">PACKED &amp; SEALED</text>
               </g>
             </svg>
           </div>
@@ -2433,7 +2433,7 @@
                 <text id="s2RecGrade" x="8" y="60" font-size="5" font-family="monospace" font-weight="700" fill="#facc15">GRADE: AGMARKNET A+</text>
                 <g id="s2RecCommit" opacity="0">
                   <rect x="6" y="72" width="84" height="20" rx="4" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
-                  <text x="48" y="85" font-size="5" font-weight="900" fill="#22c55e" text-anchor="middle">✓ RECORD COMMITTED</text>
+                  <text x="48" y="85" font-size="5" font-weight="900" fill="#22c55e" text-anchor="middle">RECORD COMMITTED</text>
                 </g>
               </g>
               <!-- Agmarknet Grade-A Stamp Seal -->
@@ -2508,7 +2508,7 @@
               </g>
               <g id="s3DispatchIndicator" opacity="0">
                 <rect x="68" y="124" width="84" height="16" rx="4" fill="#15803d"/>
-                <text x="110" y="135" font-size="5.2" font-weight="900" fill="#ffffff" text-anchor="middle">✓ DISPATCH READY</text>
+                <text x="110" y="135" font-size="5.2" font-weight="900" fill="#ffffff" text-anchor="middle">DISPATCH READY</text>
               </g>
             </svg>
           </div>
@@ -2540,7 +2540,7 @@
                 <rect x="0" y="38" width="94" height="6" fill="#16a34a"/>
                 <rect x="94" y="8" width="12" height="12" rx="2" fill="#64748b"/>
                 <text x="47" y="32" font-size="6" font-weight="900" fill="#0b3d2e" text-anchor="middle">ANNASUTRA LOGISTICS</text>
-                <text x="47" y="54" font-size="4.5" font-weight="700" fill="#64748b" text-anchor="middle">❄️ REEFER +4.0°C</text>
+                <text x="47" y="54" font-size="4.5" font-weight="700" fill="#64748b" text-anchor="middle">REEFER +4.0°C</text>
                 <path d="M 94 24 L 122 24 Q 138 38 141 54 L 141 70 L 94 70 Z" fill="#0b3d2e"/>
                 <path d="M 116 27 L 132 38 Q 135 46 135 50 L 114 50 L 114 27 Z" fill="#7dd3fc"/>
                 <circle cx="139" cy="62" r="2.8" fill="#fef08a"/>
@@ -2653,7 +2653,7 @@
                 <!-- Final Sale POS Confirmation Badge -->
                 <g id="s5SaleStamp" transform="translate(33, 86) scale(0)">
                   <rect x="-26" y="-8" width="52" height="16" rx="4" fill="#15803d"/>
-                  <text x="0" y="3.5" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">✓ SOLD &amp; SEALED</text>
+                  <text x="0" y="3.5" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">SOLD &amp; SEALED</text>
                 </g>
               </g>
             </svg>
@@ -2662,7 +2662,7 @@
           <div class="flow-step-desc" id="flowStep5Desc">Kirana / POS intake, consumer shelf QR, final sale logging.</div>
           <div class="flow-step-meta">
             <span class="meta-pill" id="flowMeta5A">CUSTOMER: <strong class="meta-code">VERIFIED</strong></span>
-            <span class="meta-pill" id="flowMeta5B">SALE: <strong class="meta-code">SEALED ✓</strong></span>
+            <span class="meta-pill" id="flowMeta5B">SALE: <strong class="meta-code">SEALED</strong></span>
           </div>
         </div>
       </div>
@@ -2680,19 +2680,19 @@
       <!-- 5 Entity Switcher Tabs -->
       <div class="entity-preview-tabs" id="previewRoleTabs">
         <button type="button" class="btn-entity-tab active" data-role="PRODUCER" onclick="switchPreviewEntity('PRODUCER')">
-          <span>🌾</span> <span id="tabProducerLabel">Producer</span>
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></span><span id="tabProducerLabel">Producer</span>
         </button>
         <button type="button" class="btn-entity-tab" data-role="AGGREGATOR" onclick="switchPreviewEntity('AGGREGATOR')">
-          <span>⚖️</span> <span id="tabAggregatorLabel">Aggregator</span>
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h18"/></svg></span><span id="tabAggregatorLabel">Aggregator</span>
         </button>
         <button type="button" class="btn-entity-tab" data-role="WHOLESALER" onclick="switchPreviewEntity('WHOLESALER')">
-          <span>🏢</span> <span id="tabWholesalerLabel">Wholesaler</span>
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect x="10" y="10" width="4" height="4"/></svg></span><span id="tabWholesalerLabel">Wholesaler</span>
         </button>
         <button type="button" class="btn-entity-tab" data-role="DISTRIBUTOR" onclick="switchPreviewEntity('DISTRIBUTOR')">
-          <span>🚚</span> <span id="tabDistributorLabel">Distributor</span>
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><span id="tabDistributorLabel">Distributor</span>
         </button>
         <button type="button" class="btn-entity-tab" data-role="RETAILER" onclick="switchPreviewEntity('RETAILER')">
-          <span>🛒</span> <span id="tabRetailerLabel">Retailer</span>
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg></span><span id="tabRetailerLabel">Retailer</span>
         </button>
       </div>
 
@@ -2700,13 +2700,13 @@
       <div class="preview-console-screen" id="previewConsoleScreen">
         <div class="preview-org-bar">
           <div class="preview-org-info">
-            <span style="font-size: 20px;" id="previewRoleIcon">🌾</span>
+            <span id="previewRoleIcon" style="display:inline-flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></span>
             <div>
               <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
               <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Bardhaman Organic Farmers Producer Co-op • Cluster Farm Yard #4</div>
             </div>
           </div>
-          <span class="preview-org-badge" id="previewBadgeText">⚡ SIMULATED LIVE NODE</span>
+          <span class="preview-org-badge" id="previewBadgeText">SIMULATED LIVE NODE</span>
         </div>
 
         <!-- 3 KPI Cards -->
@@ -2732,7 +2732,7 @@
             Want to operate this console live? Click below to access the role workspace.
           </span>
           <button type="button" class="btn-preview-launch" id="btnPreviewLaunch" onclick="launchFromPreview()">
-            <span id="btnPreviewLaunchText">Sign In as Producer ➔</span>
+            <span id="btnPreviewLaunchText">Sign In as Producer &rarr;</span>
           </button>
         </div>
       </div>
@@ -2748,7 +2748,7 @@
     <div class="confined-workspace" id="confinedWorkspace" style="display: none;">
       <div class="confined-banner">
         <div class="confined-badge">
-          🔒 <span id="confinedBadgeText">ROLE CONFINED: Operating strictly within authorized domain.</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span id="confinedBadgeText">ROLE CONFINED: Operating strictly within authorized domain.</span>
         </div>
         <button class="btn-logout" onclick="logoutEntity()" id="btnLogout">Log Out / Switch Entity</button>
       </div>
@@ -2844,22 +2844,22 @@
       <!-- Assurance Ribbon -->
       <div class="trust-assurance-ribbon">
         <div class="trust-assurance-item">
-          <span class="trust-assurance-bullet">✓</span>
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span id="trustRibbonLedger">Append-Only SHA-256 Ledger</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
-          <span class="trust-assurance-bullet">✓</span>
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span id="trustRibbonDpdp">DPDP Act 2023 Certified</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
-          <span class="trust-assurance-bullet">✓</span>
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span id="trustRibbonAgmark">Agmarknet Quality Grading</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
-          <span class="trust-assurance-bullet">✓</span>
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span id="trustRibbonCdac">C-DAC Sovereign Cloud Node</span>
         </div>
       </div>
@@ -2906,7 +2906,7 @@
           </div>
 
           <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span>⌃</span> <span id="btnBackToTopText">BACK TO TOP</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><polyline points="18 15 12 9 6 15"/></svg><span id="btnBackToTopText">BACK TO TOP</span>
           </button>
         </div>
 
@@ -3004,7 +3004,7 @@
   <!-- 11. ENTITY LOGIN MODAL (FAST OTP AUTHENTICATION) -->
   <div class="modal-overlay" id="loginModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <button class="modal-close" onclick="closeLoginModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
         <h3 id="modalRoleTitle">Entity Login</h3>
         <p id="modalSubtitle">Role-Confined Authentication on AnnaSutra</p>
@@ -3033,13 +3033,13 @@
           Send Verification OTP
         </button>
         <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;" id="otpGatewayHint">
-          🔒 An OTP will be dispatched via official SMS Gateway to your device.
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> An OTP will be dispatched via official SMS Gateway to your device.
         </p>
       </div>
 
       <div id="otpVerifyStep" style="display: none; margin-top: 10px;">
         <div style="font-size: 12.5px; color: #166534; background: #f0fdf4; border: 1.5px solid #86efac; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-weight: 600;" id="otpStatusNotice">
-          ✓ OTP sent via Android SMS Gateway
+          OTP sent via Android SMS Gateway
         </div>
         <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;" id="otpEnterCodeLabel">
           Enter 6-Digit Code
@@ -3059,7 +3059,7 @@
   <!-- 12. "WHO ARE YOU?" - UNIVERSAL ENTITY ACCESS PORTAL MODAL -->
   <div class="modal-overlay" id="entityPortalModal" onclick="closeModalOnBackdrop(event)">
     <div class="portal-modal-box" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+      <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       
       <div class="portal-modal-header">
         <div class="portal-modal-badge">
@@ -3095,7 +3095,7 @@
               <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill1A">Farm Genesis</span>
               <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill1B">Crate QR Labels</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer &rarr;</button>
           </div>
 
           <!-- 2. Aggregator -->
@@ -3117,7 +3117,7 @@
               <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2A">Weighbridge Attest</span>
               <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2B">Agmarknet Grade</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator &rarr;</button>
           </div>
 
           <!-- 3. Wholesaler -->
@@ -3140,7 +3140,7 @@
               <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill3A">Mass-Balance Split</span>
               <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill3B">Cold Bay Control</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler &rarr;</button>
           </div>
 
           <!-- 4. Distributor -->
@@ -3165,7 +3165,7 @@
               <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill4A">GPS Geofence</span>
               <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill4B">Reefer Telemetry</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor &rarr;</button>
           </div>
 
           <!-- 5. Retailer -->
@@ -3189,7 +3189,7 @@
               <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill5A">Shelf QR Standee</span>
               <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill5B">POS Deduct</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer &rarr;</button>
           </div>
         </div>
 
@@ -3207,7 +3207,7 @@
   <!-- 13. FAST QR CODE SCANNER MODAL -->
   <div class="modal-overlay" id="qrModal" onclick="closeModalOnBackdrop(event)">
     <div class="qr-modal-box">
-      <button class="modal-close" onclick="closeQrModal()">✕</button>
+      <button class="modal-close" onclick="closeQrModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head" style="margin-bottom: 12px;">
         <div style="margin-bottom: 6px; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3255,7 +3255,7 @@
   <!-- 14. DPDP PRIVACY MODAL -->
   <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeDpdpModal()">✕</button>
+      <button class="modal-close" onclick="closeDpdpModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
         <h3 id="dpdpTitle">DPDP Act 2023 Compliance</h3>
         <p id="dpdpSub">Digital Personal Data Protection Notice</p>
@@ -3271,9 +3271,9 @@
   <!-- 15. UNIFIED GOVERNANCE & STANDARDS MODAL (EXACT DPDP STYLE) -->
   <div class="modal-overlay" id="govInfoModal" onclick="closeModalOnBackdrop(event)">
     <div class="gov-modal-box">
-      <button class="modal-close" onclick="closeGovModal()">✕</button>
+      <button class="modal-close" onclick="closeGovModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head" style="text-align: left; margin-bottom: 16px;">
-        <div style="font-size: 30px; margin-bottom: 6px;" id="govModalIcon">📜</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:50%;margin-bottom:8px;" id="govModalIcon"></div>
         <h3 id="govModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">Policy Title</h3>
         <p id="govModalSubtitle" style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Sovereign Agri-Traceability Framework</p>
       </div>
@@ -3289,9 +3289,9 @@
   <!-- 16. DEDICATED ENTITY OPERATION MODAL -->
   <div class="modal-overlay" id="operationModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box" style="max-width: 520px; width: 92%;">
-      <button class="modal-close" onclick="closeOperationModal()">✕</button>
+      <button class="modal-close" onclick="closeOperationModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
-        <div style="font-size: 28px; margin-bottom: 6px;" id="opModalIcon">🌾</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:50%;margin-bottom:6px;" id="opModalIcon"></div>
         <h3 id="opModalTitle" style="margin: 0 0 4px; font-size: 19px; font-weight: 900; color: var(--primary);">Operation Title</h3>
         <p id="opModalSubtitle" style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Cryptographic Custody Event Ledger</p>
       </div>
@@ -3302,7 +3302,7 @@
 
       <div id="opResultCard" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 14px; margin-bottom: 14px; text-align: left;">
         <div style="display: flex; align-items: center; gap: 8px; color: #166534; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
-          <span>✓</span> <span id="opResultTitle">Action Committed to Ledger</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> <span id="opResultTitle">Action Committed to Ledger</span>
         </div>
         <div style="font-size: 11px; font-family: monospace; color: #15803d; word-break: break-all; margin-bottom: 4px;" id="opResultTx">
           Tx Hash: 0x...
@@ -3322,9 +3322,9 @@
   <!-- 17. LOCALIZED HELP & USER GUIDE MODAL -->
   <div class="modal-overlay" id="helpModal" onclick="if(event.target===this && window.closeHelpModal) window.closeHelpModal();">
     <div class="modal-box help-modal-box">
-      <button class="modal-close" onclick="if(window.closeHelpModal) window.closeHelpModal();">✕</button>
+      <button class="modal-close" onclick="if(window.closeHelpModal) window.closeHelpModal();"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head" style="text-align: left; margin-bottom: 20px;">
-        <div style="font-size: 30px; margin-bottom: 6px;">ℹ️</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:50%;margin-bottom:8px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
         <h3 id="helpModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">AnnaSutra — Help &amp; User Guide</h3>
         <p id="helpModalSubtitle" style="margin: 0; font-size: 13px; color: var(--text-muted);">National Agri-Produce Traceability &amp; Verification Assistance</p>
       </div>
@@ -3408,7 +3408,7 @@
         footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
         modalRoleTitle: "Entity Login",
         modalSubtitle: "Role-Confined Authentication on AnnaSutra",
-        demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
+        demoFastTitle: "1-Tap Evaluation Sign In",
         btnDemoTap: "1-Tap Sign In",
         otpOrLabel: "── OR SIGN IN WITH MOBILE OTP ──",
         phonePlaceholder: "Mobile Number (+91)",
@@ -3437,7 +3437,7 @@
         previewThDesc: "Description & Volume",
         previewThStatus: "Custody Status",
         previewActionHint: "Want to operate this console live? Click below to access the role workspace.",
-        previewSimBadge: "⚡ SIMULATED LIVE NODE",
+        previewSimBadge: "SIMULATED LIVE NODE",
         navQrBtnLabel: "Scan QR",
         portalBadgeText: "NATIONAL SOVEREIGN VALUE CHAIN",
         portalModalTitle: "Who Are You?",
@@ -3452,23 +3452,23 @@
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO / Cultivator",
         portalRoleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
-        btnPortalProducer: "Sign In as Producer ➔",
+        btnPortalProducer: "Sign In as Producer &rarr;",
         portalRoleTitleAggregator: "Aggregator",
         portalRoleSubAggregator: "Mandi Arhatiya / APMC Yard",
         portalRoleDescAggregator: "Receive consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.",
-        btnPortalAggregator: "Sign In as Aggregator ➔",
+        btnPortalAggregator: "Sign In as Aggregator &rarr;",
         portalRoleTitleWholesaler: "Wholesaler",
         portalRoleSubWholesaler: "Terminal Market / Bulk Trader",
         portalRoleDescWholesaler: "Terminal intake, split bulk lots into trading consignments, and allocate cold storage.",
-        btnPortalWholesaler: "Sign In as Wholesaler ➔",
+        btnPortalWholesaler: "Sign In as Wholesaler &rarr;",
         portalRoleTitleDistributor: "Distributor",
         portalRoleSubDistributor: "Logistics Fleet & Secondary Depot",
         portalRoleDescDistributor: "Accept transport custody, log vehicle GPS & cold-chain temperatures, and deliver to retailers.",
-        btnPortalDistributor: "Sign In as Distributor ➔",
+        btnPortalDistributor: "Sign In as Distributor &rarr;",
         portalRoleTitleRetailer: "Retailer",
         portalRoleSubRetailer: "Kirana / Supermarket / POS",
         portalRoleDescRetailer: "Inbound store receipt, generate customer shelf QR codes, and record retail checkout sales.",
-        btnPortalRetailer: "Sign In as Retailer ➔",
+        btnPortalRetailer: "Sign In as Retailer &rarr;",
         qrModalTitle: "Instant QR Code Scanner",
         qrModalSubtitle: "Point your device camera at any produce crate QR tag or upload an image.",
         btnSwitchCameraText: "Toggle Camera",
@@ -3526,7 +3526,7 @@
         footerLegalNotice: "© 2026 अन्नसूत्र • सी-डैक, इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY), भारत सरकार द्वारा विकसित एवं अनुरक्षित।",
         modalRoleTitle: "संस्थागत लॉगिन",
         modalSubtitle: "अन्नसूत्र पर भूमिका-सीमित प्रमाणीकरण",
-        demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
+        demoFastTitle: "1-टैप परीक्षण साइन इन",
         btnDemoTap: "1-टैप साइन इन करें",
         otpOrLabel: "── अथवा मोबाइल ओटीपी से साइन इन करें ──",
         phonePlaceholder: "मोबाइल नंबर (+91)",
@@ -3555,7 +3555,7 @@
         previewThDesc: "विवरण एवं मात्रा",
         previewThStatus: "कस्टडी स्थिति",
         previewActionHint: "क्या आप इस कंसोल को लाइव चलाना चाहते हैं? कार्यक्षेत्र में जाने के लिए नीचे क्लिक करें।",
-        previewSimBadge: "⚡ लाइव नोड सिमुलेशन",
+        previewSimBadge: "लाइव नोड सिमुलेशन",
         navQrBtnLabel: "क्यूआर स्कैन",
         portalBadgeText: "राष्ट्रीय संप्रभु मूल्य श्रृंखला",
         portalModalTitle: "आप कौन हैं?",
@@ -3570,23 +3570,23 @@
         portalRoleTitleProducer: "उत्पादक",
         portalRoleSubProducer: "किसान / एफपीओ / उत्पादक",
         portalRoleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
-        btnPortalProducer: "उत्पादक के रूप में साइन इन ➔",
+        btnPortalProducer: "उत्पादक के रूप में साइन इन &rarr;",
         portalRoleTitleAggregator: "संग्रहकर्ता",
         portalRoleSubAggregator: "मंडी आढ़ती / एपीएमसी यार्ड",
         portalRoleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
-        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन ➔",
+        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन &rarr;",
         portalRoleTitleWholesaler: "थोक व्यापारी",
         portalRoleSubWholesaler: "टर्मिनल बाजार / थोक व्यापारी",
         portalRoleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
-        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन ➔",
+        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन &rarr;",
         portalRoleTitleDistributor: "वितरक",
         portalRoleSubDistributor: "लॉजिस्टिक्स फ्लीट / द्वितीयक डिपो",
         portalRoleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
-        btnPortalDistributor: "वितरक के रूप में साइन इन ➔",
+        btnPortalDistributor: "वितरक के रूप में साइन इन &rarr;",
         portalRoleTitleRetailer: "खुदरा विक्रेता",
         portalRoleSubRetailer: "किराना / सुपरमार्केट / पीओएस",
         portalRoleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
-        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन ➔",
+        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन &rarr;",
         qrModalTitle: "त्वरित क्यूआर कोड स्कैनर",
         qrModalSubtitle: "क्रेट क्यूआर टैग पर अपना कैमरा केंद्रित करें अथवा चित्र अपलोड करें।",
         btnSwitchCameraText: "कैमरा बदलें",
@@ -3644,7 +3644,7 @@
         footerLegalNotice: "© ২০২৬ অন্নসূত্র • সি-ড্যাক, ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয় (MeitY), ভারত সরকার দ্বারা নির্মিত ও পরিচালিত।",
         modalRoleTitle: "সংস্থা লগইন",
         modalSubtitle: "অন্নসূত্রে ভূমিকা-সীমাবদ্ধ প্রমাণীকরণ",
-        demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",
+        demoFastTitle: "১-ট্যাপে সরাসরি প্রবেশ",
         btnDemoTap: "১-ট্যাপে সাইন ইন করুন",
         otpOrLabel: "── অথবা মোবাইল ওটিপি দিয়ে সাইন ইন করুন ──",
         phonePlaceholder: "মোবাইল নম্বর (+91)",
@@ -3673,7 +3673,7 @@
         previewThDesc: "বিবরণ ও পরিমাণ",
         previewThStatus: "হেফাজত স্থিতি",
         previewActionHint: "এই কনসোলটি সরাসরি ব্যবহার করতে চান? কার্যক্ষেত্রে প্রবেশ করতে নিচে ক্লিক করুন।",
-        previewSimBadge: "⚡ লাইভ নোড সিমুলেশন",
+        previewSimBadge: "লাইভ নোড সিমুলেশন",
         navQrBtnLabel: "কিউআর স্ক্যান",
         portalBadgeText: "জাতীয় সার্বভৌম মূল্য শৃঙ্খল",
         portalModalTitle: "আপনি কে?",
@@ -3688,23 +3688,23 @@
         portalRoleTitleProducer: "উৎপাদক",
         portalRoleSubProducer: "কৃষক / সমবায় / চাষী",
         portalRoleDescProducer: "ফসল লট নথিভুক্ত করুন, কিউআর ট্যাগ ইস্যু করুন এবং মণ্ডিতে পাঠান।",
-        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন ➔",
+        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন &rarr;",
         portalRoleTitleAggregator: "সংগ্রহকারী",
         portalRoleSubAggregator: "মণ্ডি আড়তদার / এপিএমসি ইয়ার্ড",
         portalRoleDescAggregator: "খামার থেকে পণ্য গ্রহণ, ওজন রেকর্ড ও পাইকারি বিক্রেতার নিকট প্রেরণ।",
-        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন ➔",
+        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন &rarr;",
         portalRoleTitleWholesaler: "পাইকারি বিক্রেতা",
         portalRoleSubWholesaler: "টার্মিনাল মার্কেট / পাইকারি ব্যবসায়ী",
         portalRoleDescWholesaler: "টার্মিনাল চালান গ্রহণ, লট বিভাজন ও পরিবেশকের নিকট প্রেরণ।",
-        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন ➔",
+        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন &rarr;",
         portalRoleTitleDistributor: "পরিবেশক",
         portalRoleSubDistributor: "লজিস্টিকস ফ্লিট / দ্বিতীয় ডিপো",
         portalRoleDescDistributor: "পরিবহন হেফাজত গ্রহণ, তাপমাত্রা ট্র্যাকিং ও দোকানে চালান সরবরাহ।",
-        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন ➔",
+        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন &rarr;",
         portalRoleTitleRetailer: "খুচরা বিক্রেতা",
         portalRoleSubRetailer: "মুদি দোকান / সুপারমার্কেট / পিওএস",
         portalRoleDescRetailer: "দোকানে চালান গ্রহণ, কাউন্টার কিউআর স্ট্যান্ডি ও চূড়ান্ত বিক্রয় নথিভুক্ত।",
-        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন ➔",
+        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন &rarr;",
         qrModalTitle: "তাত্ক্ষণিক কিউআর কোড স্ক্যানার",
         qrModalSubtitle: "ক্রেট কিউআর ট্যাগে আপনার ক্যামেরা রাখুন অথবা ছবি আপলোড করুন।",
         btnSwitchCameraText: "ক্যামেরা পরিবর্তন",
@@ -3720,14 +3720,14 @@
           title: 'Producer Operations Console (Farmer & FPO Cultivator)',
           org: 'Bardhaman Organic Farmers Producer Co-op (FPO-WB-0492)',
           station: 'Cluster Farm Yard #4, Bardhaman',
-          lockedBadge: '🔒 ROLE CONFINED: Operating strictly within authorized [PRODUCER] boundary.',
+          lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [PRODUCER] boundary.',
           batchHeading: 'Active Batches in Custody:',
-          executeBtn: 'Execute Action ➔',
+          executeBtn: 'Execute Action &rarr;',
           tools: [
             {
               id: 'harvestLot',
               label: 'Register New Harvest Lot',
-              icon: '🌾',
+              icon: 'sprout',
               tag: 'Farm Genesis',
               desc: 'Register crop harvest, quantity (kg), plot GPS coordinates, and generate genesis ledger hash.',
               fields: [
@@ -3740,7 +3740,7 @@
             {
               id: 'printQr',
               label: 'Issue Agmarknet Crate QR Labels',
-              icon: '🏷️',
+              icon: 'tag',
               tag: 'Serialization',
               desc: 'Print serialized tamper-evident QR code labels for harvest transport crates.',
               fields: [
@@ -3752,7 +3752,7 @@
             {
               id: 'dispatchMandi',
               label: 'Dispatch to APMC Mandi Aggregator',
-              icon: '🚚',
+              icon: 'truck',
               tag: 'Transit Gate Pass',
               desc: 'Generate electronic transit manifest and initiate mutual custody transfer to Mandi Arhatiya.',
               fields: [
@@ -3764,7 +3764,7 @@
             {
               id: 'soilTest',
               label: 'Pre-Harvest Soil & Quality Attestation',
-              icon: '🧪',
+              icon: 'flask',
               tag: 'Quality Pre-Check',
               desc: 'Log field moisture %, organic clearance certificate, and soil test sensor readings.',
               fields: [
@@ -3776,7 +3776,7 @@
             {
               id: 'dpdpConsent',
               label: 'DPDP Farmer Consent Registry',
-              icon: '📜',
+              icon: 'file-text',
               tag: 'DPDP 2023 Compliant',
               desc: 'Record farmer explicit data privacy consent protecting sensitive coordinates and pricing.',
               fields: [
@@ -3788,7 +3788,7 @@
             {
               id: 'yieldAnalytics',
               label: 'Harvest Yield & Mass-Balance Ledger',
-              icon: '📊',
+              icon: 'chart',
               tag: 'Ledger Audit',
               desc: 'Audit season mass-balance records, farm inventory balances, and immutable trigger logs.',
               fields: [
@@ -3808,14 +3808,14 @@
           title: 'Aggregator Mandi Console (APMC Yard & Mandi Arhatiya)',
           org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
           station: 'Gate #2 Weighment & Grading Complex',
-          lockedBadge: '🔒 ROLE CONFINED: Operating strictly within authorized [AGGREGATOR] boundary.',
+          lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [AGGREGATOR] boundary.',
           batchHeading: 'Active Consignments in Custody:',
-          executeBtn: 'Execute Action ➔',
+          executeBtn: 'Execute Action &rarr;',
           tools: [
             {
               id: 'acceptHandover',
               label: 'Accept Producer Handover',
-              icon: '📥',
+              icon: 'inbox',
               tag: 'Mandi Inward',
               desc: 'Scan farmer crate QR code, verify vehicle gate pass and sign mutual custody receipt.',
               fields: [
@@ -3827,7 +3827,7 @@
             {
               id: 'weighbridge',
               label: 'Digital Weighbridge Attestation',
-              icon: '⚖️',
+              icon: 'scale',
               tag: 'Certified Weight',
               desc: 'Capture unalterable weighbridge gross, tare, and net weights with certified timestamp.',
               fields: [
@@ -3840,7 +3840,7 @@
             {
               id: 'gradeInspection',
               label: 'Agmarknet Quality Grading',
-              icon: '🔬',
+              icon: 'microscope',
               tag: 'Grade Certificate',
               desc: 'Conduct physical examination and issue Agmarknet Grade A, B, or C quality certificate.',
               fields: [
@@ -3852,7 +3852,7 @@
             {
               id: 'lotSplit',
               label: 'Consignment Splitting & Merge',
-              icon: '✂️',
+              icon: 'scissors',
               tag: 'Mass-Balance DAG',
               desc: 'Subdivide bulk farmer consignments into commercial auction lots preserving cryptographic parent links.',
               fields: [
@@ -3864,7 +3864,7 @@
             {
               id: 'mandiAuction',
               label: 'APMC Mandi Auction Record',
-              icon: '🔨',
+              icon: 'gavel',
               tag: 'Price Discovery',
               desc: 'Log open auction clearing price (₹/Quintal), winning trader bidder, and mandi cess attestation.',
               fields: [
@@ -3876,7 +3876,7 @@
             {
               id: 'gatePass',
               label: 'Issue e-NAM Electronic Gate Pass',
-              icon: '🎫',
+              icon: 'ticket',
               tag: 'e-NAM Exit Pass',
               desc: 'Generate serialized gate pass QR for dispatch from APMC yard to wholesale market.',
               fields: [
@@ -3896,14 +3896,14 @@
           title: 'Wholesaler Terminal Console (Posta Market & Cold Storage)',
           org: 'Kolkata Central Wholesalers Ltd (Posta Market)',
           station: 'Posta Terminal Complex, Kolkata',
-          lockedBadge: '🔒 ROLE CONFINED: Operating strictly within authorized [WHOLESALER] boundary.',
+          lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [WHOLESALER] boundary.',
           batchHeading: 'Active Terminal Inventories:',
-          executeBtn: 'Execute Action ➔',
+          executeBtn: 'Execute Action &rarr;',
           tools: [
             {
               id: 'terminalInward',
               label: 'Terminal Market Inward Receipt',
-              icon: '📦',
+              icon: 'box',
               tag: 'Terminal Inward',
               desc: 'Scan Mandi gate pass QR, verify signatures, and log warehouse intake.',
               fields: [
@@ -3915,7 +3915,7 @@
             {
               id: 'coldStorage',
               label: 'Cold Storage Bay Allocation',
-              icon: '❄️',
+              icon: 'snowflake',
               tag: 'Temp Preservation',
               desc: 'Allocate cold storage bay, pallet slot, and target temperature for perishables.',
               fields: [
@@ -3927,7 +3927,7 @@
             {
               id: 'iotLogger',
               label: 'IoT Temperature & Sensor Log',
-              icon: '🌡️',
+              icon: 'thermometer',
               tag: 'Cold-Chain Audit',
               desc: 'Commit telemetry data (temp, humidity) directly into append-only ledger.',
               fields: [
@@ -3939,7 +3939,7 @@
             {
               id: 'palletSplit',
               label: 'Bulk Pallet Repack & Splitting',
-              icon: '📦',
+              icon: 'box',
               tag: 'Logistics Pallet',
               desc: 'Repack bulk lots into delivery pallets for regional distributors.',
               fields: [
@@ -3951,7 +3951,7 @@
             {
               id: 'invoiceAttest',
               label: 'Commercial Invoice Attestation',
-              icon: '📑',
+              icon: 'file-text',
               tag: 'GST Invoice',
               desc: 'Cryptographically anchor B2B GST tax invoice and e-way bill reference.',
               fields: [
@@ -3963,7 +3963,7 @@
             {
               id: 'dispatchLogistics',
               label: 'Dispatch to Logistics Fleet',
-              icon: '🚚',
+              icon: 'truck',
               tag: 'Fleet Handover',
               desc: 'Hand over sealed consignments to refrigerated transport fleet.',
               fields: [
@@ -3983,14 +3983,14 @@
           title: 'Distributor Logistics Console (Cold-Chain Fleet & Depots)',
           org: 'Bengal Cold-Chain Express Logistics (WB-LOG-004)',
           station: 'Central Transit Depot, New Town, Kolkata',
-          lockedBadge: '🔒 ROLE CONFINED: Operating strictly within authorized [DISTRIBUTOR] boundary.',
+          lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [DISTRIBUTOR] boundary.',
           batchHeading: 'Active Transit Consignments:',
-          executeBtn: 'Execute Action ➔',
+          executeBtn: 'Execute Action &rarr;',
           tools: [
             {
               id: 'acceptLogistics',
               label: 'Accept Transport Custody',
-              icon: '🚛',
+              icon: 'reefer',
               tag: 'Fleet Inward',
               desc: 'Dual-sign custody handover upon loading produce into reefer truck.',
               fields: [
@@ -4002,7 +4002,7 @@
             {
               id: 'gpsTelemetry',
               label: 'Vehicle Fleet GPS & Route Checkpoint',
-              icon: '📍',
+              icon: 'map-pin',
               tag: 'Live Route',
               desc: 'Record real-time highway checkpoints and geofence events.',
               fields: [
@@ -4014,7 +4014,7 @@
             {
               id: 'coldChainLog',
               label: 'In-Transit Cold-Chain Telemetry',
-              icon: '❄️',
+              icon: 'snowflake',
               tag: 'Thermal Audit',
               desc: 'Log continuous in-transit temperature to prove unbroken chain.',
               fields: [
@@ -4026,7 +4026,7 @@
             {
               id: 'routeRealloc',
               label: 'Regional Depot Route Re-allocation',
-              icon: '🔀',
+              icon: 'shuffle',
               tag: 'Last-Mile Route',
               desc: 'Break down trunk container at secondary depot into local vans.',
               fields: [
@@ -4038,7 +4038,7 @@
             {
               id: 'incidentLog',
               label: 'Transit Delay & Spoilage Log',
-              icon: '⚠️',
+              icon: 'alert',
               tag: 'Exception Log',
               desc: 'Record highway incident, traffic delay, or thermal excursion.',
               fields: [
@@ -4050,7 +4050,7 @@
             {
               id: 'retailDelivery',
               label: 'Retail Store Delivery Sign-Off',
-              icon: '🏪',
+              icon: 'store',
               tag: 'Store Dropoff',
               desc: 'Perform dual-signature delivery handover to retail store manager.',
               fields: [
@@ -4070,14 +4070,14 @@
           title: 'Retailer Point-of-Sale Console (Supermarket & Kirana)',
           org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
           station: 'Main Store Produce Aisle, Lake Gardens, Kolkata',
-          lockedBadge: '🔒 ROLE CONFINED: Operating strictly within authorized [RETAILER] boundary.',
+          lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [RETAILER] boundary.',
           batchHeading: 'Active Shelf Batches on Sale:',
-          executeBtn: 'Execute Action ➔',
+          executeBtn: 'Execute Action &rarr;',
           tools: [
             {
               id: 'storeReceipt',
               label: 'Store Inbound Receipt Sign-Off',
-              icon: '🛒',
+              icon: 'cart',
               tag: 'Retail Inward',
               desc: 'Scan van QR, inspect crates, and accept produce into retail inventory.',
               fields: [
@@ -4089,7 +4089,7 @@
             {
               id: 'shelfQr',
               label: 'Print Consumer Shelf QR Standee',
-              icon: '🖨️',
+              icon: 'printer',
               tag: 'Consumer Trace',
               desc: 'Print customer-facing QR cards and price standees enabling consumer smartphone verification.',
               fields: [
@@ -4101,7 +4101,7 @@
             {
               id: 'posSale',
               label: 'Record Point-of-Sale (POS) Sale',
-              icon: '🧾',
+              icon: 'receipt',
               tag: 'POS Checkout',
               desc: 'Log consumer purchase transaction, deducting quantity from shelf ledger.',
               fields: [
@@ -4113,7 +4113,7 @@
             {
               id: 'wasteDeficit',
               label: 'Record Shelf Waste & Spoilage',
-              icon: '🗑️',
+              icon: 'trash',
               tag: 'Deficit Ledger',
               desc: 'Log damaged, unsaleable, or discarded produce with automatic ledger inventory write-off.',
               fields: [
@@ -4125,7 +4125,7 @@
             {
               id: 'packageAudit',
               label: 'Scan & Verify Shelf Authenticity',
-              icon: '📱',
+              icon: 'phone',
               tag: 'Provenance Audit',
               desc: 'Audit packages on the retail floor to display full farm-to-shelf cryptographic timeline.',
               fields: [
@@ -4137,7 +4137,7 @@
             {
               id: 'recallFeedback',
               label: 'Consumer Feedback & Recall Log',
-              icon: '⭐',
+              icon: 'star',
               tag: 'Customer Trust',
               desc: 'Capture consumer quality feedback ratings and process instant batch safety recall notice.',
               fields: [
@@ -4159,14 +4159,14 @@
           title: 'उत्पादक संचालन कंसोल (किसान एवं एफपीओ)',
           org: 'बर्धमान ऑर्गेनिक फार्मर्स प्रोड्यूसर को-ऑप (FPO-WB-0492)',
           station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
-          lockedBadge: '🔒 भूमिका-सीमित: केवल अधिकृत [PRODUCER] कार्यक्षेत्र में संचालन।',
+          lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [PRODUCER] कार्यक्षेत्र में संचालन।',
           batchHeading: 'कस्टडी में सक्रिय बैच:',
-          executeBtn: 'कार्य निष्पादित करें ➔',
+          executeBtn: 'कार्य निष्पादित करें &rarr;',
           tools: [
             {
               id: 'harvestLot',
               label: 'नई फसल लॉट पंजीकृत करें',
-              icon: '🌾',
+              icon: 'sprout',
               tag: 'खेत उत्पत्ति',
               desc: 'फसल उपज, मात्रा (किग्रा), खेत जीपीएस निर्देशांक दर्ज करें और जेनेसिस लेज़र हैश उत्पन्न करें।',
               fields: [
@@ -4179,7 +4179,7 @@
             {
               id: 'printQr',
               label: 'एगमार्कनेट क्रेट क्यूआर लेबल जारी करें',
-              icon: '🏷️',
+              icon: 'tag',
               tag: 'क्रमांकन',
               desc: 'परिवहन क्रेटों के लिए सुरक्षित क्यूआर कोड लेबल प्रिंट करें।',
               fields: [
@@ -4191,7 +4191,7 @@
             {
               id: 'dispatchMandi',
               label: 'एपीएमसी मंडी संग्रहकर्ता को प्रेषित करें',
-              icon: '🚚',
+              icon: 'truck',
               tag: 'पारगमन गेट पास',
               desc: 'इलेक्ट्रॉनिक पारगमन घोषणापत्र बनाएं और मंडी आढ़ती को कस्टडी हस्तांतरण शुरू करें।',
               fields: [
@@ -4203,7 +4203,7 @@
             {
               id: 'soilTest',
               label: 'फसल-पूर्व मृदा एवं गुणवत्ता प्रमाणन',
-              icon: '🧪',
+              icon: 'flask',
               tag: 'गुणवत्ता पूर्व-जांच',
               desc: 'खेत की नमी %, जैविक प्रमाण पत्र और मृदा परीक्षण सेंसर रीडिंग दर्ज करें।',
               fields: [
@@ -4215,7 +4215,7 @@
             {
               id: 'dpdpConsent',
               label: 'डीपीडीपी किसान सहमति रजिस्ट्री',
-              icon: '📜',
+              icon: 'file-text',
               tag: 'डीपीडीपी 2023 अनुपालन',
               desc: 'संवेदनशील जीपीएस और मूल्य को सुरक्षित रखते हुए किसान की डेटा गोपनीयता सहमति दर्ज करें।',
               fields: [
@@ -4227,7 +4227,7 @@
             {
               id: 'yieldAnalytics',
               label: 'उपज एवं द्रव्यमान-संतुलन लेज़र',
-              icon: '📊',
+              icon: 'chart',
               tag: 'लेज़र ऑडिट',
               desc: 'मौसमी द्रव्यमान-संतुलन, फार्म इन्वेंटरी और अपरिवर्तनीय डेटाबेस ट्रिगर्स का ऑडिट करें।',
               fields: [
@@ -4247,14 +4247,14 @@
           title: 'संग्रहकर्ता मंडी कंसोल (एपीएमसी यार्ड व मंडी आढ़ती)',
           org: 'हुगली एपीएमसी संग्रह यार्ड (MANDI-WB-012)',
           station: 'गेट #2 वजन एवं ग्रेडिंग परिसर',
-          lockedBadge: '🔒 भूमिका-सीमित: केवल अधिकृत [AGGREGATOR] कार्यक्षेत्र में संचालन।',
+          lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [AGGREGATOR] कार्यक्षेत्र में संचालन।',
           batchHeading: 'कस्टडी में सक्रिय आवक लॉट:',
-          executeBtn: 'कार्य निष्पादित करें ➔',
+          executeBtn: 'कार्य निष्पादित करें &rarr;',
           tools: [
             {
               id: 'acceptHandover',
               label: 'उत्पादक आवक स्वीकार करें',
-              icon: '📥',
+              icon: 'inbox',
               tag: 'मंडी आवक',
               desc: 'किसान क्रेट क्यूआर स्कैन करें, वाहन गेट पास सत्यापित करें और कस्टडी रसीद पर हस्ताक्षर करें।',
               fields: [
@@ -4266,7 +4266,7 @@
             {
               id: 'weighbridge',
               label: 'डिजिटल वेज-ब्रिज वजन प्रमाणन',
-              icon: '⚖️',
+              icon: 'scale',
               tag: 'प्रमाणित भार',
               desc: 'प्रमाणित टाइमस्टैम्प के साथ सकल, खाली और शुद्ध वजन दर्ज करें।',
               fields: [
@@ -4279,7 +4279,7 @@
             {
               id: 'gradeInspection',
               label: 'एगमार्कनेट गुणवत्ता ग्रेडिंग',
-              icon: '🔬',
+              icon: 'microscope',
               tag: 'ग्रेड प्रमाणपत्र',
               desc: 'भौतिक परीक्षण करें और एगमार्कनेट ग्रेड ए, बी या सी प्रमाणपत्र जारी करें।',
               fields: [
@@ -4291,7 +4291,7 @@
             {
               id: 'lotSplit',
               label: 'खेप विभाजन एवं विलय',
-              icon: '✂️',
+              icon: 'scissors',
               tag: 'द्रव्यमान-संतुलन डीएजी',
               desc: 'मूल लॉट लिंक सुरक्षित रखते हुए नीलामी के लिए खेप को उप-लॉट्स में विभाजित करें।',
               fields: [
@@ -4303,7 +4303,7 @@
             {
               id: 'mandiAuction',
               label: 'एपीएमसी मंडी नीलामी रिकॉर्ड',
-              icon: '🔨',
+              icon: 'gavel',
               tag: 'मूल्य खोज',
               desc: 'खुली नीलामी दर (₹/क्विंटल), विजेता बोलीदाता और मंडी उपकर दर्ज करें।',
               fields: [
@@ -4315,7 +4315,7 @@
             {
               id: 'gatePass',
               label: 'ई-नाम इलेक्ट्रॉनिक गेट पास जारी करें',
-              icon: '🎫',
+              icon: 'ticket',
               tag: 'ई-नाम निकास पास',
               desc: 'एपीएमसी से थोक बाजार प्रेषण के लिए क्यूआर इलेक्ट्रॉनिक निकास पास बनाएं।',
               fields: [
@@ -4335,14 +4335,14 @@
           title: 'थोक व्यापारी टर्मिनल कंसोल (पोस्ता बाजार व शीत गृह)',
           org: 'कोलकाता सेंट्रल होलसेलर्स लि. (पोस्ता बाजार)',
           station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
-          lockedBadge: '🔒 भूमिका-सीमित: केवल अधिकृत [WHOLESALER] कार्यक्षेत्र में संचालन।',
+          lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [WHOLESALER] कार्यक्षेत्र में संचालन।',
           batchHeading: 'सक्रिय टर्मिनल इन्वेंटरी:',
-          executeBtn: 'कार्य निष्पादित करें ➔',
+          executeBtn: 'कार्य निष्पादित करें &rarr;',
           tools: [
             {
               id: 'terminalInward',
               label: 'टर्मिनल बाजार आवक रसीद',
-              icon: '📦',
+              icon: 'box',
               tag: 'टर्मिनल आवक',
               desc: 'मंडी गेट पास क्यूआर स्कैन करें, हस्ताक्षर सत्यापित करें और आवक दर्ज करें।',
               fields: [
@@ -4354,7 +4354,7 @@
             {
               id: 'coldStorage',
               label: 'शीत गृह कक्ष आवंटन',
-              icon: '❄️',
+              icon: 'snowflake',
               tag: 'तापमान संरक्षण',
               desc: 'कोल्ड स्टोरेज कक्ष, पैलेट स्लॉट और निर्धारित तापमान आवंटित करें।',
               fields: [
@@ -4366,7 +4366,7 @@
             {
               id: 'iotLogger',
               label: 'आईओटी तापमान एवं सेंसर लॉग',
-              icon: '🌡️',
+              icon: 'thermometer',
               tag: 'कोल्ड-चेन ऑडिट',
               desc: 'लाइव तापमान और आर्द्रता टेलीमेट्री डेटा को लेज़र में दर्ज करें।',
               fields: [
@@ -4378,7 +4378,7 @@
             {
               id: 'palletSplit',
               label: 'पैलेट रीपैक एवं विभाजन',
-              icon: '📦',
+              icon: 'box',
               tag: 'लॉजिस्टिक्स पैलेट',
               desc: 'वितरकों और खुदरा आपूर्ति के लिए व्यावसायिक पैलेट में विभाजित करें।',
               fields: [
@@ -4390,7 +4390,7 @@
             {
               id: 'invoiceAttest',
               label: 'वाणिज्यिक चालान एवं कर प्रमाणन',
-              icon: '📑',
+              icon: 'file-text',
               tag: 'जीएसटी चालान',
               desc: 'टैक्स इनवॉइस, ई-वे बिल और क्रेता विवरण को लेज़र से जोड़ें।',
               fields: [
@@ -4402,7 +4402,7 @@
             {
               id: 'dispatchLogistics',
               label: 'लॉजिस्टिक्स फ्लीट को प्रेषित करें',
-              icon: '🚚',
+              icon: 'truck',
               tag: 'फ्लीट हैंडओवर',
               desc: 'तापमान-नियंत्रित परिवहन फ्लीट को सीलबंद खेप सौंपें।',
               fields: [
@@ -4422,14 +4422,14 @@
           title: 'वितरक लॉजिस्टिक्स कंसोल (कोल्ड-चेन फ्लीट एवं डिपो)',
           org: 'बंगाल कोल्ड-चेन एक्सप्रेस लॉजिस्टिक्स (WB-LOG-004)',
           station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
-          lockedBadge: '🔒 भूमिका-सीमित: केवल अधिकृत [DISTRIBUTOR] कार्यक्षेत्र में संचालन।',
+          lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [DISTRIBUTOR] कार्यक्षेत्र में संचालन।',
           batchHeading: 'पारगमन में सक्रिय खेप:',
-          executeBtn: 'कार्य निष्पादित करें ➔',
+          executeBtn: 'कार्य निष्पादित करें &rarr;',
           tools: [
             {
               id: 'acceptLogistics',
               label: 'परिवहन कस्टडी स्वीकार करें',
-              icon: '🚛',
+              icon: 'reefer',
               tag: 'फ्लीट आवक',
               desc: 'रेफ्रिजरेटेड ट्रक में माल लोड करते समय दोहरे हस्ताक्षर से कस्टडी लें।',
               fields: [
@@ -4441,7 +4441,7 @@
             {
               id: 'gpsTelemetry',
               label: 'वाहन बेड़ा जीपीएस एवं चेकपॉइंट',
-              icon: '📍',
+              icon: 'map-pin',
               tag: 'लाइव मार्ग',
               desc: 'राजमार्ग चेकपॉइंट और जियोफेंस घटनाओं को रिकॉर्ड करें।',
               fields: [
@@ -4453,7 +4453,7 @@
             {
               id: 'coldChainLog',
               label: 'इन-ट्रांजिट कोल्ड-चेन टेलीमेट्री',
-              icon: '❄️',
+              icon: 'snowflake',
               tag: 'थर्मल ऑडिट',
               desc: 'निर्बाध कोल्ड-चेन साबित करने के लिए निरंतर तापमान दर्ज करें।',
               fields: [
@@ -4465,7 +4465,7 @@
             {
               id: 'routeRealloc',
               label: 'क्षेत्रीय डिपो मार्ग पुनरावंटन',
-              icon: '🔀',
+              icon: 'shuffle',
               tag: 'अंतिम-मील मार्ग',
               desc: 'द्वितीयक डिपो में कंटेनर से स्थानीय डिलीवरी वैनों में माल बांटें।',
               fields: [
@@ -4477,7 +4477,7 @@
             {
               id: 'incidentLog',
               label: 'पारगमन विलंब एवं क्षति लॉग',
-              icon: '⚠️',
+              icon: 'alert',
               tag: 'अपवाद लॉग',
               desc: 'यातायात विलंब, दुर्घटना या तापमान विचलन के नुकसान को दर्ज करें।',
               fields: [
@@ -4489,7 +4489,7 @@
             {
               id: 'retailDelivery',
               label: 'खुदरा स्टोर डिलीवरी हस्ताक्षर',
-              icon: '🏪',
+              icon: 'store',
               tag: 'स्टोर सुपुर्दगी',
               desc: 'स्टोर प्रबंधक की उपस्थिति में दोहरे हस्ताक्षर से सुपुर्दगी करें।',
               fields: [
@@ -4509,14 +4509,14 @@
           title: 'खुदरा विक्रेता बिक्री केंद्र कंसोल (सुपरमार्केट व किराना)',
           org: 'मां दुर्गा रिटेल फ्रेश मार्ट (कोलकाता आउटलेट #4)',
           station: 'मुख्य सब्जी अनुभाग, लेक गार्डन्स, कोलकाता',
-          lockedBadge: '🔒 भूमिका-सीमित: केवल अधिकृत [RETAILER] कार्यक्षेत्र में संचालन।',
+          lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [RETAILER] कार्यक्षेत्र में संचालन।',
           batchHeading: 'शेल्फ पर सक्रिय बिक्री लॉट:',
-          executeBtn: 'कार्य निष्पादित करें ➔',
+          executeBtn: 'कार्य निष्पादित करें &rarr;',
           tools: [
             {
               id: 'storeReceipt',
               label: 'स्टोर आवक रसीद हस्ताक्षर',
-              icon: '🛒',
+              icon: 'cart',
               tag: 'खुदरा आवक',
               desc: 'वैन क्यूआर स्कैन करें, क्रेट जांचें और स्टोर इन्वेंटरी में स्वीकार करें।',
               fields: [
@@ -4528,7 +4528,7 @@
             {
               id: 'shelfQr',
               label: 'उपभोक्ता शेल्फ क्यूआर स्टैंडी प्रिंट करें',
-              icon: '🖨️',
+              icon: 'printer',
               tag: 'उपभोक्ता ट्रेस',
               desc: 'ग्राहकों के स्मार्टफोन से सत्यापन हेतु शेल्फ क्यूआर कार्ड प्रिंट करें।',
               fields: [
@@ -4540,7 +4540,7 @@
             {
               id: 'posSale',
               label: 'पॉइंट-ऑफ-सेल (पीओएस) बिक्री दर्ज करें',
-              icon: '🧾',
+              icon: 'receipt',
               tag: 'पीओएस चेकआउट',
               desc: 'ग्राहक की खरीद दर्ज करें और शेल्फ इन्वेंटरी से मात्रा घटाएं।',
               fields: [
@@ -4552,7 +4552,7 @@
             {
               id: 'wasteDeficit',
               label: 'शेल्फ अपशिष्ट एवं खराबी दर्ज करें',
-              icon: '🗑️',
+              icon: 'trash',
               tag: 'घाटा लेज़र',
               desc: 'क्षतिग्रस्त या खराब उत्पाद को लेज़र से हटाकर इन्वेंटरी बट्टे खाते डालें।',
               fields: [
@@ -4564,7 +4564,7 @@
             {
               id: 'packageAudit',
               label: 'शेल्फ प्रामाणिकता स्कैन एवं सत्यापित करें',
-              icon: '📱',
+              icon: 'phone',
               tag: 'स्रोत ऑडिट',
               desc: 'खेत से शेल्फ तक 100% निर्बाध क्रिप्टोग्राफ़िक श्रृंखला की पुष्टि करें।',
               fields: [
@@ -4576,7 +4576,7 @@
             {
               id: 'recallFeedback',
               label: 'उपभोक्ता प्रतिक्रिया एवं रिकॉल लॉग',
-              icon: '⭐',
+              icon: 'star',
               tag: 'ग्राहक विश्वास',
               desc: 'उपभोक्ता संतुष्टि रेटिंग दर्ज करें और आवश्यकता पड़ने पर तत्काल रिकॉल जारी करें।',
               fields: [
@@ -4598,14 +4598,14 @@
           title: 'উৎপাদক পরিচালনা কনসোল (কৃষক ও সমবায় চাষী)',
           org: 'বর্ধমান অর্গানিক ফারমার্স প্রডিউসার কো-অপ (FPO-WB-0492)',
           station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
-          lockedBadge: '🔒 ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [PRODUCER] সীমার মধ্যে কার্যকর।',
+          lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [PRODUCER] সীমার মধ্যে কার্যকর।',
           batchHeading: 'হেফাজতে থাকা সক্রিয় ব্যাচসমূহ:',
-          executeBtn: 'কার্য সম্পাদন করুন ➔',
+          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
           tools: [
             {
               id: 'harvestLot',
               label: 'নতুন ফসল লট নিবন্ধন করুন',
-              icon: '🌾',
+              icon: 'sprout',
               tag: 'খামার প্রারম্ভ',
               desc: 'ফসলের ফলন, পরিমাণ (কেজি), জমির জিপিএস স্থানাঙ্ক নিবন্ধন করুন এবং প্রারম্ভিক লেজার হ্যাশ তৈরি করুন।',
               fields: [
@@ -4618,7 +4618,7 @@
             {
               id: 'printQr',
               label: 'অ্যাগমার্কনেট ক্রেট কিউআর লেবেল ইস্যু করুন',
-              icon: '🏷️',
+              icon: 'tag',
               tag: 'সিরিয়ালাইজেশন',
               desc: 'ফসল পরিবহন ক্রেটের জন্য সুরক্ষিত কিউআর কোড লেবেল প্রিন্ট করুন।',
               fields: [
@@ -4630,7 +4630,7 @@
             {
               id: 'dispatchMandi',
               label: 'এপিএমসি মণ্ডি সংগ্রহকারীকে প্রেরণ করুন',
-              icon: '🚚',
+              icon: 'truck',
               tag: 'ট্রানজিট গেট পাস',
               desc: 'ইলেকট্রনিক ট্রানজিট মেনিফেস্ট তৈরি করুন এবং মণ্ডি আড়তদারের নিকট দ্বিপাক্ষিক ডিজিটাল হেফাজত হস্তান্তর শুরু করুন।',
               fields: [
@@ -4642,7 +4642,7 @@
             {
               id: 'soilTest',
               label: 'ফসল পূর্ব মাটি ও গুণমান প্রত্যায়ন',
-              icon: '🧪',
+              icon: 'flask',
               tag: 'গুণমান প্রাক-যাচাই',
               desc: 'মাটির আর্দ্রতা %, জৈব ছাড়পত্র সার্টিফিকেট এবং মাটির সেন্সর রিডিং লেজারে যুক্ত করুন।',
               fields: [
@@ -4654,7 +4654,7 @@
             {
               id: 'dpdpConsent',
               label: 'ডিপিডিপি কৃষক সম্মতি রেজিস্ট্রি',
-              icon: '📜',
+              icon: 'file-text',
               tag: 'ডিপিডিপি ২০২৩ সম্মত',
               desc: 'সংবেদনশীল জিপিএস স্থানাঙ্ক এবং দাম গোপন রেখে কৃষকের স্পষ্ট তথ্য গোপনীয়তা সম্মতি রেকর্ড করুন।',
               fields: [
@@ -4666,7 +4666,7 @@
             {
               id: 'yieldAnalytics',
               label: 'ফসলের ফলন ও ভর-ভারসাম্য লেজার',
-              icon: '📊',
+              icon: 'chart',
               tag: 'লেজার অডিট',
               desc: 'মৌসুমী ভর-ভারসাম্য রেকর্ড, খামারের মজুদ স্টক এবং অপরিবর্তনীয় ডাটাবেস ট্রিগার অডিট করুন।',
               fields: [
@@ -4686,14 +4686,14 @@
           title: 'সংগ্রহকারী মণ্ডি কনসোল (এপিএমসি ইয়ার্ড ও মণ্ডি আড়তদার)',
           org: 'হুগলী এপিএমসি সংগ্রহ ইয়ার্ড (MANDI-WB-012)',
           station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
-          lockedBadge: '🔒 ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [AGGREGATOR] সীমার মধ্যে কার্যকর।',
+          lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [AGGREGATOR] সীমার মধ্যে কার্যকর।',
           batchHeading: 'হেফাজতে থাকা সক্রিয় চালান:',
-          executeBtn: 'কার্য সম্পাদন করুন ➔',
+          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
           tools: [
             {
               id: 'acceptHandover',
               label: 'উৎপাদকের হস্তান্তর গ্রহণ করুন',
-              icon: '📥',
+              icon: 'inbox',
               tag: 'মণ্ডি ইনওয়ার্ড',
               desc: 'কৃষকের ক্রেট কিউআর কোড স্ক্যান করুন, গাড়ির গেট পাস যাচাই করুন এবং দ্বিপাক্ষিক হেফাজত রসিদে স্বাক্ষর করুন।',
               fields: [
@@ -4705,7 +4705,7 @@
             {
               id: 'weighbridge',
               label: 'ডিজিটাল ওয়েব্রিজ ওজন প্রত্যায়ন',
-              icon: '⚖️',
+              icon: 'scale',
               tag: 'প্রত্যয়িত ওজন',
               desc: 'প্রত্যয়িত টাইমস্ট্যাম্প সহ ওয়েব্রিজের মোট ওজন, গাড়ির ওজন এবং খাঁটি নেট ওজন রেকর্ড করুন।',
               fields: [
@@ -4718,7 +4718,7 @@
             {
               id: 'gradeInspection',
               label: 'অ্যাগমার্কনেট গুণমান গ্রেডিং',
-              icon: '🔬',
+              icon: 'microscope',
               tag: 'গ্রেড সার্টিফিকেট',
               desc: 'শারীরিক পরীক্ষা সম্পন্ন করে অ্যাগমার্কনেট গ্রেড এ, বি, অথবা সি গুণমান সার্টিফিকেট ইস্যু করুন।',
               fields: [
@@ -4730,7 +4730,7 @@
             {
               id: 'lotSplit',
               label: 'চালান বিভাজন ও একত্রীকরণ',
-              icon: '✂️',
+              icon: 'scissors',
               tag: 'ভর-ভারসাম্য ডিএজি',
               desc: 'ক্রিপ্টোগ্রাফিক অভিভাবক লিঙ্ক বজায় রেখে পাইকারি নিলামের জন্য কৃষকের চালানকে উপ-লটে বিভক্ত করুন।',
               fields: [
@@ -4742,7 +4742,7 @@
             {
               id: 'mandiAuction',
               label: 'এপিএমসি মণ্ডি নিলাম নথি',
-              icon: '🔨',
+              icon: 'gavel',
               tag: 'দর আবিষ্কার',
               desc: 'মুক্ত নিলাম নিষ্পত্তির দর (টাকা/কুইন্টাল), বিজয়ী পাইকারি ক্রেতা এবং মণ্ডি সেস লেজারে যুক্ত করুন।',
               fields: [
@@ -4754,7 +4754,7 @@
             {
               id: 'gatePass',
               label: 'ই-নাম ইলেকট্রনিক গেট পাস ইস্যু করুন',
-              icon: '🎫',
+              icon: 'ticket',
               tag: 'ই-নাম বহির্গমন পাস',
               desc: 'মণ্ডি থেকে পাইকারি বাজারে প্রেরণের জন্য কিউআর ইলেকট্রনিক বহির্গমন পাস তৈরি করুন।',
               fields: [
@@ -4774,14 +4774,14 @@
           title: 'পাইকারি টার্মিনাল কনসোল (পোস্তা বাজার ও হিমাগার)',
           org: 'কলকাতা সেন্ট্রাল হোলসেলার্স প্রাঃ লিঃ (পোস্তা মার্কেট)',
           station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
-          lockedBadge: '🔒 ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [WHOLESALER] সীমার মধ্যে কার্যকর।',
+          lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [WHOLESALER] সীমার মধ্যে কার্যকর।',
           batchHeading: 'সক্রিয় টার্মিনাল ইনভেন্টরি:',
-          executeBtn: 'কার্য সম্পাদন করুন ➔',
+          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
           tools: [
             {
               id: 'terminalInward',
               label: 'টার্মিনাল মার্কেট চালান গ্রহণ',
-              icon: '📦',
+              icon: 'box',
               tag: 'টার্মিনাল ইনওয়ার্ড',
               desc: 'মণ্ডির গেট পাস কিউআর স্ক্যান করুন, ক্রিপ্টোগ্রাফিক স্বাক্ষর মিলিয়ে নিন এবং চালান গ্রহণ নিশ্চিত করুন।',
               fields: [
@@ -4793,7 +4793,7 @@
             {
               id: 'coldStorage',
               label: 'হিমাগার চেম্বার বরাদ্দ',
-              icon: '❄️',
+              icon: 'snowflake',
               tag: 'তাপমাত্রা সংরক্ষণ',
               desc: 'পচনশীল পণ্যের জন্য কোল্ড স্টোরেজ চেম্বার, প্যালেট স্লট এবং অনুকূল তাপমাত্রা বরাদ্দ করুন।',
               fields: [
@@ -4805,7 +4805,7 @@
             {
               id: 'iotLogger',
               label: 'আইওটি তাপমাত্রা ও আর্দ্রতা সেন্সর লগ',
-              icon: '🌡️',
+              icon: 'thermometer',
               tag: 'কোল্ড-চেন অডিট',
               desc: 'ব্লকচেইন লেজারে লাইভ আইওটি কোল্ড চেইন সেন্সর টেলিমেট্রি ডাটা রেকর্ড করুন।',
               fields: [
@@ -4817,7 +4817,7 @@
             {
               id: 'palletSplit',
               label: 'বাণিজ্যিক প্যালেট বিভাজন ও প্যাকিং',
-              icon: '📦',
+              icon: 'box',
               tag: 'লজিস্টিকস প্যালেট',
               desc: 'পরিবেশক ও শহরতলির খুচরা বাজারে সরবরাহের জন্য বাণিজ্যিক প্যালেটে পণ্য ভাগ করুন।',
               fields: [
@@ -4829,7 +4829,7 @@
             {
               id: 'invoiceAttest',
               label: 'বাণিজ্যিক চালান ও কর প্রত্যায়ন',
-              icon: '📑',
+              icon: 'file-text',
               tag: 'জিএসটি চালান',
               desc: 'ট্যাক্স চালান, ই-ওয়ে বিল এবং ক্রেতার বিস্তারিত লেজারে ক্রিপ্টোগ্রাফিকভাবে সংযুক্ত করুন।',
               fields: [
@@ -4841,7 +4841,7 @@
             {
               id: 'dispatchLogistics',
               label: 'লজিস্টিকস ফ্লিটে চালান সমর্পণ',
-              icon: '🚚',
+              icon: 'truck',
               tag: 'ফ্লিট হ্যান্ডওভার',
               desc: 'শহরের ভেতরে বিভিন্ন দোকানে পৌঁছানোর জন্য তাপমাত্রা নিয়ন্ত্রিত পরিবহন ফ্লিটের নিকট হস্তান্তর করুন।',
               fields: [
@@ -4861,14 +4861,14 @@
           title: 'পরিবেশক লজিস্টিকস কনসোল (শীতল পরিবহন ও ডিপো)',
           org: 'বেঙ্গল কোল্ড-চেন এক্সপ্রেস লজিস্টিকস (WB-LOG-004)',
           station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
-          lockedBadge: '🔒 ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [DISTRIBUTOR] সীমার মধ্যে কার্যকর।',
+          lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [DISTRIBUTOR] সীমার মধ্যে কার্যকর।',
           batchHeading: 'পরিবহনরত সক্রিয় চালান:',
-          executeBtn: 'কার্য সম্পাদন করুন ➔',
+          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
           tools: [
             {
               id: 'acceptLogistics',
               label: 'পরিবহন হেফাজত গ্রহণ করুন',
-              icon: '🚛',
+              icon: 'reefer',
               tag: 'ফ্লিট ইনওয়ার্ড',
               desc: 'পাইকারি বাজার থেকে শীতল ভ্যানে পণ্য তোলার সময় দ্বিপাক্ষিক ডিজিটাল হস্তান্তরে স্বাক্ষর করুন।',
               fields: [
@@ -4880,7 +4880,7 @@
             {
               id: 'gpsTelemetry',
               label: 'গাড়ির জিপিএস ও রুট চেকপয়েন্ট',
-              icon: '📍',
+              icon: 'map-pin',
               tag: 'লাইভ রুট',
               desc: 'পরিবহন চলাকালীন রিয়েল-টাইম জিপিএস চেকপয়েন্ট এবং জিওফেন্স ইভেন্ট রেকর্ড করুন।',
               fields: [
@@ -4892,7 +4892,7 @@
             {
               id: 'coldChainLog',
               label: 'চলন্ত অবস্থায় কোল্ড-চেন টেলিমেট্রি',
-              icon: '❄️',
+              icon: 'snowflake',
               tag: 'থার্মাল অডিট',
               desc: 'পরিবহনের সময় রিফার গাড়ির তাপমাত্রা ও কোল্ড চেইন শর্তাবলি অডিট করুন।',
               fields: [
@@ -4904,7 +4904,7 @@
             {
               id: 'routeRealloc',
               label: 'আঞ্চলিক ডিপো রুট পুনর্বণ্টন',
-              icon: '🔀',
+              icon: 'shuffle',
               tag: 'লাস্ট-মাইল রুট',
               desc: 'সেকেন্ডারি ট্রানজিট ডিপোতে বড় কনটেইনার ভেঙে শহরের বিভিন্ন খুচরা ডেলিভারি ভ্যানে পণ্য ভাগ করুন।',
               fields: [
@@ -4916,7 +4916,7 @@
             {
               id: 'incidentLog',
               label: 'পরিবহন বিলম্ব ও ক্ষতির নথি',
-              icon: '⚠️',
+              icon: 'alert',
               tag: 'ব্যতিক্রম লগ',
               desc: 'হাইওয়েতে যানজট, দুর্ঘটনা বা তাপমাত্রা পরিবর্তনের কারণে ক্ষতির হিসাব লেজারে রেকর্ড করুন।',
               fields: [
@@ -4928,7 +4928,7 @@
             {
               id: 'retailDelivery',
               label: 'খুচরা দোকানে ডেলিভারি সমর্পণ',
-              icon: '🏪',
+              icon: 'store',
               tag: 'দোকানে সরবরাহ',
               desc: 'খুচরা সুপারমার্কেট বা মুদি দোকানের ম্যানেজারের উপস্থিতিতে দ্বৈত স্বাক্ষরে হেফাজত হস্তান্তর সম্পন্ন করুন।',
               fields: [
@@ -4948,14 +4948,14 @@
           title: 'খুচরা পয়েন্ট-অফ-সেল কনসোল (সুপারমার্কেট ও মুদি দোকান)',
           org: 'মা দুর্গা রিটেইল ফ্রেশ মার্ট (কলকাতা আউটলেট #৪)',
           station: 'প্রধান সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
-          lockedBadge: '🔒 ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [RETAILER] সীমার মধ্যে কার্যকর।',
+          lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [RETAILER] সীমার মধ্যে কার্যকর।',
           batchHeading: 'বিক্রির জন্য সেলফে থাকা ব্যাচসমূহ:',
-          executeBtn: 'কার্য সম্পাদন করুন ➔',
+          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
           tools: [
             {
               id: 'storeReceipt',
               label: 'দোকানে চালান গ্রহণ ও স্বাক্ষর',
-              icon: '🛒',
+              icon: 'cart',
               tag: 'খুচরা ইনওয়ার্ড',
               desc: 'ডেলিভারি ভ্যানের কিউআর স্ক্যান করুন, তাজা পণ্যের ক্রেট পরীক্ষা করুন এবং দোকানের মজুদে গ্রহণ করুন।',
               fields: [
@@ -4967,7 +4967,7 @@
             {
               id: 'shelfQr',
               label: 'গ্রাহকের জন্য কাউন্টার কিউআর স্ট্যান্ডি প্রিন্ট',
-              icon: '🖨️',
+              icon: 'printer',
               tag: 'ভোক্তা ট্রেস',
               desc: 'গ্রাহকদের স্মার্টফোন দিয়ে যাচাইয়ের জন্য কাউন্টার কিউআর কার্ড এবং মূল্যের স্ট্যান্ডি প্রিন্ট করুন।',
               fields: [
@@ -4979,7 +4979,7 @@
             {
               id: 'posSale',
               label: 'পয়েন্ট-অফ-সেল (পিওএস) বিক্রয় নথিভুক্ত',
-              icon: '🧾',
+              icon: 'receipt',
               tag: 'পিওএস ক্যাশিয়ার',
               desc: 'গ্রাহকের কেনাকাটা রেকর্ড করুন এবং সক্রিয় সেলফ স্টক থেকে বিক্রি হওয়া পরিমাণ স্বয়ংক্রিয়ভাবে হ্রাস করুন।',
               fields: [
@@ -4991,7 +4991,7 @@
             {
               id: 'wasteDeficit',
               label: 'সেলফ নষ্ট ও ক্ষতির হিসাব',
-              icon: '🗑️',
+              icon: 'trash',
               tag: 'ঘাটতি লেজার',
               desc: 'ক্ষতিগ্রস্ত বা অবিক্রিত পণ্যের হিসাব লেজারে নথিভুক্ত করে স্বয়ংক্রিয়ভাবে স্টক সমন্বয় করুন।',
               fields: [
@@ -5003,7 +5003,7 @@
             {
               id: 'packageAudit',
               label: 'সেলফ সত্যতা ও প্রামাণিকতা স্ক্যান',
-              icon: '📱',
+              icon: 'phone',
               tag: 'উৎস অডিট',
               desc: 'দোকানের মেঝেতে থাকা প্যাকেজ স্ক্যান করে সম্পূর্ণ খামার-থেকে-থালা ডিজিটাল টাইমলাইন প্রদর্শন করুন।',
               fields: [
@@ -5015,7 +5015,7 @@
             {
               id: 'recallFeedback',
               label: 'ভোক্তা প্রতিক্রিয়া ও জরুরি প্রত্যাহার লগ',
-              icon: '⭐',
+              icon: 'star',
               tag: 'ভোক্তা আস্থা',
               desc: 'গ্রাহকের সন্তুষ্টি রেটিং সংগ্রহ করুন এবং প্রয়োজনে তাৎক্ষণিক খাদ্য নিরাপত্তা প্রত্যাহার সতর্কতা জারি করুন।',
               fields: [
@@ -5037,11 +5037,11 @@
     const dashboardPreviewData = {
       en: {
         PRODUCER: {
-          icon: '🌾',
+          icon: 'sprout',
           title: 'Producer Operations Console',
           org: 'Bardhaman Organic Farmers Producer Co-op',
           station: 'Cluster Farm Yard #4, Bardhaman',
-          launchBtn: 'Sign In as Producer ➔',
+          launchBtn: 'Sign In as Producer &rarr;',
           metrics: [
             { title: 'Total Harvested', val: '18,450 Kg', tag: '↑ 14% vs last month' },
             { title: 'Active QR Batches', val: '12 Batches', tag: 'All tamper-evident sealed' },
@@ -5054,11 +5054,11 @@
           ]
         },
         AGGREGATOR: {
-          icon: '⚖️',
+          icon: 'scale',
           title: 'Aggregator Mandi Console',
           org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
           station: 'Gate #2 Weighbridge & Grading Yard',
-          launchBtn: 'Sign In as Aggregator ➔',
+          launchBtn: 'Sign In as Aggregator &rarr;',
           metrics: [
             { title: 'Mandi Inward Intake', val: '42,800 Kg', tag: 'Digital weighbridge certified' },
             { title: 'Agmarknet Grade A', val: '99.4%', tag: 'Official quality tested' },
@@ -5071,11 +5071,11 @@
           ]
         },
         WHOLESALER: {
-          icon: '🏢',
+          icon: 'warehouse',
           title: 'Wholesaler Terminal Console',
           org: 'Kolkata Central Wholesalers Ltd (Posta Market)',
           station: 'Posta Terminal Complex, Kolkata',
-          launchBtn: 'Sign In as Wholesaler ➔',
+          launchBtn: 'Sign In as Wholesaler &rarr;',
           metrics: [
             { title: 'Cold Bay Inventory', val: '65,200 Kg', tag: 'Controlled 4°C - 8°C chambers' },
             { title: 'Consignments Split', val: '38 Lots', tag: 'Mass-balance preserved' },
@@ -5088,11 +5088,11 @@
           ]
         },
         DISTRIBUTOR: {
-          icon: '🚚',
+          icon: 'truck',
           title: 'Distributor Logistics Console',
           org: 'Bengal Cold-Chain Express Logistics (WB-LOG-004)',
           station: 'Central Transit Depot, New Town, Kolkata',
-          launchBtn: 'Sign In as Distributor ➔',
+          launchBtn: 'Sign In as Distributor &rarr;',
           metrics: [
             { title: 'Active Reefer Trucks', val: '18 Trucks', tag: 'Live GPS geofenced' },
             { title: 'Mean Cargo Temp', val: '7.4 °C', tag: 'Zero thermal excursions' },
@@ -5105,11 +5105,11 @@
           ]
         },
         RETAILER: {
-          icon: '🛒',
+          icon: 'cart',
           title: 'Retailer Point-of-Sale Console',
           org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
           station: 'Produce Aisle, Lake Gardens, Kolkata',
-          launchBtn: 'Sign In as Retailer ➔',
+          launchBtn: 'Sign In as Retailer &rarr;',
           metrics: [
             { title: 'Shelf Stock Volume', val: '1,420 Kg', tag: 'Active on display counters' },
             { title: 'Consumer QR Scans', val: '1,890 Scans', tag: '4.9/5.0 Customer trust score' },
@@ -5124,11 +5124,11 @@
       },
       hi: {
         PRODUCER: {
-          icon: '🌾',
+          icon: 'sprout',
           title: 'उत्पादक संचालन कंसोल',
           org: 'बर्धमान ऑर्गेनिक फार्मर्स प्रोड्यूसर को-ऑप',
           station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
-          launchBtn: 'उत्पादक के रूप में लॉगिन करें ➔',
+          launchBtn: 'उत्पादक के रूप में लॉगिन करें &rarr;',
           metrics: [
             { title: 'कुल कटाई उपज', val: '18,450 किग्रा', tag: '↑ पिछले माह से 14% अधिक' },
             { title: 'सक्रिय क्यूआर बैच', val: '12 लॉट्स', tag: 'सभी क्रेट सुरक्षित रूप से सीलबंद' },
@@ -5141,11 +5141,11 @@
           ]
         },
         AGGREGATOR: {
-          icon: '⚖️',
+          icon: 'scale',
           title: 'संग्रहकर्ता मंडी कंसोल',
           org: 'हुगली एपीएमसी संग्रह यार्ड (MANDI-WB-012)',
           station: 'गेट #2 वेज-ब्रिज एवं ग्रेडिंग परिसर',
-          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें ➔',
+          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें &rarr;',
           metrics: [
             { title: 'मंडी आवक वजन', val: '42,800 किग्रा', tag: 'डिजिटल वेज-ब्रिज द्वारा प्रमाणित' },
             { title: 'एगमार्कनेट ग्रेड ए', val: '99.4%', tag: 'आधिकारिक गुणवत्ता जांच' },
@@ -5158,11 +5158,11 @@
           ]
         },
         WHOLESALER: {
-          icon: '🏢',
+          icon: 'warehouse',
           title: 'थोक व्यापारी टर्मिनल कंसोल',
           org: 'कोलकाता सेंट्रल होलसेलर्स लि. (पोस्ता बाजार)',
           station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
-          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें ➔',
+          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें &rarr;',
           metrics: [
             { title: 'शीत गृह भंडार', val: '65,200 किग्रा', tag: 'नियंत्रित 4°C - 8°C तापमान' },
             { title: 'लॉट विभाजन', val: '38 लॉट्स', tag: 'द्रव्यमान-संतुलन सुरक्षित' },
@@ -5175,11 +5175,11 @@
           ]
         },
         DISTRIBUTOR: {
-          icon: '🚚',
+          icon: 'truck',
           title: 'वितरक लॉजिस्टिक्स कंसोल',
           org: 'बंगाल कोल्ड-चेन एक्सप्रेस लॉजिस्टिक्स (WB-LOG-004)',
           station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
-          launchBtn: 'वितरक के रूप में लॉगिन करें ➔',
+          launchBtn: 'वितरक के रूप में लॉगिन करें &rarr;',
           metrics: [
             { title: 'सक्रिय रीफर ट्रक', val: '18 ट्रक', tag: 'लाइव जीपीएस जियोफेंस्ड' },
             { title: 'औसत तापमान', val: '7.4 °C', tag: 'शून्य तापीय विचलन' },
@@ -5192,11 +5192,11 @@
           ]
         },
         RETAILER: {
-          icon: '🛒',
+          icon: 'cart',
           title: 'खुदरा विक्रेता पीओएस कंसोल',
           org: 'मां दुर्गा रिटेल फ्रेश मार्ट (कोलकाता आउटलेट #4)',
           station: 'सब्जी विभाग, लेक गार्डन्स, कोलकाता',
-          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें ➔',
+          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें &rarr;',
           metrics: [
             { title: 'काउंटर स्टॉक', val: '1,420 किग्रा', tag: 'दुकान के डिस्प्ले रैक पर सक्रिय' },
             { title: 'उपभोक्ता क्यूआर स्कैन', val: '1,890 स्कैन', tag: '4.9/5.0 ग्राहक विश्वास स्कोर' },
@@ -5211,11 +5211,11 @@
       },
       bn: {
         PRODUCER: {
-          icon: '🌾',
+          icon: 'sprout',
           title: 'উৎপাদক পরিচালনা কনসোল',
           org: 'বর্ধমান অর্গানিক ফার্মার্স প্রডিউসার কো-অপ',
           station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
-          launchBtn: 'উৎপাদক হিসেবে লগইন করুন ➔',
+          launchBtn: 'উৎপাদক হিসেবে লগইন করুন &rarr;',
           metrics: [
             { title: 'মোট ফসল ফলন', val: '১৮,৪৫০ কেজি', tag: '↑ গত মাসের চেয়ে ১৪% বেশি' },
             { title: 'সক্রিয় কিউআর ব্যাচ', val: '১২টি ব্যাচ', tag: 'সব ক্রেট সুরক্ষিত সিলযুক্ত' },
@@ -5228,11 +5228,11 @@
           ]
         },
         AGGREGATOR: {
-          icon: '⚖️',
+          icon: 'scale',
           title: 'সংগ্রহকারী মণ্ডি কনসোল',
           org: 'হুগলি এপিএমসি সংগ্রহ ইয়ার্ড (MANDI-WB-012)',
           station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
-          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন ➔',
+          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন &rarr;',
           metrics: [
             { title: 'মণ্ডি চালান ওজন', val: '৪২,৮০০ কেজি', tag: 'ডিজিটাল ওয়েজ-ব্রিজ দ্বারা প্রত্যয়িত' },
             { title: 'অ্যাগমার্কনেট গ্রেড এ', val: '৯৯.৪%', tag: 'অফিসিয়াল গুণমান পরীক্ষিত' },
@@ -5245,11 +5245,11 @@
           ]
         },
         WHOLESALER: {
-          icon: '🏢',
+          icon: 'warehouse',
           title: 'পাইকারি টার্মিনাল কনসোল',
           org: 'কলকাতা সেন্ট্রাল হোলসেলার্স প্রাঃ লিঃ (পোস্তা বাজার)',
           station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
-          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন ➔',
+          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন &rarr;',
           metrics: [
             { title: 'হিমাগার মজুদ', val: '৬৫,২০০ কেজি', tag: 'নিয়ন্ত্রিত ৪°সে - ৮°সে তাপমাত্রা' },
             { title: 'চালান বিভাজন', val: '৩৮টি লট', tag: 'ভর-ভারসাম্য অক্ষত' },
@@ -5262,11 +5262,11 @@
           ]
         },
         DISTRIBUTOR: {
-          icon: '🚚',
+          icon: 'truck',
           title: 'পরিবেশক লজিস্টিকস কনসোল',
           org: 'বেঙ্গল কোল্ড-চেন এক্সপ্রেস লজিস্টিকস (WB-LOG-004)',
           station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
-          launchBtn: 'পরিবেশক হিসেবে লগইন করুন ➔',
+          launchBtn: 'পরিবেশক হিসেবে লগইন করুন &rarr;',
           metrics: [
             { title: 'সক্রিয় রিফার ট্রাক', val: '১৮টি ট্রাক', tag: 'লাইভ জিপিএস জিওফেন্সড' },
             { title: 'গড় তাপমাত্রা', val: '৭.৪ °সে', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
@@ -5279,11 +5279,11 @@
           ]
         },
         RETAILER: {
-          icon: '🛒',
+          icon: 'cart',
           title: 'খুচরা বিক্রেতা পিওএস কনসোল',
           org: 'মা দুর্গা রিটেইল ফ্রেশ মার্ট (কলকাতা আউটলেট #৪)',
           station: 'সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
-          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন ➔',
+          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন &rarr;',
           metrics: [
             { title: 'কাউন্টার মজুদ', val: '১,৪২০ কেজি', tag: 'দোকানের ডিসপ্লে র্যাকে সক্রিয়' },
             { title: 'ভোক্তা কিউআর স্ক্যান', val: '১,৮৯০টি স্ক্যান', tag: '৪.৯/৫.০ গ্রাহক আস্থা স্কোর' },
@@ -5337,7 +5337,7 @@
         const msg = list[tickerIdx];
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-        streamEl.textContent = `⚡ [${timeStr} IST] ` + (msg || '');
+        streamEl.textContent = `[${timeStr} IST] ` + (msg || '');
       }, 4000);
     }
     startTickerCycle();
@@ -5712,7 +5712,7 @@
     /* UNIFIED GOVERNANCE & STANDARDS MODALS (EXACT DPDP MODAL STYLE) */
     const govTopicsData = {
       agmarknet: {
-        icon: '📜',
+        icon: 'file-text',
         en: {
           title: 'Agmarknet Standards & APMC Assaying Framework',
           sub: 'Directorate of Marketing & Inspection (DMI), Ministry of Agriculture',
@@ -5722,7 +5722,7 @@
             <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'Visit Agmarknet National Portal ➔'
+          actionText: 'Visit Agmarknet National Portal &rarr;'
         },
         hi: {
           title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
@@ -5733,7 +5733,7 @@
             <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं ➔'
+          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं &rarr;'
         },
         bn: {
           title: 'অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
@@ -5744,11 +5744,11 @@
             <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান ➔'
+          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান &rarr;'
         }
       },
       health: {
-        icon: '🏥',
+        icon: 'award',
         en: {
           title: 'System Health & Infrastructure Telemetry',
           sub: 'National Distributed Ledger Resilience & Availability',
@@ -5758,7 +5758,7 @@
             <p><strong>End-to-End Latency:</strong> Sub-50ms API response time ensures rapid QR verification at fast-paced retail checkout counters and APMC weighbridge gates.</p>
           `,
           actionLink: '/health/',
-          actionText: 'View Live /health Telemetry ➔'
+          actionText: 'View Live /health Telemetry &rarr;'
         },
         hi: {
           title: 'सिस्टम स्वास्थ्य एवं अवसंरचना टेलीमेट्री',
@@ -5769,7 +5769,7 @@
             <p><strong>त्वरित प्रतिक्रिया:</strong> 50ms से कम प्रतिक्रिया समय खुदरा काउंटरों और मंडी वेज-ब्रिज पर त्वरित क्यूआर सत्यापन सुनिश्चित करता है।</p>
           `,
           actionLink: '/health/',
-          actionText: 'लाइव /health टेलीमेट्री देखें ➔'
+          actionText: 'लाइव /health टेलीमेट्री देखें &rarr;'
         },
         bn: {
           title: 'সিস্টেম স্থিতি ও ক্লাউড অবকাঠামো টেলিমেট্রি',
@@ -5780,11 +5780,11 @@
             <p><strong>দ্রুত প্রতিক্রিয়া:</strong> ৫০ মিলি-সেকেন্ডের কম সময়ে উত্তর প্রদান নিশ্চিত করে চেকআউট কাউন্টারে দ্রুত কিউআর স্ক্যান সুবিধা।</p>
           `,
           actionLink: '/health/',
-          actionText: 'লাইভ /health টেলিমেট্রি দেখুন ➔'
+          actionText: 'লাইভ /health টেলিমেট্রি দেখুন &rarr;'
         }
       },
       security: {
-        icon: '🔐',
+        icon: 'lock',
         en: {
           title: 'Security Audit & CERT-In Directions',
           sub: 'National Cybersecurity Standards & Compliance Protocol',
@@ -5814,7 +5814,7 @@
         }
       },
       grievance: {
-        icon: '👤',
+        icon: 'user',
         en: {
           title: 'Grievance Redressal Officer (DPDP Act 2023)',
           sub: 'Statutory Citizen & Operator Resolution Mechanism',
@@ -5847,7 +5847,7 @@
         }
       },
       cdac: {
-        icon: '🌱',
+        icon: 'sprout',
         en: {
           title: 'AnnaSutra Project Architecture & Principles',
           sub: 'Independent Agricultural Produce Traceability Initiative',
@@ -5857,7 +5857,7 @@
             <p><strong>Decentralized & Role-Confined:</strong> Built on append-only event records, mutual custody confirmation, and data-protection design principles aligned with Indian agricultural ecosystems.</p>
           `,
           actionLink: '#',
-          actionText: 'Platform Architecture Notice ➔'
+          actionText: 'Platform Architecture Notice &rarr;'
         },
         hi: {
           title: 'अन्नसूत्र परियोजना वास्तुकला एवं सिद्धांत',
@@ -5868,7 +5868,7 @@
             <p><strong>भूमिका-सीमित संरचना:</strong> अपरिवर्तनीय इवेंट रिकॉर्ड, पारस्परिक कस्टडी पुष्टि और डेटा सुरक्षा सिद्धांतों पर आधारित।</p>
           `,
           actionLink: '#',
-          actionText: 'परियोजना सूचना ➔'
+          actionText: 'परियोजना सूचना &rarr;'
         },
         bn: {
           title: 'অন্নসূত্র প্রকল্প স্থাপত্য ও রূপরেখা',
@@ -5879,7 +5879,7 @@
             <p><strong>ভূমিকা-সীমাবদ্ধ কাঠামো:</strong> অপরিবর্তনীয় ইভেন্ট রেকর্ড, পারস্পরিক হেফাজত নিশ্চিতকরণ এবং ডেটা সুরক্ষা নীতির ভিত্তিতে নির্মিত।</p>
           `,
           actionLink: '#',
-          actionText: 'প্রকল্প তথ্য ➔'
+          actionText: 'প্রকল্প তথ্য &rarr;'
         }
       }
     };
@@ -5888,7 +5888,7 @@
       const data = govTopicsData[topic];
       if (!data) return;
       const localized = data[currentLang] || data['en'];
-      document.getElementById('govModalIcon').innerText = data.icon || '📜';
+      document.getElementById('govModalIcon').innerHTML = window.renderUniformIcon ? window.renderUniformIcon(data.icon, 32, '#047857') : '';
       document.getElementById('govModalTitle').innerText = localized.title;
       document.getElementById('govModalSubtitle').innerText = localized.sub;
       
@@ -5923,10 +5923,10 @@
       }
 
       const icons = {
-        error: '❌',
-        success: '✅',
-        warning: '⚠️',
-        info: 'ℹ️'
+        error: window.renderUniformIcon ? window.renderUniformIcon('x', 18, '#ef4444', 2.5) : '',
+        success: window.renderUniformIcon ? window.renderUniformIcon('check', 18, '#10b981', 2.8) : '',
+        warning: window.renderUniformIcon ? window.renderUniformIcon('alert', 18, '#f59e0b', 2.2) : '',
+        info: window.renderUniformIcon ? window.renderUniformIcon('info', 18, '#3b82f6', 2.2) : ''
       };
 
       const defaultTitles = {
@@ -5939,7 +5939,7 @@
       const toast = document.createElement('div');
       toast.className = 'annasutra-toast toast-' + type;
       toast.innerHTML = 
-        '<div class="toast-icon">' + (icons[type] || 'ℹ️') + '</div>' +
+        '<div class="toast-icon">' + (icons[type] || icons.info) + '</div>' +
         '<div class="toast-content">' +
           '<div class="toast-title">' + (title || defaultTitles[type] || 'Notice') + '</div>' +
           '<div class="toast-body">' + message + '</div>' +
@@ -6032,10 +6032,10 @@
           vStep.style.display = 'block';
           const notice = document.getElementById('otpStatusNotice');
           if (notice) {
-            notice.innerText = (currentLang === 'hi' ? '✓ ' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway');
+            notice.innerText = (currentLang === 'hi' ? '' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway');
           }
           startOtpCountdown(60);
-          showToast((currentLang === 'hi' ? '✓ ' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
+          showToast((currentLang === 'hi' ? '' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
           const codeInput = document.getElementById('otpCodeInput');
           if (codeInput) {
             codeInput.value = data.debug_code || '';
@@ -6104,7 +6104,7 @@
           if (phone) {
             localStorage.setItem('annasutra_phone', phone);
           }
-          showToast((currentLang === 'hi' ? '✓ पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? '✓ পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : '✓ Identity verified! Launching operational console...'), 'success', 'Access Granted');
+          showToast((currentLang === 'hi' ? 'पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? 'পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : 'Identity verified! Launching operational console...'), 'success', 'Access Granted');
           verifySuccess = true;
         } else {
           showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error', 'Verification Failed');
@@ -6200,12 +6200,12 @@
       if (vid.paused) {
         vid.play().catch(() => {});
         delete vid.dataset.userPaused;
-        if (icon) icon.innerText = '⏸️';
+        if (icon) icon.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
         if (btn) btn.title = (currentLang === 'bn' ? 'ভিডিও থামান' : currentLang === 'hi' ? 'वीडियो रोकें' : 'Pause Background Video');
       } else {
         vid.pause();
         vid.dataset.userPaused = 'true';
-        if (icon) icon.innerText = '▶️';
+        if (icon) icon.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
         if (btn) btn.title = (currentLang === 'bn' ? 'ভিডিও চালান' : currentLang === 'hi' ? 'वीडियो चलाएं' : 'Play Background Video');
       }
     }
@@ -6230,7 +6230,7 @@
       if (!tool) return;
       activeTool = tool;
 
-      document.getElementById('opModalIcon').innerText = tool.icon;
+      document.getElementById('opModalIcon').innerHTML = window.renderUniformIcon ? window.renderUniformIcon(tool.icon, 26, '#0b3d2e') : '';
       document.getElementById('opModalTitle').innerText = tool.label;
       const subtitleText = {
         en: 'Cryptographic Custody Event Ledger',
@@ -6302,7 +6302,7 @@
       document.getElementById('opResultTx').innerText = 'Tx Hash: ' + hexHash;
       document.getElementById('opResultDesc').innerText = attestedDesc;
       document.getElementById('opResultCard').style.display = 'block';
-      btn.innerText = (currentLang === 'bn' ? '✓ শৃঙ্খলে সংরক্ষিত' : currentLang === 'hi' ? '✓ चेन में सुरक्षित' : '✓ Committed to Chain');
+      btn.innerText = (currentLang === 'bn' ? 'শৃঙ্খলে সংরক্ষিত' : currentLang === 'hi' ? 'चेन में सुरक्षित' : 'Committed to Chain');
 
       const newLotCode = vals.lotCode || (hexHash.slice(2, 14).toUpperCase());
       const newDesc = (vals.crop || activeTool.label) + ' • ' + (vals.qty ? vals.qty + ' Kg • ' : '') + (currentLang === 'bn' ? 'এইমাত্র প্রত্যয়িত' : currentLang === 'hi' ? 'अभी प्रमाणित' : 'Attested just now');
@@ -6360,14 +6360,14 @@
           card.innerHTML = `
             <div>
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                <span style="font-size: 24px;">${tool.icon || '📦'}</span>
+                <div class="tool-icon-box" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;">${window.renderUniformIcon ? window.renderUniformIcon(tool.icon, 20, "#047857") : ""}</div>
                 <span style="font-size: 11px; font-weight: 700; color: #047857; background: #ecfdf5; padding: 2px 8px; border-radius: 12px;">${tool.tag || ''}</span>
               </div>
               <h5 style="margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #0f172a;">${tool.label}</h5>
               <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.4;">${tool.desc}</p>
             </div>
             <button class="btn-primary" style="padding: 8px 14px; font-size: 12.5px; width: 100%; border-radius: 6px; cursor: pointer;" onclick="openOperationModal('${tool.id}')">
-              ${def.executeBtn || 'Execute Action ➔'}
+              ${def.executeBtn || 'Execute Action &rarr;'}
             </button>
           `;
           toolsContainer.appendChild(card);
@@ -6534,17 +6534,17 @@
 
       function interpretWmoCode(code, lang) {
         const labels = {
-          0: { en: "Clear", hi: "साफ़ मौसम", bn: "পরিষ্কার আকাশ", icon: "☀️" },
-          1: { en: "Mainly Clear", hi: "मुख्यतः साफ़", bn: "প্রধানত পরিষ্কার", icon: "🌤️" },
-          2: { en: "Partly Cloudy", hi: "आंशिक बादल", bn: "আংশিক মেঘলা", icon: "⛅" },
-          3: { en: "Overcast", hi: "घने बादल", bn: "মেঘলা আকাশ", icon: "☁️" },
-          45: { en: "Foggy", hi: "कोहरा", bn: "কুয়াশাচ্ছন্ন", icon: "🌫️" },
-          48: { en: "Foggy", hi: "कोहरा", bn: "কুয়াশাচ্ছন্ন", icon: "🌫️" },
-          51: { en: "Drizzle", hi: "बूंदाबांदी", bn: "গুঁড়ি গুঁড়ি বৃষ্টি", icon: "🌦️" },
-          61: { en: "Rain", hi: "वर्षा", bn: "বৃষ্টিপাত", icon: "🌧️" },
-          71: { en: "Snow", hi: "बर्फबारी", bn: "তুষারপাত", icon: "🌨️" },
-          80: { en: "Showers", hi: "तेज़ बौछार", bn: "বৃষ্টির ঝাপটা", icon: "🌦️" },
-          95: { en: "Thunderstorm", hi: "गरज के साथ वर्षा", bn: "বজ্রবিদ্যুৎ সহ ঝড়", icon: "⛈️" }
+          0: { en: "Clear", hi: "साफ़ मौसम", bn: "পরিষ্কার আকাশ", icon: "sun" },
+          1: { en: "Mainly Clear", hi: "मुख्यतः साफ़", bn: "প্রধানত পরিষ্কার", icon: "cloud-sun" },
+          2: { en: "Partly Cloudy", hi: "आंशिक बादल", bn: "আংশিক মেঘলা", icon: "cloud-sun" },
+          3: { en: "Overcast", hi: "घने बादल", bn: "মেঘলা আকাশ", icon: "cloud" },
+          45: { en: "Foggy", hi: "कोहरा", bn: "কুয়াশাচ্ছন্ন", icon: "fog" },
+          48: { en: "Foggy", hi: "कोहरा", bn: "কুয়াশাচ্ছন্ন", icon: "fog" },
+          51: { en: "Drizzle", hi: "बूंदाबांदी", bn: "গুঁড়ি গুঁড়ি বৃষ্টি", icon: "rain" },
+          61: { en: "Rain", hi: "वर्षा", bn: "বৃষ্টিপাত", icon: "rain" },
+          71: { en: "Snow", hi: "बर्फबारी", bn: "তুষারপাত", icon: "snow" },
+          80: { en: "Showers", hi: "तेज़ बौछार", bn: "বৃষ্টির ঝাপটা", icon: "rain" },
+          95: { en: "Thunderstorm", hi: "गरज के साथ वर्षा", bn: "বজ্রবিদ্যুৎ সহ ঝড়", icon: "thunder" }
         };
         const item = labels[code] || labels[0];
         const l = (lang === 'bn' || lang === 'hi') ? lang : 'en';
@@ -6614,7 +6614,7 @@
 
           applyWeather(weatherPayload);
         } catch (err) {
-          applyWeather({ city: 'India', temp: 28, icon: '🌤️', label: 'Fair' });
+          applyWeather({ city: 'India', temp: 28, icon: 'cloud-sun', label: 'Fair' });
         }
       }
 

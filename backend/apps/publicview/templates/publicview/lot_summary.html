@@ -1141,13 +1141,13 @@
   <div class="top-bar">
     <div class="top-weather-datetime" id="topWeatherWidget">
       <div class="weather-pill" id="weatherPill" title="Current live weather based on IP">
-        <span class="weather-icon" id="weatherIcon">🌤️</span>
+        <span class="weather-icon" id="weatherIcon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fde047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></svg></span>
         <span class="weather-temp" id="weatherTemp">--°C</span>
         <span class="weather-loc" id="weatherLoc">Detecting location...</span>
       </div>
       <span class="top-bar-divider">•</span>
       <div class="datetime-pill" id="dateTimePill">
-        <span class="live-clock-icon">🕒</span>
+        <span class="live-clock-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
         <span class="time-live" id="liveTime">--:--:--</span>
         <span class="date-live" id="liveDate">--</span>
       </div>
@@ -1159,7 +1159,7 @@
         <button type="button" class="btn-text-size" onclick="changeFontSize(1)" title="Increase font size">A+</button>
       </div>
       <button type="button" class="btn-help-top" id="btnHelpTop" onclick="if(window.openHelpModal) window.openHelpModal();" title="Help & User Guide">
-        <span class="btn-help-icon">ℹ️</span>
+        <span class="btn-help-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
         <span id="btnHelpTopText">Help</span>
       </button>
       <select class="lang-dropdown" id="langSelector" onchange="setLanguage(this.value)">
@@ -1217,7 +1217,7 @@
         <span id="navLoginText">Log In</span>
       </button>
       <div class="user-pill" id="userPill" onclick="window.location.href='/'">
-        👤 <span id="activeUserName">Producer (Active)</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="activeUserName">Producer (Active)</span>
       </div>
     </div>
   </header>
@@ -1228,7 +1228,7 @@
       <div class="batch-verified-header">
         <div class="lot-badge">BATCH: {{ lot.code }}</div>
         <div class="status-verified" id="statusVerified">
-          ✓ <span id="statusVerifiedText">Verified on Ledger</span>
+          <span id="statusVerifiedText">Verified on Ledger</span>
         </div>
       </div>
 
@@ -1314,7 +1314,7 @@
           </div>
 
           <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span>⌃</span> <span id="btnBackToTopText">BACK TO TOP</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><polyline points="18 15 12 9 6 15"/></svg><span id="btnBackToTopText">BACK TO TOP</span>
           </button>
         </div>
 
@@ -1412,7 +1412,7 @@
   <!-- 5. ENTITY LOGIN MODAL -->
   <div class="modal-overlay" id="loginModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <button class="modal-close" onclick="closeLoginModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
         <h3 id="modalRoleTitle">Entity Login</h3>
         <p id="modalSubtitle">Role-Confined Authentication on AnnaSutra</p>
@@ -1441,13 +1441,13 @@
           Send Verification OTP
         </button>
         <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;" id="otpGatewayHint">
-          🔒 An OTP will be dispatched via official SMS Gateway to your device.
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> An OTP will be dispatched via official SMS Gateway to your device.
         </p>
       </div>
 
       <div id="otpVerifyStep" style="display: none; margin-top: 10px;">
         <div style="font-size: 12.5px; color: #166534; background: #f0fdf4; border: 1.5px solid #86efac; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-weight: 600;" id="otpStatusNotice">
-          ✓ OTP sent via Android SMS Gateway
+          OTP sent via Android SMS Gateway
         </div>
         <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;" id="otpEnterCodeLabel">
           Enter 6-Digit Code
@@ -1467,7 +1467,7 @@
   <!-- 6. UNIVERSAL ENTITY ACCESS PORTAL MODAL -->
   <div class="modal-overlay" id="entityPortalModal" onclick="closeModalOnBackdrop(event)">
     <div class="portal-modal-box">
-      <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+      <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       
       <div class="portal-modal-header">
         <div class="portal-modal-badge">
@@ -1499,7 +1499,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescProducer">
               Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer &rarr;</button>
           </div>
 
           <!-- 2. Aggregator -->
@@ -1521,7 +1521,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
               Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator &rarr;</button>
           </div>
 
           <!-- 3. Wholesaler -->
@@ -1546,7 +1546,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescWholesaler">
               Terminal warehouse receipt, lot splitting into pallets, and IoT cold-chain telemetry logging.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler &rarr;</button>
           </div>
 
           <!-- 4. Distributor -->
@@ -1567,7 +1567,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescDistributor">
               Accept cold-chain transit, reefer temperature monitoring, and electronic store dispatch.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor &rarr;</button>
           </div>
 
           <!-- 5. Retailer -->
@@ -1587,7 +1587,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescRetailer">
               Record store intake, generate customer shelf QR standees, and complete tamper-proof final sale.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer ➔</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer &rarr;</button>
           </div>
         </div>
       </div>
@@ -1597,7 +1597,7 @@
   <!-- 7. FAST QR CODE SCANNER MODAL -->
   <div class="modal-overlay" id="qrModal" onclick="closeModalOnBackdrop(event)">
     <div class="qr-modal-box">
-      <button class="modal-close" onclick="closeQrModal()">✕</button>
+      <button class="modal-close" onclick="closeQrModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head" style="margin-bottom: 12px;">
         <div style="margin-bottom: 6px; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1645,7 +1645,7 @@
   <!-- 8. DPDP PRIVACY MODAL -->
   <div class="modal-overlay" id="dpdpModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeDpdpModal()">✕</button>
+      <button class="modal-close" onclick="closeDpdpModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
         <h3 id="dpdpTitle">DPDP Act 2023 Compliance</h3>
         <p id="dpdpSub">Digital Personal Data Protection Notice</p>
@@ -1661,9 +1661,9 @@
   <!-- 9. UNIFIED GOVERNANCE & STANDARDS MODAL -->
   <div class="modal-overlay" id="govInfoModal" onclick="closeModalOnBackdrop(event)">
     <div class="gov-modal-box">
-      <button class="modal-close" onclick="closeGovModal()">✕</button>
+      <button class="modal-close" onclick="closeGovModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head" style="text-align: left; margin-bottom: 16px;">
-        <div style="font-size: 30px; margin-bottom: 6px;" id="govModalIcon">📜</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:50%;margin-bottom:8px;" id="govModalIcon"></div>
         <h3 id="govModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">Policy Title</h3>
         <p id="govModalSubtitle" style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Sovereign Agri-Traceability Framework</p>
       </div>
@@ -1679,9 +1679,9 @@
   <!-- 10. LOCALIZED HELP & USER GUIDE MODAL -->
   <div class="modal-overlay" id="helpModal" onclick="if(event.target===this && window.closeHelpModal) window.closeHelpModal();">
     <div class="modal-box help-modal-box">
-      <button class="modal-close" onclick="if(window.closeHelpModal) window.closeHelpModal();">✕</button>
+      <button class="modal-close" onclick="if(window.closeHelpModal) window.closeHelpModal();"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head" style="text-align: left; margin-bottom: 20px;">
-        <div style="font-size: 30px; margin-bottom: 6px;">ℹ️</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:50%;margin-bottom:8px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
         <h3 id="helpModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">AnnaSutra — Help &amp; User Guide</h3>
         <p id="helpModalSubtitle" style="margin: 0; font-size: 13px; color: var(--text-muted);">National Agri-Produce Traceability &amp; Verification Assistance</p>
       </div>
@@ -1757,7 +1757,7 @@
         footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
         modalRoleTitle: "Entity Login",
         modalSubtitle: "Role-Confined Authentication on AnnaSutra",
-        demoFastTitle: "⚡ 1-Tap Evaluation Sign In",
+        demoFastTitle: "1-Tap Evaluation Sign In",
         btnDemoTap: "1-Tap Sign In",
         otpOrLabel: "── OR SIGN IN WITH MOBILE OTP ──",
         phonePlaceholder: "Mobile Number (+91)",
@@ -1773,23 +1773,23 @@
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO Cultivator",
         portalRoleDescProducer: "Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.",
-        btnPortalProducer: "Sign In as Producer ➔",
+        btnPortalProducer: "Sign In as Producer &rarr;",
         portalRoleTitleAggregator: "Aggregator",
         portalRoleSubAggregator: "APMC Yard / Mandi Arhatiya",
         portalRoleDescAggregator: "Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.",
-        btnPortalAggregator: "Sign In as Aggregator ➔",
+        btnPortalAggregator: "Sign In as Aggregator &rarr;",
         portalRoleTitleWholesaler: "Wholesaler",
         portalRoleSubWholesaler: "Terminal Trader / Cold Storage",
         portalRoleDescWholesaler: "Terminal warehouse receipt, lot splitting into pallets, and IoT cold-chain telemetry logging.",
-        btnPortalWholesaler: "Sign In as Wholesaler ➔",
+        btnPortalWholesaler: "Sign In as Wholesaler &rarr;",
         portalRoleTitleDistributor: "Distributor",
         portalRoleSubDistributor: "Logistics Fleet / Regional Depot",
         portalRoleDescDistributor: "Accept cold-chain transit, reefer temperature monitoring, and electronic store dispatch.",
-        btnPortalDistributor: "Sign In as Distributor ➔",
+        btnPortalDistributor: "Sign In as Distributor &rarr;",
         portalRoleTitleRetailer: "Retailer",
         portalRoleSubRetailer: "Kirana / POS / Supermarket",
         portalRoleDescRetailer: "Record store intake, generate customer shelf QR standees, and complete tamper-proof final sale.",
-        btnPortalRetailer: "Sign In as Retailer ➔",
+        btnPortalRetailer: "Sign In as Retailer &rarr;",
         qrModalTitle: "Instant QR Code Scanner",
         qrModalSubtitle: "Point your device camera at any produce crate QR tag or upload an image.",
         btnSwitchCameraText: "Toggle Camera",
@@ -1836,7 +1836,7 @@
         footerLegalNotice: "© 2026 अन्नसूत्र • सी-डैक, इलेक्ट्रॉनिकी एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY), भारत सरकार द्वारा विकसित एवं अनुरक्षित।",
         modalRoleTitle: "संस्थागत लॉगिन",
         modalSubtitle: "अन्नसूत्र पर भूमिका-सीमित प्रमाणीकरण",
-        demoFastTitle: "⚡ 1-टैप परीक्षण साइन इन",
+        demoFastTitle: "1-टैप परीक्षण साइन इन",
         btnDemoTap: "1-टैप साइन इन करें",
         otpOrLabel: "── अथवा मोबाइल ओटीपी से साइन इन करें ──",
         phonePlaceholder: "मोबाइल नंबर (+91)",
@@ -1852,23 +1852,23 @@
         portalRoleTitleProducer: "उत्पादक",
         portalRoleSubProducer: "किसान / एफपीओ / उत्पादक",
         portalRoleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
-        btnPortalProducer: "उत्पादक के रूप में साइन इन ➔",
+        btnPortalProducer: "उत्पादक के रूप में साइन इन &rarr;",
         portalRoleTitleAggregator: "संग्रहकर्ता",
         portalRoleSubAggregator: "मंडी आढ़ती / एपीएमसी यार्ड",
         portalRoleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
-        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन ➔",
+        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन &rarr;",
         portalRoleTitleWholesaler: "थोक व्यापारी",
         portalRoleSubWholesaler: "टर्मिनल बाजार / थोक व्यापारी",
         portalRoleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
-        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन ➔",
+        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन &rarr;",
         portalRoleTitleDistributor: "वितरक",
         portalRoleSubDistributor: "लॉजिस्टिक्स फ्लीट / द्वितीयक डिपो",
         portalRoleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
-        btnPortalDistributor: "वितरक के रूप में साइन इन ➔",
+        btnPortalDistributor: "वितरक के रूप में साइन इन &rarr;",
         portalRoleTitleRetailer: "खुदरा विक्रेता",
         portalRoleSubRetailer: "किराना / सुपरमार्केट / पीओएस",
         portalRoleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
-        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन ➔",
+        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन &rarr;",
         qrModalTitle: "त्वरित क्यूआर कोड स्कैनर",
         qrModalSubtitle: "क्रेट क्यूआर टैग पर अपना कैमरा केंद्रित करें अथवा चित्र अपलोड करें।",
         btnSwitchCameraText: "कैमरा बदलें",
@@ -1915,7 +1915,7 @@
         footerLegalNotice: "© ২০২৬ অন্নসূত্র • সি-ড্যাক, ইলেকট্রনিক্স ও তথ্যপ্রযুক্তি মন্ত্রণালয় (MeitY), ভারত সরকার দ্বারা নির্মিত ও পরিচালিত।",
         modalRoleTitle: "সংস্থা লগইন",
         modalSubtitle: "অন্নসূত্রে ভূমিকা-সীমাবদ্ধ প্রমাণীকরণ",
-        demoFastTitle: "⚡ ১-ট্যাপে সরাসরি প্রবেশ",
+        demoFastTitle: "১-ট্যাপে সরাসরি প্রবেশ",
         btnDemoTap: "১-ট্যাপে সাইন ইন করুন",
         otpOrLabel: "── অথবা মোবাইল ওটিপি দিয়ে সাইন ইন করুন ──",
         phonePlaceholder: "মোবাইল নম্বর (+91)",
@@ -1931,23 +1931,23 @@
         portalRoleTitleProducer: "উৎপাদক",
         portalRoleSubProducer: "কৃষক / এফপিও / উৎপাদক",
         portalRoleDescProducer: "ফসল লট তৈরি করুন, ক্রেট ট্যাগ জারি করুন ও মণ্ডিতে প্রেরণ করুন।",
-        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন ➔",
+        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন &rarr;",
         portalRoleTitleAggregator: "সংগ্রহকারী",
         portalRoleSubAggregator: "মণ্ডি আড়তদার / এপিএমসি ইয়ার্ড",
         portalRoleDescAggregator: "খামার চালান গ্রহণ, ওজন যাচাই, অ্যাগমার্কনেট গ্রেড প্রদান ও পাইকারি বিক্রেতার কাছে হস্তান্তর।",
-        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন ➔",
+        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন &rarr;",
         portalRoleTitleWholesaler: "পাইকারি বিক্রেতা",
         portalRoleSubWholesaler: "টার্মিনাল মার্কেট / পাইকারি বিক্রেতা",
         portalRoleDescWholesaler: "টার্মিনাল চালান গ্রহণ, বাণিজ্যিক লট বিভাজন ও হিমাগার সংরক্ষণ।",
-        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন ➔",
+        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন &rarr;",
         portalRoleTitleDistributor: "পরিবেশক",
         portalRoleSubDistributor: "লজিস্টিকস ফ্লিট / আঞ্চলিক ডিপো",
         portalRoleDescDistributor: "পরিবহন হেফাজত গ্রহণ, জিপিএস ও তাপমাত্রা নথিভুক্তকরণ ও দোকানে সরবরাহ।",
-        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন ➔",
+        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন &rarr;",
         portalRoleTitleRetailer: "খুচরা বিক্রেতা",
         portalRoleSubRetailer: "মুদি / সুপারমার্কেট / পিওএস",
         portalRoleDescRetailer: "দোকানে পণ্য গ্রহণ, ক্রেতার জন্য কিউআর প্রদর্শন ও বিক্রয় নথি।",
-        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন ➔",
+        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন &rarr;",
         qrModalTitle: "ত্বরিত কিউআর কোড স্ক্যানার",
         qrModalSubtitle: "ক্রেট কিউআর ট্যাগে ক্যামেরা নির্দেশ করুন অথবা ছবি আপলোড করুন।",
         btnSwitchCameraText: "ক্যামেরা পরিবর্তন করুন",
@@ -2128,10 +2128,10 @@
       }
 
       const icons = {
-        error: '❌',
-        success: '✅',
-        warning: '⚠️',
-        info: 'ℹ️'
+        error: window.renderUniformIcon ? window.renderUniformIcon('x', 18, '#ef4444', 2.5) : '',
+        success: window.renderUniformIcon ? window.renderUniformIcon('check', 18, '#10b981', 2.8) : '',
+        warning: window.renderUniformIcon ? window.renderUniformIcon('alert', 18, '#f59e0b', 2.2) : '',
+        info: window.renderUniformIcon ? window.renderUniformIcon('info', 18, '#3b82f6', 2.2) : ''
       };
 
       const defaultTitles = {
@@ -2144,7 +2144,7 @@
       const toast = document.createElement('div');
       toast.className = 'annasutra-toast toast-' + type;
       toast.innerHTML = 
-        '<div class="toast-icon">' + (icons[type] || 'ℹ️') + '</div>' +
+        '<div class="toast-icon">' + (icons[type] || icons.info) + '</div>' +
         '<div class="toast-content">' +
           '<div class="toast-title">' + (title || defaultTitles[type] || 'Notice') + '</div>' +
           '<div class="toast-body">' + message + '</div>' +
@@ -2237,10 +2237,10 @@
           vStep.style.display = 'block';
           const notice = document.getElementById('otpStatusNotice');
           if (notice) {
-            notice.innerText = (currentLang === 'hi' ? '✓ ' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway');
+            notice.innerText = (currentLang === 'hi' ? '' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway');
           }
           startOtpCountdown(60);
-          showToast((currentLang === 'hi' ? '✓ ' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '✓ ' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : '✓ OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
+          showToast((currentLang === 'hi' ? '' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
           const codeInput = document.getElementById('otpCodeInput');
           if (codeInput) {
             codeInput.value = data.debug_code || '';
@@ -2309,7 +2309,7 @@
           if (phone) {
             localStorage.setItem('annasutra_phone', phone);
           }
-          showToast((currentLang === 'hi' ? '✓ पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? '✓ পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : '✓ Identity verified! Launching operational console...'), 'success', 'Access Granted');
+          showToast((currentLang === 'hi' ? 'पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? 'পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : 'Identity verified! Launching operational console...'), 'success', 'Access Granted');
           verifySuccess = true;
         } else {
           showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error', 'Verification Failed');
@@ -2400,7 +2400,7 @@
     /* GOVERNANCE MODAL CONTENT */
     const govTopicsData = {
       agmarknet: {
-        icon: '📜',
+        icon: 'file-text',
         en: {
           title: 'Agmarknet Standards & APMC Assaying Framework',
           sub: 'Directorate of Marketing & Inspection (DMI), Ministry of Agriculture',
@@ -2410,7 +2410,7 @@
             <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'Visit Agmarknet National Portal ➔'
+          actionText: 'Visit Agmarknet National Portal &rarr;'
         },
         hi: {
           title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
@@ -2421,7 +2421,7 @@
             <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं ➔'
+          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं &rarr;'
         },
         bn: {
           title: 'অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
@@ -2432,11 +2432,11 @@
             <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান ➔'
+          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান &rarr;'
         }
       },
       health: {
-        icon: '🏥',
+        icon: 'award',
         en: {
           title: 'System Health & Infrastructure Telemetry',
           sub: 'National Distributed Ledger Resilience & Availability',
@@ -2446,7 +2446,7 @@
             <p><strong>End-to-End Latency:</strong> Sub-50ms API response time ensures rapid QR verification at fast-paced retail checkout counters and APMC weighbridge gates.</p>
           `,
           actionLink: '/health/',
-          actionText: 'View Live /health Telemetry ➔'
+          actionText: 'View Live /health Telemetry &rarr;'
         },
         hi: {
           title: 'सिस्टम स्वास्थ्य एवं अवसंरचना टेलीमेट्री',
@@ -2457,7 +2457,7 @@
             <p><strong>त्वरित प्रतिक्रिया:</strong> 50ms से कम प्रतिक्रिया समय खुदरा काउंटरों और मंडी वेज-ब्रिज पर त्वरित क्यूआर सत्यापन सुनिश्चित करता है।</p>
           `,
           actionLink: '/health/',
-          actionText: 'लाइव /health टेलीमेट्री देखें ➔'
+          actionText: 'लाइव /health टेलीमेट्री देखें &rarr;'
         },
         bn: {
           title: 'সিস্টেম স্থিতি ও ক্লাউড অবকাঠামো টেলিমেট্রি',
@@ -2468,11 +2468,11 @@
             <p><strong>দ্রুত প্রতিক্রিয়া:</strong> ৫০ মিলি-সেকেন্ডের কম সময়ে উত্তর প্রদান নিশ্চিত করে চেকআউট কাউন্টারে দ্রুত কিউআর স্ক্যান সুবিধা।</p>
           `,
           actionLink: '/health/',
-          actionText: 'লাইভ /health টেলিমেট্রি দেখুন ➔'
+          actionText: 'লাইভ /health টেলিমেট্রি দেখুন &rarr;'
         }
       },
       security: {
-        icon: '🔐',
+        icon: 'lock',
         en: {
           title: 'Security Audit & CERT-In Directions',
           sub: 'National Cybersecurity Standards & Compliance Protocol',
@@ -2502,7 +2502,7 @@
         }
       },
       grievance: {
-        icon: '👤',
+        icon: 'user',
         en: {
           title: 'Grievance Redressal Officer (DPDP Act 2023)',
           sub: 'Statutory Citizen & Operator Resolution Mechanism',
@@ -2535,7 +2535,7 @@
         }
       },
       cdac: {
-        icon: '🌱',
+        icon: 'sprout',
         en: {
           title: 'AnnaSutra Project Architecture & Principles',
           sub: 'Independent Agricultural Produce Traceability Initiative',
@@ -2545,7 +2545,7 @@
             <p><strong>Decentralized & Role-Confined:</strong> Built on append-only event records, mutual custody confirmation, and data-protection design principles aligned with Indian agricultural ecosystems.</p>
           `,
           actionLink: '#',
-          actionText: 'Platform Architecture Notice ➔'
+          actionText: 'Platform Architecture Notice &rarr;'
         },
         hi: {
           title: 'अन्नसूत्र परियोजना वास्तुकला एवं सिद्धांत',
@@ -2556,7 +2556,7 @@
             <p><strong>भूमिका-सीमित संरचना:</strong> अपरिवर्तनीय इवेंट रिकॉर्ड, पारस्परिक कस्टडी पुष्टि और डेटा सुरक्षा सिद्धांतों पर आधारित।</p>
           `,
           actionLink: '#',
-          actionText: 'परियोजना सूचना ➔'
+          actionText: 'परियोजना सूचना &rarr;'
         },
         bn: {
           title: 'অন্নসূত্র প্রকল্প স্থাপত্য ও রূপরেখা',
@@ -2567,7 +2567,7 @@
             <p><strong>ভূমিকা-সীমাবদ্ধ কাঠামো:</strong> অপরিবর্তনীয় ইভেন্ট রেকর্ড, পারস্পরিক হেফাজত নিশ্চিতকরণ এবং ডেটা সুরক্ষা নীতির ভিত্তিতে নির্মিত।</p>
           `,
           actionLink: '#',
-          actionText: 'প্রকল্প তথ্য ➔'
+          actionText: 'প্রকল্প তথ্য &rarr;'
         }
       }
     };
@@ -2576,7 +2576,7 @@
       const data = govTopicsData[topic];
       if (!data) return;
       const localized = data[currentLang] || data['en'];
-      document.getElementById('govModalIcon').innerText = data.icon || '📜';
+      document.getElementById('govModalIcon').innerHTML = window.renderUniformIcon ? window.renderUniformIcon(data.icon, 32, '#047857') : '';
       document.getElementById('govModalTitle').innerText = localized.title;
       document.getElementById('govModalSubtitle').innerText = localized.sub;
       
