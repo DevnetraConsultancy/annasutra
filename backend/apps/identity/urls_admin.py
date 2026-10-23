@@ -7,6 +7,8 @@ from .views_admin import (
     AdminRevealFieldView,
     AdminEntityDecisionView,
     AdminIssueQrBlockView,
+    AdminEntityRestoreView,
+    AdminEntityPurgeView,
 )
 
 urlpatterns = [
@@ -20,4 +22,8 @@ urlpatterns = [
     path("entities/<uuid:entity_id>/decision/", AdminEntityDecisionView.as_view(), name="admin_entity_decision_slash"),
     path("entities/<uuid:entity_id>/qr-blocks", AdminIssueQrBlockView.as_view(), name="admin_issue_qr_block"),
     path("entities/<uuid:entity_id>/qr-blocks/", AdminIssueQrBlockView.as_view(), name="admin_issue_qr_block_slash"),
+    path("entities/<uuid:entity_id>/restore", AdminEntityRestoreView.as_view(), name="admin_entity_restore"),
+    path("entities/<uuid:entity_id>/restore/", AdminEntityRestoreView.as_view(), name="admin_entity_restore_slash"),
+    path("entities/<uuid:entity_id>/purge", AdminEntityPurgeView.as_view(), name="admin_entity_purge"),
+    path("entities/<uuid:entity_id>/purge/", AdminEntityPurgeView.as_view(), name="admin_entity_purge_slash"),
 ]

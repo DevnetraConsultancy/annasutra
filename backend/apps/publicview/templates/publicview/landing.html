@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
   <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261023" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261023" defer></script>
+  <script src="/static/publicview/js/producer_wizard.js?v=20261023v2" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -2230,7 +2230,7 @@
         <span id="tickerTitle">LIVE CUSTODY TICKER</span>
       </span>
       <span class="ledger-ticker-stream" id="tickerStream">
-        [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #LOT-VERIFIED-01) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
+        [00:14:02 IST] Digital weighbridge gross weight attested • Cryptographic hash chained • e-NAM settlement confirmed
       </span>
     </div>
   </div>
@@ -3821,11 +3821,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 kg • Harvested at Cluster Yard #4', status: 'In Farm Custody' },
-            { code: 'LOT-VERIFIED-02', desc: 'Potato (Jyoti) • 1,200.0 kg • Packed in 24 crates', status: 'Ready for Mandi Dispatch' },
-            { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) • 320.0 kg • Graded Farm Stock', status: 'Quality Inspected' }
-          ]
+          batches: []
         },
         AGGREGATOR: {
           title: 'Aggregator Mandi Console (APMC Yard & Mandi Arhatiya)',
@@ -3909,11 +3905,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Grade A) • 500.0 kg • Auction clearance granted', status: 'In Mandi Custody' },
-            { code: 'HGH-LOT-9921-A', desc: 'Potato (Jyoti Grade A) • 700.0 kg • Weighbridge certified', status: 'Auction Cleared' },
-            { code: 'HGH-LOT-9921-B', desc: 'Potato (Jyoti Grade B) • 500.0 kg • Sub-lot dispatch ready', status: 'Ready for Wholesaler' }
-          ]
+          batches: []
         },
         WHOLESALER: {
           title: 'Wholesaler Terminal Console (Posta Market & Cold Storage)',
@@ -3996,11 +3988,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid) • 500.0 kg • Stored in Cold Bay #3', status: 'In Cold Storage' },
-            { code: 'CCW-PLT-4401', desc: 'Onion (Nasik Red) • 1,800.0 kg • Pallet G-02', status: 'Terminal Stock' },
-            { code: 'CCW-PLT-4402', desc: 'Green Chilli • 250.0 kg • AC Chamber #1', status: 'Ready for Dispatch' }
-          ]
+          batches: []
         },
         DISTRIBUTOR: {
           title: 'Distributor Logistics Console (Cold-Chain Fleet & Depots)',
@@ -4083,11 +4071,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 kg • Reefer Truck WB-19-AX-4402', status: 'In Transit (Kolkata Route)' },
-            { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 kg • En route to New Town Retail Depot', status: 'In Transit' },
-            { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) • 450.0 kg • Cold-chain verified', status: 'Arrival at Depot' }
-          ]
+          batches: []
         },
         RETAILER: {
           title: 'Retailer Point-of-Sale Console (Supermarket & Kirana)',
@@ -4170,11 +4154,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • On Shelf: 120.0 kg • Grade A Organic', status: 'Active on Retail Shelf' },
-            { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • On Shelf: 80.0 kg • 24 Verified Customer Scans', status: 'Active on Retail Shelf' },
-            { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) • On Shelf: 45.0 kg • Premium Crisp Grade', status: 'Active on Retail Shelf' }
-          ]
+          batches: []
         }
       },
       hi: {
@@ -4260,11 +4240,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • क्लस्टर यार्ड #4 में उत्पादित', status: 'खेत कस्टडी में' },
-            { code: 'LOT-VERIFIED-02', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट में पैक', status: 'मंडी प्रेषण हेतु तैयार' },
-            { code: 'WB-FPO-RABI-04', desc: 'फूलगोभी (स्नोबॉल) • 320.0 किग्रा • ग्रेडेड फार्म स्टॉक', status: 'गुणवत्ता सत्यापित' }
-          ]
+          batches: []
         },
         AGGREGATOR: {
           title: 'संग्रहकर्ता मंडी कंसोल (एपीएमसी यार्ड व मंडी आढ़ती)',
@@ -4348,11 +4324,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • नीलामी निकासी स्वीकृत', status: 'मंडी कस्टडी में' },
-            { code: 'HGH-LOT-9921-A', desc: 'आलू (ज्योति ग्रेड ए) • 700.0 किग्रा • वजन सत्यापित', status: 'नीलामी संपन्न' },
-            { code: 'HGH-LOT-9921-B', desc: 'आलू (ज्योति ग्रेड बी) • 500.0 किग्रा • प्रेषण तैयार', status: 'थोक व्यापारी हेतु तैयार' }
-          ]
+          batches: []
         },
         WHOLESALER: {
           title: 'थोक व्यापारी टर्मिनल कंसोल (पोस्ता बाजार व शीत गृह)',
@@ -4435,11 +4407,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बे #3 में सुरक्षित', status: 'शीत गृह में सुरक्षित' },
-            { code: 'CCW-PLT-4401', desc: 'प्याज (नासिक लाल) • 1,800.0 किग्रा • पैलेट जी-02', status: 'टर्मिनल स्टॉक' },
-            { code: 'CCW-PLT-4402', desc: 'हरी मिर्च • 250.0 किग्रा • एसी कक्ष #1', status: 'प्रेषण तैयार' }
-          ]
+          batches: []
         },
         DISTRIBUTOR: {
           title: 'वितरक लॉजिस्टिक्स कंसोल (कोल्ड-चेन फ्लीट एवं डिपो)',
@@ -4522,11 +4490,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ट्रक WB-19-AX-4402', status: 'पारगमन में (कोलकाता मार्ग)' },
-            { code: '6R3T8PLM2K9V', desc: 'सेब (किन्नौर) • 300.0 किग्रा • न्यू टाउन डिपो मार्ग पर', status: 'पारगमन में' },
-            { code: 'DIST-VEG-4401', desc: 'हरी मटर (ताजा) • 450.0 किग्रा • कोल्ड-चेन सत्यापित', status: 'डिपो पर आगमन' }
-          ]
+          batches: []
         },
         RETAILER: {
           title: 'खुदरा विक्रेता बिक्री केंद्र कंसोल (सुपरमार्केट व किराना)',
@@ -4609,11 +4573,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • शेल्फ पर: 120.0 किग्रा • ग्रेड ए ऑर्गेनिक', status: 'खुदरा शेल्फ पर उपलब्ध' },
-            { code: '4T9Q2XMD7K1B', desc: 'गाजर (नारंगी) • शेल्फ पर: 80.0 किग्रा • 24 सत्यापित ग्राहक स्कैन', status: 'खुदरा शेल्फ पर उपलब्ध' },
-            { code: 'RET-APP-9901', desc: 'सेब (किन्नौर) • शेल्फ पर: 45.0 किग्रा • प्रीमियम क्रिस्प ग्रेड', status: 'खुदरा शेल्फ पर उपलब्ध' }
-          ]
+          batches: []
         }
       },
       bn: {
@@ -4699,11 +4659,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • ক্লাস্টার ইয়ার্ড #৪-এ উৎপাদিত', status: 'খামার হেফাজতে সংরক্ষিত' },
-            { code: 'LOT-VERIFIED-02', desc: 'আলু (জ্যোতি) • ১২০০.০ কেজি • ২৪টি ক্রেটে প্যাক করা', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
-            { code: 'WB-FPO-RABI-04', desc: 'ফুলকপি (স্নোবল) • ৩২০.০ কেজি • গ্রেডেড খামার স্টক', status: 'গুণমান পরীক্ষিত' }
-          ]
+          batches: []
         },
         AGGREGATOR: {
           title: 'সংগ্রহকারী মণ্ডি কনসোল (এপিএমসি ইয়ার্ড ও মণ্ডি আড়তদার)',
@@ -4787,11 +4743,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • নিলাম ক্লিয়ারেন্স প্রাপ্ত', status: 'মণ্ডি কাস্টডিতে রক্ষিত' },
-            { code: 'HGH-LOT-9921-A', desc: 'আলু (জ্যোতি গ্রেড এ) • ৭০০.০ কেজি • ওয়েব্রিজ প্রত্যয়িত', status: 'নিলাম সম্পন্ন' },
-            { code: 'HGH-LOT-9921-B', desc: 'আলু (জ্যোতি গ্রেড বি) • ৫০০.০ কেজি • প্রেষণ প্রস্তুত', status: 'পাইকারি ক্রেতার জন্য প্রস্তুত' }
-          ]
+          batches: []
         },
         WHOLESALER: {
           title: 'পাইকারি টার্মিনাল কনসোল (পোস্তা বাজার ও হিমাগার)',
@@ -4874,11 +4826,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সংরক্ষিত', status: 'হিমাগারে সংরক্ষিত' },
-            { code: 'CCW-PLT-4401', desc: 'পেঁয়াজ (নাসিক লাল) • ১৮০০.০ কেজি • প্যালেট জি-০২', status: 'পাইকারি মজুদ' },
-            { code: 'CCW-PLT-4402', desc: 'কাঁচা লঙ্কা • ২৫০.০ কেজি • এসি চেম্বার #১', status: 'বিতরণের জন্য প্রস্তুত' }
-          ]
+          batches: []
         },
         DISTRIBUTOR: {
           title: 'পরিবেশক লজিস্টিকস কনসোল (শীতল পরিবহন ও ডিপো)',
@@ -4961,11 +4909,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার ট্রাক WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা রুট)' },
-            { code: '6R3T8PLM2K9V', desc: 'আপেল (কিন্নর) • ৩০০.০ কেজি • নিউ টাউন রিটেইল ডিপোর পথে', status: 'পরিবহনরত' },
-            { code: 'DIST-VEG-4401', desc: 'মটরশুঁটি (তাজা) • ৪৫০.০ কেজি • কোল্ড-চেন যাচাইকৃত', status: 'ডিপোতে পৌঁছেছে' }
-          ]
+          batches: []
         },
         RETAILER: {
           title: 'খুচরা পয়েন্ট-অফ-সেল কনসোল (সুপারমার্কেট ও মুদি দোকান)',
@@ -5048,11 +4992,7 @@
               ]
             }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • সেলফে আছে: ১২০.০ কেজি • গ্রেড এ অর্গানিক', status: 'খুচরা সেলফে সক্রিয়' },
-            { code: '4T9Q2XMD7K1B', desc: 'গাজর (কমলা) • সেলফে আছে: ৮০.০ কেজি • ২৪টি সফল গ্রাহক স্ক্যান', status: 'খুচরা সেলফে সক্রিয়' },
-            { code: 'RET-APP-9901', desc: 'আপেল (কিন্নর) • সেলফে আছে: ৪৫.০ কেজি • প্রিমিয়াম গ্রেড', status: 'খুচরা সেলফে সক্রিয়' }
-          ]
+          batches: []
         }
       }
     };
@@ -5070,11 +5010,7 @@
             { title: 'Active QR Batches', val: '12 Batches', tag: 'All tamper-evident sealed' },
             { title: 'Dispatched to Mandi', val: '14,200 Kg', tag: 'Dual-signed transfer' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Grade A Organic', status: 'In Farm Custody' },
-            { code: 'LOT-VERIFIED-02', desc: 'Potato (Jyoti) • 1,200.0 Kg • 24 Crates Sealed', status: 'Ready for Mandi' },
-            { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) • 320.0 Kg • Verified Lot', status: 'Quality Certified' }
-          ]
+          batches: []
         },
         AGGREGATOR: {
           icon: 'scale',
@@ -5087,11 +5023,7 @@
             { title: 'Agmarknet Grade A', val: '99.4%', tag: 'Official quality tested' },
             { title: 'Auction Cleared', val: '₹ 14.8 Lakh', tag: 'e-NAM settlements' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Grade A) • 500.0 Kg • Mandi Weighbridge Slip #8812', status: 'In Mandi Custody' },
-            { code: 'HGH-LOT-9921-A', desc: 'Potato (Jyoti Grade A) • 700.0 Kg • Auction Cleared', status: 'Auction Settled' },
-            { code: 'HGH-LOT-9921-B', desc: 'Potato (Jyoti Grade B) • 500.0 Kg • Transit Pass Issued', status: 'Ready for Wholesaler' }
-          ]
+          batches: []
         },
         WHOLESALER: {
           icon: 'warehouse',
@@ -5104,11 +5036,7 @@
             { title: 'Consignments Split', val: '38 Lots', tag: 'Mass-balance preserved' },
             { title: 'Fleet Dispatches', val: '24 Shipments', tag: 'Locked reefer trucks' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid) • 500.0 Kg • Cold Bay #3 Active', status: 'In Cold Storage' },
-            { code: 'CCW-PLT-4401', desc: 'Onion (Nasik Red) • 1,800.0 Kg • Pallet G-02', status: 'Terminal Stock' },
-            { code: 'CCW-PLT-4402', desc: 'Green Chilli • 250.0 Kg • AC Chamber #1', status: 'Ready for Fleet' }
-          ]
+          batches: []
         },
         DISTRIBUTOR: {
           icon: 'truck',
@@ -5121,11 +5049,7 @@
             { title: 'Mean Cargo Temp', val: '7.4 °C', tag: 'Zero thermal excursions' },
             { title: 'On-Time Retail Drops', val: '99.8%', tag: '42 Store destinations' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Reefer WB-19-AX-4402', status: 'In Transit (Kolkata)' },
-            { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 Kg • Highway Toll Checkpoint', status: 'In Transit' },
-            { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) • 450.0 Kg • Cold-chain verified', status: 'Arrived at Depot' }
-          ]
+          batches: []
         },
         RETAILER: {
           icon: 'cart',
@@ -5138,11 +5062,7 @@
             { title: 'Consumer QR Scans', val: '1,890 Scans', tag: '4.9/5.0 Customer trust score' },
             { title: 'Freshness Retention', val: '99.2%', tag: '< 0.8% organic waste rate' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 120.0 Kg on shelf • Grade A Organic', status: 'Active on Shelf' },
-            { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • 80.0 Kg • 24 Verified Customer Scans', status: 'Active on Shelf' },
-            { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) • 45.0 Kg • Standee QR Verified', status: 'Active on Shelf' }
-          ]
+          batches: []
         }
       },
       hi: {
@@ -5157,11 +5077,7 @@
             { title: 'सक्रिय क्यूआर बैच', val: '12 लॉट्स', tag: 'सभी क्रेट सुरक्षित रूप से सीलबंद' },
             { title: 'मंडी को प्रेषित', val: '14,200 किग्रा', tag: 'द्विपक्षीय हस्ताक्षरित प्रेषण' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ग्रेड ए जैविक', status: 'खेत कस्टडी में' },
-            { code: 'LOT-VERIFIED-02', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट सील', status: 'मंडी प्रेषण हेतु तैयार' },
-            { code: 'WB-FPO-RABI-04', desc: 'फूलगोभी (स्नोबॉल) • 320.0 किग्रा • सत्यापित लॉट', status: 'गुणवत्ता प्रमाणित' }
-          ]
+          batches: []
         },
         AGGREGATOR: {
           icon: 'scale',
@@ -5174,11 +5090,7 @@
             { title: 'एगमार्कनेट ग्रेड ए', val: '99.4%', tag: 'आधिकारिक गुणवत्ता जांच' },
             { title: 'नीलामी निकासी', val: '₹ 14.8 लाख', tag: 'ई-नाम द्वारा निपटान' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • वेज-ब्रिज पर्ची #8812', status: 'मंडी कस्टडी में' },
-            { code: 'HGH-LOT-9921-A', desc: 'आलू (ज्योति ग्रेड ए) • 700.0 किग्रा • नीलामी पूर्ण', status: 'नीलामी संपन्न' },
-            { code: 'HGH-LOT-9921-B', desc: 'आलू (ज्योति ग्रेड बी) • 500.0 किग्रा • ट्रांजिट पास जारी', status: 'थोक व्यापारी हेतु तैयार' }
-          ]
+          batches: []
         },
         WHOLESALER: {
           icon: 'warehouse',
@@ -5191,11 +5103,7 @@
             { title: 'लॉट विभाजन', val: '38 लॉट्स', tag: 'द्रव्यमान-संतुलन सुरक्षित' },
             { title: 'फ्लीट प्रेषण', val: '24 खेपें', tag: 'सीलबंद रीफर वाहन' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बेयर #3 में सुरक्षित', status: 'हिमागार में सुरक्षित' },
-            { code: 'CCW-PLT-4401', desc: 'प्याज (नासिक लाल) • 1,800.0 किग्रा • पैलेट जी-02', status: 'टर्मिनल स्टॉक' },
-            { code: 'CCW-PLT-4402', desc: 'हरी मिर्च • 250.0 किग्रा • एसी चैंबर #1', status: 'फ्लीट हेतु तैयार' }
-          ]
+          batches: []
         },
         DISTRIBUTOR: {
           icon: 'truck',
@@ -5208,11 +5116,7 @@
             { title: 'औसत तापमान', val: '7.4 °C', tag: 'शून्य तापीय विचलन' },
             { title: 'समय पर डिलीवरी', val: '99.8%', tag: '42 खुदरा गंतव्य' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • रीफर WB-19-AX-4402', status: 'परिवहन में (कोलकाता)' },
-            { code: '6R3T8PLM2K9V', desc: 'सेब (किन्नौर) • 300.0 किग्रा • टोल चेकपॉइंट पर', status: 'मार्ग में' },
-            { code: 'DIST-VEG-4401', desc: 'हरी मटर (ताजा) • 450.0 किग्रा • कोल्ड-चेन प्रमाणित', status: 'डिपो में आगमन' }
-          ]
+          batches: []
         },
         RETAILER: {
           icon: 'cart',
@@ -5225,11 +5129,7 @@
             { title: 'उपभोक्ता क्यूआर स्कैन', val: '1,890 स्कैन', tag: '4.9/5.0 ग्राहक विश्वास स्कोर' },
             { title: 'ताजगी प्रतिधारण', val: '99.2%', tag: '< 0.8% जैविक नुकसान' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 120.0 किग्रा शेल्फ पर • ग्रेड ए जैविक', status: 'शेल्फ पर सक्रिय' },
-            { code: '4T9Q2XMD7K1B', desc: 'गाजर (नारंगी) • 80.0 किग्रा • 24 सत्यापित ग्राहक स्कैन', status: 'शेल्फ पर सक्रिय' },
-            { code: 'RET-APP-9901', desc: 'सेब (किन्नौर) • 45.0 किग्रा • स्टैंडी क्यूआर सत्यापित', status: 'शेल्फ पर सक्रिय' }
-          ]
+          batches: []
         }
       },
       bn: {
@@ -5244,11 +5144,7 @@
             { title: 'সক্রিয় কিউআর ব্যাচ', val: '১২টি ব্যাচ', tag: 'সব ক্রেট সুরক্ষিত সিলযুক্ত' },
             { title: 'মণ্ডিতে প্রেরিত', val: '১৪,২০০ কেজি', tag: 'দ্বিপাক্ষিক স্বাক্ষরে প্রেরিত' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • গ্রেড এ জৈব', status: 'খামার হেফাজতে' },
-            { code: 'LOT-VERIFIED-02', desc: 'আলু (জ্যোতি) • ১,২০০.০ কেজি • ২৪টি ক্রেট সিলযুক্ত', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
-            { code: 'WB-FPO-RABI-04', desc: 'ফুলকপি (স্নোবল) • ৩২০.০ কেজি • প্রত্যয়িত লট', status: 'গুণমান প্রত্যয়িত' }
-          ]
+          batches: []
         },
         AGGREGATOR: {
           icon: 'scale',
@@ -5261,11 +5157,7 @@
             { title: 'অ্যাগমার্কনেট গ্রেড এ', val: '৯৯.৪%', tag: 'অফিসিয়াল গুণমান পরীক্ষিত' },
             { title: 'নিলাম নিষ্পত্তি', val: '₹ ১৪.৮ লাখ', tag: 'ই-নাম দ্বারা নিষ্পত্তি' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • ওয়েজ-ব্রিজ স্লিপ #৮৮১২', status: 'মণ্ডি হেফাজতে' },
-            { code: 'HGH-LOT-9921-A', desc: 'আলু (জ্যোতি গ্রেড এ) • ৭০০.০ কেজি • নিলাম সম্পন্ন', status: 'নিলাম সম্পন্ন' },
-            { code: 'HGH-LOT-9921-B', desc: 'আলু (জ্যোতি গ্রেড বি) • ৫০০.০ কেজি • ট্রানজিট পাস ইস্যু', status: 'পাইকারদের জন্য প্রস্তুত' }
-          ]
+          batches: []
         },
         WHOLESALER: {
           icon: 'warehouse',
@@ -5278,11 +5170,7 @@
             { title: 'চালান বিভাজন', val: '৩৮টি লট', tag: 'ভর-ভারসাম্য অক্ষত' },
             { title: 'ফ্লিট প্রেরণ', val: '২৪টি চালান', tag: 'সিলযুক্ত রিফার ভ্যান' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সক্রিয়', status: 'হিমাগারে সংরক্ষিত' },
-            { code: 'CCW-PLT-4401', desc: 'পেঁয়াজ (নাসিক লাল) • ১,৮০০.০ কেজি • প্যালেট জি-০২', status: 'টার্মিনাল মজুদ' },
-            { code: 'CCW-PLT-4402', desc: 'কাঁচা লঙ্কা • ২৫০.০ কেজি • এসি চেম্বার #১', status: 'ফ্লিটের জন্য প্রস্তুত' }
-          ]
+          batches: []
         },
         DISTRIBUTOR: {
           icon: 'truck',
@@ -5295,11 +5183,7 @@
             { title: 'গড় তাপমাত্রা', val: '৭.৪ °সে', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
             { title: 'অন-টাইম ডেলিভারি', val: '৯৯.৮%', tag: '৪২টি খুচরা আউটলেট' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা)' },
-            { code: '6R3T8PLM2K9V', desc: 'আপেল (কিন্নর) • ৩০০.০ কেজি • টোল চেকপয়েন্টে', status: 'পথিমধ্যে' },
-            { code: 'DIST-VEG-4401', desc: 'মটরশুঁটি (তাজা) • ৪৫০.০ কেজি • কোল্ড-চেন প্রত্যয়িত', status: 'ডিপোতে পৌঁছেছে' }
-          ]
+          batches: []
         },
         RETAILER: {
           icon: 'cart',
@@ -5312,11 +5196,7 @@
             { title: 'ভোক্তা কিউআর স্ক্যান', val: '১,৮৯০টি স্ক্যান', tag: '৪.৯/৫.০ গ্রাহক আস্থা স্কোর' },
             { title: 'তাজাত্ব ধারণ', val: '৯৯.২%', tag: '< ০.৮% জৈব অপচয়' }
           ],
-          batches: [
-            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ১২০.০ কেজি সেলফে • গ্রেড এ অর্গানিক', status: 'সেলফে সক্রিয়' },
-            { code: '4T9Q2XMD7K1B', desc: 'গাজর (কমলা) • ৮০.০ কেজি • ২৪টি গ্রাহক স্ক্যান সম্পন্ন', status: 'সেলফে সক্রিয়' },
-            { code: 'RET-APP-9901', desc: 'আপেল (কিন্নর) • ৪৫.০ কেজি • স্ট্যান্ডি কিউআর যাচাইকৃত', status: 'সেলফে সক্রিয়' }
-          ]
+          batches: []
         }
       }
     };
@@ -5328,22 +5208,22 @@
 
     const tickerEvents = {
       en: [
-        "Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #LOT-VERIFIED-01) • Hash: 0x9e8a...3f12 • Custody to Aggregator",
-        "Bardhaman Organic FPO registered 750 Kg Hybrid Tomato (Lot #LOT-VERIFIED-02) • Plot B-4 Geofence • Hash: 0x3d41...b891",
+        "Digital weighbridge gross weight attested • Cryptographic hash chained • e-NAM settlement confirmed",
+        "Farmer producer harvest registered • GPS geofence verified • Immutable genesis ledger hash chained",
         "Bengal Cold-Chain Reefer WB-19-AX-4402 recorded in-transit temp 7.8°C • Zero thermal excursions • Route on track",
         "Maa Durga Fresh Mart (Kolkata) dispensed 2.5 Kg via consumer QR checkout • Append-only inventory adjusted",
         "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Agmarknet Grade A certified • e-NAM settlement"
       ],
       hi: [
-        "मंडी एपीएमसी आजादपुर ने 1,200 किग्रा अल्फांसो आम प्रमाणित किया (लॉट #LOT-VERIFIED-01) • हैश: 0x9e8a...3f12 • संग्रहकर्ता को कस्टडी",
-        "बर्धमान ऑर्गेनिक एफपीओ ने 750 किग्रा हाइब्रिड टमाटर पंजीकृत किया (लॉट #LOT-VERIFIED-02) • प्लॉट बी-4 • हैश: 0x3d41...b891",
+        "डिजिटल वेज-ब्रिज सकल भार सत्यापित • क्रिप्टोग्राफिक हैश शृंखलाबद्ध • ई-नाम निपटान प्रमाणित",
+        "किसान उत्पादक फसल पंजीकृत • जीपीएस जियोफेंस सत्यापित • अपरिवर्तनीय जेनेसिस लेज़र हैश",
         "बंगाल कोल्ड-चेन रीफर WB-19-AX-4402 ने परिवहन तापमान 7.8°C दर्ज किया • शून्य तापीय विचलन • समय पर मार्ग",
         "मां दुर्गा फ्रेश मार्ट (कोलकाता) ने उपभोक्ता क्यूआर द्वारा 2.5 किग्रा बिक्री दर्ज की • अपरिवर्तनीय लेज़र समायोजित",
         "हुगली एपीएमसी वेज-ब्रिज ने 4,250 किग्रा भार सत्यापित किया • एगमार्कनेट ग्रेड ए प्रमाणित • ई-नाम निपटान"
       ],
       bn: [
-        "মণ্ডি এপিএমসি আজাদপুর ১,২০০ কেজি আলফানসো আম প্রত্যয়িত করেছে (লট #LOT-VERIFIED-01) • হ্যাশ: 0x9e8a...3f12 • সংগ্রহকারীর নিকট হেফাজত",
-        "বর্ধমান অর্গানিক এফপিও ৭৫০ কেজি হাইব্রিড টমেটো নিবন্ধন করেছে (লট #LOT-VERIFIED-02) • প্লট বি-৪ • হ্যাশ: 0x3d41...b891",
+        "ডিজিটাল ওয়েজ-ব্রিজ ওজন যাচাই সম্পন্ন • ক্রিপ্টোগ্রাফিক হ্যাশ শৃঙ্খলিত • ই-নাম নিষ্পত্তি প্রত্যয়িত",
+        "কৃষক উৎপাদক ফসল নিবন্ধিত • জিপিএস জিওফেন্স যাচাইকৃত • অপরিবর্তনীয় জেনেসিস লেজার হ্যাশ",
         "বেঙ্গল কোল্ড-চেন রিফার WB-19-AX-4402 চলন্ত তাপমাত্রা ৭.৮°সে রেকর্ড করেছে • শূন্য বিচ্যুতি • সঠিক ট্রানজিট",
         "মা দুর্গা ফ্রেশ মার্ট (কলকাতা) ভোক্তা কিউআর স্ক্যানে ২.৫ কেজি বিক্রয় সম্পন্ন করেছে • লেজার হালনাগাদ",
         "হুগলি এপিএমসি ওয়েজ-ব্রিজ ৪,২৫০ কেজি ওজন যাচাই করেছে • অ্যাগমার্কনেট গ্রেড এ প্রত্যয়িত • ই-নাম নিষ্পত্তি"

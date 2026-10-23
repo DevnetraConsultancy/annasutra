@@ -133,7 +133,7 @@
       submitting: 'Submitting Application...',
       saving: 'Saving Draft...',
       underReviewTitle: 'Application Submitted — Under Verification Review',
-      underReviewSub: 'Your producer profile has been securely recorded. An official sequential code and your initial 50-QR label batch will be allocated upon administrative approval.',
+      underReviewSub: 'Your producer profile has been securely recorded. An official sequential code and QR label issuance will be enabled upon administrative approval. Unlimited QR labels can be generated for your harvest lots.',
       lblMappedLand: 'Verified Land Mapped',
       lblMaskedPan: 'Masked PAN Identity',
       lblSettlementBank: 'Settlement Bank',
@@ -174,7 +174,38 @@
       btnRevealBank: 'Reveal Account (Audit Logged)',
       lblReviewNotes: 'Administrative Review Notes / Reason',
       reviewNotesPh: 'Enter verification notes or reason for rejection / changes...',
-      btnApproveEntity: 'Approve & Issue Sovereign Code + 50 QR',
+      btnApproveEntity: 'Approve',
+      btnDeleteProducer: 'Delete Producer Data',
+      tabTrash: 'Trash',
+      consoleHeading: 'Harvest Lot & Custody Ledger Console',
+      btnRegisterLot: '+ Register New Harvest Lot',
+      searchLotPh: 'Search lot code, crop, variety, or plot...',
+      filterAllCrops: 'All Crops & Produce',
+      filterAllPlots: 'All Land Parcels / Plots',
+      filterAllCustody: 'All Custody States',
+      statusInCustody: 'In Farm Custody',
+      statusInTransit: 'In Transit (Locked)',
+      statusHandoverDone: 'Handover Approved (Locked)',
+      filterAllPayment: 'All Payment Statuses',
+      paymentPending: 'Pending Settlement',
+      paymentAdvance: 'Advance Received',
+      paymentSettled: 'Fully Settled',
+      sortLatest: 'Latest to Oldest',
+      sortOldest: 'Oldest to Latest',
+      sortQtyHigh: 'Quantity: High to Low',
+      sortQtyLow: 'Quantity: Low to High',
+      btnPrintQr: 'Print QR Labels',
+      btnEditLot: 'Edit Harvest Lot',
+      lblLockedNotice: 'Locked: Custody handover active. Immutability enforced by ledger.',
+      emptyLotsTitle: 'No harvest lots recorded in custody yet',
+      emptyLotsSub: 'Click the button above to register your first harvest lot and generate unique QR labels.',
+      confirmDeletePrompt: 'To confirm moving this producer to Trash, type DELETE in capital letters below:',
+      btnMoveToTrash: 'Move to Trash',
+      btnRestoreProducer: 'Restore Producer',
+      btnPurgeProducer: 'Purge Permanently',
+      addOtherProduce: 'Other Produce / Fruits / Spices',
+      customCropPh: 'Type fruit or crop name (e.g. Guava, Pomegranate, Turmeric)...',
+      btnAddProduce: '+ Add Produce',
       btnRequestChanges: 'Request Changes',
       btnRejectEntity: 'Reject Application'
     },
@@ -299,7 +330,7 @@
       submitting: 'आवेदन जमा हो रहा है...',
       saving: 'सहेजा जा रहा है...',
       underReviewTitle: 'आवेदन जमा हो गया — सत्यापन समीक्षाधीन है',
-      underReviewSub: 'आपका उत्पादक प्रोफ़ाइल सुरक्षित रूप से दर्ज कर लिया गया है। प्रशासनिक स्वीकृति मिलने पर आधिकारिक कोड और 50 क्यूआर लेबल आवंटित किए जाएंगे।',
+      underReviewSub: 'आपका उत्पादक प्रोफ़ाइल सुरक्षित रूप से दर्ज कर लिया गया है। प्रशासनिक स्वीकृति मिलने पर आधिकारिक कोड आवंटित किए जाएंगे एवं प्रत्येक फसल लॉट के लिए असीमित क्यूआर कोड उत्पन्न किए जा सकते हैं।',
       lblMappedLand: 'सत्यापित भूमि रकबा',
       lblMaskedPan: 'मास्क्ड पैन पहचान',
       lblSettlementBank: 'निपटान बैंक खाता',
@@ -340,7 +371,38 @@
       btnRevealBank: 'खाता संख्या देखें (ऑडिट लॉग)',
       lblReviewNotes: 'प्रशासनिक समीक्षा टिप्पणी / कारण',
       reviewNotesPh: 'सत्यापन टिप्पणी या अस्वीकृति/सुधार का कारण दर्ज करें...',
-      btnApproveEntity: 'स्वीकृत करें एवं आधिकारिक कोड + 50 QR जारी करें',
+      btnApproveEntity: 'स्वीकृत करें',
+      btnDeleteProducer: 'उत्पादक डेटा हटाएं',
+      tabTrash: 'ट्रैश (कचरा)',
+      consoleHeading: 'फसल लॉट एवं कस्टडी लेज़र कंसोल',
+      btnRegisterLot: '+ नया फसल लॉट पंजीकृत करें',
+      searchLotPh: 'लॉट कोड, फसल, किस्म या भूखंड खोजें...',
+      filterAllCrops: 'सभी फसलें व उत्पाद',
+      filterAllPlots: 'सभी भूमि / भूखंड',
+      filterAllCustody: 'सभी कस्टडी स्थितियां',
+      statusInCustody: 'खेत कस्टडी में',
+      statusInTransit: 'पारगमन में (लॉक)',
+      statusHandoverDone: 'हस्तांतरण स्वीकृत (लॉक)',
+      filterAllPayment: 'सभी भुगतान स्थितियां',
+      paymentPending: 'निपटान लंबित',
+      paymentAdvance: 'अग्रिम प्राप्त',
+      paymentSettled: 'पूर्णतः चुकता',
+      sortLatest: 'नवीनतम से पुराना',
+      sortOldest: 'पुराना से नवीनतम',
+      sortQtyHigh: 'मात्रा: अधिक से कम',
+      sortQtyLow: 'मात्रा: कम से अधिक',
+      btnPrintQr: 'क्यूआर लेबल प्रिंट करें',
+      btnEditLot: 'फसल लॉट संपादित करें',
+      lblLockedNotice: 'लॉक: कस्टडी हस्तांतरण सक्रिय। अपरिवर्तनीय लेज़र द्वारा सुरक्षित।',
+      emptyLotsTitle: 'कस्टडी में अभी कोई फसल लॉट दर्ज नहीं है',
+      emptyLotsSub: 'अपना पहला फसल लॉट पंजीकृत करने और अद्वितीय क्यूआर लेबल बनाने के लिए ऊपर दिए गए बटन का उपयोग करें।',
+      confirmDeletePrompt: 'इस उत्पादक को ट्रैश में स्थानांतरित करने के लिए नीचे DELETE लिखें:',
+      btnMoveToTrash: 'ट्रैश में भेजें',
+      btnRestoreProducer: 'उत्पादक पुनर्स्थापित करें',
+      btnPurgeProducer: 'स्थायी रूप से हटाएं',
+      addOtherProduce: 'अन्य उपज / फल / मसाले',
+      customCropPh: 'फल या फसल का नाम लिखें (उदा. अमरूद, अनार, हल्दी)...',
+      btnAddProduce: '+ फसल जोड़ें',
       btnRequestChanges: 'सुधार का अनुरोध करें',
       btnRejectEntity: 'आवेदन अस्वीकृत करें'
     },
@@ -506,7 +568,38 @@
       btnRevealBank: 'অ্যাকাউন্ট দেখুন (অডিট লগ)',
       lblReviewNotes: 'প্রশাসনিক মন্তব্য / কারণ',
       reviewNotesPh: 'যাচাইকরণ মন্তব্য বা বাতিলের কারণ লিখুন...',
-      btnApproveEntity: 'অনুমোদন করুন এবং কোড + ৫০টি QR জারি করুন',
+      btnApproveEntity: 'অনুমোদন করুন',
+      btnDeleteProducer: 'উৎপাদক তথ্য মুছুন',
+      tabTrash: 'ট্র্যাশ',
+      consoleHeading: 'ফসল লট ও হেফাজত লেজার কনসোল',
+      btnRegisterLot: '+ নতুন ফসল লট নিবন্ধন করুন',
+      searchLotPh: 'লট কোড, ফসল বা প্লট খুঁজুন...',
+      filterAllCrops: 'সকল ফসল ও উৎপাদিত দ্রব্য',
+      filterAllPlots: 'সকল জমি / প্লট',
+      filterAllCustody: 'সকল হেফাজত স্থিতি',
+      statusInCustody: 'খামার হেফাজতে',
+      statusInTransit: 'পরিবহনরত (লক)',
+      statusHandoverDone: 'হস্তান্তর অনুমোদিত (লক)',
+      filterAllPayment: 'সকল অর্থপ্রদান স্থিতি',
+      paymentPending: 'নিষ্পত্তি বাকি',
+      paymentAdvance: 'অগ্রিম গৃহীত',
+      paymentSettled: 'সম্পূর্ণ পরিশোধিত',
+      sortLatest: 'নতুন থেকে পুরাতন',
+      sortOldest: 'পুরাতন থেকে নতুন',
+      sortQtyHigh: 'পরিমাণ: বেশি থেকে কম',
+      sortQtyLow: 'পরিমাণ: কম থেকে বেশি',
+      btnPrintQr: 'QR লেবেল প্রিন্ট করুন',
+      btnEditLot: 'ফসল লট সম্পাদনা করুন',
+      lblLockedNotice: 'লক: হেফাজত হস্তান্তর সক্রিয়। অপরিবর্তনীয়।',
+      emptyLotsTitle: 'হেফাজতে এখনও কোনো ফসল লট নিবন্ধিত নেই',
+      emptyLotsSub: 'আপনার প্রথম ফসল লট নিবন্ধন করতে এবং অনন্য QR লেবেল তৈরি করতে উপরের বোতামটি ব্যবহার করুন।',
+      confirmDeletePrompt: 'এই উৎপাদককে ট্র্যাশে সরাতে নিচে DELETE লিখুন:',
+      btnMoveToTrash: 'ট্র্যাশে স্থানান্তর',
+      btnRestoreProducer: 'উৎপাদক পুনরুদ্ধার',
+      btnPurgeProducer: 'স্থায়ীভাবে মুছে ফেলুন',
+      addOtherProduce: 'অন্যান্য ফলমূল ও মশলা',
+      customCropPh: 'ফল বা ফসলের নাম লিখুন (যেমন পেয়ারা, বেদানা, হলুদ)...',
+      btnAddProduce: '+ ফসল যোগ করুন',
       btnRequestChanges: 'সংশোধনের অনুরোধ করুন',
       btnRejectEntity: 'আবেদন বাতিল করুন'
     }
@@ -532,19 +625,27 @@
   ];
 
   const CROPS_LIST = [
-    { id: 'Tomato', icon: 'sprout', labels: { en: 'Tomato', hi: 'टमाटर', bn: 'টমেটো', as: 'বিলাহী', gu: 'ટામેટા', kn: 'ಟೊমেಟೊ', ml: 'തക്കാളി', mr: 'टोमॅटो', or: 'টমাটোর', pa: 'ਟਮਾਟਰ', ta: 'தக்காளி', te: 'టమాటా' } },
-    { id: 'Potato', icon: 'sprout', labels: { en: 'Potato', hi: 'आलू', bn: 'আলু', as: 'আলু', gu: 'બટાকা', kn: 'ಆಲೂಗಡ್ಡೆ', ml: 'ഉരുളക്കിഴങ്ങ്', mr: 'बटाटा', or: 'ଆଳୁ', pa: 'ਆਲੂ', ta: 'உருளைக்கிழங்கு', te: 'బంగాళాదుంప' } },
-    { id: 'Onion', icon: 'sprout', labels: { en: 'Onion', hi: 'प्याज', bn: 'পেঁয়াজ', as: 'পিঁয়াজ', gu: 'ડુંગળી', kn: 'ಈರುಳ್ಳಿ', ml: 'ഉള്ളി', mr: 'कांदा', or: 'পিଆଜ', pa: 'ਪਿਆਜ਼', ta: 'வெங்காயம்', te: 'ఉల్లిపాయ' } },
+    { id: 'Tomato', icon: 'sprout', labels: { en: 'Tomato', hi: 'टमाटर', bn: 'টমেটো', as: 'বিলাহী', gu: 'ટામેટા', kn: 'ಟೊಮೆಟೊ', ml: 'തക്കാളി', mr: 'टोमॅटो', or: 'ଟମାଟୋ', pa: 'ਟਮਾਟਰ', ta: 'தக்காளி', te: 'టమాటా' } },
+    { id: 'Potato', icon: 'sprout', labels: { en: 'Potato', hi: 'आलू', bn: 'আলু', as: 'আলু', gu: 'બટાકા', kn: 'ಆಲೂಗಡ್ಡೆ', ml: 'ഉരുളക്കിഴങ്ങ്', mr: 'बटाटा', or: 'ଆଳୁ', pa: 'ਆਲੂ', ta: 'உருளைக்கிழங்கு', te: 'బంగాళாదుంప' } },
+    { id: 'Onion', icon: 'sprout', labels: { en: 'Onion', hi: 'प्याज', bn: 'পেঁয়াজ', as: 'পিঁয়াজ', gu: 'ડુંગળી', kn: 'ಈರುಳ್ಳಿ', ml: 'ഉള്ളി', mr: 'कांदा', or: 'ପିଆଜ', pa: 'ਪਿਆਜ਼', ta: 'வெங்காயம்', te: 'ఉల్లిপాయ' } },
     { id: 'Chilli', icon: 'sprout', labels: { en: 'Green Chilli', hi: 'हरी मिर्च', bn: 'কাঁচা লঙ্কা', as: 'কেঁচা জলকীয়া', gu: 'લીલા મરચાં', kn: 'ಹಸಿರು ಮೆಣಸಿನಕಾಯಿ', ml: 'പച്ചമുളക്', mr: 'हिरवी मिरची', or: 'କଞ୍ଚା ଲଙ୍କା', pa: 'ਹਰੀ ਮਿਰਚ', ta: 'பச்சை மிளகாய்', te: 'పచ్చిమిర్చి' } },
-    { id: 'Cabbage', icon: 'sprout', labels: { en: 'Cabbage', hi: 'पत्तागोभी', bn: 'বাঁধাকপি', as: 'বন্ধাকবি', gu: 'કોબીજ', kn: 'ಎಲೆಕೋಸು', ml: 'കാബേജ്', mr: 'कोबी', or: 'ବନ୍ଧাকୋବି', pa: 'ਬੰਦਗੋਭੀ', ta: 'முட்டைக்கோஸ்', te: 'క్యాబేజీ' } },
+    { id: 'Cabbage', icon: 'sprout', labels: { en: 'Cabbage', hi: 'पत्तागोभी', bn: 'বাঁধাকপি', as: 'বন্ধাকবি', gu: 'કોબીજ', kn: 'ಎಲೆಕೋಸು', ml: 'കാബേജ്', mr: 'कोबी', or: 'ବନ୍ଧାକୋବି', pa: 'ਬੰਦਗੋਭੀ', ta: 'முட்டைக்கோஸ்', te: 'క్యాబేజీ' } },
     { id: 'Cauliflower', icon: 'sprout', labels: { en: 'Cauliflower', hi: 'फूलगोभी', bn: 'ফুলকপি', as: 'ফুলকবি', gu: 'ફ્લાવર', kn: 'ಹೂಕೋಸು', ml: 'കോളിഫ്ലവർ', mr: 'फ्लॉवर', or: 'ଫୁଲକୋବି', pa: 'ਫੁੱਲਗੋਭੀ', ta: 'காலிஃபிளவர்', te: 'కాలీఫ్లవర్' } },
     { id: 'Carrot', icon: 'sprout', labels: { en: 'Carrot', hi: 'गाजर', bn: 'গাজর', as: 'গাজৰ', gu: 'ગાજર', kn: 'ಕ್ಯಾರೆಟ್', ml: 'ക്യാരറ്റ്', mr: 'गाजर', or: 'ଗାଜର', pa: 'ਗਾਜਰ', ta: 'கேரட்', te: 'క్యారెట్' } },
     { id: 'Brinjal', icon: 'sprout', labels: { en: 'Brinjal', hi: 'बैंगन', bn: 'বেগুন', as: 'বেঙেনা', gu: 'રીંગણ', kn: 'ಬದನೆಕಾಯಿ', ml: 'വഴുതനങ്ങ', mr: 'वांगी', or: 'ବାଇଗଣ', pa: 'ਬੈਂਗਣ', ta: 'கத்திரிக்காய்', te: 'వంకాయ' } },
     { id: 'Rice', icon: 'wheat', labels: { en: 'Paddy / Rice', hi: 'धान / चावल', bn: 'ধান / চাল', as: 'ধান / চাউল', gu: 'ડાંગર / ચોખા', kn: 'ಭತ್ತ / ಅಕ್ಕಿ', ml: 'നെല്ല് / അരി', mr: 'भात / तांदूळ', or: 'ଧାନ / ଚାଉଳ', pa: 'ਝੋਨਾ / ਚਾਵਲ', ta: 'நெல் / அரிசி', te: 'వరి / బియ్యం' } },
     { id: 'Wheat', icon: 'wheat', labels: { en: 'Wheat', hi: 'गेहूं', bn: 'গম', as: 'ঘেঁহু', gu: 'ઘઉં', kn: 'ಗೋಧಿ', ml: 'ഗോതമ്പ്', mr: 'गहू', or: 'ଗହମ', pa: 'ਕਣਕ', ta: 'கோதுமை', te: 'గోధుమలు' } },
     { id: 'Mustard', icon: 'sprout', labels: { en: 'Mustard', hi: 'सरसों', bn: 'সর্ষে', as: 'সঁৰিয়হ', gu: 'રાઈ / সরસવ', kn: 'ಸಾಸಿವೆ', ml: 'കടുക്', mr: 'मोहरी', or: 'ସୋରିଷ', pa: 'ਸਰ੍ਹੋਂ', ta: 'கடுகு', te: 'ఆవాలు' } },
-    { id: 'Banana', icon: 'sprout', labels: { en: 'Banana', hi: 'केला', bn: 'কলা', as: 'কল', gu: 'કેળા', kn: 'ಬಾಳೆಹಣ್ಣು', ml: 'വാഴപ്പഴം', mr: 'केळी', or: 'କଦଳୀ', pa: 'ਕੇਲਾ', ta: 'வாழைപ്പழம்', te: 'అరటి' } },
-    { id: 'Mango', icon: 'sprout', labels: { en: 'Mango', hi: 'आम', bn: 'আম', as: 'আম', gu: 'કેરી', kn: 'ಮಾವಿನಹಣ್ಣು', ml: 'മാമ്പഴം', mr: 'आंबा', or: 'ଆମ୍ବ', pa: 'ਅੰਬ', ta: 'மாம்பழம்', te: 'మామిడి' } }
+    { id: 'Banana', icon: 'sprout', labels: { en: 'Banana', hi: 'केला', bn: 'কলা', as: 'কল', gu: 'કેળા', kn: 'ಬಾಳೆಹಣ್ಣು', ml: 'വാഴപ്പഴം', mr: 'केळी', or: 'କଦଳୀ', pa: 'ਕੇਲਾ', ta: 'வாழைப்பழம்', te: 'అరటి' } },
+    { id: 'Mango', icon: 'sprout', labels: { en: 'Mango', hi: 'आम', bn: 'আম', as: 'আম', gu: 'કેરી', kn: 'ಮಾವಿನಹಣ್ಣು', ml: 'മാമ്പഴം', mr: 'आंबा', or: 'ଆମ୍ବ', pa: 'ਅੰਬ', ta: 'மாம்பழம்', te: 'మామిడి' } },
+    { id: 'Apple', icon: 'sprout', labels: { en: 'Apple', hi: 'सेब', bn: 'আপেল', as: 'আপেল', gu: 'સફરજન', kn: 'ಸೇಬು', ml: 'ആപ്പിൾ', mr: 'सफरचंद', or: 'ସେଓ', pa: 'ਸੇਬ', ta: 'ஆப்பிள்', te: 'ఆపిల్' } },
+    { id: 'Guava', icon: 'sprout', labels: { en: 'Guava', hi: 'अमरूद', bn: 'পেয়ারা', as: 'মধুৰিআম', gu: 'જામફળ', kn: 'ಸೀಬೆಹಣ್ಣು', ml: 'പേരയ്ക്ക', mr: 'पेरू', or: 'ପିଜୁଳି', pa: 'ਅਮਰੂਦ', ta: 'கொய்யா', te: 'జామకాయ' } },
+    { id: 'Pomegranate', icon: 'sprout', labels: { en: 'Pomegranate', hi: 'अनार', bn: 'বেদানা / ডালিম', as: 'ডালিম', gu: 'દાડમ', kn: 'ದಾಳಿಂಬೆ', ml: 'മാതളനാരങ്ങ', mr: 'डाळिंब', or: 'ଡାଳିମ୍ବ', pa: 'ਅਨਾਰ', ta: 'மாதுளை', te: 'దానిమ్మ' } },
+    { id: 'Papaya', icon: 'sprout', labels: { en: 'Papaya', hi: 'पपीता', bn: 'পেঁপে', as: 'অমিতা', gu: 'પપૈયું', kn: 'ಪಪ್ಪಾಯಿ', ml: 'പപ്പായ', mr: 'पपई', or: 'ଅମୃତଭଣ୍ଡା', pa: 'ਪਪੀਤਾ', ta: 'பப்பாளி', te: 'బొప్పాయి' } },
+    { id: 'Ginger', icon: 'sprout', labels: { en: 'Ginger', hi: 'अदरक', bn: 'আদা', as: 'আদা', gu: 'આદુ', kn: 'ಶುಂಠಿ', ml: 'ഇഞ്ചി', mr: 'आले', or: 'ଅଦା', pa: 'ਅਦਰਕ', ta: 'இஞ்சி', te: 'అల్లం' } },
+    { id: 'Garlic', icon: 'sprout', labels: { en: 'Garlic', hi: 'लहसुन', bn: 'রসুন', as: 'নহৰু', gu: 'લસણ', kn: 'ಬೆಳ್ಳುಳ್ಳಿ', ml: 'വെളുത്തുള്ളി', mr: 'लसूण', or: 'ରସୁଣ', pa: 'ਲਸਣ', ta: 'பூண்டு', te: 'వెల్లుల్లి' } },
+    { id: 'Turmeric', icon: 'sprout', labels: { en: 'Turmeric', hi: 'हल्दी', bn: 'হলুদ', as: 'হালধি', gu: 'હળદર', kn: 'ಅರಿಶಿನ', ml: 'മഞ്ഞൾ', mr: 'हळद', or: 'ହଳଦୀ', pa: 'ਹਲਦੀ', ta: 'மஞ்சள்', te: 'పసుపు' } },
+    { id: 'GreenPeas', icon: 'sprout', labels: { en: 'Green Peas', hi: 'हरी मटर', bn: 'মটরশুঁটি', as: 'মটৰ', gu: 'વટાણા', kn: 'ಬಟಾಣಿ', ml: 'പട്ടாണി', mr: 'मटार', or: 'ମଟର', pa: 'ਮਟਰ', ta: 'பட்டாணி', te: 'బఠానీ' } }
   ];
 
   let wizardState = {
@@ -839,7 +940,7 @@
     }
   };
 
-  function renderAdminConsoleUI(container) {
+function renderAdminConsoleUI(container) {
     const t = getI18n();
     const activeFilter = wizardState.adminFilterStatus || 'ALL';
     const items = wizardState.adminEntities || [];
@@ -851,7 +952,8 @@
       { key: 'VERIFIED', label: t.filterVerified },
       { key: 'DRAFT', label: t.filterDraft },
       { key: 'NEEDS_CHANGES', label: t.filterChanges },
-      { key: 'REJECTED', label: t.filterRejected }
+      { key: 'REJECTED', label: t.filterRejected },
+      { key: 'TRASH', label: t.tabTrash || 'Trash' }
     ];
 
     container.innerHTML = `
@@ -900,7 +1002,8 @@
                   SUBMITTED: { bg: '#fffbeb', text: '#92400e', border: '#fde68a' },
                   DRAFT: { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1' },
                   NEEDS_CHANGES: { bg: '#fff7ed', text: '#9a3412', border: '#fed7aa' },
-                  REJECTED: { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' }
+                  REJECTED: { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+                  TRASH: { bg: '#fef2f2', text: '#b91c1c', border: '#fca5a5' }
                 };
                 const sc = statusColors[item.status] || statusColors.DRAFT;
                 return `
@@ -994,16 +1097,31 @@
           <input type="text" class="form-input" id="inp_admin_review_notes" placeholder="${escapeHtml(t.reviewNotesPh)}" />
         </div>
 
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button type="button" class="btn-wizard-action btn-wizard-submit" onclick="submitAdminDecision('${ent.entity_id}', 'APPROVED')">
-            <span>${getIcon('check', 14, '#ffffff', 2.8)}</span> <span>${escapeHtml(t.btnApproveEntity)}</span>
-          </button>
-          <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="submitAdminDecision('${ent.entity_id}', 'NEEDS_CHANGES')">
-            ${escapeHtml(t.btnRequestChanges)}
-          </button>
-          <button type="button" class="btn-wizard-action btn-wizard-prev" style="color: #dc2626; border-color: #fca5a5;" onclick="submitAdminDecision('${ent.entity_id}', 'REJECTED')">
-            ${escapeHtml(t.btnRejectEntity)}
-          </button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+          ${ent.status === 'TRASH' ? `
+            <div style="width: 100%; background: #fee2e2; border: 1px solid #f87171; border-radius: 8px; padding: 10px 14px; color: #991b1b; font-size: 13px; font-weight: 700; margin-bottom: 8px;">
+              <span>${getIcon('alert', 16, '#dc2626')}</span> <span>This producer is currently in Admin Trash.</span>
+            </div>
+            <button type="button" class="btn-wizard-action btn-wizard-submit" onclick="restoreAdminProducer('${ent.entity_id}')">
+              <span>${getIcon('check', 14, '#ffffff')}</span> <span>${escapeHtml(t.btnRestoreProducer || 'Restore Producer')}</span>
+            </button>
+            <button type="button" class="btn-wizard-action" style="color: #ffffff; background: #991b1b; border: 1.5px solid #7f1d1d; font-weight: 700;" onclick="openDeleteProducerModal('${ent.entity_id}', '${escapeHtml(ent.organisation_name || ent.full_name)}', true)">
+              <span>${getIcon('trash', 14, '#ffffff')}</span> <span>${escapeHtml(t.btnPurgeProducer || 'Purge Permanently')}</span>
+            </button>
+          ` : `
+            <button type="button" class="btn-wizard-action btn-wizard-submit" onclick="submitAdminDecision('${ent.entity_id}', 'APPROVED')">
+              <span>${getIcon('check', 14, '#ffffff', 2.8)}</span> <span>${escapeHtml(t.btnApproveEntity)}</span>
+            </button>
+            <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="submitAdminDecision('${ent.entity_id}', 'NEEDS_CHANGES')">
+              ${escapeHtml(t.btnRequestChanges)}
+            </button>
+            <button type="button" class="btn-wizard-action btn-wizard-prev" style="color: #dc2626; border-color: #fca5a5;" onclick="submitAdminDecision('${ent.entity_id}', 'REJECTED')">
+              ${escapeHtml(t.btnRejectEntity)}
+            </button>
+            <button type="button" class="btn-wizard-action" style="color: #ffffff; background: #dc2626; border: 1.5px solid #b91c1c; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="openDeleteProducerModal('${ent.entity_id}', '${escapeHtml(ent.organisation_name || ent.full_name)}', false)">
+              <span>${getIcon('trash', 14, '#ffffff')}</span> <span>${escapeHtml(t.btnDeleteProducer || 'Delete Producer Data')}</span>
+            </button>
+          `}
         </div>
       </div>
     `;
@@ -1155,77 +1273,894 @@
   /* --------------------------------------------------------------------------
      VERIFIED OPERATIONAL CONSOLE
      -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+     VERIFIED PRODUCER CONSOLE: ONE-PAGE HARVEST LOT MANAGEMENT & CUSTODY LEDGER
+     -------------------------------------------------------------------------- */
+  window._producerLots = [];
+  window._producerPlots = [];
+  window._lotFilterState = {
+    search: '',
+    crop: 'ALL',
+    plot: 'ALL',
+    custody: 'ALL',
+    payment: 'ALL',
+    sort: '-created_at'
+  };
+
+/* --------------------------------------------------------------------------
+     VERIFIED PRODUCER CONSOLE: ONE-PAGE HARVEST LOT MANAGEMENT & CUSTODY LEDGER
+     -------------------------------------------------------------------------- */
+  window._producerLots = [];
+  window._producerPlots = [];
+  window._lotFilterState = {
+    search: '',
+    crop: 'ALL',
+    plot: 'ALL',
+    custody: 'ALL',
+    payment: 'ALL',
+    sort: '-created_at'
+  };
+
   async function renderVerifiedOperationalConsole(container) {
     const t = getI18n();
     const p = wizardState.profile || {};
     const eCode = p.entity_code || '';
+    const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node';
+
+    // Permanently hide the 6 legacy tool cards and dummy batches list
+    const toolsGrid = document.getElementById('workspaceTools');
+    const batchesList = document.getElementById('workspaceBatchesList');
+    if (toolsGrid) toolsGrid.style.display = 'none';
+    if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'none';
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #a7f3d0; padding: 24px; margin: 16px 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #10b981; padding: 24px; margin: 12px 0; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);">
+        <!-- Top Entity Header Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
           <div>
             <div style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px;">
-              <span>${getIcon('check', 14, '#15803d', 2.8)}</span> <span>${escapeHtml(t.verifiedNodeBadge)}</span>
+              <span>${getIcon('check', 14, '#15803d', 2.8)}</span> <span>${escapeHtml(t.verifiedNodeBadge || 'VERIFIED PRODUCER NODE')}</span>
             </div>
-            <h3 style="margin: 0; font-size: 20px; color: #0f172a;">${escapeHtml(p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' '))}</h3>
-            <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')} • ${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))}</span>
+            <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a;">${escapeHtml(orgDisplayName)}</h3>
+            <span style="font-size: 13px; color: #64748b;">${escapeHtml([p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', '))}</span>
           </div>
-          <div style="text-align: right;">
-            <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">${escapeHtml(t.lblSovereignCode)}</div>
-            <div style="font-family: monospace; font-size: 20px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px;">
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statActiveBatches)}</div>
-            <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statBatchesCount">0</div>
-            <div style="font-size: 11.5px; color: #10b981;">${escapeHtml(t.statActiveBatchesSub)}</div>
-          </div>
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statQrAvail)}</div>
-            <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statQrAvailCount">50</div>
-            <div style="font-size: 11.5px; color: #64748b;">${escapeHtml(t.statQrAvailSub)}</div>
-          </div>
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statPlotsVerified)}</div>
-            <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statPlotsCount">${wizardState.plots.length || 0}</div>
-            <div style="font-size: 11.5px; color: #10b981;">${escapeHtml(t.statPlotsVerifiedSub)}</div>
+          <div style="text-align: right; display: flex; align-items: center; gap: 14px;">
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">${escapeHtml(t.lblSovereignCode || 'Sovereign Code')}</div>
+              <div style="font-family: monospace; font-size: 19px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
+            </div>
+            <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5;" onclick="window.logoutEntitySession()">
+              ${escapeHtml(t.btnLogOut || 'Log Out')}
+            </button>
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <button class="btn-wizard-action btn-wizard-draft" onclick="downloadMyQrPdfSheet()">
-            <span>${getIcon('printer', 16, '#047857')}</span> <span>${escapeHtml(t.btnDownloadQrPdf)}</span>
+        <!-- Quick Metrics Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 22px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statTotalLots || 'Total Harvest Lots')}</div>
+            <div style="font-size: 24px; font-weight: 900; color: #0b3d2e;" id="metricTotalLots">0</div>
+            <div style="font-size: 11.5px; color: #10b981;">${escapeHtml(t.statInLedger || 'Recorded on Sovereign Chain')}</div>
+          </div>
+          <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; padding: 14px 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: #065f46; font-weight: 700;">${escapeHtml(t.statusInCustody || 'In Farm Custody')}</div>
+            <div style="font-size: 24px; font-weight: 900; color: #047857;" id="metricInCustody">0</div>
+            <div style="font-size: 11.5px; color: #059669;">${escapeHtml(t.statEditable || 'Editable (Pre-Handover)')}</div>
+          </div>
+          <div style="background: #fffbeb; border: 1.5px solid #fde68a; padding: 14px 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: #92400e; font-weight: 700;">${escapeHtml(t.statusInTransit || 'In Transit (Locked)')}</div>
+            <div style="font-size: 24px; font-weight: 900; color: #b45309;" id="metricInTransit">0</div>
+            <div style="font-size: 11.5px; color: #d97706;">${escapeHtml(t.statImmutable || 'Immutable Custody Transfer')}</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statTotalQty || 'Total Harvest Weight')}</div>
+            <div style="font-size: 24px; font-weight: 900; color: #0b3d2e;" id="metricTotalWeight">0.0 Kg</div>
+            <div style="font-size: 11.5px; color: #64748b;">${escapeHtml(t.statCumulative || 'Cumulative Yield')}</div>
+          </div>
+        </div>
+
+        <!-- Action Bar: Register Lot CTA Button -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+          <div>
+            <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+              <span>${getIcon('sprout', 20, '#047857')}</span> <span>${escapeHtml(t.consoleHeading || 'Harvest Lot & Custody Ledger Console')}</span>
+            </h4>
+          </div>
+          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 20px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);" onclick="openHarvestLotModal(null)">
+            <span style="font-size: 17px; line-height: 1; margin-right: 4px;">+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
+          </button>
+        </div>
+
+        <!-- Search & Filter Controls Toolbar -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 18px; display: grid; grid-template-columns: 2fr repeat(4, 1fr) 1.2fr; gap: 10px; align-items: center;">
+          <input type="text" id="filter_search" class="form-input" style="background: #fff; font-size: 12.5px;" placeholder="${escapeHtml(t.searchLotPh || 'Search lot code, crop, variety, or plot...')}" oninput="applyLotFilters()" />
+          
+          <select id="filter_crop" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
+            <option value="ALL">${escapeHtml(t.filterAllCrops || 'All Crops')}</option>
+            ${(wizardState.selectedCrops || []).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(getCropLabel(c))}</option>`).join('')}
+          </select>
+
+          <select id="filter_plot" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
+            <option value="ALL">${escapeHtml(t.filterAllPlots || 'All Plots / Land')}</option>
+            ${(wizardState.plots || []).map(pl => `<option value="${escapeHtml(pl.plot_id)}">${escapeHtml(pl.plot_name || 'Plot')} (${pl.area_acres || 0} Ac)</option>`).join('')}
+          </select>
+
+          <select id="filter_custody" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
+            <option value="ALL">${escapeHtml(t.filterAllCustody || 'All Custody States')}</option>
+            <option value="IN_CUSTODY">${escapeHtml(t.statusInCustody || 'In Farm Custody (Editable)')}</option>
+            <option value="IN_TRANSIT">${escapeHtml(t.statusInTransit || 'In Transit (Locked)')}</option>
+            <option value="CLOSED">${escapeHtml(t.statusHandoverDone || 'Handover Approved')}</option>
+          </select>
+
+          <select id="filter_payment" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
+            <option value="ALL">${escapeHtml(t.filterAllPayment || 'All Payment Statuses')}</option>
+            <option value="PENDING">${escapeHtml(t.paymentPending || 'Pending Settlement')}</option>
+            <option value="ADVANCE">${escapeHtml(t.paymentAdvance || 'Advance Received')}</option>
+            <option value="SETTLED">${escapeHtml(t.paymentSettled || 'Fully Settled')}</option>
+          </select>
+
+          <select id="filter_sort" class="form-select" style="background: #fff; font-size: 12px; font-weight: 700;" onchange="applyLotFilters()">
+            <option value="-created_at">${escapeHtml(t.sortLatest || 'Latest to Oldest')}</option>
+            <option value="created_at">${escapeHtml(t.sortOldest || 'Oldest to Latest')}</option>
+            <option value="-qty">${escapeHtml(t.sortQtyHigh || 'Quantity: High to Low')}</option>
+            <option value="qty">${escapeHtml(t.sortQtyLow || 'Quantity: Low to High')}</option>
+          </select>
+        </div>
+
+        <!-- Harvest Lots List Container -->
+        <div id="producerHarvestLotsList">
+          <div style="text-align: center; padding: 40px; color: #64748b;">
+            <div style="width: 28px; height: 28px; border: 2.5px solid #cbd5e1; border-top-color: #047857; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+            <span>Loading registered harvest lots from ledger...</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await loadProducerLots();
+  }
+
+  async function loadProducerLots() {
+    try {
+      const res = await fetch('/api/v1/lots/', { headers: getAuthHeader() });
+      if (res.ok) {
+        const data = await res.json();
+        window._producerLots = data.items || [];
+      } else {
+        window._producerLots = [];
+      }
+    } catch (e) {
+      window._producerLots = [];
+    }
+    updateLotMetrics();
+    applyLotFilters();
+  }
+
+  function updateLotMetrics() {
+    const lots = window._producerLots || [];
+    const totalEl = document.getElementById('metricTotalLots');
+    const inCustodyEl = document.getElementById('metricInCustody');
+    const inTransitEl = document.getElementById('metricInTransit');
+    const weightEl = document.getElementById('metricTotalWeight');
+
+    if (totalEl) totalEl.innerText = lots.length;
+    const custodyCount = lots.filter(l => l.state === 'CREATED' || l.state === 'IN_CUSTODY').length;
+    const transitCount = lots.filter(l => l.state === 'IN_TRANSIT').length;
+    const totalWeight = lots.reduce((acc, l) => acc + (parseFloat(l.net_qty_kg || l.on_hand_kg || 0) || 0), 0);
+
+    if (inCustodyEl) inCustodyEl.innerText = custodyCount;
+    if (inTransitEl) inTransitEl.innerText = transitCount;
+    if (weightEl) weightEl.innerText = totalWeight.toLocaleString('en-IN', { maximumFractionDigits: 1 }) + ' Kg';
+  }
+
+  window.applyLotFilters = function () {
+    const t = getI18n();
+    const lots = window._producerLots || [];
+    const searchVal = (document.getElementById('filter_search')?.value || '').trim().toLowerCase();
+    const cropVal = document.getElementById('filter_crop')?.value || 'ALL';
+    const plotVal = document.getElementById('filter_plot')?.value || 'ALL';
+    const custodyVal = document.getElementById('filter_custody')?.value || 'ALL';
+    const paymentVal = document.getElementById('filter_payment')?.value || 'ALL';
+    const sortVal = document.getElementById('filter_sort')?.value || '-created_at';
+
+    let filtered = lots.filter(lot => {
+      if (searchVal) {
+        const text = [lot.public_code, lot.crop, lot.variety, lot.origin_plot_name, lot.remarks].filter(Boolean).join(' ').toLowerCase();
+        if (!text.includes(searchVal)) return false;
+      }
+      if (cropVal !== 'ALL' && String(lot.crop).toLowerCase() !== cropVal.toLowerCase()) return false;
+      if (plotVal !== 'ALL' && String(lot.origin_plot_id) !== plotVal) return false;
+      if (custodyVal !== 'ALL') {
+        if (custodyVal === 'IN_CUSTODY' && !(lot.state === 'CREATED' || lot.state === 'IN_CUSTODY')) return false;
+        if (custodyVal === 'IN_TRANSIT' && lot.state !== 'IN_TRANSIT') return false;
+        if (custodyVal === 'CLOSED' && lot.state !== 'CLOSED') return false;
+      }
+      if (paymentVal !== 'ALL' && (lot.payment_status || 'PENDING') !== paymentVal) return false;
+      return true;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at || a.harvest_date || 0).getTime();
+      const dateB = new Date(b.created_at || b.harvest_date || 0).getTime();
+      const qtyA = parseFloat(a.net_qty_kg || a.on_hand_kg || 0);
+      const qtyB = parseFloat(b.net_qty_kg || b.on_hand_kg || 0);
+
+      if (sortVal === 'created_at') return dateA - dateB;
+      if (sortVal === '-qty') return qtyB - qtyA;
+      if (sortVal === 'qty') return qtyA - qtyB;
+      return dateB - dateA; // default -created_at
+    });
+
+    renderFilteredLotsList(filtered, t);
+  };
+
+  function renderFilteredLotsList(list, t) {
+    const listContainer = document.getElementById('producerHarvestLotsList');
+    if (!listContainer) return;
+
+    if (!list || list.length === 0) {
+      listContainer.innerHTML = `
+        <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 48px 20px; text-align: center;">
+          <div style="width: 48px; height: 48px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            ${getIcon('sprout', 24, '#047857')}
+          </div>
+          <h4 style="margin: 0 0 6px; font-size: 16px; color: #0f172a; font-weight: 800;">${escapeHtml(t.emptyLotsTitle || 'No harvest lots recorded in custody yet')}</h4>
+          <p style="margin: 0 0 16px; font-size: 13px; color: #64748b; max-width: 460px; margin-left: auto; margin-right: auto;">${escapeHtml(t.emptyLotsSub || 'Click the button above to register your first harvest lot and generate unique QR labels.')}</p>
+          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 18px; font-size: 13px;" onclick="openHarvestLotModal(null)">
+            <span>+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = list.map(lot => {
+      const isEditable = lot.is_editable !== false && (lot.state === 'CREATED' || lot.state === 'IN_CUSTODY');
+      const pStatus = lot.payment_status || 'PENDING';
+      const paymentStyles = {
+        PENDING: { label: t.paymentPending || 'Pending Settlement', bg: '#fffbeb', text: '#92400e', border: '#fde68a' },
+        ADVANCE: { label: t.paymentAdvance || 'Advance Received', bg: '#eff6ff', text: '#1e40af', border: '#bfdbfe' },
+        SETTLED: { label: t.paymentSettled || 'Fully Settled', bg: '#ecfdf5', text: '#065f46', border: '#86efac' }
+      };
+      const ps = paymentStyles[pStatus] || paymentStyles.PENDING;
+
+      const weightDisplay = (parseFloat(lot.net_qty_kg || lot.on_hand_kg || 0)).toLocaleString('en-IN') + ' ' + (lot.unit || 'Kg');
+      const harvestDateDisplay = lot.harvest_date ? new Date(lot.harvest_date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Recent';
+
+      return `
+        <div class="harvest-lot-row-card" style="background: #ffffff; border: 1.5px solid ${isEditable ? '#e2e8f0' : '#fed7aa'}; border-radius: 12px; padding: 18px; margin-bottom: 12px; transition: all 0.15s ease-in-out; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <!-- Top Row: Public Code, Crop & Variety, Custody Status -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span style="font-family: monospace; font-size: 14px; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.5px;">
+                ${escapeHtml(lot.public_code)}
+              </span>
+              <strong style="font-size: 16px; color: #0f172a;">${escapeHtml(getCropLabel(lot.crop))}</strong>
+              ${lot.variety ? `<span style="font-size: 13.5px; color: #475569; font-weight: 600;">• ${escapeHtml(lot.variety)}</span>` : ''}
+              ${lot.grade ? `<span style="font-size: 11px; font-weight: 800; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 12px;">${escapeHtml(lot.grade)}</span>` : ''}
+              <span style="font-size: 11px; font-weight: 700; color: ${ps.text}; background: ${ps.bg}; border: 1px solid ${ps.border}; padding: 2px 8px; border-radius: 12px;">
+                ${escapeHtml(ps.label)}
+              </span>
+            </div>
+
+            <!-- Right-hand custody status & Lock/Edit action -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+              ${isEditable ? `
+                <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; color: #065f46; background: #ecfdf5; border: 1px solid #86efac; padding: 4px 10px; border-radius: 20px;">
+                  <span>${getIcon('check', 13, '#10b981')}</span> <span>${escapeHtml(t.statusInCustody || 'In Farm Custody')}</span>
+                </span>
+                <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;" onclick="openHarvestLotModal('${lot.public_code}')" title="Edit Harvest Lot">
+                  <span>${getIcon('edit', 14, '#047857')}</span> <span>${escapeHtml(t.btnEditLot || 'Edit')}</span>
+                </button>
+              ` : `
+                <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #9a3412; background: #fff7ed; border: 1.5px solid #fdba74; padding: 4px 12px; border-radius: 20px;" title="${escapeHtml(t.lblLockedNotice || 'Locked: Custody handover active. Immutability enforced.')}">
+                  <span>${getIcon('lock', 14, '#c2410c')}</span> <span>${escapeHtml(lot.state === 'IN_TRANSIT' ? (t.statusInTransit || 'In Transit (Locked)') : (t.statusHandoverDone || 'Handover Approved (Locked)'))}</span>
+                </span>
+              `}
+            </div>
+          </div>
+
+          <!-- Body Grid: Harvest Info, Land/Origin, Commercials -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; font-size: 13px; color: #334155; margin-bottom: 14px;">
+            <div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Harvest Quantity</div>
+              <div style="font-size: 15px; font-weight: 800; color: #0b3d2e;">${escapeHtml(weightDisplay)}</div>
+              <div style="font-size: 12px; color: #64748b;">${lot.packages_count ? `${lot.packages_count} ${lot.package_type || 'Crates'}` : 'Bulk Harvest'}</div>
+            </div>
+
+            <div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Origin Plot & Land</div>
+              <div style="font-size: 13.5px; font-weight: 700; color: #0f172a;">${escapeHtml(lot.origin_plot_name || 'Registered Farm Parcel')}</div>
+              <div style="font-size: 12px; color: #64748b;">${lot.plot_area_acres ? `${lot.plot_area_acres} Acres • ` : ''}${escapeHtml(lot.farming_method || 'Conventional')}</div>
+            </div>
+
+            <div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Harvest Timestamp</div>
+              <div style="font-size: 13px; font-weight: 600; color: #334155;">${escapeHtml(harvestDateDisplay)}</div>
+              <div style="font-size: 12px; color: #047857; font-weight: 600;">${lot.shelf_life_days ? `Shelf-Life: ~${lot.shelf_life_days} Days` : ''}</div>
+            </div>
+
+            <div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Valuation & Buyer</div>
+              <div style="font-size: 13.5px; font-weight: 700; color: #0f172a;">
+                ${lot.base_price_per_unit ? `₹${parseFloat(lot.base_price_per_unit).toFixed(2)} / ${lot.unit || 'Kg'}` : 'Market Price'}
+                ${lot.estimated_value ? `<span style="color: #047857;"> (₹${parseFloat(lot.estimated_value).toLocaleString('en-IN')})</span>` : ''}
+              </div>
+              <div style="font-size: 12px; color: #64748b;">Target: ${escapeHtml(lot.intended_buyer || 'APMC Mandi')}</div>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons: Print QR Labels & Public Trace -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 10px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 14px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="openUnlimitedQrPrintModal('${lot.public_code}', '${escapeHtml(lot.crop)}', '${escapeHtml(lot.variety || '')}', '${escapeHtml(weightDisplay)}')">
+                <span>${getIcon('printer', 14, '#047857')}</span> <span>${escapeHtml(t.btnPrintQr || 'Print QR Labels (Unlimited)')}</span>
+              </button>
+              <a href="/l/${encodeURIComponent(lot.public_code)}" target="_blank" style="padding: 6px 12px; font-size: 12px; font-weight: 700; color: #047857; text-decoration: none; border: 1px solid #cbd5e1; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; background: #fff;">
+                <span>${getIcon('globe', 13, '#047857')}</span> <span>Public Trace Page</span>
+              </a>
+            </div>
+
+            ${isEditable ? `
+              <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 6px 16px; font-size: 12px; font-weight: 700;" onclick="openQuickDispatchModal('${lot.public_code}', '${escapeHtml(lot.crop)}', ${parseFloat(lot.net_qty_kg || lot.on_hand_kg || 0)})">
+                <span>Dispatch to Mandi / Buyer &rarr;</span>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* --------------------------------------------------------------------------
+     LOT CREATION & EDIT MODAL (ALL POSSIBLE AGRICULTURAL & COMMERCIAL FIELDS)
+     -------------------------------------------------------------------------- */
+  window.openHarvestLotModal = function (lotCode) {
+    const t = getI18n();
+    const isEdit = !!lotCode;
+    const existing = isEdit ? (window._producerLots || []).find(l => l.public_code === lotCode) : null;
+
+    let modal = document.getElementById('harvestLotModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'harvestLotModal';
+      modal.className = 'wizard-modal-backdrop';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;';
+      document.body.appendChild(modal);
+    }
+
+    const plots = wizardState.plots || [];
+    const registeredCrops = wizardState.selectedCrops || [];
+    const nowIso = new Date().toISOString().slice(0, 16);
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; max-width: 820px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 26px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 20px;">
+          <div>
+            <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: #0b3d2e; display: flex; align-items: center; gap: 8px;">
+              <span>${getIcon(isEdit ? 'edit' : 'sprout', 20, '#047857')}</span>
+              <span>${isEdit ? `Edit Harvest Lot #${lotCode}` : 'Register New Harvest Lot'}</span>
+            </h3>
+            <span style="font-size: 12.5px; color: #64748b;">Collect and sign all agricultural traceability, quality, and commercial settlement parameters.</span>
+          </div>
+          <button type="button" onclick="closeHarvestLotModal()" style="background: #f1f5f9; border: none; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: #64748b; line-height: 1;">&times;</button>
+        </div>
+
+        <form id="form_harvest_lot" onsubmit="submitHarvestLotForm(event, '${lotCode || ''}')">
+          <!-- 1. Commodity & Crop Identity -->
+          <fieldset style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+            <legend style="font-size: 13px; font-weight: 800; color: #047857; padding: 0 6px;">1. Produce & Crop Identity</legend>
+            <div class="form-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="form-group">
+                <label class="form-label">Crop / Commodity <span class="req">*</span></label>
+                <select class="form-select" id="lot_inp_crop" required>
+                  ${registeredCrops.map(c => `<option value="${escapeHtml(c)}" ${existing && existing.crop === c ? 'selected' : ''}>${escapeHtml(getCropLabel(c))}</option>`).join('')}
+                  ${CROPS_LIST.filter(c => !registeredCrops.includes(c.id)).map(c => `<option value="${escapeHtml(c.id)}" ${existing && existing.crop === c.id ? 'selected' : ''}>${escapeHtml(getCropLabel(c.id))}</option>`).join('')}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Variety / Cultivar</label>
+                <input type="text" class="form-input" id="lot_inp_variety" value="${escapeHtml(existing?.variety || '')}" placeholder="e.g. Hybrid Red 105, Jyoti, Alphonso" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Produce Category</label>
+                <select class="form-select" id="lot_inp_category">
+                  <option value="Vegetable" ${existing?.category === 'Vegetable' ? 'selected' : ''}>Vegetable</option>
+                  <option value="Fruit" ${existing?.category === 'Fruit' ? 'selected' : ''}>Fruit</option>
+                  <option value="Grain/Cereal" ${existing?.category === 'Grain/Cereal' ? 'selected' : ''}>Grain / Cereal</option>
+                  <option value="Pulse" ${existing?.category === 'Pulse' ? 'selected' : ''}>Pulse</option>
+                  <option value="Spice" ${existing?.category === 'Spice' ? 'selected' : ''}>Spice</option>
+                  <option value="Oilseed" ${existing?.category === 'Oilseed' ? 'selected' : ''}>Oilseed</option>
+                  <option value="Horticulture" ${existing?.category === 'Horticulture' ? 'selected' : ''}>Horticulture</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px;">
+              <div class="form-group">
+                <label class="form-label">Harvest Date & Time <span class="req">*</span></label>
+                <input type="datetime-local" class="form-input" id="lot_inp_harvest_date" value="${existing?.harvest_date ? existing.harvest_date.slice(0, 16) : nowIso}" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sowing Date</label>
+                <input type="date" class="form-input" id="lot_inp_sowing_date" value="${existing?.sowing_date || ''}" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Estimated Shelf-Life (Days)</label>
+                <input type="number" class="form-input" id="lot_inp_shelf_life" value="${existing?.shelf_life_days || 14}" min="1" max="365" />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- 2. Land & Origin Traceability -->
+          <fieldset style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+            <legend style="font-size: 13px; font-weight: 800; color: #047857; padding: 0 6px;">2. Land & Origin Traceability</legend>
+            <div class="form-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="form-group">
+                <label class="form-label">Origin Plot / Land Parcel</label>
+                <select class="form-select" id="lot_inp_plot">
+                  <option value="">Farm Cluster / Yard (Default)</option>
+                  ${plots.map(pl => `<option value="${escapeHtml(pl.plot_id)}" ${existing && existing.origin_plot_id === pl.plot_id ? 'selected' : ''}>${escapeHtml(pl.plot_name || 'Plot')} (${pl.area_acres || 0} Acres)</option>`).join('')}
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Field / Cluster Yard Location</label>
+                <input type="text" class="form-input" id="lot_inp_yard" value="${escapeHtml(existing?.plot_name || 'Cluster Yard #4')}" placeholder="e.g. Cluster Yard #4" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Soil & Irrigation Source</label>
+                <select class="form-select" id="lot_inp_irrigation">
+                  <option value="Drip Micro" ${existing?.irrigation_type === 'Drip Micro' ? 'selected' : ''}>Drip / Micro-Irrigation</option>
+                  <option value="Rainfed" ${existing?.irrigation_type === 'Rainfed' ? 'selected' : ''}>Rainfed</option>
+                  <option value="Canal / River" ${existing?.irrigation_type === 'Canal / River' ? 'selected' : ''}>Canal / River</option>
+                  <option value="Borewell" ${existing?.irrigation_type === 'Borewell' ? 'selected' : ''}>Borewell</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- 3. Quantity, Packaging & Crate Serialization -->
+          <fieldset style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+            <legend style="font-size: 13px; font-weight: 800; color: #047857; padding: 0 6px;">3. Quantity, Packaging & Crates</legend>
+            <div class="form-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+              <div class="form-group">
+                <label class="form-label">Net Harvest Weight <span class="req">*</span></label>
+                <input type="number" step="0.1" class="form-input" id="lot_inp_qty" value="${existing?.net_qty_kg || existing?.on_hand_kg || 500}" required min="0.1" oninput="calculateLotValuation()" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Unit of Measure</label>
+                <select class="form-select" id="lot_inp_unit" onchange="calculateLotValuation()">
+                  <option value="Kg" ${existing?.unit === 'Kg' ? 'selected' : ''}>Kilograms (Kg)</option>
+                  <option value="Quintals" ${existing?.unit === 'Quintals' ? 'selected' : ''}>Quintals (Qtl)</option>
+                  <option value="Metric Tons" ${existing?.unit === 'Metric Tons' ? 'selected' : ''}>Metric Tons (MT)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Crates / Bags Count</label>
+                <input type="number" class="form-input" id="lot_inp_packages" value="${existing?.packages_count || 20}" min="1" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Packaging Material</label>
+                <select class="form-select" id="lot_inp_package_type">
+                  <option value="Plastic Crates" ${existing?.package_type === 'Plastic Crates' ? 'selected' : ''}>Plastic Crates (Standard)</option>
+                  <option value="Jute Bags" ${existing?.package_type === 'Jute Bags' ? 'selected' : ''}>Jute Gunny Bags</option>
+                  <option value="Corrugated Boxes" ${existing?.package_type === 'Corrugated Boxes' ? 'selected' : ''}>Corrugated Paper Cartons</option>
+                  <option value="Bulk Loose" ${existing?.package_type === 'Bulk Loose' ? 'selected' : ''}>Bulk Loose Vehicle</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- 4. Quality, Grade & Farming Inputs -->
+          <fieldset style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+            <legend style="font-size: 13px; font-weight: 800; color: #047857; padding: 0 6px;">4. Quality Grade & Inputs</legend>
+            <div class="form-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="form-group">
+                <label class="form-label">Produce Grade</label>
+                <select class="form-select" id="lot_inp_grade">
+                  <option value="Grade A" ${existing?.grade === 'Grade A' ? 'selected' : ''}>Grade A (Premium Commercial)</option>
+                  <option value="Grade B" ${existing?.grade === 'Grade B' ? 'selected' : ''}>Grade B (Standard Market)</option>
+                  <option value="Grade C" ${existing?.grade === 'Grade C' ? 'selected' : ''}>Grade C (Processing / Economy)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Farming Method</label>
+                <select class="form-select" id="lot_inp_method">
+                  <option value="Organic NPOP" ${existing?.farming_method === 'Organic NPOP' ? 'selected' : ''}>Organic (Certified NPOP)</option>
+                  <option value="PGS-India" ${existing?.farming_method === 'PGS-India' ? 'selected' : ''}>PGS-India Natural</option>
+                  <option value="Good Agri Practices" ${existing?.farming_method === 'Good Agri Practices' ? 'selected' : ''}>GAP Certified</option>
+                  <option value="Conventional" ${existing?.farming_method === 'Conventional' ? 'selected' : ''}>Conventional</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Moisture Content (%)</label>
+                <input type="number" step="0.1" class="form-input" id="lot_inp_moisture" value="${existing?.moisture_pct || 11.5}" />
+              </div>
+            </div>
+            <div style="margin-top: 10px;">
+              <label class="form-label">Fertilizers / Amendments Used</label>
+              <input type="text" class="form-input" id="lot_inp_fertilizers" value="${escapeHtml(existing?.fertilizers || 'Vermicompost, Neem Cake, Bio-fertilizer')}" placeholder="e.g. Vermicompost, Neem Cake, Trichoderma" />
+            </div>
+          </fieldset>
+
+          <!-- 5. Commercials, Pricing & Payment Details -->
+          <fieldset style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+            <legend style="font-size: 13px; font-weight: 800; color: #047857; padding: 0 6px;">5. Commercial Valuation & Payment Details</legend>
+            <div class="form-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="form-group">
+                <label class="form-label">Expected Base Price (₹)</label>
+                <input type="number" step="0.5" class="form-input" id="lot_inp_price" value="${existing?.base_price_per_unit || 25.0}" oninput="calculateLotValuation()" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Estimated Lot Valuation (₹)</label>
+                <input type="number" step="1" class="form-input" id="lot_inp_valuation" value="${existing?.estimated_value || 12500}" readonly style="background: #f8fafc; font-weight: 800; color: #047857;" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Payment / Settlement Status</label>
+                <select class="form-select" id="lot_inp_payment">
+                  <option value="PENDING" ${existing?.payment_status === 'PENDING' ? 'selected' : ''}>Pending Settlement</option>
+                  <option value="ADVANCE" ${existing?.payment_status === 'ADVANCE' ? 'selected' : ''}>Advance Received</option>
+                  <option value="SETTLED" ${existing?.payment_status === 'SETTLED' ? 'selected' : ''}>Fully Settled</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top: 10px;">
+              <label class="form-label">Intended Buyer / Distribution Channel</label>
+              <select class="form-select" id="lot_inp_buyer">
+                <option value="APMC Mandi Aggregator" ${existing?.intended_buyer === 'APMC Mandi Aggregator' ? 'selected' : ''}>APMC Mandi Aggregator (Auction)</option>
+                <option value="Direct Retailer" ${existing?.intended_buyer === 'Direct Retailer' ? 'selected' : ''}>Direct Retailer / Supermarket</option>
+                <option value="Cold Storage Warehouse" ${existing?.intended_buyer === 'Cold Storage Warehouse' ? 'selected' : ''}>Cold Storage Terminal</option>
+                <option value="Food Processing Unit" ${existing?.intended_buyer === 'Food Processing Unit' ? 'selected' : ''}>Food Processing Company</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <!-- 6. Remarks & Statutory Attestation -->
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label">Farmer Remarks & Quality Notes</label>
+            <textarea class="form-input" id="lot_inp_remarks" rows="2" placeholder="Early morning harvest, sorted and washed.">${escapeHtml(existing?.remarks || '')}</textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1.5px solid #e2e8f0; padding-top: 16px;">
+            <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="closeHarvestLotModal()">Cancel</button>
+            <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 24px; font-weight: 800;">
+              <span>${getIcon('check', 14, '#ffffff')}</span> <span>${isEdit ? 'Save Changes' : 'Confirm & Mint Harvest Lot'}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+    modal.style.display = 'flex';
+  };
+
+  window.closeHarvestLotModal = function () {
+    const modal = document.getElementById('harvestLotModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.calculateLotValuation = function () {
+    const qty = parseFloat(document.getElementById('lot_inp_qty')?.value || 0);
+    const price = parseFloat(document.getElementById('lot_inp_price')?.value || 0);
+    const valEl = document.getElementById('lot_inp_valuation');
+    if (valEl) valEl.value = Math.round(qty * price);
+  };
+
+  window.submitHarvestLotForm = async function (e, lotCode) {
+    e.preventDefault();
+    const isEdit = !!lotCode;
+    const crop = document.getElementById('lot_inp_crop')?.value;
+    const variety = document.getElementById('lot_inp_variety')?.value;
+    const category = document.getElementById('lot_inp_category')?.value;
+    const harvestDate = document.getElementById('lot_inp_harvest_date')?.value;
+    const sowingDate = document.getElementById('lot_inp_sowing_date')?.value;
+    const shelfLife = parseInt(document.getElementById('lot_inp_shelf_life')?.value || 14);
+    const plotId = document.getElementById('lot_inp_plot')?.value || null;
+    const yard = document.getElementById('lot_inp_yard')?.value;
+    const irrigation = document.getElementById('lot_inp_irrigation')?.value;
+    const qty = parseFloat(document.getElementById('lot_inp_qty')?.value);
+    const unit = document.getElementById('lot_inp_unit')?.value;
+    const packages = parseInt(document.getElementById('lot_inp_packages')?.value || 1);
+    const packageType = document.getElementById('lot_inp_package_type')?.value;
+    const grade = document.getElementById('lot_inp_grade')?.value;
+    const method = document.getElementById('lot_inp_method')?.value;
+    const moisture = parseFloat(document.getElementById('lot_inp_moisture')?.value || 0);
+    const fertilizers = document.getElementById('lot_inp_fertilizers')?.value;
+    const price = parseFloat(document.getElementById('lot_inp_price')?.value || 0);
+    const valuation = parseFloat(document.getElementById('lot_inp_valuation')?.value || 0);
+    const paymentStatus = document.getElementById('lot_inp_payment')?.value;
+    const buyer = document.getElementById('lot_inp_buyer')?.value;
+    const remarks = document.getElementById('lot_inp_remarks')?.value;
+
+    const payload = {
+      crop,
+      product: { name: crop, variety, category },
+      variety,
+      category,
+      harvest_date: harvestDate,
+      sowing_date: sowingDate,
+      shelf_life_days: shelfLife,
+      origin_plot_id: plotId,
+      plot_id: plotId,
+      plot_name: yard,
+      irrigation_type: irrigation,
+      net_qty_kg: qty,
+      unit,
+      packages_count: packages,
+      package_type: packageType,
+      grade,
+      farming_method: method,
+      moisture_pct: moisture,
+      fertilizers,
+      base_price_per_unit: price,
+      estimated_value: valuation,
+      payment_status: paymentStatus,
+      intended_buyer: buyer,
+      remarks
+    };
+
+    try {
+      const url = isEdit ? `/api/v1/lots/${encodeURIComponent(lotCode)}` : '/api/v1/lots/';
+      const methodHttp = isEdit ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method: methodHttp,
+        headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.detail || 'Failed to save harvest lot.');
+        return;
+      }
+
+      closeHarvestLotModal();
+      showToast(isEdit ? 'Harvest lot updated successfully.' : 'New harvest lot registered and signed into ledger.', 'success');
+      await loadProducerLots();
+    } catch (err) {
+      alert('Network error while saving harvest lot.');
+    }
+  };
+
+  /* --------------------------------------------------------------------------
+     UNLIMITED QR CODE LABEL PRINTING & DOWNLOAD MODAL
+     -------------------------------------------------------------------------- */
+  window.openUnlimitedQrPrintModal = function (lotCode, cropName, variety, weightDisplay) {
+    let modal = document.getElementById('unlimitedQrModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'unlimitedQrModal';
+      modal.className = 'wizard-modal-backdrop';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;';
+      document.body.appendChild(modal);
+    }
+
+    const orgName = wizardState.profile?.organisation_name || 'AnnaSutra Verified Producer';
+    const qrUrl = `${window.location.origin}/l/${encodeURIComponent(lotCode)}`;
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 26px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px;">
+          <div>
+            <h3 style="margin: 0; font-size: 19px; font-weight: 800; color: #0b3d2e;">Generate & Print Crate QR Labels</h3>
+            <span style="font-size: 12.5px; color: #64748b;">Unlimited QR issuance for Lot #${escapeHtml(lotCode)}. Print on standard sticker sheets.</span>
+          </div>
+          <button type="button" onclick="document.getElementById('unlimitedQrModal').style.display='none'" style="background: #f1f5f9; border: none; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">&times;</button>
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; background: #f8fafc; padding: 12px 16px; border-radius: 10px;">
+          <label style="font-size: 13px; font-weight: 700; color: #334155;">Quantity of Labels to Print:</label>
+          <select id="qr_print_count" class="form-select" style="width: 140px; background: #fff;" onchange="renderQrStickersPreview('${lotCode}', '${escapeHtml(cropName)}', '${escapeHtml(variety)}', '${escapeHtml(weightDisplay)}')">
+            <option value="1">1 Sticker</option>
+            <option value="6" selected>6 Stickers (1 Sheet)</option>
+            <option value="12">12 Stickers</option>
+            <option value="24">24 Stickers</option>
+            <option value="48">48 Stickers</option>
+            <option value="100">100 Stickers</option>
+          </select>
+          <span style="font-size: 12px; color: #047857; font-weight: 700;">Zero QR Limits • Instant Generator</span>
+        </div>
+
+        <!-- Preview Sheet Area -->
+        <div id="qrStickersPreviewContainer" style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; max-height: 380px; overflow-y: auto; background: #f1f5f9; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; border-top: 1.5px solid #e2e8f0; padding-top: 14px;">
+          <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="document.getElementById('unlimitedQrModal').style.display='none'">Close</button>
+          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 22px; font-weight: 800;" onclick="window.print()">
+            <span>${getIcon('printer', 15, '#ffffff')}</span> <span>Print Labels</span>
           </button>
         </div>
       </div>
     `;
 
-    // Also display the Producer operational tools & real batches table below the verified card
-    const toolsGrid = document.getElementById('workspaceTools');
-    const batchesList = document.getElementById('workspaceBatchesList');
-    if (toolsGrid) toolsGrid.style.display = 'grid';
-    if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'block';
-    if (typeof window.renderDefaultWorkspace === 'function') {
-      window.renderDefaultWorkspace();
-      updateRegisteredHeaderBanner(wizardState.profile);
+    modal.style.display = 'flex';
+    renderQrStickersPreview(lotCode, cropName, variety, weightDisplay);
+  };
+
+  function renderQrStickersPreview(lotCode, cropName, variety, weightDisplay) {
+    const container = document.getElementById('qrStickersPreviewContainer');
+    if (!container) return;
+    const count = parseInt(document.getElementById('qr_print_count')?.value || 6);
+    const orgName = wizardState.profile?.organisation_name || 'AnnaSutra Producer';
+    const qrTargetUrl = `${window.location.origin}/l/${encodeURIComponent(lotCode)}`;
+
+    let html = '';
+    for (let i = 1; i <= count; i++) {
+      html += `
+        <div style="background: #ffffff; border: 1.5px solid #0b3d2e; border-radius: 8px; padding: 10px; display: flex; gap: 10px; align-items: center;">
+          <div style="width: 72px; height: 72px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrTargetUrl)}" alt="QR" style="width: 64px; height: 64px;" />
+          </div>
+          <div style="flex: 1; overflow: hidden;">
+            <div style="font-size: 9.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">National Traceability C-DAC</div>
+            <div style="font-size: 13px; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(cropName)} ${variety ? `• ${escapeHtml(variety)}` : ''}</div>
+            <div style="font-family: monospace; font-size: 11.5px; font-weight: 900; color: #0b3d2e;">${escapeHtml(lotCode)}</div>
+            <div style="font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(orgName)} • #${i}</div>
+          </div>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+  }
+
+  /* --------------------------------------------------------------------------
+     ADMIN TRASH & CONFIRMATION MECHANISM
+     -------------------------------------------------------------------------- */
+  window.openDeleteProducerModal = function (entityId, entityName, isPurge) {
+    const t = getI18n();
+    let modal = document.getElementById('adminDeleteConfirmModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'adminDeleteConfirmModal';
+      modal.className = 'wizard-modal-backdrop';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 16px;';
+      document.body.appendChild(modal);
     }
 
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; max-width: 520px; width: 100%; padding: 26px; border: 2px solid ${isPurge ? '#7f1d1d' : '#dc2626'}; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <div style="width: 40px; height: 40px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            ${getIcon('alert', 22, '#dc2626')}
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #991b1b;">
+              ${isPurge ? 'Permanent Producer Purge' : 'Move Producer to Trash'}
+            </h3>
+            <span style="font-size: 12px; color: #64748b;">${escapeHtml(entityName)}</span>
+          </div>
+        </div>
+
+        <p style="font-size: 13.5px; color: #334155; line-height: 1.5; margin-bottom: 16px;">
+          ${isPurge ? `
+            <strong>DANGER:</strong> This action is permanent and cannot be reversed. All KYC documents, plots, and sensitive records for <strong>${escapeHtml(entityName)}</strong> will be wiped.
+          ` : `
+            This producer will be moved to the <strong>Admin Trash</strong>. Their sovereign code access will be suspended immediately. You can restore them anytime from the Trash tab.
+          `}
+        </p>
+
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 14px; margin-bottom: 18px;">
+          <label style="display: block; font-size: 12.5px; font-weight: 800; color: #991b1b; margin-bottom: 6px;">
+            ${escapeHtml(t.confirmDeletePrompt || 'To confirm, type DELETE in capital letters below:')}
+          </label>
+          <input type="text" id="inp_del_word_confirm" class="form-input" style="font-family: monospace; font-size: 14px; font-weight: 800; text-transform: uppercase; border-color: #f87171;" placeholder="DELETE" oninput="checkDeleteWordConfirm(this, '${isPurge ? 'PURGE' : 'TRASH'}')" />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="document.getElementById('adminDeleteConfirmModal').style.display='none'">Cancel</button>
+          <button type="button" id="btn_admin_exec_delete" class="btn-wizard-action" style="color: #ffffff; background: #94a3b8; border-color: #94a3b8; cursor: not-allowed; font-weight: 800;" disabled onclick="executeAdminProducerDeletion('${entityId}', ${isPurge})">
+            ${isPurge ? 'Permanently Purge Data' : 'Confirm Move to Trash'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  };
+
+  window.checkDeleteWordConfirm = function (input, mode) {
+    const val = input.value.trim().toUpperCase();
+    const btn = document.getElementById('btn_admin_exec_delete');
+    if (!btn) return;
+    if (val === 'DELETE') {
+      btn.disabled = false;
+      btn.style.background = '#dc2626';
+      btn.style.borderColor = '#b91c1c';
+      btn.style.cursor = 'pointer';
+    } else {
+      btn.disabled = true;
+      btn.style.background = '#94a3b8';
+      btn.style.borderColor = '#94a3b8';
+      btn.style.cursor = 'not-allowed';
+    }
+  };
+
+  window.executeAdminProducerDeletion = async function (entityId, isPurge) {
+    const modal = document.getElementById('adminDeleteConfirmModal');
     try {
-      const statsRes = await fetch('/api/v1/me/stats', { headers: getAuthHeader() });
-      if (statsRes.ok) {
-        const sData = await statsRes.json();
-        const stats = sData.stats || {};
-        const bEl = document.getElementById('statBatchesCount');
-        const qEl = document.getElementById('statQrAvailCount');
-        const pEl = document.getElementById('statPlotsCount');
-        if (bEl && stats.batches_created !== undefined) bEl.innerText = stats.batches_created;
-        if (qEl && stats.qr_labels_available !== undefined) qEl.innerText = stats.qr_labels_available;
-        if (pEl && stats.plots_count !== undefined) pEl.innerText = stats.plots_count;
+      if (isPurge) {
+        const res = await fetch(`/api/v1/admin/entities/${entityId}/purge`, {
+          method: 'POST',
+          headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ confirmation: 'DELETE' })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || 'Failed to purge producer.');
+          return;
+        }
+        showToast('Producer data permanently purged.', 'success');
+      } else {
+        const res = await fetch(`/api/v1/admin/entities/${entityId}/decision`, {
+          method: 'POST',
+          headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ decision: 'TRASH', reason: 'Moved to trash by administrator.' })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || 'Failed to move producer to trash.');
+          return;
+        }
+        showToast('Producer moved to trash successfully.', 'success');
       }
-    } catch (e) {}
-  }
+
+      if (modal) modal.style.display = 'none';
+      wizardState.adminInspectedEntity = null;
+      const contentArea = document.getElementById('workspaceDynamicContent');
+      if (contentArea) await loadAdminQueueAndRender(contentArea);
+    } catch (err) {
+      alert('Network error while processing deletion.');
+    }
+  };
+
+  window.restoreAdminProducer = async function (entityId) {
+    try {
+      const res = await fetch(`/api/v1/admin/entities/${entityId}/restore`, {
+        method: 'POST',
+        headers: getAuthHeader()
+      });
+      if (res.ok) {
+        showToast('Producer restored successfully from Trash.', 'success');
+        wizardState.adminInspectedEntity = null;
+        const contentArea = document.getElementById('workspaceDynamicContent');
+        if (contentArea) await loadAdminQueueAndRender(contentArea);
+      } else {
+        const err = await res.json();
+        alert(err.detail || 'Failed to restore producer.');
+      }
+    } catch (e) {
+      alert('Network error while restoring producer.');
+    }
+  };
+
+  window.openQuickDispatchModal = function (lotCode, cropName, maxQty) {
+    const qty = prompt(`Dispatch Lot #${lotCode} (${cropName}): Enter dispatch quantity in Kg (Max: ${maxQty} Kg):`, maxQty);
+    if (!qty) return;
+    const qtyNum = parseFloat(qty);
+    if (isNaN(qtyNum) || qtyNum <= 0 || qtyNum > maxQty) {
+      alert('Invalid dispatch quantity.');
+      return;
+    }
+    const receiver = prompt('Enter Destination APMC Mandi / Buyer Name:', 'Hooghly APMC Aggregator Yard');
+    if (!receiver) return;
+
+    fetch(`/api/v1/lots/${encodeURIComponent(lotCode)}/dispatch`, {
+      method: 'POST',
+      headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ declared_qty_kg: qtyNum, destination_name: receiver })
+    }).then(async res => {
+      if (res.ok) {
+        showToast(`Lot #${lotCode} successfully dispatched to ${receiver}. Custody locked.`, 'success');
+        await loadProducerLots();
+      } else {
+        const err = await res.json();
+        alert(err.detail || 'Failed to dispatch lot.');
+      }
+    }).catch(() => alert('Network error during dispatch.'));
+  };
 
   window.downloadMyQrPdfSheet = async function () {
     try {
@@ -1497,16 +2432,39 @@
 
         <div class="form-group">
           <label class="form-label">${escapeHtml(t.commodities)} <span class="req">*</span></label>
-          <div class="crop-chips-grid">
+          <div class="crop-checkbox-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-top: 8px;">
             ${CROPS_LIST.map(c => {
               const isSelected = selectedCrops.includes(c.id);
               return `
-                <div class="crop-chip-item ${isSelected ? 'selected' : ''}" onclick="toggleCropSelection('${c.id}', this)">
-                  <span>${getIcon(c.icon, 15, isSelected ? '#047857' : '#64748b')}</span>
-                  <span>${escapeHtml(getCropLabel(c.id))}</span>
-                </div>
+                <label class="crop-checkbox-card ${isSelected ? 'selected' : ''}" id="card_crop_${c.id}" style="display: flex; align-items: center; gap: 9px; padding: 10px 12px; background: ${isSelected ? '#ecfdf5' : '#ffffff'}; border: 1.5px solid ${isSelected ? '#047857' : '#e2e8f0'}; border-radius: 8px; cursor: pointer; transition: all 0.15s ease-in-out; user-select: none;">
+                  <input type="checkbox" id="chk_crop_${c.id}" value="${c.id}" ${isSelected ? 'checked' : ''} onchange="toggleCropCheckbox('${c.id}', this.checked)" style="width: 17px; height: 17px; accent-color: #047857; cursor: pointer;" />
+                  <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: ${isSelected ? '#d1fae5' : '#f8fafc'}; border-radius: 6px;">${getIcon(c.icon, 14, isSelected ? '#047857' : '#64748b')}</span>
+                  <span style="font-size: 13px; font-weight: ${isSelected ? '700' : '600'}; color: ${isSelected ? '#065f46' : '#334155'};">${escapeHtml(getCropLabel(c.id))}</span>
+                </label>
               `;
             }).join('')}
+          </div>
+
+          <!-- Other Produce / Custom Fruits / Spices Adder -->
+          <div style="margin-top: 16px; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 14px;">
+            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0b3d2e; margin-bottom: 6px;">
+              <span>${getIcon('sprout', 15, '#047857')}</span> ${escapeHtml(t.addOtherProduce || 'Other Produce / Fruits / Spices (If unlisted above)')}
+            </label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="inp_custom_crop" class="form-input" style="flex: 1;" placeholder="${escapeHtml(t.customCropPh || 'Type fruit or crop name (e.g. Guava, Pomegranate, Turmeric)...')}" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomCrop();}" />
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 8px 16px; white-space: nowrap;" onclick="addCustomCrop()">
+                ${escapeHtml(t.btnAddProduce || '+ Add Produce')}
+              </button>
+            </div>
+            <div id="customCropsTagsContainer" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+              ${(selectedCrops.filter(id => !CROPS_LIST.some(c => c.id === id))).map(customName => `
+                <span class="custom-crop-pill" style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1.5px solid #047857; color: #065f46; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
+                  <span>${getIcon('sprout', 13, '#047857')}</span>
+                  <span>${escapeHtml(customName)}</span>
+                  <button type="button" onclick="removeCustomCrop('${escapeHtml(customName)}')" style="background: transparent; border: none; cursor: pointer; color: #dc2626; font-size: 14px; font-weight: 900; line-height: 1; padding: 0 0 0 4px;" title="Remove">&times;</button>
+                </span>
+              `).join('')}
+            </div>
           </div>
         </div>
 
@@ -2375,3 +3333,67 @@
   window.renderAdminConsoleUI = renderAdminConsoleUI;
   window.renderWizardInterface = renderWizardInterface;
 })();
+
+  window.toggleCropCheckbox = function (cropId, isChecked) {
+    if (!wizardState.selectedCrops) wizardState.selectedCrops = [];
+    const idx = wizardState.selectedCrops.indexOf(cropId);
+    if (isChecked && idx === -1) {
+      wizardState.selectedCrops.push(cropId);
+    } else if (!isChecked && idx > -1) {
+      wizardState.selectedCrops.splice(idx, 1);
+    }
+    const card = document.getElementById('card_crop_' + cropId);
+    if (card) {
+      if (isChecked) {
+        card.classList.add('selected');
+        card.style.background = '#ecfdf5';
+        card.style.borderColor = '#047857';
+      } else {
+        card.classList.remove('selected');
+        card.style.background = '#ffffff';
+        card.style.borderColor = '#e2e8f0';
+      }
+    }
+  };
+
+  window.addCustomCrop = function () {
+    const inp = document.getElementById('inp_custom_crop');
+    if (!inp) return;
+    const name = inp.value.trim();
+    if (!name) return;
+    if (!wizardState.selectedCrops) wizardState.selectedCrops = [];
+    if (!wizardState.selectedCrops.includes(name)) {
+      wizardState.selectedCrops.push(name);
+    }
+    inp.value = '';
+    const container = document.getElementById('customCropsTagsContainer');
+    if (container) {
+      const customList = wizardState.selectedCrops.filter(id => !CROPS_LIST.some(c => c.id === id));
+      container.innerHTML = customList.map(customName => `
+        <span class="custom-crop-pill" style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1.5px solid #047857; color: #065f46; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
+          <span>${getIcon('sprout', 13, '#047857')}</span>
+          <span>${escapeHtml(customName)}</span>
+          <button type="button" onclick="removeCustomCrop('${escapeHtml(customName)}')" style="background: transparent; border: none; cursor: pointer; color: #dc2626; font-size: 14px; font-weight: 900; line-height: 1; padding: 0 0 0 4px;" title="Remove">&times;</button>
+        </span>
+      `).join('');
+    }
+  };
+
+  window.removeCustomCrop = function (cropName) {
+    if (!wizardState.selectedCrops) return;
+    const idx = wizardState.selectedCrops.indexOf(cropName);
+    if (idx > -1) {
+      wizardState.selectedCrops.splice(idx, 1);
+    }
+    const container = document.getElementById('customCropsTagsContainer');
+    if (container) {
+      const customList = wizardState.selectedCrops.filter(id => !CROPS_LIST.some(c => c.id === id));
+      container.innerHTML = customList.map(customName => `
+        <span class="custom-crop-pill" style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1.5px solid #047857; color: #065f46; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
+          <span>${getIcon('sprout', 13, '#047857')}</span>
+          <span>${escapeHtml(customName)}</span>
+          <button type="button" onclick="removeCustomCrop('${escapeHtml(customName)}')" style="background: transparent; border: none; cursor: pointer; color: #dc2626; font-size: 14px; font-weight: 900; line-height: 1; padding: 0 0 0 4px;" title="Remove">&times;</button>
+        </span>
+      `).join('');
+    }
+  };

@@ -99,6 +99,7 @@ class EntityProfile(models.Model):
         ("VERIFIED", "Verified"),
         ("REJECTED", "Rejected"),
         ("SUSPENDED", "Suspended"),
+        ("TRASH", "Trash"),
     ]
 
     entity_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -248,6 +249,8 @@ class VerificationReview(models.Model):
         ("REJECTED", "Rejected"),
         ("NEEDS_CHANGES", "Needs Changes"),
         ("SUSPENDED", "Suspended"),
+        ("TRASH", "Moved to Trash"),
+        ("RESTORED", "Restored"),
     ]
 
     review_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

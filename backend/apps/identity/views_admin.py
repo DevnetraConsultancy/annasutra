@@ -54,6 +54,32 @@ class IsAdminOrStaff(permissions.BasePermission):
         return getattr(request.user, "role", None) in ("OWNER", "STAFF")
 
 
+_trash_enums_ensured = False
+
+
+def _ensure_trash_enums():
+    global _trash_enums_ensured
+    if _trash_enums_ensured:
+        return
+    try:
+        from django.db import connection
+        if connection.vendor == "mysql":
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "ALTER TABLE entity_profile MODIFY COLUMN status "
+                    "ENUM('DRAFT','SUBMITTED','NEEDS_CHANGES','VERIFIED','REJECTED','SUSPENDED','TRASH') "
+                    "NOT NULL DEFAULT 'DRAFT';"
+                )
+                cursor.execute(
+                    "ALTER TABLE verification_review MODIFY COLUMN decision "
+                    "ENUM('APPROVED','REJECTED','NEEDS_CHANGES','SUSPENDED','TRASH','RESTORED') "
+                    "NOT NULL;"
+                )
+        _trash_enums_ensured = True
+    except Exception:
+        _trash_enums_ensured = True
+
+
 class AdminReviewQueueView(APIView):
     """GET /api/v1/admin/reviews?status=SUBMITTED
     List entity registrations awaiting administrative verification.
@@ -63,6 +89,7 @@ class AdminReviewQueueView(APIView):
     permission_classes = [IsAdminOrStaff]
 
     def get(self, request):
+        _ensure_trash_enums()
         status_filter = request.query_params.get("status", "SUBMITTED").upper()
         role_filter = request.query_params.get("role")
         state_filter = request.query_params.get("state")
@@ -70,7 +97,11 @@ class AdminReviewQueueView(APIView):
 
         qs = EntityProfile.objects.all().order_by("-submitted_at", "-created_at")
 
-        if status_filter != "ALL":
+        if status_filter == "TRASH":
+            qs = qs.filter(status="TRASH")
+        elif status_filter == "ALL":
+            qs = qs.exclude(status="TRASH")
+        else:
             qs = qs.filter(status=status_filter)
 
         if role_filter:
@@ -368,13 +399,14 @@ class AdminEntityDecisionView(APIView):
     permission_classes = [IsAdminOrStaff]
 
     def post(self, request, entity_id):
+        _ensure_trash_enums()
         decision = request.data.get("decision", "").upper().strip()
         reason = request.data.get("reason", "").strip()
         qr_count = request.data.get("qr_count")
 
-        if decision not in ("APPROVED", "REJECTED", "NEEDS_CHANGES", "SUSPENDED"):
+        if decision not in ("APPROVED", "REJECTED", "NEEDS_CHANGES", "SUSPENDED", "TRASH"):
             raise exceptions.ValidationError({
-                "detail": "decision must be one of: APPROVED, REJECTED, NEEDS_CHANGES, SUSPENDED",
+                "detail": "decision must be one of: APPROVED, REJECTED, NEEDS_CHANGES, SUSPENDED, TRASH",
                 "code": "INVALID_DECISION",
             })
 
@@ -407,6 +439,38 @@ class AdminEntityDecisionView(APIView):
                 review_notes=reason,
             )
             return Response(res, status=status.HTTP_200_OK)
+
+        if decision == "TRASH":
+            with transaction.atomic():
+                now = timezone.now()
+                entity.status = "TRASH"
+                entity.version += 1
+                entity.save(update_fields=["status", "version", "updated_at"])
+
+                try:
+                    user = AppUser.objects.get(user_id=entity.user_id)
+                    org = user.org
+                    org.verification = "SUSPENDED"
+                    org.save(update_fields=["verification"])
+                except Exception:
+                    pass
+
+                review = VerificationReview.objects.create(
+                    review_id=uuid.uuid4(),
+                    entity=entity,
+                    reviewer_id=admin_user.user_id if getattr(admin_user, "user_id", None) else uuid.uuid4(),
+                    decision="TRASH",
+                    reason=reason or "Moved to trash by administrator.",
+                    created_at=now,
+                )
+
+            return Response({
+                "entity_id": str(entity.entity_id),
+                "status": "TRASH",
+                "decision": "TRASH",
+                "review_id": str(review.review_id),
+                "message": "Producer moved to trash successfully.",
+            }, status=status.HTTP_200_OK)
 
         with transaction.atomic():
             now = timezone.now()
@@ -473,3 +537,92 @@ class AdminIssueQrBlockView(APIView):
             "sample_serials": serials[:5],
             "total_serials": len(serials),
         }, status=status.HTTP_201_CREATED)
+
+
+class AdminEntityRestoreView(APIView):
+    """POST /api/v1/admin/entities/{entity_id}/restore
+    Restore a producer from TRASH back to active review/verified status.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrStaff]
+
+    def post(self, request, entity_id):
+        try:
+            entity = EntityProfile.objects.get(entity_id=entity_id)
+        except EntityProfile.DoesNotExist:
+            raise exceptions.NotFound({"detail": "Entity profile not found.", "code": "NOT_FOUND"})
+
+        if entity.status != "TRASH":
+            raise exceptions.ValidationError({"detail": "Entity is not currently in trash.", "code": "NOT_IN_TRASH"})
+
+        admin_user = request.user
+        if not admin_user or not getattr(admin_user, "user_id", None):
+            admin_user = AppUser.objects.filter(role__in=["OWNER", "STAFF"]).first()
+
+        target_status = "VERIFIED" if entity.entity_code else "SUBMITTED"
+        with transaction.atomic():
+            now = timezone.now()
+            entity.status = target_status
+            entity.version += 1
+            entity.save(update_fields=["status", "version", "updated_at"])
+
+            try:
+                user = AppUser.objects.get(user_id=entity.user_id)
+                org = user.org
+                org.verification = "VERIFIED" if entity.entity_code else "PENDING"
+                org.save(update_fields=["verification"])
+            except Exception:
+                pass
+
+            VerificationReview.objects.create(
+                review_id=uuid.uuid4(),
+                entity=entity,
+                reviewer_id=admin_user.user_id if admin_user else uuid.uuid4(),
+                decision="RESTORED",
+                reason="Restored from trash by administrator.",
+                created_at=now,
+            )
+
+        return Response({
+            "entity_id": str(entity.entity_id),
+            "status": entity.status,
+            "message": f"Producer restored to {entity.status} successfully.",
+        }, status=status.HTTP_200_OK)
+
+
+class AdminEntityPurgeView(APIView):
+    """POST /api/v1/admin/entities/{entity_id}/purge
+    Permanently purge producer data after explicit word confirmation 'DELETE'.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrStaff]
+
+    def post(self, request, entity_id):
+        confirm_word = str(request.data.get("confirmation", "")).strip().upper()
+        if confirm_word != "DELETE":
+            raise exceptions.ValidationError({
+                "detail": "Word confirmation 'DELETE' is required to permanently purge producer data.",
+                "code": "CONFIRMATION_REQUIRED",
+            })
+
+        try:
+            entity = EntityProfile.objects.get(entity_id=entity_id)
+        except EntityProfile.DoesNotExist:
+            raise exceptions.NotFound({"detail": "Entity profile not found.", "code": "NOT_FOUND"})
+
+        with transaction.atomic():
+            try:
+                entity.sensitive.delete()
+            except Exception:
+                pass
+            entity.documents.all().delete()
+            entity.plots.all().delete()
+            try:
+                entity.role_details.delete()
+            except Exception:
+                pass
+            entity.delete()
+
+        return Response({"message": "Producer data permanently purged from system."}, status=status.HTTP_200_OK)
