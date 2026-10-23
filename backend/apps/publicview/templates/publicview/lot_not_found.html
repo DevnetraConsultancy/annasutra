@@ -1296,7 +1296,7 @@
             <img src="{{ brand_logo }}" alt="AnnaSutra" class="ataraxis-brand-logo" />
           </a>
           <p class="ataraxis-mission-text" id="footerMissionText">
-            National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.
+            National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and cryptographically protected food security.
           </p>
 
           <!-- Toll-Free Helpline Box -->
@@ -1379,13 +1379,13 @@
             <li>
               <button type="button" onclick="openDpdpModal()">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkDpdp">DPDP Act 2023 Policy & Notice</span>
+                <span id="footerLinkDpdp">Privacy Policy & Citizen Protection</span>
               </button>
             </li>
             <li>
-              <button type="button" onclick="openGovModal('agmarknet')">
+              <button type="button" onclick="openGovModal('quality')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkAgmarknet">Agmarknet Standards & APMC</span>
+                <span id="footerLinkQuality">Agricultural Quality Standards</span>
               </button>
             </li>
             <li>
@@ -1536,7 +1536,7 @@
             <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAggregator">Aggregator</strong>
             <div style="font-size: 12px; font-weight: 700; color: #d97706; margin-bottom: 8px;" id="portalRoleSubAggregator">APMC Yard / Mandi Arhatiya</div>
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
-              Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.
+              Accept farmer crate handover, attest weighbridge slips, assign certified quality grades, and issue e-NAM gate passes.
             </p>
             <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator</button>
           </div>
@@ -1621,7 +1621,7 @@
             <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAdmin">Admin / Verifier</strong>
             <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="portalRoleSubAdmin">Entity Verification &amp; Audit Authority</div>
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAdmin">
-              Inspect pending producer &amp; entity registrations, audit DPDP encrypted credentials, and approve or reject nodes with QR allocation.
+              Inspect pending producer &amp; entity registrations, audit encrypted credentials, and approve or reject nodes with QR allocation.
             </p>
             <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #0f172a; color: #ffffff;" id="btnPortalAdmin">Sign In as Admin</button>
           </div>
@@ -1677,8 +1677,8 @@
     <div class="modal-box">
       <button class="modal-close" onclick="closeDpdpModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
-        <h3 id="dpdpTitle">DPDP Act 2023 Compliance</h3>
-        <p id="dpdpSub">Digital Personal Data Protection Notice</p>
+        <h3 id="dpdpTitle">Data Privacy & Protection</h3>
+        <p id="dpdpSub">Privacy & Security Notice</p>
       </div>
       <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 16px;">
         <p id="dpdpNoticeP1">AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
@@ -1718,7 +1718,7 @@
 
       <div class="help-section-card">
         <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
-        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
+        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and quality grade.</p>
       </div>
 
       <div class="help-section-card">
@@ -1773,8 +1773,8 @@
         footerLinkFlow: "5-Tier Value Chain",
         footerLinkTrust: "National Trust Standards",
         footerColLegalTitle: "LEGAL & GOVERNANCE",
-        footerLinkDpdp: "DPDP Act 2023 Policy & Notice",
-        footerLinkAgmarknet: "Agmarknet Standards & APMC",
+        footerLinkDpdp: "Privacy Policy & Citizen Protection",
+        footerLinkQuality: "Agricultural Quality Standards",
         footerLinkHealth: "System Health & Live Uptime",
         footerLinkSecurity: "Security Audit & CERT-In Policy",
         footerLinkGrievance: "Grievance Redressal Officer",
@@ -1789,8 +1789,8 @@
         otpOrLabel: "── OR SIGN IN WITH MOBILE OTP ──",
         phonePlaceholder: "Mobile Number (+91)",
         btnSendOtp: "Send Verification OTP",
-        dpdpTitle: "DPDP Act 2023 Compliance",
-        dpdpSub: "Digital Personal Data Protection Notice",
+        dpdpTitle: "Data Privacy & Protection",
+        dpdpSub: "Privacy & Security Notice",
         dpdpNoticeP1: "AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.",
         dpdpGrievanceLabel: "Grievance Redressal Officer:",
         btnDpdpClose: "I Understand & Continue",
@@ -1803,7 +1803,7 @@
         btnPortalProducer: "Sign In as Producer",
         portalRoleTitleAggregator: "Aggregator",
         portalRoleSubAggregator: "APMC Yard / Mandi Arhatiya",
-        portalRoleDescAggregator: "Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.",
+        portalRoleDescAggregator: "Accept farmer crate handover, attest weighbridge slips, assign certified quality grades, and issue e-NAM gate passes.",
         btnPortalAggregator: "Sign In as Aggregator",
         portalRoleTitleWholesaler: "Wholesaler",
         portalRoleSubWholesaler: "Terminal Trader / Cold Storage",
@@ -1849,8 +1849,8 @@
         footerLinkFlow: "5-स्तरीय आपूर्ति श्रृंखला",
         footerLinkTrust: "राष्ट्रीय विश्वास मानक",
         footerColLegalTitle: "कानूनी एवं शासन",
-        footerLinkDpdp: "डीपीडीपी अधिनियम 2023 नीति एवं नोटिस",
-        footerLinkAgmarknet: "एगमार्कनेट मानक एवं एपीएमसी",
+        footerLinkDpdp: "गोपनीयता नीति एवं नागरिक सुरक्षा",
+        footerLinkQuality: "कृषि गुणवत्ता मानक एवं एपीएमसी",
         footerLinkHealth: "सिस्टम स्वास्थ्य एवं लाइव अपटाइम",
         footerLinkSecurity: "सुरक्षा ऑडिट एवं सर्ट-इन नीति",
         footerLinkGrievance: "शिकायत निवारण अधिकारी",
@@ -1865,7 +1865,7 @@
         otpOrLabel: "── अथवा मोबाइल ओटीपी से साइन इन करें ──",
         phonePlaceholder: "मोबाइल नंबर (+91)",
         btnSendOtp: "ओटीपी कोड भेजें",
-        dpdpTitle: "डीपीडीपी अधिनियम 2023 अनुपालन",
+        dpdpTitle: "डेटा गोपनीयता एवं संरक्षण",
         dpdpSub: "डिजिटल व्यक्तिगत डेटा संरक्षण नोटिस",
         dpdpNoticeP1: "अन्नसूत्र केवल खाद्य सुरक्षा और ट्रैसेबिलिटी के लिए आवश्यक आपूर्ति-श्रृंखला घटना रिकॉर्ड एकत्र करता है। किसान की व्यक्तिगत पहचान, सटीक जीपीएस निर्देशांक और कीमतें कभी भी सार्वजनिक नहीं की जाती हैं।",
         dpdpGrievanceLabel: "शिकायत निवारण अधिकारी:",
@@ -1925,8 +1925,8 @@
         footerLinkFlow: "৫-স্তর বিশিষ্ট সরবরাহ শৃঙ্খল",
         footerLinkTrust: "জাতীয় বিশ্বাস মানদণ্ড",
         footerColLegalTitle: "আইন ও শাসন",
-        footerLinkDpdp: "ডিপিডিপি আইন ২০২৩ নীতি ও বিজ্ঞপ্তি",
-        footerLinkAgmarknet: "অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি",
+        footerLinkDpdp: "গোপনীয়তা নীতি ও নাগরিক সুরক্ষা",
+        footerLinkQuality: "কৃষি গুণমান মানদণ্ড ও এপিএমসি",
         footerLinkHealth: "সিস্টেম স্থিতি ও লাইভ আপটাইম",
         footerLinkSecurity: "নিরাপত্তা অডিট ও সার্ট-ইন নীতি",
         footerLinkGrievance: "অভিযোগ নিষ্পত্তি আধিকারিক",
@@ -1941,7 +1941,7 @@
         otpOrLabel: "── অথবা মোবাইল ওটিপি দিয়ে সাইন ইন করুন ──",
         phonePlaceholder: "মোবাইল নম্বর (+91)",
         btnSendOtp: "ওটিপি পাঠান",
-        dpdpTitle: "ডিপিডিপি আইন ২০২৩ সম্মতি",
+        dpdpTitle: "তথ্য গোপনীয়তা ও সুরক্ষা",
         dpdpSub: "ডিজিটাল ব্যক্তিগত তথ্য সুরক্ষা বিজ্ঞপ্তি",
         dpdpNoticeP1: "অন্নসূত্র শুধুমাত্র খাদ্য নিরাপত্তা ও ট্রেসেবিলিটির জন্য প্রয়োজনীয় সরবরাহ-শৃঙ্খল ইভেন্ট রেকর্ড সংগ্রহ করে। কৃষকের ব্যক্তিগত পরিচয়, খামারের সঠিক জিপিএস স্থানাঙ্ক এবং বাণিজ্যিক লেনদেনের মূল্য কখনও জনসমক্ষে প্রকাশ করা হয় না।",
         dpdpGrievanceLabel: "অভিযোগ নিষ্পত্তি আধিকারিক:",
@@ -2035,7 +2035,7 @@
       setTxt('footerLinkTrust', t.footerLinkTrust);
       setTxt('footerColLegalTitle', t.footerColLegalTitle);
       setTxt('footerLinkDpdp', t.footerLinkDpdp);
-      setTxt('footerLinkAgmarknet', t.footerLinkAgmarknet);
+      setTxt('footerLinkQuality', t.footerLinkQuality);
       setTxt('footerLinkHealth', t.footerLinkHealth);
       setTxt('footerLinkSecurity', t.footerLinkSecurity);
       setTxt('footerLinkGrievance', t.footerLinkGrievance);
@@ -2436,39 +2436,39 @@
 
     /* GOVERNANCE MODAL CONTENT */
     const govTopicsData = {
-      agmarknet: {
+      quality: {
         icon: 'file-text',
         en: {
-          title: 'Agmarknet Standards & APMC Assaying Framework',
+          title: 'Agricultural Quality Standards Assaying Framework',
           sub: 'Directorate of Marketing & Inspection (DMI), Ministry of Agriculture',
           content: `
-            <p><strong>Agmarknet Quality & Grading Assaying:</strong> AnnaSutra strictly adheres to the Agricultural Produce (Grading and Marking) Act and standard APMC mandi assaying protocols.</p>
+            <p><strong>Quality & Grading Assaying:</strong> AnnaSutra strictly adheres to the Agricultural Produce (Grading and Marking) Act and standard APMC mandi assaying protocols.</p>
             <p>Every agricultural lot is graded into Grade A, Grade B, or Grade C based on physical parameters: moisture percentage, visual purity, blemish index, and organoleptic checks recorded via authorized APMC assayers.</p>
             <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
           `,
-          actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'Visit Agmarknet National Portal'
+          actionLink: '#',
+          actionText: 'Quality Standards Protocol'
         },
         hi: {
-          title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
+          title: 'कृषि गुणवत्ता मानक एवं एपीएमसी मंडी संरचना',
           sub: 'विपणन एवं निरीक्षण निदेशालय (DMI), कृषि मंत्रालय, भारत सरकार',
           content: `
             <p><strong>एगमार्कनेट गुणवत्ता एवं ग्रेडिंग:</strong> अन्नसूत्र कृषि उपज (ग्रेडिंग और मार्किंग) अधिनियम और मानक एपीएमसी मंडी प्रोटोकॉल का कड़ाई से पालन करता है।</p>
             <p>प्रत्येक कृषि लॉट को भौतिक मापदंडों के आधार पर ग्रेड ए, ग्रेड बी या ग्रेड सी में वर्गीकृत किया जाता है: नमी प्रतिशत, शुद्धता और अधिकृत मंडी निरीक्षकों द्वारा दर्ज की गई गुणवत्ता जांच।</p>
             <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
           `,
-          actionLink: 'https://agmarknet.gov.in/',
+          actionLink: '#',
           actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं'
         },
         bn: {
-          title: 'অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
+          title: 'কৃষি গুণমান মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
           sub: 'বিপণন ও পরিদর্শন অধিদপ্তর (DMI), কৃষি মন্ত্রক, ভারত সরকার',
           content: `
             <p><strong>অ্যাগমার্কনেট গুণমান ও গ্রেডিং:</strong> অন্নসূত্র কৃষি পণ্য (গ্রেডিং ও মার্কিং) আইন এবং মানক এপিএমসি মণ্ডি প্রোটোকল কঠোরভাবে অনুসরণ করে।</p>
             <p>প্রতিটি কৃষি চালান ভৌত পরিমাপের ভিত্তিতে গ্রেড এ, গ্রেড বি বা গ্রেড সি হিসেবে প্রত্যয়িত হয়: আর্দ্রতার হার, দৃশ্যমান বিশুদ্ধতা এবং অনুমোদিত মণ্ডি পরীক্ষকদের দ্বারা রেকর্ডকৃত গুণমান।</p>
             <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
           `,
-          actionLink: 'https://agmarknet.gov.in/',
+          actionLink: '#',
           actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান'
         }
       },
@@ -2541,7 +2541,7 @@
       grievance: {
         icon: 'user',
         en: {
-          title: 'Grievance Redressal Officer (DPDP Act 2023)',
+          title: 'Grievance Redressal Officer (Privacy Protection)',
           sub: 'Statutory Citizen & Operator Resolution Mechanism',
           content: `
             <p>In compliance with the Digital Personal Data Protection Act 2023 and Information Technology Rules, users may reach out to the designated Grievance Officer for privacy requests or dispute resolution.</p>

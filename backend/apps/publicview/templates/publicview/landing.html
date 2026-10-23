@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
   <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261023" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261023v3" defer></script>
+  <script src="/static/publicview/js/producer_wizard.js?v=20261023v4" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -2251,7 +2251,7 @@
       <div class="home-stat-card">
         <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
         <div class="home-stat-num" id="statGradeA">99.8%</div>
-        <div class="home-stat-label" id="statGradeALabel">Agmarknet Grade A</div>
+        <div class="home-stat-label" id="statGradeALabel">Certified Grade A Quality</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
@@ -2430,24 +2430,24 @@
                 <text x="48" y="13" font-size="5.2" font-weight="800" fill="#94a3b8" text-anchor="middle">APMC MANDI NODE #104</text>
                 <text id="s2RecLot" x="8" y="34" font-size="5" font-family="monospace" font-weight="700" fill="#38bdf8">SCAN: #AS-2026-X1</text>
                 <text id="s2RecWeight" x="8" y="47" font-size="5" font-family="monospace" font-weight="700" fill="#e2e8f0">WT: 450.0 KG (NET)</text>
-                <text id="s2RecGrade" x="8" y="60" font-size="5" font-family="monospace" font-weight="700" fill="#facc15">GRADE: AGMARKNET A+</text>
+                <text id="s2RecGrade" x="8" y="60" font-size="5" font-family="monospace" font-weight="700" fill="#facc15">GRADE: CERTIFIED A+</text>
                 <g id="s2RecCommit" opacity="0">
                   <rect x="6" y="72" width="84" height="20" rx="4" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
                   <text x="48" y="85" font-size="5" font-weight="900" fill="#22c55e" text-anchor="middle">RECORD COMMITTED</text>
                 </g>
               </g>
-              <!-- Agmarknet Grade-A Stamp Seal -->
+              <!-- Certified Grade-A Quality Stamp -->
               <g id="s2GradeStamp" transform="translate(68, 88) scale(0)">
                 <circle cx="0" cy="0" r="18" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.2" stroke-dasharray="2 1"/>
                 <circle cx="0" cy="0" r="14" fill="#15803d"/>
-                <text x="0" y="-3" font-size="4.5" font-weight="900" fill="#fef08a" text-anchor="middle">AGMARKNET</text>
+                <text x="0" y="-3" font-size="4.5" font-weight="900" fill="#fef08a" text-anchor="middle">CERTIFIED</text>
                 <text x="0" y="5" font-size="6" font-weight="900" fill="#ffffff" text-anchor="middle">GRADE A</text>
                 <path d="M -4 9 L -1 11 L 4 7" fill="none" stroke="#fef08a" stroke-width="1.5" stroke-linecap="round"/>
               </g>
             </svg>
           </div>
           <div class="flow-step-title" id="flowStep2Title">Aggregator</div>
-          <div class="flow-step-desc" id="flowStep2Desc">Mandi collection, weight verification, Agmarknet grading.</div>
+          <div class="flow-step-desc" id="flowStep2Desc">Mandi collection, digital weight verification, quality assaying.</div>
           <div class="flow-step-meta">
             <span class="meta-pill" id="flowMeta2A">RECORD: <strong class="meta-code">COMMITTED</strong></span>
             <span class="meta-pill" id="flowMeta2B">GRADE: <strong class="meta-code">A+ PASS</strong></span>
@@ -2831,12 +2831,12 @@
           </div>
           <h4 id="trust3Title">Mutual Custody Confirmation</h4>
           <p id="trust3Desc">
-            Produce custody cannot be transferred unilaterally. Both dispatching and receiving operators must digitally sign off on net weights and Agmarknet grades.
+            Produce custody cannot be transferred unilaterally. Both dispatching and receiving operators must digitally sign off on net weights and certified quality grades.
           </p>
           <div class="pillar-pills">
             <span class="pillar-pill" id="trust3Pill1">Dual-Signature Handoff</span>
             <span class="pillar-pill" id="trust3Pill2">Anti-Counterfeit QR</span>
-            <span class="pillar-pill" id="trust3Pill3">Agmarknet Verification</span>
+            <span class="pillar-pill" id="trust3Pill3">Quality Assaying Verification</span>
           </div>
         </div>
       </div>
@@ -2855,7 +2855,7 @@
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
           <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span id="trustRibbonAgmark">Agmarknet Quality Grading</span>
+          <span id="trustRibbonAgmark">Certified Quality Grading</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
@@ -2964,9 +2964,9 @@
               </button>
             </li>
             <li>
-              <button type="button" onclick="openGovModal('agmarknet')">
+              <button type="button" onclick="openGovModal('quality')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkAgmarknet">Agmarknet Standards & APMC</span>
+                <span id="footerLinkQuality">Agricultural Quality Standards</span>
               </button>
             </li>
             <li>
@@ -3117,11 +3117,11 @@
             <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAggregator">Aggregator</strong>
             <div style="font-size: 12px; font-weight: 700; color: #d97706; margin-bottom: 8px;" id="portalRoleSubAggregator">Mandi Arhatiya / APMC Yard</div>
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
-              Verify gross weights on digital weighbridges, assign Agmarknet grades, and settle e-NAM auctions.
+              Verify gross weights on digital weighbridges, assign certified quality grades, and settle auctions.
             </p>
             <div class="pillar-pills" style="margin-bottom: 14px;">
               <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2A">Weighbridge Attest</span>
-              <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2B">Agmarknet Grade</span>
+              <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2B">Certified Grade</span>
             </div>
             <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator</button>
           </div>
@@ -3354,7 +3354,7 @@
 
       <div class="help-section-card">
         <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
-        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
+        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and certified quality grade.</p>
       </div>
 
       <div class="help-section-card">
@@ -3393,7 +3393,7 @@
         flowStep1Title: "Producer",
         flowStep1Desc: "Farmer / FPO logs harvest & generates QR crate labels.",
         flowStep2Title: "Aggregator",
-        flowStep2Desc: "Mandi collection, weight verification, Agmarknet grading.",
+        flowStep2Desc: "Mandi collection, digital weight verification, quality assaying.",
         flowStep3Title: "Wholesaler",
         flowStep3Desc: "Terminal market intake, lot splitting, cold storage.",
         flowStep4Title: "Distributor",
@@ -3421,7 +3421,7 @@
         footerLinkTrust: "National Trust Standards",
         footerColLegalTitle: "LEGAL & GOVERNANCE",
         footerLinkDpdp: "DPDP Act 2023 Policy & Notice",
-        footerLinkAgmarknet: "Agmarknet Standards & APMC",
+        footerLinkQuality: "Agricultural Quality Standards",
         footerLinkHealth: "System Health & Live Uptime",
         footerLinkSecurity: "Security Audit & CERT-In Policy",
         footerLinkGrievance: "Grievance Redressal Officer",
@@ -3445,7 +3445,7 @@
         tickerTitle: "LIVE CUSTODY TICKER",
         statProduceKgLabel: "Kg Produce Tracked",
         statFarmersLabel: "Registered Farmers",
-        statGradeALabel: "Agmarknet Grade A",
+        statGradeALabel: "Certified Grade A",
         statScansLabel: "Consumer QR Scans",
         statPrivacyLabel: "Data Leakage (DPDP)",
         statAppendOnlyLabel: "Append-Only Integrity",
@@ -3470,7 +3470,7 @@
         trustSubtitle: "Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.",
         trustRibbonLedger: "Append-Only SHA-256 Ledger",
         trustRibbonDpdp: "DPDP Act 2023 Certified",
-        trustRibbonAgmark: "Agmarknet Quality Grading",
+        trustRibbonAgmark: "Certified Quality Grading",
         trustRibbonCdac: "C-DAC Sovereign Cloud Node",
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO / Cultivator",
@@ -3478,7 +3478,7 @@
         btnPortalProducer: "Sign In as Producer",
         portalRoleTitleAggregator: "Aggregator",
         portalRoleSubAggregator: "Mandi Arhatiya / APMC Yard",
-        portalRoleDescAggregator: "Receive consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.",
+        portalRoleDescAggregator: "Receive consignments, record weight, inspect quality grade, and dispatch to Wholesaler.",
         btnPortalAggregator: "Sign In as Aggregator",
         portalRoleTitleWholesaler: "Wholesaler",
         portalRoleSubWholesaler: "Terminal Market / Bulk Trader",
@@ -3539,7 +3539,7 @@
         footerLinkTrust: "राष्ट्रीय विश्वास मानक",
         footerColLegalTitle: "कानूनी एवं शासन",
         footerLinkDpdp: "डीपीडीपी अधिनियम 2023 नीति एवं नोटिस",
-        footerLinkAgmarknet: "एगमार्कनेट मानक एवं एपीएमसी",
+        footerLinkQuality: "एगमार्कनेट मानक एवं एपीएमसी",
         footerLinkHealth: "सिस्टम स्वास्थ्य एवं लाइव अपटाइम",
         footerLinkSecurity: "सुरक्षा ऑडिट एवं सर्ट-इन नीति",
         footerLinkGrievance: "शिकायत निवारण अधिकारी",
@@ -3657,7 +3657,7 @@
         footerLinkTrust: "জাতীয় বিশ্বাস মানদণ্ড",
         footerColLegalTitle: "আইন ও শাসন",
         footerLinkDpdp: "ডিপিডিপি আইন ২০২৩ নীতি ও বিজ্ঞপ্তি",
-        footerLinkAgmarknet: "অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি",
+        footerLinkQuality: "অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি",
         footerLinkHealth: "সিস্টেম স্থিতি ও লাইভ আপটাইম",
         footerLinkSecurity: "নিরাপত্তা অডিট ও সার্ট-ইন নীতি",
         footerLinkGrievance: "অভিযোগ নিষ্পত্তি আধিকারিক",
@@ -3762,7 +3762,7 @@
             },
             {
               id: 'printQr',
-              label: 'Issue Agmarknet Crate QR Labels',
+              label: 'Issue Certified Crate QR Labels',
               icon: 'tag',
               tag: 'Serialization',
               desc: 'Print serialized tamper-evident QR code labels for harvest transport crates.',
@@ -3858,10 +3858,10 @@
             },
             {
               id: 'gradeInspection',
-              label: 'Agmarknet Quality Grading',
+              label: 'Quality Assaying & Grading',
               icon: 'microscope',
               tag: 'Grade Certificate',
-              desc: 'Conduct physical examination and issue Agmarknet Grade A, B, or C quality certificate.',
+              desc: 'Conduct physical examination and issue Certified Grade A, B, or C quality certificate.',
               fields: [
                 { name: 'grade', label: 'Assigned Grade', type: 'text', value: 'Grade A (Premium Commercial)' },
                 { name: 'defectPct', label: 'Defect / Blemish Percentage', type: 'number', value: '1.2' },
@@ -5020,7 +5020,7 @@
           launchBtn: 'Sign In as Aggregator',
           metrics: [
             { title: 'Mandi Inward Intake', val: '42,800 Kg', tag: 'Digital weighbridge certified' },
-            { title: 'Agmarknet Grade A', val: '99.4%', tag: 'Official quality tested' },
+            { title: 'Certified Grade A', val: '99.4%', tag: 'Official quality tested' },
             { title: 'Auction Cleared', val: '₹ 14.8 Lakh', tag: 'e-NAM settlements' }
           ],
           batches: []
@@ -5212,7 +5212,7 @@
         "Farmer producer harvest registered • GPS geofence verified • Immutable genesis ledger hash chained",
         "Bengal Cold-Chain Reefer WB-19-AX-4402 recorded in-transit temp 7.8°C • Zero thermal excursions • Route on track",
         "Maa Durga Fresh Mart (Kolkata) dispensed 2.5 Kg via consumer QR checkout • Append-only inventory adjusted",
-        "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Agmarknet Grade A certified • e-NAM settlement"
+        "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Certified Grade A quality inspected • e-NAM settlement"
       ],
       hi: [
         "डिजिटल वेज-ब्रिज सकल भार सत्यापित • क्रिप्टोग्राफिक हैश शृंखलाबद्ध • ई-नाम निपटान प्रमाणित",
@@ -5398,7 +5398,7 @@
       setTxt('footerLinkTrust', t.footerLinkTrust);
       setTxt('footerColLegalTitle', t.footerColLegalTitle);
       setTxt('footerLinkDpdp', t.footerLinkDpdp);
-      setTxt('footerLinkAgmarknet', t.footerLinkAgmarknet);
+      setTxt('footerLinkQuality', t.footerLinkQuality);
       setTxt('footerLinkHealth', t.footerLinkHealth);
       setTxt('footerLinkSecurity', t.footerLinkSecurity);
       setTxt('footerLinkGrievance', t.footerLinkGrievance);
@@ -5629,18 +5629,18 @@
 
     /* UNIFIED GOVERNANCE & STANDARDS MODALS (EXACT DPDP MODAL STYLE) */
     const govTopicsData = {
-      agmarknet: {
+      quality: {
         icon: 'file-text',
         en: {
-          title: 'Agmarknet Standards & APMC Assaying Framework',
+          title: 'National Agricultural Quality Assaying Framework',
           sub: 'Directorate of Marketing & Inspection (DMI), Ministry of Agriculture',
           content: `
-            <p><strong>Agmarknet Quality & Grading Assaying:</strong> AnnaSutra strictly adheres to the Agricultural Produce (Grading and Marking) Act and standard APMC mandi assaying protocols.</p>
+            <p><strong>National Quality & Grading Assaying:</strong> AnnaSutra strictly adheres to standardized agricultural assaying and grading protocols.</p>
             <p>Every agricultural lot is graded into Grade A, Grade B, or Grade C based on physical parameters: moisture percentage, visual purity, blemish index, and organoleptic checks recorded via authorized APMC assayers.</p>
             <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
           `,
-          actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'Visit Agmarknet National Portal'
+          actionLink: '#',
+          actionText: 'Standard Quality Assaying Guidelines'
         },
         hi: {
           title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
@@ -5650,7 +5650,7 @@
             <p>प्रत्येक कृषि लॉट को भौतिक मापदंडों के आधार पर ग्रेड ए, ग्रेड बी या ग्रेड सी में वर्गीकृत किया जाता है: नमी प्रतिशत, शुद्धता और अधिकृत मंडी निरीक्षकों द्वारा दर्ज की गई गुणवत्ता जांच।</p>
             <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
           `,
-          actionLink: 'https://agmarknet.gov.in/',
+          actionLink: '#',
           actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं'
         },
         bn: {
@@ -5661,7 +5661,7 @@
             <p>প্রতিটি কৃষি চালান ভৌত পরিমাপের ভিত্তিতে গ্রেড এ, গ্রেড বি বা গ্রেড সি হিসেবে প্রত্যয়িত হয়: আর্দ্রতার হার, দৃশ্যমান বিশুদ্ধতা এবং অনুমোদিত মণ্ডি পরীক্ষকদের দ্বারা রেকর্ডকৃত গুণমান।</p>
             <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
           `,
-          actionLink: 'https://agmarknet.gov.in/',
+          actionLink: '#',
           actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান'
         }
       },
@@ -6792,7 +6792,7 @@
       flowTimeline.fromTo('#s2RecGrade', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 }, '-=0.12');
       flowTimeline.to('#s2RecCommit', { opacity: 1, duration: 0.35, ease: 'power1.out' });
 
-      // 5. Agmarknet Grade-A verification stamp bounces down
+      // 5. Certified Grade-A verification stamp bounces down
       flowTimeline.fromTo('#s2GradeStamp', 
         { scale: 0, rotation: -30, opacity: 0 }, 
         { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'back.out(2)' }
