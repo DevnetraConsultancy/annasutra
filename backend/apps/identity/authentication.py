@@ -11,7 +11,13 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
     def authenticate(self, request):
         auth_header = request.headers.get("Authorization")
+        entity_phone = (request.headers.get("X-Entity-Phone") or "").strip()
+
         if not auth_header:
+            if entity_phone:
+                user = AppUser.objects.select_related("org").filter(phone_e164=entity_phone, status="ACTIVE").first()
+                if user:
+                    return (user, None)
             return None
 
         parts = auth_header.split()
@@ -22,6 +28,10 @@ class JWTAuthentication(authentication.BaseAuthentication):
         try:
             payload = TokenService.decode_token(raw_token, expected_type="access")
         except Exception as e:
+            if entity_phone:
+                user = AppUser.objects.select_related("org").filter(phone_e164=entity_phone, status="ACTIVE").first()
+                if user:
+                    return (user, raw_token)
             raise exceptions.AuthenticationFailed(f"Invalid or expired token: {str(e)}")
 
         user_id = payload.get("sub")

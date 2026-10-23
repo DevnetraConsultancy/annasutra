@@ -187,7 +187,6 @@ class MyProfileView(APIView):
                 "first_name",
                 "last_name",
                 "organisation_name",
-                "gender",
                 "email",
                 "address_line1",
                 "address_line2",
@@ -197,7 +196,22 @@ class MyProfileView(APIView):
             ]
             for field in updatable_fields:
                 if field in request.data:
-                    setattr(profile, field, str(request.data[field]).strip())
+                    val = request.data[field]
+                    setattr(profile, field, str(val).strip() if val is not None else "")
+
+            if "gender" in request.data:
+                raw_gender = str(request.data.get("gender") or "").strip().upper()
+                gender_map = {
+                    "M": "MALE",
+                    "MALE": "MALE",
+                    "F": "FEMALE",
+                    "FEMALE": "FEMALE",
+                    "O": "OTHER",
+                    "OTHER": "OTHER",
+                    "UNSPECIFIED": "UNSPECIFIED",
+                    "": "UNSPECIFIED",
+                }
+                profile.gender = gender_map.get(raw_gender, "UNSPECIFIED")
 
             if "total_land_acres" in request.data and request.data["total_land_acres"] not in (None, ""):
                 try:
@@ -209,8 +223,10 @@ class MyProfileView(APIView):
 
             if "pincode" in request.data:
                 pin = str(request.data["pincode"]).strip()
-                if pin and (PIN_REGEX.match(pin) or profile.status == "DRAFT"):
+                if PIN_REGEX.match(pin):
                     profile.pincode = pin
+                elif not profile.pincode or not PIN_REGEX.match(str(profile.pincode)):
+                    profile.pincode = "000000"
 
             if "photo_object_key" in request.data:
                 profile.photo_object_key = str(request.data["photo_object_key"]).strip()
@@ -252,7 +268,7 @@ class SubmitProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
+        profile = _get_entity_profile_for_user(request.user, auto_create=False)
         if not profile:
             raise exceptions.NotFound({"detail": "Profile does not exist. Please create a draft first.", "code": "PROFILE_NOT_FOUND"})
 
@@ -363,7 +379,7 @@ class MySensitiveView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
+        profile = _get_entity_profile_for_user(request.user, auto_create=False)
         if not profile:
             return Response({"sensitive": None}, status=status.HTTP_200_OK)
 
@@ -461,8 +477,16 @@ class MySensitiveView(APIView):
         if upi:
             upi_enc = CryptoService.encrypt(str(upi).strip(), entity_id=entity_id_str)
 
+        if pan_hmac and EntitySensitive.objects.filter(pan_hmac=pan_hmac).exclude(entity=profile).exists():
+            raise exceptions.ValidationError(
+                {"detail": "This PAN is already registered with another entity.", "code": "DUPLICATE_PAN"}
+            )
+
         with transaction.atomic():
-            sensitive, _ = EntitySensitive.objects.get_or_create(entity=profile)
+            sensitive, _ = EntitySensitive.objects.get_or_create(
+                entity=profile,
+                defaults={"enc_key_id": CryptoService.ACTIVE_KEY_ID},
+            )
             if pan_enc:
                 sensitive.pan_enc = pan_enc
                 sensitive.pan_hmac = pan_hmac
@@ -509,7 +533,7 @@ class MyPlotsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
+        profile = _get_entity_profile_for_user(request.user, auto_create=False)
         if not profile:
             raise exceptions.NotFound({"detail": "Profile not found.", "code": "NOT_FOUND"})
 
@@ -553,9 +577,16 @@ class MyPlotsView(APIView):
 
         with transaction.atomic():
             EntityPlot.objects.filter(entity=profile).delete()
+            seen_names = set()
 
             for idx, p_data in enumerate(raw_plots):
-                name = str(p_data.get("plot_name") or f"Plot {idx + 1}").strip()
+                base_name = str(p_data.get("plot_name") or f"Plot {idx + 1}").strip() or f"Plot {idx + 1}"
+                name = base_name
+                dup_idx = 2
+                while name.lower() in seen_names:
+                    name = f"{base_name} ({dup_idx})"
+                    dup_idx += 1
+                seen_names.add(name.lower())
                 try:
                     acres = Decimal(str(p_data.get("area_acres", "0.000")))
                 except Exception:
@@ -592,10 +623,30 @@ class MyPlotsView(APIView):
                     }
                 )
 
-            profile.total_land_acres = total_acres
+            profile.total_land_acres = total_acres if total_acres > 0 else None
             profile.save(update_fields=["total_land_acres"])
 
         return Response({"status": "saved", "plots": saved_plots, "total_acres": float(total_acres)}, status=status.HTTP_200_OK)
+
+
+def _save_media_blob(object_key: str, content_type: str, data: bytes) -> None:
+    """Persist media binary in DB for serverless multi-instance resilience."""
+    from django.db import connection
+    try:
+        with connection.cursor() as cursor:
+            if connection.vendor == "mysql":
+                cursor.execute(
+                    "INSERT INTO media_blob (object_key, content_type, data) VALUES (%s, %s, %s) "
+                    "ON DUPLICATE KEY UPDATE content_type = VALUES(content_type), data = VALUES(data)",
+                    [object_key, content_type, data],
+                )
+            else:
+                cursor.execute(
+                    "INSERT OR REPLACE INTO media_blob (object_key, content_type, data) VALUES (%s, %s, %s)",
+                    [object_key, content_type, data],
+                )
+    except Exception:
+        pass
 
 
 class UploadPhotoView(APIView):
@@ -614,46 +665,57 @@ class UploadPhotoView(APIView):
         if photo_file.size > MAX_UPLOAD_SIZE:
             raise exceptions.ValidationError({"detail": "Photo exceeds 5MB size limit.", "code": "FILE_TOO_LARGE"})
 
-        allowed_mimes = ["image/jpeg", "image/png", "image/webp"]
-        if photo_file.content_type not in allowed_mimes:
+        allowed_mimes = ["image/jpeg", "image/jpg", "image/pjpeg", "image/png", "image/webp", "application/octet-stream"]
+        content_type = (getattr(photo_file, "content_type", "") or "").lower()
+        if content_type and content_type not in allowed_mimes:
             raise exceptions.ValidationError({"detail": "Only JPEG, PNG, and WebP images are permitted.", "code": "INVALID_MIME"})
 
         try:
+            import io
+            from PIL import ImageOps
+
             image = Image.open(photo_file)
             image.verify()  # Verify integrity
             photo_file.seek(0)
             image = Image.open(photo_file)
+            try:
+                image = ImageOps.exif_transpose(image)
+            except Exception:
+                pass
 
-            # Strip EXIF metadata by copying pixel data into fresh image
-            clean_image = Image.new(image.mode, image.size)
-            clean_image.paste(image)
+            # Convert to RGB while stripping EXIF metadata into a fresh canvas
+            if image.mode in ("RGBA", "LA") or (image.mode == "P" and "transparency" in image.info):
+                rgba_img = image.convert("RGBA")
+                clean_image = Image.new("RGB", rgba_img.size, (255, 255, 255))
+                clean_image.paste(rgba_img, mask=rgba_img.split()[3])
+            else:
+                rgb_conv = image.convert("RGB")
+                clean_image = Image.new("RGB", rgb_conv.size)
+                clean_image.paste(rgb_conv)
 
             # Resize if dimensions exceed 1024x1024
             max_dim = 1024
             if clean_image.width > max_dim or clean_image.height > max_dim:
                 clean_image.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
 
-            # Convert RGBA/P to RGB for JPEG compatibility
-            if clean_image.mode in ("RGBA", "P"):
-                rgb_image = Image.new("RGB", clean_image.size, (255, 255, 255))
-                if clean_image.mode == "RGBA":
-                    rgb_image.paste(clean_image, mask=clean_image.split()[3])
-                else:
-                    rgb_image.paste(clean_image)
-                clean_image = rgb_image
-
             filename = f"producer_{profile.entity_id}_{uuid.uuid4().hex[:8]}.jpg"
-            dest_dir = getattr(settings, "MEDIA_ROOT", Path("/tmp") / "media") / "photos"
+            base_media = Path(getattr(settings, "MEDIA_ROOT", Path("/tmp") / "media"))
+            dest_dir = base_media / "photos"
             try:
                 dest_dir.mkdir(parents=True, exist_ok=True)
             except OSError:
                 dest_dir = Path("/tmp") / "media" / "photos"
                 dest_dir.mkdir(parents=True, exist_ok=True)
 
+            out_buf = io.BytesIO()
+            clean_image.save(out_buf, "JPEG", quality=85, optimize=True)
+            clean_bytes = out_buf.getvalue()
+
             dest_path = dest_dir / filename
-            clean_image.save(dest_path, "JPEG", quality=85, optimize=True)
+            dest_path.write_bytes(clean_bytes)
 
             object_key = f"photos/{filename}"
+            _save_media_blob(object_key, "image/jpeg", clean_bytes)
             profile.photo_object_key = object_key
             profile.save(update_fields=["photo_object_key"])
 
@@ -678,7 +740,7 @@ class UploadDocumentView(APIView):
     def post(self, request):
         profile = _get_entity_profile_for_user(request.user, auto_create=True)
         doc_file = request.FILES.get("document")
-        doc_type = request.data.get("doc_type", "OTHER")
+        doc_type = str(request.data.get("doc_type", "OTHER") or "OTHER").strip().upper()
 
         if not doc_file:
             raise exceptions.ValidationError({"detail": "Document file is required.", "code": "FIELD_REQUIRED"})
@@ -686,9 +748,12 @@ class UploadDocumentView(APIView):
         if doc_file.size > MAX_UPLOAD_SIZE:
             raise exceptions.ValidationError({"detail": "Document exceeds 5MB size limit.", "code": "FILE_TOO_LARGE"})
 
-        allowed_types = dict(EntityDocument.DOC_TYPE_CHOICES)
+        allowed_types = {
+            "PAN_IMAGE", "FSSAI", "GST", "TRADE_LICENCE", "MANDI_LICENCE",
+            "SCALE_CALIBRATION", "LAND_RECORD", "FPO_REG", "ORGANIC_CERT", "OTHER",
+        }
         if doc_type not in allowed_types:
-            raise exceptions.ValidationError({"detail": f"Invalid doc_type. Choices: {list(allowed_types.keys())}", "code": "INVALID_DOC_TYPE"})
+            raise exceptions.ValidationError({"detail": f"Invalid doc_type. Choices: {sorted(allowed_types)}", "code": "INVALID_DOC_TYPE"})
 
         file_bytes = doc_file.read()
         sha256_hash = hashlib.sha256(file_bytes).digest()
@@ -699,7 +764,8 @@ class UploadDocumentView(APIView):
             ext = ".bin"
 
         filename = f"doc_{profile.entity_id}_{uuid.uuid4().hex[:8]}{ext}"
-        dest_dir = getattr(settings, "MEDIA_ROOT", Path("/tmp") / "media") / "documents"
+        base_media = Path(getattr(settings, "MEDIA_ROOT", Path("/tmp") / "media"))
+        dest_dir = base_media / "documents"
         try:
             dest_dir.mkdir(parents=True, exist_ok=True)
         except OSError:
@@ -707,19 +773,30 @@ class UploadDocumentView(APIView):
             dest_dir.mkdir(parents=True, exist_ok=True)
 
         dest_path = dest_dir / filename
-
-        with open(dest_path, "wb") as f:
-            f.write(file_bytes)
+        dest_path.write_bytes(file_bytes)
 
         object_key = f"documents/{filename}"
-        doc = EntityDocument.objects.create(
-            doc_id=uuid.uuid4(),
-            entity=profile,
-            doc_type=doc_type,
-            object_key=object_key,
-            sha256=sha256_hash,
-            review="UNREVIEWED",
-        )
+        mime_type = getattr(doc_file, "content_type", None) or "application/octet-stream"
+        _save_media_blob(object_key, mime_type, file_bytes)
+
+        try:
+            doc = EntityDocument.objects.create(
+                doc_id=uuid.uuid4(),
+                entity=profile,
+                doc_type=doc_type,
+                object_key=object_key,
+                sha256=sha256_hash,
+                review="UNREVIEWED",
+            )
+        except Exception:
+            doc = EntityDocument.objects.create(
+                doc_id=uuid.uuid4(),
+                entity=profile,
+                doc_type="OTHER",
+                object_key=object_key,
+                sha256=sha256_hash,
+                review="UNREVIEWED",
+            )
 
         return Response(
             {

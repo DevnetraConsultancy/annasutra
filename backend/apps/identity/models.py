@@ -218,6 +218,9 @@ class EntityDocument(models.Model):
         ("TRADE_LICENCE", "Trade Licence"),
         ("MANDI_LICENCE", "Mandi Licence"),
         ("SCALE_CALIBRATION", "Scale Calibration"),
+        ("LAND_RECORD", "Land Record"),
+        ("FPO_REG", "FPO Registration"),
+        ("ORGANIC_CERT", "Organic Certificate"),
         ("OTHER", "Other"),
     ]
     REVIEW_CHOICES = [

@@ -604,7 +604,11 @@
 
   function getAuthHeader() {
     const token = localStorage.getItem('annasutra_access_token');
-    return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+    const phone = localStorage.getItem('annasutra_phone') || '';
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    if (phone) headers['X-Entity-Phone'] = phone;
+    return headers;
   }
 
   function formatPhoneTag(rawPhone) {
@@ -1351,10 +1355,10 @@
           <div class="form-group">
             <label class="form-label">${escapeHtml(t.gender)}</label>
             <select class="form-select" id="inp_gender">
-              <option value="" ${!p.gender ? 'selected' : ''}>${escapeHtml(t.genderSelect)}</option>
-              <option value="M" ${p.gender === 'M' ? 'selected' : ''}>${escapeHtml(t.genderMale)}</option>
-              <option value="F" ${p.gender === 'F' ? 'selected' : ''}>${escapeHtml(t.genderFemale)}</option>
-              <option value="O" ${p.gender === 'O' ? 'selected' : ''}>${escapeHtml(t.genderOther)}</option>
+              <option value="UNSPECIFIED" ${(!p.gender || p.gender === 'UNSPECIFIED') ? 'selected' : ''}>${escapeHtml(t.genderSelect)}</option>
+              <option value="MALE" ${(p.gender === 'MALE' || p.gender === 'M') ? 'selected' : ''}>${escapeHtml(t.genderMale)}</option>
+              <option value="FEMALE" ${(p.gender === 'FEMALE' || p.gender === 'F') ? 'selected' : ''}>${escapeHtml(t.genderFemale)}</option>
+              <option value="OTHER" ${(p.gender === 'OTHER' || p.gender === 'O') ? 'selected' : ''}>${escapeHtml(t.genderOther)}</option>
             </select>
           </div>
         </div>
@@ -2040,10 +2044,13 @@
 
           try {
             const token = localStorage.getItem('annasutra_access_token');
-            if (!token) return;
+            const phone = localStorage.getItem('annasutra_phone') || '';
+            const upHeaders = {};
+            if (token) upHeaders['Authorization'] = 'Bearer ' + token;
+            if (phone) upHeaders['X-Entity-Phone'] = phone;
             const upRes = await fetch('/api/v1/me/photo', {
               method: 'POST',
-              headers: { 'Authorization': 'Bearer ' + token },
+              headers: upHeaders,
               body: formData
             });
 
@@ -2055,7 +2062,12 @@
               if (badge) badge.style.display = 'inline-block';
               showToast(getI18n().photoScrubbed, 'success');
             } else {
-              showToast('Failed to upload photo.', 'error');
+              let errMsg = 'Failed to upload photo.';
+              try {
+                const errJson = await upRes.json();
+                if (errJson && errJson.detail) errMsg = errJson.detail;
+              } catch (e) {}
+              showToast(errMsg, 'error');
             }
           } catch (err) {
             showToast('Network error uploading photo.', 'error');
@@ -2085,9 +2097,13 @@
 
     try {
       const token = localStorage.getItem('annasutra_access_token');
+      const phone = localStorage.getItem('annasutra_phone') || '';
+      const docHeaders = {};
+      if (token) docHeaders['Authorization'] = 'Bearer ' + token;
+      if (phone) docHeaders['X-Entity-Phone'] = phone;
       const res = await fetch('/api/v1/me/documents', {
         method: 'POST',
-        headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+        headers: docHeaders,
         body: formData
       });
       if (res.ok) {

@@ -94,13 +94,20 @@ MYSQL_REGISTRATION_STATEMENTS = [
     """CREATE TABLE IF NOT EXISTS entity_document (
       doc_id     CHAR(36) PRIMARY KEY,
       entity_id  CHAR(36) NOT NULL,
-      doc_type   ENUM('PAN_IMAGE','FSSAI','GST','TRADE_LICENCE','MANDI_LICENCE','SCALE_CALIBRATION','OTHER') NOT NULL,
+      doc_type   ENUM('PAN_IMAGE','FSSAI','GST','TRADE_LICENCE','MANDI_LICENCE','SCALE_CALIBRATION','LAND_RECORD','FPO_REG','ORGANIC_CERT','OTHER') NOT NULL,
       doc_number_enc VARBINARY(256) NULL,
       object_key VARCHAR(255) NOT NULL,
       sha256     BINARY(32) NOT NULL,
       review     ENUM('UNREVIEWED','ACCEPTED','REJECTED') NOT NULL DEFAULT 'UNREVIEWED',
       uploaded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_doc_entity FOREIGN KEY (entity_id) REFERENCES entity_profile(entity_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;""",
+
+    """CREATE TABLE IF NOT EXISTS media_blob (
+      object_key   VARCHAR(255) PRIMARY KEY,
+      content_type VARCHAR(80)  NOT NULL DEFAULT 'image/jpeg',
+      data         MEDIUMBLOB   NOT NULL,
+      created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;""",
 
     """CREATE TABLE IF NOT EXISTS verification_review (

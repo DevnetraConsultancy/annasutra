@@ -50,6 +50,18 @@ def serve_static_asset(request, path: str):
             continue
 
     if not file_path:
+        if clean_path.startswith(("photos/", "documents/")):
+            try:
+                from django.db import connection
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT content_type, data FROM media_blob WHERE object_key = %s", [clean_path])
+                    row = cursor.fetchone()
+                    if row and row[1]:
+                        resp = HttpResponse(bytes(row[1]), content_type=row[0] or "image/jpeg")
+                        resp["Cache-Control"] = "public, max-age=86400"
+                        return resp
+            except Exception:
+                pass
         raise Http404(f"Asset not found: {clean_path}")
 
     file_size = file_path.stat().st_size
