@@ -164,7 +164,7 @@
       thStatus: 'Verification Status',
       thActions: 'Administrative Action',
       btnInspect: 'Inspect & Decide',
-      btnApproveNow: 'Approve & Mint 50 QR',
+      btnApproveNow: 'Approve',
       btnIssueMoreQr: '+20 QR Labels',
       noApplicationsFound: 'No entity registrations found for the selected filter.',
       inspectorTitle: 'Application Verification Inspector',
@@ -347,7 +347,7 @@
       btnDownloadQrPdf: 'प्रिंट करने योग्य A4 क्यूआर स्टिकर शीट डाउनलोड करें (PDF)',
       loadingRegistry: 'सत्यापित इकाई रजिस्ट्री लोड हो रही है...',
       adminQueueTitle: 'इकाई सत्यापन समीक्षा कतार',
-      adminQueueSub: 'उत्पादकों और संस्थाओं को सत्यापित करने और 50 क्यूआर लेबल जारी करने के लिए केवाईसी, भूखंड और सहमति की जांच करें।',
+      adminQueueSub: 'सत्यापन प्रदान करने के लिए जमा किए गए क्रेडेंशियल, भूखंड सीमा और कानूनी सहमति की समीक्षा करें।',
       filterAll: 'सभी आवेदन',
       filterSubmitted: 'समीक्षाधीन (लंबित)',
       filterVerified: 'सत्यापित',
@@ -361,7 +361,7 @@
       thStatus: 'सत्यापन स्थिति',
       thActions: 'प्रशासनिक कार्रवाई',
       btnInspect: 'जांचें और निर्णय लें',
-      btnApproveNow: 'स्वीकृत करें व 50 QR जारी करें',
+      btnApproveNow: 'स्वीकृत करें',
       btnIssueMoreQr: '+20 QR लेबल',
       noApplicationsFound: 'चयनित फ़िल्टर के लिए कोई पंजीकरण आवेदन नहीं मिला।',
       inspectorTitle: 'आवेदन सत्यापन निरीक्षक',
@@ -558,7 +558,7 @@
       thStatus: 'যাচাইকরণ স্থিতি',
       thActions: 'প্রশাসনিক পদক্ষেপ',
       btnInspect: 'পরীক্ষা ও সিদ্ধান্ত',
-      btnApproveNow: 'অনুমোদন ও ৫০টি QR জারি',
+      btnApproveNow: 'অনুমোদন করুন',
       btnIssueMoreQr: '+২০টি QR লেবেল',
       noApplicationsFound: 'নির্বাচিত ফিল্টারের জন্য কোনো আবেদন পাওয়া যায়নি।',
       inspectorTitle: 'আবেদন যাচাইকরণ পরিদর্শক',
@@ -1186,7 +1186,7 @@ function renderAdminConsoleUI(container) {
       const data = await res.json();
       if (res.ok) {
         if (decision === 'APPROVED') {
-          showToast(`${data.entity_code || 'Entity'} verified! ${data.qr_count || 50} QR labels issued.`, 'success');
+          showToast(`${data.entity_code || 'Entity'} verified! Unlimited QR printing enabled.`, 'success');
         } else {
           showToast(`Decision recorded: ${decision}`, 'info');
         }
