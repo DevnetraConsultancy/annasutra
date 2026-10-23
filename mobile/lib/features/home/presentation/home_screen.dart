@@ -21,7 +21,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _selectedLang = 'en';
-  String _weatherText = '🌤️ Detecting...';
+  IconData _weatherIcon = Icons.wb_sunny_outlined;
+  String _weatherText = 'Detecting...';
   String _dateTimeText = '';
   Timer? _clockTimer;
 
@@ -46,7 +47,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'roleProcessorDesc': 'Raw intake, milling/sorting, retail pack QR generation.',
       'roleRetailer': 'Wholesaler & Retailer',
       'roleRetailerDesc': 'Point-of-sale verification, batch sales recording, consumer audit.',
+      'roleAdmin': 'Admin / Verifier',
+      'roleAdminDesc': 'Entity verification, KYC reveal audit, and QR label issuance.',
       'loginBtn': 'Login as',
+      'tabIncoming': 'Incoming',
+      'tabMyStock': 'My Stock',
+      'tabWaiting': 'Waiting',
+      'emptyIncoming': 'No inbound shipments awaiting receipt.',
+      'emptyStock': 'No active produce batches in custody.',
+      'emptyWaiting': 'No dispatched handovers awaiting counterparty sign-off.',
       'receiveBatch': 'Receive Batch',
       'dispatchBatch': 'Dispatch Batch',
       'splitLot': 'Split Lot',
@@ -87,7 +96,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'roleProcessorDesc': 'कच्चा माल प्राप्ति, छंटाई, खुदरा पैकेजिंग।',
       'roleRetailer': 'थोक व खुदरा विक्रेता',
       'roleRetailerDesc': 'बिक्री केंद्र सत्यापन, खुदरा बिलिंग।',
+      'roleAdmin': 'प्रशासक / सत्यापनकर्ता',
+      'roleAdminDesc': 'इकाई सत्यापन, केवाईसी ऑडिट और क्यूआर आवंटन।',
       'loginBtn': 'के रूप में लॉगिन करें',
+      'tabIncoming': 'आवक',
+      'tabMyStock': 'मेरा स्टॉक',
+      'tabWaiting': 'प्रतीक्षारत',
+      'emptyIncoming': 'प्राप्ति की प्रतीक्षा में कोई आवक खेप नहीं है।',
+      'emptyStock': 'कस्टडी में कोई सक्रिय उत्पाद बैच नहीं है।',
+      'emptyWaiting': 'प्रतिपक्ष की पुष्टि के लिए कोई प्रेषित हैंडओवर लंबित नहीं है।',
       'receiveBatch': 'बैच प्राप्त करें',
       'dispatchBatch': 'बैच प्रेषित करें',
       'splitLot': 'लॉट विभाजित करें',
@@ -128,7 +145,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'roleProcessorDesc': 'কাঁচামাল গ্রহণ, বাছাই ও প্যাকেটজাতকরণ।',
       'roleRetailer': 'খুচরা বিক্রেতা',
       'roleRetailerDesc': 'বিক্রয় কেন্দ্র যাচাইকরণ, খুচরা বিক্রয় নথিভুক্ত।',
+      'roleAdmin': 'প্রশাসক / যাচাইকারী',
+      'roleAdminDesc': 'সংস্থা যাচাইকরণ, কেওয়াইসি অডিট এবং কিউআর বরাদ্দ।',
       'loginBtn': 'হিসেবে প্রবেশ করুন',
+      'tabIncoming': 'আগত',
+      'tabMyStock': 'আমার স্টক',
+      'tabWaiting': 'অপেক্ষমাণ',
+      'emptyIncoming': 'গ্রহণের অপেক্ষায় কোনো আগত চালান নেই।',
+      'emptyStock': 'হেফাজতে কোনো সক্রিয় পণ্য ব্যাচ নেই।',
+      'emptyWaiting': 'প্রতিপক্ষের নিশ্চিতকরণের অপেক্ষায় কোনো প্রেরণ নেই।',
       'receiveBatch': 'ব্যাচ গ্রহণ করুন',
       'dispatchBatch': 'ব্যাচ প্রেরণ করুন',
       'splitLot': 'লট ভাগ করুন',
@@ -153,6 +178,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
   String _t(String key) {
     return _strings[_selectedLang]?[key] ?? _strings['en']![key] ?? key;
+  }
+
+  String _roleDisplayName(String? orgType) {
+    final code = (orgType ?? 'PRODUCER').toUpperCase();
+    if (_selectedLang == 'hi') {
+      switch (code) {
+        case 'FARMER':
+        case 'PRODUCER':
+          return 'किसान';
+        case 'MANDI':
+        case 'AGGREGATOR':
+          return 'मंडी';
+        case 'COLD_STORAGE':
+          return 'शीत गृह';
+        case 'PROCESSOR':
+          return 'प्रसंस्करण';
+        case 'RETAILER':
+          return 'खुदरा विक्रेता';
+        case 'ADMIN':
+          return 'प्रशासक';
+        default:
+          return code;
+      }
+    } else if (_selectedLang == 'bn') {
+      switch (code) {
+        case 'FARMER':
+        case 'PRODUCER':
+          return 'কৃষক';
+        case 'MANDI':
+        case 'AGGREGATOR':
+          return 'মাণ্ডি';
+        case 'COLD_STORAGE':
+          return 'হিমাগার';
+        case 'PROCESSOR':
+          return 'প্রক্রিয়াকরণ';
+        case 'RETAILER':
+          return 'খুচরা বিক্রেতা';
+        case 'ADMIN':
+          return 'প্রশাসক';
+        default:
+          return code;
+      }
+    }
+    switch (code) {
+      case 'FARMER':
+      case 'PRODUCER':
+        return 'Producer';
+      case 'MANDI':
+      case 'AGGREGATOR':
+        return 'Mandi';
+      case 'COLD_STORAGE':
+        return 'Cold Storage';
+      case 'PROCESSOR':
+        return 'Processor';
+      case 'RETAILER':
+        return 'Retailer';
+      case 'ADMIN':
+        return 'Admin';
+      default:
+        return 'Producer';
+    }
+  }
+
+  String _formatUserBadge(AuthState authState) {
+    final roleLabel = _roleDisplayName(authState.orgType);
+    final rawPhone = (authState.phone ?? '').replaceAll(RegExp(r'\D'), '');
+    if (rawPhone.length >= 4) {
+      final last4 = rawPhone.substring(rawPhone.length - 4);
+      return '$roleLabel (X$last4)';
+    }
+    return roleLabel;
   }
 
   @override
@@ -204,15 +300,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           final temp = current?['temperature_2m']?.round() ?? 28;
           final code = current?['weather_code'] ?? 1;
 
-          String icon = '🌤️';
-          if (code == 0) icon = '☀️';
-          else if (code == 2) icon = '⛅';
-          else if (code >= 61 && code <= 65) icon = '🌧️';
-          else if (code >= 95) icon = '⛈️';
+          IconData icon = Icons.wb_cloudy_outlined;
+          if (code == 0) {
+            icon = Icons.wb_sunny_outlined;
+          } else if (code >= 61 && code <= 65) {
+            icon = Icons.water_drop_outlined;
+          } else if (code >= 95) {
+            icon = Icons.thunderstorm_outlined;
+          }
 
           if (mounted) {
             setState(() {
-              _weatherText = '$icon $temp°C $city';
+              _weatherIcon = icon;
+              _weatherText = '$temp°C $city';
             });
           }
         }
@@ -220,7 +320,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     } catch (_) {
       if (mounted) {
         setState(() {
-          _weatherText = '🌤️ India';
+          _weatherIcon = Icons.wb_sunny_outlined;
+          _weatherText = 'India';
         });
       }
     }
@@ -296,13 +397,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: Colors.white.withOpacity(0.14)),
             ),
-            child: Text(
-              _weatherText,
-              style: const TextStyle(
-                color: Color(0xFFFDE047),
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(_weatherIcon, color: const Color(0xFFFDE047), size: 13),
+                const SizedBox(width: 4),
+                Text(
+                  _weatherText,
+                  style: const TextStyle(
+                    color: Color(0xFFFDE047),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 8),
@@ -433,7 +541,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     const Icon(Icons.verified_user, color: Color(0xFF86EFAC), size: 16),
                     const SizedBox(width: 6),
                     Text(
-                      authState.orgType ?? 'User',
+                      _formatUserBadge(authState),
                       style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -535,7 +643,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
-                          context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
+                          context.push('/receive');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE67E22),
@@ -608,21 +716,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ],
           ),
           const SizedBox(height: 16),
-          _buildTrustItem('🛡️', _t('trust1Title'), _t('trust1Desc')),
+          _buildTrustItem(Icons.verified_user_outlined, _t('trust1Title'), _t('trust1Desc')),
           const Divider(height: 24, thickness: 1, color: Color(0xFFF1F5F9)),
-          _buildTrustItem('🔒', _t('trust2Title'), _t('trust2Desc')),
+          _buildTrustItem(Icons.lock_outline, _t('trust2Title'), _t('trust2Desc')),
           const Divider(height: 24, thickness: 1, color: Color(0xFFF1F5F9)),
-          _buildTrustItem('⚖️', _t('trust3Title'), _t('trust3Desc')),
+          _buildTrustItem(Icons.balance_outlined, _t('trust3Title'), _t('trust3Desc')),
         ],
       ),
     );
   }
 
-  Widget _buildTrustItem(String emoji, String title, String description) {
+  Widget _buildTrustItem(IconData iconData, String title, String description) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(emoji, style: const TextStyle(fontSize: 22)),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0FDF4),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFBBF7D0)),
+          ),
+          child: Icon(iconData, color: const Color(0xFF0B3D2E), size: 20),
+        ),
         const SizedBox(width: 12),
         Expanded(
           child: RichText(
@@ -650,8 +766,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   }
 
   Widget _buildSyncAndVerificationAlerts(BuildContext context, AuthState authState, SyncState syncState) {
+    final registeredName = (authState.orgName != null && authState.orgName!.trim().isNotEmpty)
+        ? authState.orgName!
+        : _roleDisplayName(authState.orgType);
     return Column(
       children: [
+        Container(
+          margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0FDF4),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFF86EFAC)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.verified_user_outlined, color: Color(0xFF15803D), size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  registeredName,
+                  style: const TextStyle(
+                    color: Color(0xFF14532D),
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              Text(
+                _formatUserBadge(authState),
+                style: const TextStyle(
+                  color: Color(0xFF15803D),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
         if (authState.isAuthenticated && authState.orgVerification == 'PENDING')
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -797,7 +949,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     description: _t('roleFarmerDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
-                    sampleOrg: 'Bardhaman Farmer Coop (FPO-WB-0492)',
                   ),
                   _buildEntityCard(
                     context: context,
@@ -807,7 +958,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     description: _t('roleMandiDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
-                    sampleOrg: 'Kolkata Central APMC Traders Ltd',
                   ),
                   _buildEntityCard(
                     context: context,
@@ -817,7 +967,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     description: _t('roleColdDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
-                    sampleOrg: 'Hooghly Cold Chain Logistics Ltd',
                   ),
                   _buildEntityCard(
                     context: context,
@@ -827,7 +976,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     description: _t('roleProcessorDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
-                    sampleOrg: 'Bengal Agro Processing Works Pvt Ltd',
                   ),
                   _buildEntityCard(
                     context: context,
@@ -837,7 +985,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     description: _t('roleRetailerDesc'),
                     width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
                     currentRole: authState.orgType,
-                    sampleOrg: 'Maa Durga Retail Fresh Mart',
+                  ),
+                  _buildEntityCard(
+                    context: context,
+                    roleKey: 'ADMIN',
+                    icon: Icons.verified_user_outlined,
+                    title: _t('roleAdmin'),
+                    description: _t('roleAdminDesc'),
+                    width: isWide ? (constraints.maxWidth - 20) / 3 : constraints.maxWidth,
+                    currentRole: authState.orgType,
                   ),
                 ],
               );
@@ -856,7 +1012,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     required String description,
     required double width,
     required String? currentRole,
-    required String sampleOrg,
   }) {
     final bool isActive = currentRole == roleKey;
 
@@ -891,15 +1046,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),
-              if (isActive)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF16A34A),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text('ACTIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                ),
             ],
           ),
           const SizedBox(height: 8),
@@ -913,7 +1059,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             height: 38,
             child: ElevatedButton.icon(
               onPressed: () {
-                _showDirectEntityLoginModal(context, roleKey, title, sampleOrg);
+                context.push('/login');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: isActive ? const Color(0xFF15803D) : const Color(0xFF0B3D2E),
@@ -923,128 +1069,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               ),
               icon: Icon(isActive ? Icons.check_circle : Icons.login, size: 16),
               label: Text(
-                '${_t('loginBtn')} $roleKey',
+                '${_t('loginBtn')} $title',
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showDirectEntityLoginModal(BuildContext context, String roleKey, String roleTitle, String sampleOrg) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    'assets/images/annasutra_emblem.jpg',
-                    width: 32,
-                    height: 32,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.shield, color: Colors.green),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Login: $roleTitle',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'AnnaSutra Authentication',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0FDF4),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF86EFAC)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.flash_on, color: Color(0xFF15803D), size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        '1-Tap Fast Field Access',
-                        style: TextStyle(color: Colors.green.shade900, fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Authenticates as $sampleOrg instantly.',
-                    style: TextStyle(color: Colors.green.shade800, fontSize: 11),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 42,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        Navigator.pop(ctx);
-                        await ref.read(authControllerProvider.notifier).quickLoginAsEntity(
-                          entityRole: roleKey,
-                          orgName: sampleOrg,
-                          phone: '+919876543210',
-                        );
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Authenticated as $roleTitle ($sampleOrg)'),
-                              backgroundColor: const Color(0xFF0B3D2E),
-                            ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF15803D),
-                        foregroundColor: Colors.white,
-                      ),
-                      icon: const Icon(Icons.touch_app, size: 18),
-                      label: const Text('1-Tap Sign In as this Entity', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -1074,15 +1105,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               indicatorColor: const Color(0xFFE67E22),
               indicatorWeight: 3.5,
               labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              tabs: const [
-                Tab(text: 'Incoming'),
-                Tab(text: 'My Stock'),
-                Tab(text: 'Waiting'),
+              tabs: [
+                Tab(text: _t('tabIncoming')),
+                Tab(text: _t('tabMyStock')),
+                Tab(text: _t('tabWaiting')),
               ],
             ),
           ),
           SizedBox(
-            height: 380,
+            height: 300,
             child: TabBarView(
               controller: _tabController,
               children: [
@@ -1098,185 +1129,104 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   }
 
   Widget _buildIncomingTabContent(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(14.0),
-      children: [
-        Card(
-          elevation: 1,
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'BATCH: 7K3Q9XMD4T2B',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'In Transit',
-                        style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                const Text('Tomato (hybrid) • Declared: 500.0 kg', style: TextStyle(fontSize: 13)),
-                const Text('From: Bardhaman Farmer Coop', style: TextStyle(fontSize: 12, color: Colors.black54)),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
-                  },
-                  icon: const Icon(Icons.download_done, size: 18),
-                  label: Text(_t('receiveBatch')),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(44),
-                    backgroundColor: const Color(0xFF0B3D2E),
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.move_to_inbox_outlined, size: 42, color: Color(0xFF64748B)),
+            const SizedBox(height: 12),
+            Text(
+              _t('emptyIncoming'),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF475569), fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
             ),
-          ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => context.push('/receive'),
+              icon: const Icon(Icons.download_done, size: 18),
+              label: Text(_t('receiveBatch')),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0B3D2E),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildMyStockTabContent(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(14.0),
-      children: [
-        Card(
-          elevation: 1,
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.inventory_2_outlined, size: 42, color: Color(0xFF64748B)),
+            const SizedBox(height: 12),
+            Text(
+              _t('emptyStock'),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF475569), fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'BATCH: 7K3Q9XMD4T2B',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade100,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'In Custody',
-                        style: TextStyle(
-                          color: Colors.green.shade900,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                const Text('Tomato (hybrid) • On Hand: 500.0 kg', style: TextStyle(fontSize: 13)),
-                const Text('Quality Grade: A (Fresh)', style: TextStyle(fontSize: 12, color: Colors.black54)),
-                const SizedBox(height: 10),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    context.push('/dispatch?code=7K3Q9XMD4T2B');
-                  },
-                  icon: const Icon(Icons.upload, size: 18),
-                  label: Text(_t('dispatchBatch')),
+                  onPressed: () => context.push('/create-batch'),
+                  icon: const Icon(Icons.add_box_outlined, size: 16),
+                  label: Text(_t('createBatch')),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(44),
-                    backgroundColor: const Color(0xFF1E3A8A),
+                    backgroundColor: const Color(0xFF0B3D2E),
                     foregroundColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        context.push('/split?code=7K3Q9XMD4T2B&qty=500.0');
-                      },
-                      icon: const Icon(Icons.call_split, size: 14),
-                      label: Text(_t('splitLot'), style: const TextStyle(fontSize: 12)),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        context.push('/inspection?code=7K3Q9XMD4T2B');
-                      },
-                      icon: const Icon(Icons.verified, size: 14),
-                      label: Text(_t('inspectQuality'), style: const TextStyle(fontSize: 12)),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        context.push('/waste?code=7K3Q9XMD4T2B&qty=500.0');
-                      },
-                      icon: const Icon(Icons.delete_outline, size: 14),
-                      label: Text(_t('recordWaste'), style: const TextStyle(fontSize: 12)),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        context.push('/sale?code=7K3Q9XMD4T2B&qty=500.0');
-                      },
-                      icon: const Icon(Icons.point_of_sale, size: 14),
-                      label: Text(_t('recordSale'), style: const TextStyle(fontSize: 12)),
-                    ),
-                  ],
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/dispatch'),
+                  icon: const Icon(Icons.upload, size: 16),
+                  label: Text(_t('dispatchBatch')),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/split'),
+                  icon: const Icon(Icons.call_split, size: 16),
+                  label: Text(_t('splitLot')),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/inspection'),
+                  icon: const Icon(Icons.verified_outlined, size: 16),
+                  label: Text(_t('inspectQuality')),
                 ),
               ],
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildWaitingTabContent(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(14.0),
-      children: [
-        Card(
-          elevation: 1,
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'BATCH: 7K3Q9XMD4T2B',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-                const SizedBox(height: 6),
-                const Text('Dispatched 500.0 kg to Kolkata Mandi Wholesaler', style: TextStyle(fontSize: 13)),
-                const SizedBox(height: 4),
-                Text(
-                  'Status: Waiting for receiver confirmation',
-                  style: TextStyle(color: Colors.amber.shade900, fontWeight: FontWeight.w600, fontSize: 12),
-                ),
-              ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.hourglass_empty_rounded, size: 42, color: Color(0xFF64748B)),
+            const SizedBox(height: 12),
+            Text(
+              _t('emptyWaiting'),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF475569), fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -1288,7 +1238,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           Expanded(
             child: ElevatedButton.icon(
               onPressed: () {
-                context.push('/receive?code=7K3Q9XMD4T2B&qty=500.0');
+                context.push('/receive');
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(120, 52),
@@ -1342,9 +1292,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('📞 Kisan Helpline: 1800-180-1551', style: TextStyle(color: Color(0xFFFCD34D), fontSize: 10.5, fontWeight: FontWeight.bold)),
-                Text('•', style: TextStyle(color: Colors.white30)),
-                Text('🛡️ Consumer Helpline: 1915', style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 10.5, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.phone_in_talk_outlined, color: Color(0xFFFCD34D), size: 13),
+                    SizedBox(width: 5),
+                    Text('Kisan Helpline: 1800-180-1551', style: TextStyle(color: Color(0xFFFCD34D), fontSize: 10.5, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Text('|', style: TextStyle(color: Colors.white30)),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.shield_outlined, color: Color(0xFFE2E8F0), size: 13),
+                    SizedBox(width: 5),
+                    Text('Consumer Helpline: 1915', style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 10.5, fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ],
             ),
           ),
@@ -1433,7 +1397,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           children: [
             Text('Entity: ${authState.orgName ?? authState.orgType ?? "Authenticated Operator"}', style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text('Phone: ${authState.phone ?? "+919876543210"}'),
+            Text('Phone: ${authState.phone ?? "-"}'),
             const SizedBox(height: 4),
             Text('Status: ${authState.orgVerification ?? "VERIFIED"}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),

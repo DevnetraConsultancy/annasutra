@@ -1,6 +1,7 @@
 /**
- * AnnaSutra Producer Registration Wizard (Phase 2)
- * Full 5-stage onboarding, Leaflet polygon mapping, encrypted identity, and statutory DPDP consent.
+ * AnnaSutra Producer Registration Wizard & Admin Verification Console
+ * Full 5-stage onboarding, Leaflet polygon mapping, encrypted identity, statutory DPDP consent,
+ * Verified Producer Console, and Administrative Verification Portal.
  */
 
 (function () {
@@ -10,9 +11,17 @@
     return '';
   }
 
-
   const WIZARD_I18N = {
     en: {
+      roleProducer: 'Producer',
+      roleAdmin: 'Admin Verifier',
+      workspaceTitleProducer: 'Producer Registration & Operational Console',
+      workspaceTitleAdmin: 'Administrative Verification & QR Issuance Portal',
+      stepTab1: '1. Basic Info',
+      stepTab2: '2. Farm Plots',
+      stepTab3: '3. Cultivation',
+      stepTab4: '4. Identity & Bank',
+      stepTab5: '5. Consent & Review',
       step1Title: 'Basic Producer & Farm Details',
       step1Desc: 'Enter your legal identity, farm enterprise name, and village jurisdiction.',
       step2Title: 'Farm Plots & Land Boundaries',
@@ -24,42 +33,161 @@
       step5Title: 'Review & Statutory DPDP Consent',
       step5Desc: 'Verify all declared parameters and provide purpose-limited digital consent under the DPDP Act 2023.',
       firstName: 'First Name',
+      firstNamePh: 'Enter first name',
       lastName: 'Last Name',
+      lastNamePh: 'Enter last name',
       orgName: 'Farm / Enterprise Name',
+      orgNamePh: 'Enter farm or FPO name',
       gender: 'Gender',
+      genderSelect: '-- Select --',
+      genderMale: 'Male',
+      genderFemale: 'Female',
+      genderOther: 'Other',
       state: 'State / UT',
+      stateSelect: '-- Select State --',
       district: 'District',
+      districtPh: 'Enter district name',
       village: 'Village / Town',
+      villagePh: 'Enter village or town',
       pincode: 'Postal PIN Code (6 digits)',
+      pincodePh: '6-digit PIN code',
       address: 'Street Address / Plot Location',
+      addressPh: 'House/Plot No, Landmark, Gram Panchayat',
       photoLabel: 'Verified Farmer Photograph',
+      photoHint: 'Clear passport or farm portrait. EXIF metadata automatically scrubbed for DPDP compliance.',
       photoUploadBtn: 'Upload Farm Photo',
       photoScrubbed: 'Pixel Scrubbed & EXIF Cleared',
+      plotMapInstructions: 'Click on the map to place polygon corner points, or use your device GPS location.',
+      btnDrawPolygon: 'Draw Plot Polygon',
+      btnClearPoints: 'Clear Points',
+      btnUseGps: 'Use My Current GPS',
+      estAreaLabel: 'Estimated Area',
+      acresUnit: 'Acres',
+      plotNameLabel: 'Plot Name / Survey Reference',
+      plotNamePh: 'Enter plot name or Khasra/Dag number',
+      plotAreaLabel: 'Cultivable Area (Acres)',
+      plotAreaPh: '0.00',
+      btnAddPlot: '+ Add Plot to Registry',
+      registeredPlotsTitle: 'Registered Farm Plots',
+      totalLabel: 'Total',
+      noPlotsYet: 'No plots added yet. Draw a polygon on the map or enter plot details above and click "+ Add Plot to Registry".',
+      btnRemove: 'Remove',
       farmType: 'Cultivator Category',
-      commodities: 'Primary Agricultural Crops',
+      farmTypeInd: 'Individual / Marginal Farmer',
+      farmTypeFpo: 'Farmer Producer Organisation (FPO / FPC)',
+      farmTypeShg: 'Self-Help Group (SHG) Collective',
+      farmTypeCoop: 'Registered Agricultural Co-operative',
       irrigation: 'Primary Irrigation Source',
+      irrRain: 'Rainfed / Monsoon Dependent',
+      irrCanal: 'Canal & River Lift Irrigation',
+      irrBore: 'Submersible Borewell / Tube-well',
+      irrDrip: 'Micro-Drip & Sprinkler System',
+      commodities: 'Primary Agricultural Crops (Select all that apply)',
       certifications: 'Quality / Organic Certifications',
+      certNone: 'Standard Commercial Cultivation (Agmarknet)',
+      certNpop: 'NPOP Certified Organic (India Organic)',
+      certPgs: 'PGS-India Green / Organic',
+      certGap: 'INDGAP (Good Agricultural Practices)',
+      kycVaultNotice: 'Zero-Plaintext Vault: PAN, Bank Account, and IFSC are encrypted with AES-256-GCM using your Entity ID as Additional Authenticated Data (AAD).',
       panLabel: 'Permanent Account Number (PAN)',
+      panPh: '10-character PAN',
+      maskedPreview: 'Masked Preview',
       aadhaarLabel: 'Voluntary Aadhaar (Last 4 Digits Only)',
+      aadhaarPh: '4 digits only',
       aadhaarNotice: 'Under DPDP & UIDAI regulations, full Aadhaar is never collected or stored.',
       bankName: 'Bank Name',
-      accountNo: 'Bank Account Number',
-      confirmAccountNo: 'Re-enter Account Number',
+      bankNamePh: 'Enter bank name',
       ifsc: 'Bank IFSC Code',
+      ifscPh: '11-character IFSC',
+      accountNo: 'Bank Account Number',
+      accountNoPh: 'Enter account number',
+      confirmAccountNo: 'Re-enter Account Number',
+      confirmAccountNoPh: 'Confirm account number',
       upi: 'UPI ID (Optional)',
+      upiPh: 'name@bank',
+      docTitle: 'Supporting Land / Identity Document (Khatian, Parcha, or Passbook)',
+      docSub: 'Upload JPEG, PNG, or PDF (Max 5MB). SHA-256 checksummed for tamper-evidence.',
+      docLand: 'Land Record / Khatian / Patta',
+      docFpo: 'FPO / Co-op Registration Certificate',
+      docOrg: 'Organic / Quality Certificate',
+      docBtnUpload: 'Select & Upload Document',
+      docUploadedBadge: 'Uploaded & SHA-256 Verified',
+      sumApplicant: 'Applicant Name',
+      sumEnterprise: 'Farm / Enterprise',
+      sumJurisdiction: 'Jurisdiction',
+      sumLand: 'Mapped Landholding',
+      sumCrops: 'Selected Commodities',
+      sumIdentity: 'Identity & Settlement',
+      notEntered: 'Not entered',
+      noneSelected: 'None selected',
+      plotsWord: 'Plots',
+      encryptedWord: 'Encrypted',
+      consentHeader: 'DPDP Act 2023 Statutory Declarations',
       consent1: 'I grant purpose-limited consent under DPDP Act 2023 for my farm location and crop harvest data to be processed strictly for supply-chain traceability and trade integrity.',
       consent2: 'I voluntarily declare the last 4 digits of my Aadhaar for local identity attestation on the AnnaSutra platform. I acknowledge full Aadhaar is never requested.',
       consent3: 'I certify that all declared crop, plot acreage, and yield information accurately represent genuine agricultural production.',
       btnSaveDraft: 'Save Draft',
       btnNext: 'Next Step',
-      btnPrev: '← Previous',
+      btnPrev: 'Previous',
       btnSubmit: 'Submit Application for Verification',
       submitting: 'Submitting Application...',
       saving: 'Saving Draft...',
       underReviewTitle: 'Application Submitted — Under Verification Review',
-      underReviewSub: 'Your producer profile has been securely recorded. An official sequential code ({ROLE}-{STATE}-{SEQ6}) and your initial 50-QR label batch will be allocated upon approval.',
+      underReviewSub: 'Your producer profile has been securely recorded. An official sequential code and your initial 50-QR label batch will be allocated upon administrative approval.',
+      lblMappedLand: 'Verified Land Mapped',
+      lblMaskedPan: 'Masked PAN Identity',
+      lblSettlementBank: 'Settlement Bank',
+      lblSubmissionDate: 'Submission Date',
+      lblEntityRefToken: 'Entity Reference Token',
+      verifiedNodeBadge: 'VERIFIED PRODUCER NODE',
+      lblSovereignCode: 'Permanent Sovereign Code',
+      statActiveBatches: 'Active Harvest Batches',
+      statActiveBatchesSub: 'Recorded in Custody Ledger',
+      statQrAvail: 'Remaining QR Crate Serials',
+      statQrAvailSub: 'Allocated (13-Char Crockford Base32)',
+      statPlotsVerified: 'Verified Farm Plots',
+      statPlotsVerifiedSub: 'Geofenced & Encrypted',
+      btnDownloadQrPdf: 'Download Printable A4 Sticker Sheet (PDF)',
+      loadingRegistry: 'Loading verified entity registry...',
+      adminQueueTitle: 'Entity Verification Review Queue',
+      adminQueueSub: 'Inspect submitted KYC, farm plot boundaries, and DPDP consent to approve entities and issue sovereign codes.',
+      filterAll: 'All Applications',
+      filterSubmitted: 'Pending Review',
+      filterVerified: 'Verified',
+      filterDraft: 'Drafts',
+      filterChanges: 'Needs Changes',
+      filterRejected: 'Rejected',
+      thApplicant: 'Applicant & Enterprise',
+      thRolePhone: 'Role & Mobile',
+      thLocation: 'Location',
+      thPlots: 'Mapped Land',
+      thStatus: 'Verification Status',
+      thActions: 'Administrative Action',
+      btnInspect: 'Inspect & Decide',
+      btnApproveNow: 'Approve & Mint 50 QR',
+      btnIssueMoreQr: '+20 QR Labels',
+      noApplicationsFound: 'No entity registrations found for the selected filter.',
+      inspectorTitle: 'Application Verification Inspector',
+      btnCloseInspector: 'Close Inspector',
+      lblKycVault: 'Encrypted KYC & Settlement Vault',
+      btnRevealPan: 'Reveal PAN (Audit Logged)',
+      btnRevealBank: 'Reveal Account (Audit Logged)',
+      lblReviewNotes: 'Administrative Review Notes / Reason',
+      reviewNotesPh: 'Enter verification notes or reason for rejection / changes...',
+      btnApproveEntity: 'Approve & Issue Sovereign Code + 50 QR',
+      btnRequestChanges: 'Request Changes',
+      btnRejectEntity: 'Reject Application'
     },
     hi: {
+      roleProducer: 'उत्पादक',
+      roleAdmin: 'प्रशासक सत्यापनकर्ता',
+      workspaceTitleProducer: 'उत्पादक पंजीकरण एवं संचालन कंसोल',
+      workspaceTitleAdmin: 'प्रशासनिक सत्यापन एवं क्यूआर आवंटन पोर्टल',
+      stepTab1: '1. मूल विवरण',
+      stepTab2: '2. खेत भूखंड',
+      stepTab3: '3. फसल प्रोफाइल',
+      stepTab4: '4. पहचान व बैंक',
+      stepTab5: '5. सहमति व जमा',
       step1Title: 'उत्पादक एवं कृषि का बुनियादी विवरण',
       step1Desc: 'अपना कानूनी नाम, कृषि उद्यम का नाम और ग्राम पंचायत अधिकार क्षेत्र दर्ज करें।',
       step2Title: 'खेत के भूखंड एवं भूमि सीमांकन',
@@ -71,42 +199,161 @@
       step5Title: 'समीक्षा एवं वैधानिक डीपीडीपी सहमति',
       step5Desc: 'सभी दर्ज विवरणों की पुष्टि करें और DPDP अधिनियम 2023 के तहत डिजिटल सहमति प्रदान करें।',
       firstName: 'पहला नाम',
+      firstNamePh: 'पहला नाम दर्ज करें',
       lastName: 'अंतिम नाम',
+      lastNamePh: 'अंतिम नाम दर्ज करें',
       orgName: 'खेत / कृषि उद्यम का नाम',
+      orgNamePh: 'खेत या एफपीओ का नाम दर्ज करें',
       gender: 'लिंग',
-      state: 'राज्य',
+      genderSelect: '-- चुनें --',
+      genderMale: 'पुरुष',
+      genderFemale: 'महिला',
+      genderOther: 'अन्य',
+      state: 'राज्य / केंद्र शासित प्रदेश',
+      stateSelect: '-- राज्य चुनें --',
       district: 'जिला',
+      districtPh: 'जिले का नाम दर्ज करें',
       village: 'गांव / कस्बा',
+      villagePh: 'गांव या कस्बे का नाम दर्ज करें',
       pincode: 'पिन कोड (6 अंक)',
+      pincodePh: '6-अंकीय पिन कोड',
       address: 'सड़क का पता / खेत का स्थान',
+      addressPh: 'मकान/प्लॉट नंबर, ग्राम पंचायत',
       photoLabel: 'सत्यापित किसान की तस्वीर',
+      photoHint: 'स्पष्ट पासपोर्ट या खेत की तस्वीर। डीपीडीपी अनुपालन हेतु EXIF मेटाडेटा स्वतः हटाया जाता है।',
       photoUploadBtn: 'तस्वीर अपलोड करें',
       photoScrubbed: 'पिक्सेल एवं मेटाडेटा साफ़',
+      plotMapInstructions: 'भूखंड की सीमा बनाने के लिए नक्शे पर क्लिक करें, या अपने वर्तमान जीपीएस स्थान का उपयोग करें।',
+      btnDrawPolygon: 'भूखंड सीमा बनाएं',
+      btnClearPoints: 'बिंदु साफ़ करें',
+      btnUseGps: 'मेरा वर्तमान जीपीएस उपयोग करें',
+      estAreaLabel: 'अनुमानित क्षेत्रफल',
+      acresUnit: 'एकड़',
+      plotNameLabel: 'भूखंड का नाम / खसरा संख्या',
+      plotNamePh: 'भूखंड का नाम या खसरा/दाग संख्या दर्ज करें',
+      plotAreaLabel: 'कृषि योग्य क्षेत्रफल (एकड़)',
+      plotAreaPh: '0.00',
+      btnAddPlot: '+ रजिस्ट्री में भूखंड जोड़ें',
+      registeredPlotsTitle: 'पंजीकृत खेत भूखंड',
+      totalLabel: 'कुल',
+      noPlotsYet: 'अभी तक कोई भूखंड नहीं जोड़ा गया है। ऊपर नक्शे पर भूखंड बनाएं और "+ रजिस्ट्री में भूखंड जोड़ें" पर क्लिक करें।',
+      btnRemove: 'हटाएं',
       farmType: 'किसान श्रेणी',
-      commodities: 'उगाई जाने वाली मुख्य फसलें',
+      farmTypeInd: 'व्यक्तिगत / सीमांत किसान',
+      farmTypeFpo: 'किसान उत्पादक संगठन (FPO / FPC)',
+      farmTypeShg: 'स्वयं सहायता समूह (SHG)',
+      farmTypeCoop: 'पंजीकृत कृषि सहकारी समिति',
       irrigation: 'मुख्य सिंचाई स्रोत',
+      irrRain: 'वर्षा आधारित / मानसून',
+      irrCanal: 'नहर एवं नदी लिफ्ट सिंचाई',
+      irrBore: 'बोरवेल / ट्यूबवेल',
+      irrDrip: 'माइक्रो-ड्रिप एवं स्प्रिंकलर प्रणाली',
+      commodities: 'उगाई जाने वाली मुख्य फसलें (सभी लागू चुनें)',
       certifications: 'गुणवत्ता / जैविक प्रमाणन',
+      certNone: 'मानक व्यावसायिक खेती (एगमार्कनेट)',
+      certNpop: 'एनपीओपी प्रमाणित जैविक (इंडिया ऑर्गेनिक)',
+      certPgs: 'पीजीएस-इंडिया ग्रीन / जैविक',
+      certGap: 'उत्तम कृषि पद्धतियां (INDGAP)',
+      kycVaultNotice: 'शून्य-प्लेनटेक्स्ट वॉल्ट: पैन, बैंक खाता और आईएफएससी को AES-256-GCM द्वारा एन्क्रिप्ट किया जाता है।',
       panLabel: 'पैन नंबर (PAN)',
+      panPh: '10-अक्षरों का पैन नंबर',
+      maskedPreview: 'मास्क्ड पूर्वावलोकन',
       aadhaarLabel: 'स्वैच्छिक आधार (केवल अंतिम 4 अंक)',
+      aadhaarPh: 'केवल अंतिम 4 अंक',
       aadhaarNotice: 'डीपीडीपी नियमों के तहत पूर्ण आधार नंबर कभी संग्रहीत नहीं किया जाता है।',
       bankName: 'बैंक का नाम',
-      accountNo: 'बैंक खाता संख्या',
-      confirmAccountNo: 'खाता संख्या पुनः दर्ज करें',
+      bankNamePh: 'बैंक का नाम दर्ज करें',
       ifsc: 'आईएफएससी कोड (IFSC)',
+      ifscPh: '11-अक्षरों का IFSC कोड',
+      accountNo: 'बैंक खाता संख्या',
+      accountNoPh: 'खाता संख्या दर्ज करें',
+      confirmAccountNo: 'खाता संख्या पुनः दर्ज करें',
+      confirmAccountNoPh: 'खाता संख्या की पुष्टि करें',
       upi: 'यूपीआई आईडी (वैकल्पिक)',
+      upiPh: 'name@bank',
+      docTitle: 'सहायक भूमि / पहचान दस्तावेज़ (खतियान, पर्चा, या पासबुक)',
+      docSub: 'JPEG, PNG या PDF अपलोड करें (अधिकतम 5MB)। SHA-256 द्वारा सत्यापित।',
+      docLand: 'भूमि रिकॉर्ड / खतियान / पट्टा',
+      docFpo: 'एफपीओ / सहकारी पंजीकरण प्रमाणपत्र',
+      docOrg: 'जैविक / गुणवत्ता प्रमाणपत्र',
+      docBtnUpload: 'दस्तावेज़ चुनें और अपलोड करें',
+      docUploadedBadge: 'अपलोड एवं SHA-256 सत्यापित',
+      sumApplicant: 'आवेदक का नाम',
+      sumEnterprise: 'खेत / कृषि उद्यम',
+      sumJurisdiction: 'अधिकार क्षेत्र',
+      sumLand: 'सीमांकित भूमि',
+      sumCrops: 'चयनित फसलें',
+      sumIdentity: 'पहचान एवं बैंक निपटान',
+      notEntered: 'दर्ज नहीं',
+      noneSelected: 'कोई चयन नहीं',
+      plotsWord: 'भूखंड',
+      encryptedWord: 'एन्क्रिप्टेड',
+      consentHeader: 'डीपीडीपी अधिनियम 2023 वैधानिक घोषणाएं',
       consent1: 'मैं DPDP अधिनियम 2023 के तहत अपनी कृषि और भूखंड डेटा को आपूर्ति-श्रृंखला ट्रेसबिलिटी के लिए संसाधित करने की सहमति देता हूँ।',
       consent2: 'मैं पहचान सत्यापन के लिए स्वेच्छा से अपने आधार के केवल अंतिम 4 अंक प्रदान कर रहा हूँ।',
       consent3: 'मैं प्रमाणित करता हूँ कि दर्ज की गई सभी फसल और रकबा जानकारी पूर्णतः सत्य और वास्तविक है।',
       btnSaveDraft: 'ड्राफ्ट सहेजें',
       btnNext: 'अगला चरण',
-      btnPrev: '← पिछला',
+      btnPrev: 'पिछला चरण',
       btnSubmit: 'सत्यापन हेतु आवेदन जमा करें',
       submitting: 'आवेदन जमा हो रहा है...',
       saving: 'सहेजा जा रहा है...',
       underReviewTitle: 'आवेदन जमा हो गया — सत्यापन समीक्षाधीन है',
       underReviewSub: 'आपका उत्पादक प्रोफ़ाइल सुरक्षित रूप से दर्ज कर लिया गया है। प्रशासनिक स्वीकृति मिलने पर आधिकारिक कोड और 50 क्यूआर लेबल आवंटित किए जाएंगे।',
+      lblMappedLand: 'सत्यापित भूमि रकबा',
+      lblMaskedPan: 'मास्क्ड पैन पहचान',
+      lblSettlementBank: 'निपटान बैंक खाता',
+      lblSubmissionDate: 'जमा करने की तिथि',
+      lblEntityRefToken: 'इकाई संदर्भ टोकन',
+      verifiedNodeBadge: 'सत्यापित उत्पादक नोड',
+      lblSovereignCode: 'स्थायी आधिकारिक कोड',
+      statActiveBatches: 'सक्रिय फसल बैच',
+      statActiveBatchesSub: 'कस्टडी लेज़र में दर्ज',
+      statQrAvail: 'उपलब्ध क्यूआर क्रेट लेबल',
+      statQrAvailSub: 'आवंटित (13-अक्षर क्रॉकफोर्ड Base32)',
+      statPlotsVerified: 'सत्यापित खेत भूखंड',
+      statPlotsVerifiedSub: 'जियोफेंस्ड एवं एन्क्रिप्टेड',
+      btnDownloadQrPdf: 'प्रिंट करने योग्य A4 क्यूआर स्टिकर शीट डाउनलोड करें (PDF)',
+      loadingRegistry: 'सत्यापित इकाई रजिस्ट्री लोड हो रही है...',
+      adminQueueTitle: 'इकाई सत्यापन समीक्षा कतार',
+      adminQueueSub: 'उत्पादकों और संस्थाओं को सत्यापित करने और 50 क्यूआर लेबल जारी करने के लिए केवाईसी, भूखंड और सहमति की जांच करें।',
+      filterAll: 'सभी आवेदन',
+      filterSubmitted: 'समीक्षाधीन (लंबित)',
+      filterVerified: 'सत्यापित',
+      filterDraft: 'ड्राफ्ट',
+      filterChanges: 'सुधार अपेक्षित',
+      filterRejected: 'अस्वीकृत',
+      thApplicant: 'आवेदक एवं उद्यम',
+      thRolePhone: 'भूमिका एवं मोबाइल',
+      thLocation: 'स्थान',
+      thPlots: 'भूमि रकबा',
+      thStatus: 'सत्यापन स्थिति',
+      thActions: 'प्रशासनिक कार्रवाई',
+      btnInspect: 'जांचें और निर्णय लें',
+      btnApproveNow: 'स्वीकृत करें व 50 QR जारी करें',
+      btnIssueMoreQr: '+20 QR लेबल',
+      noApplicationsFound: 'चयनित फ़िल्टर के लिए कोई पंजीकरण आवेदन नहीं मिला।',
+      inspectorTitle: 'आवेदन सत्यापन निरीक्षक',
+      btnCloseInspector: 'निरीक्षक बंद करें',
+      lblKycVault: 'एन्क्रिप्टेड पहचान एवं बैंक वॉल्ट',
+      btnRevealPan: 'पैन देखें (ऑडिट लॉग)',
+      btnRevealBank: 'खाता संख्या देखें (ऑडिट लॉग)',
+      lblReviewNotes: 'प्रशासनिक समीक्षा टिप्पणी / कारण',
+      reviewNotesPh: 'सत्यापन टिप्पणी या अस्वीकृति/सुधार का कारण दर्ज करें...',
+      btnApproveEntity: 'स्वीकृत करें एवं आधिकारिक कोड + 50 QR जारी करें',
+      btnRequestChanges: 'सुधार का अनुरोध करें',
+      btnRejectEntity: 'आवेदन अस्वीकृत करें'
     },
     bn: {
+      roleProducer: 'উৎপাদক',
+      roleAdmin: 'প্রশাসনিক যাচাইকারী',
+      workspaceTitleProducer: 'উৎপাদক নিবন্ধন ও পরিচালন কনসোল',
+      workspaceTitleAdmin: 'প্রশাসনিক যাচাইকরণ ও কিউআর বরাদ্দ পোর্টাল',
+      stepTab1: '১. প্রাথমিক তথ্য',
+      stepTab2: '২. জমির প্লট',
+      stepTab3: '৩. ফসল প্রোফাইল',
+      stepTab4: '৪. পরিচয় ও ব্যাঙ্ক',
+      stepTab5: '৫. সম্মতি ও জমা',
       step1Title: 'উৎপাদক ও খামারের প্রাথমিক বিবরণ',
       step1Desc: 'আপনার আইনি পরিচয়, খামারের নাম এবং গ্রাম পঞ্চায়েতের এলাকা নির্বাচন করুন।',
       step2Title: 'খামারের প্লট ও জমির সীমানা',
@@ -118,57 +365,186 @@
       step5Title: 'পর্যালোচনা ও বিধিবদ্ধ ডিপিডিপি সম্মতি',
       step5Desc: 'সকল তথ্য যাচাই করুন এবং DPDP আইন ২০২৩ অনুযায়ী ডিজিটাল সম্মতি প্রদান করুন।',
       firstName: 'নামের প্রথম অংশ',
+      firstNamePh: 'নামের প্রথম অংশ লিখুন',
       lastName: 'পদবি',
+      lastNamePh: 'পদবি লিখুন',
       orgName: 'খামার বা সংস্থার নাম',
+      orgNamePh: 'খামার বা এফপিও-এর নাম লিখুন',
       gender: 'লিঙ্গ',
-      state: 'রাজ্য',
+      genderSelect: '-- নির্বাচন করুন --',
+      genderMale: 'পুরুষ',
+      genderFemale: 'মহিলা',
+      genderOther: 'অন্যান্য',
+      state: 'রাজ্য / কেন্দ্রশাসিত অঞ্চল',
+      stateSelect: '-- রাজ্য নির্বাচন করুন --',
       district: 'জেলা',
+      districtPh: 'জেলার নাম লিখুন',
       village: 'গ্রাম / শহর',
+      villagePh: 'গ্রাম বা শহরের নাম লিখুন',
       pincode: 'পিন কোড (৬ অঙ্ক)',
+      pincodePh: '৬-অঙ্কের পিন কোড',
       address: 'ঠিকানা / খামারের অবস্থান',
+      addressPh: 'বাড়ি/প্লট নম্বর, গ্রাম পঞ্চায়েত',
       photoLabel: 'কৃষকের ছবি',
+      photoHint: 'স্পষ্ট পাসপোর্ট বা খামারের ছবি। ডিপিডিপি সম্মতির জন্য EXIF মেটাডাটা স্বয়ংক্রিয়ভাবে মুছে ফেলা হয়।',
       photoUploadBtn: 'ছবি আপলোড করুন',
       photoScrubbed: 'মেটাডাটা ও এক্সিফ মুক্ত',
+      plotMapInstructions: 'প্লটের সীমানা আঁকতে মানচিত্রে ক্লিক করুন, অথবা আপনার বর্তমান জিপিএস অবস্থান ব্যবহার করুন।',
+      btnDrawPolygon: 'প্লট সীমানা আঁকুন',
+      btnClearPoints: 'বিন্দু মুছুন',
+      btnUseGps: 'আমার বর্তমান জিপিএস ব্যবহার করুন',
+      estAreaLabel: 'আনুমানিক ক্ষেত্রফল',
+      acresUnit: 'একর',
+      plotNameLabel: 'প্লটের নাম / দাগ নম্বর',
+      plotNamePh: 'প্লটের নাম বা খতিয়ান/দাগ নম্বর লিখুন',
+      plotAreaLabel: 'চাষযোগ্য এলাকা (একর)',
+      plotAreaPh: '0.00',
+      btnAddPlot: '+ রেজিস্ট্রিতে প্লট যুক্ত করুন',
+      registeredPlotsTitle: 'নিবন্ধিত খামার প্লট',
+      totalLabel: 'মোট',
+      noPlotsYet: 'এখনও কোনো প্লট যোগ করা হয়নি। মানচিত্রে পলিগন আঁকুন এবং "+ রেজিস্ট্রিতে প্লট যুক্ত করুন" ক্লিক করুন।',
+      btnRemove: 'মুছুন',
       farmType: 'কৃষক বিভাগ',
-      commodities: 'প্রধান উৎপাদিত ফসল',
+      farmTypeInd: 'ব্যক্তিগত / প্রান্তিক কৃষক',
+      farmTypeFpo: 'কৃষক উৎপাদক সংস্থা (FPO / FPC)',
+      farmTypeShg: 'স্বনির্ভর গোষ্ঠী (SHG)',
+      farmTypeCoop: 'নিবন্ধিত কৃষি সমবায় সমিতি',
       irrigation: 'প্রধান সেচ ব্যবস্থা',
+      irrRain: 'বৃষ্টিনির্ভর / বর্ষা',
+      irrCanal: 'খাল ও নদী লিফট সেচ',
+      irrBore: 'সাবমার্সিবল বোরওয়েল / টিউবওয়েল',
+      irrDrip: 'মাইক্রো-ড্রিপ ও স্প্রিংকলার সেচ',
+      commodities: 'প্রধান উৎপাদিত ফসল (প্রযোজ্য সবগুলি নির্বাচন করুন)',
       certifications: 'জৈব বা মান শংসাপত্র',
+      certNone: 'মানক বাণিজ্যিক চাষ (অ্যাগমার্কনেট)',
+      certNpop: 'এনপিওপি প্রত্যয়িত জৈব (ইন্ডিয়া অর্গানিক)',
+      certPgs: 'পিজিএস-ইন্ডিয়া গ্রিন / জৈব',
+      certGap: 'উত্তম কৃষি পদ্ধতি (INDGAP)',
+      kycVaultNotice: 'জিরো-প্লেইনটেক্সট ভল্ট: প্যান, ব্যাঙ্ক অ্যাকাউন্ট এবং আইএফএসসি AES-256-GCM দ্বারা এনক্রিপ্ট করা হয়।',
       panLabel: 'প্যান নম্বর (PAN)',
+      panPh: '১০-অক্ষরের প্যান নম্বর',
+      maskedPreview: 'মাস্কড প্রিভিউ',
       aadhaarLabel: 'স্বেচ্ছামূলক আধার (শুধুমাত্র শেষ ৪টি অঙ্ক)',
+      aadhaarPh: 'শুধুমাত্র শেষ ৪টি অঙ্ক',
       aadhaarNotice: 'ডিপিডিপি বিধিমালার আওতায় সম্পূর্ণ ১২-অঙ্কের আধার কখনো চাওয়া বা সংরক্ষণ করা হয় না।',
       bankName: 'ব্যাঙ্কের নাম',
-      accountNo: 'ব্যাঙ্ক অ্যাকাউন্ট নম্বর',
-      confirmAccountNo: 'অ্যাকাউন্ট নম্বর পুনরায় লিখুন',
+      bankNamePh: 'ব্যাঙ্কের নাম লিখুন',
       ifsc: 'আইএফএসসি কোড (IFSC)',
+      ifscPh: '১১-অক্ষরের IFSC কোড',
+      accountNo: 'ব্যাঙ্ক অ্যাকাউন্ট নম্বর',
+      accountNoPh: 'অ্যাকাউন্ট নম্বর লিখুন',
+      confirmAccountNo: 'অ্যাকাউন্ট নম্বর পুনরায় লিখুন',
+      confirmAccountNoPh: 'অ্যাকাউন্ট নম্বর নিশ্চিত করুন',
       upi: 'ইউপিআই আইডি (ঐচ্ছিক)',
+      upiPh: 'name@bank',
+      docTitle: 'সহায়ক জমি / পরিচয় নথি (খতিয়ান, পর্চা বা পাসবুক)',
+      docSub: 'JPEG, PNG বা PDF আপলোড করুন (সর্বোচ্চ 5MB)। SHA-256 দ্বারা যাচাইকৃত।',
+      docLand: 'জমির রেকর্ড / খতিয়ান / পাট্টা',
+      docFpo: 'এফপিও / সমবায় নিবন্ধন শংসাপত্র',
+      docOrg: 'জৈব / গুণমান শংসাপত্র',
+      docBtnUpload: 'নথি নির্বাচন ও আপলোড করুন',
+      docUploadedBadge: 'আপলোড ও SHA-256 যাচাইকৃত',
+      sumApplicant: 'আবেদনকারীর নাম',
+      sumEnterprise: 'খামার / সংস্থা',
+      sumJurisdiction: 'এলাকা',
+      sumLand: 'ম্যাপ করা জমি',
+      sumCrops: 'নির্বাচিত ফসল',
+      sumIdentity: 'পরিচয় ও ব্যাঙ্ক নিষ্পত্তি',
+      notEntered: 'দেওয়া হয়নি',
+      noneSelected: 'নির্বাচিত নয়',
+      plotsWord: 'প্লট',
+      encryptedWord: 'এনক্রিপ্টেড',
+      consentHeader: 'ডিপিডিপি আইন ২০২৩ বিধিবদ্ধ ঘোষণা',
       consent1: 'আমি DPDP আইন ২০২৩ অনুযায়ী কৃষি ট্রেসেবিলিটি এবং হেফাজতের জন্য আমার খামারের তথ্য প্রক্রিয়াকরণে সম্মতি দিচ্ছি।',
       consent2: 'আমি পরিচয় প্রমাণের জন্য স্বেচ্ছায় আমার আধারের শেষ ৪টি সংখ্যা দিচ্ছি। সম্পূর্ণ আধার চাওয়া হয়নি।',
       consent3: 'আমি প্রত্যয়ন করছি যে ঘোষিত সকল ফসল ও জমির পরিমাণ সম্পূর্ণ বাস্তব এবং সঠিক।',
       btnSaveDraft: 'খসড়া সংরক্ষণ করুন',
       btnNext: 'পরবর্তী ধাপ',
-      btnPrev: '← পূর্ববর্তী',
+      btnPrev: 'পূর্ববর্তী ধাপ',
       btnSubmit: 'যাচাইকরণের জন্য জমা দিন',
       submitting: 'আবেদন জমা করা হচ্ছে...',
       saving: 'সংরক্ষণ চলছে...',
       underReviewTitle: 'আবেদন জমা হয়েছে — প্রশাসনিক পর্যালোচনা চলছে',
       underReviewSub: 'আপনার উৎপাদক প্রোফাইল নথিভুক্ত হয়েছে। অনুমোদনের পর সরকারি কোড এবং প্রাথমিক ৫০টি কিউআর লেবেল প্রদান করা হবে।',
+      lblMappedLand: 'যাচাইকৃত জমির পরিমাণ',
+      lblMaskedPan: 'মাস্কড প্যান পরিচয়',
+      lblSettlementBank: 'ব্যাঙ্ক অ্যাকাউন্ট',
+      lblSubmissionDate: 'জমা দেওয়ার তারিখ',
+      lblEntityRefToken: 'এনটিটি রেফারেন্স টোকেন',
+      verifiedNodeBadge: 'যাচাইকৃত উৎপাদক নোড',
+      lblSovereignCode: 'স্থায়ী সরকারি কোড',
+      statActiveBatches: 'সক্রিয় ফসল ব্যাচ',
+      statActiveBatchesSub: 'হেফাজত লেজারে নথিভুক্ত',
+      statQrAvail: 'উপলব্ধ কিউআর ক্রেট লেবেল',
+      statQrAvailSub: 'বরাদ্দকৃত (১৩-অক্ষর ক্রকফোর্ড Base32)',
+      statPlotsVerified: 'যাচাইকৃত খামার প্লট',
+      statPlotsVerifiedSub: 'জিওফেন্সড ও এনক্রিপ্টেড',
+      btnDownloadQrPdf: 'প্রিন্টযোগ্য A4 কিউআর স্টিকার শিট ডাউনলোড করুন (PDF)',
+      loadingRegistry: 'যাচাইকৃত এনটিটি রেজিস্ট্রি লোড হচ্ছে...',
+      adminQueueTitle: 'এনটিটি যাচাইকরণ পর্যালোচনা তালিকা',
+      adminQueueSub: 'উৎপাদক ও সংস্থাগুলিকে অনুমোদন করতে এবং ৫০টি কিউআর লেবেল জারি করতে কেওয়াইসি, প্লট ও সম্মতি পরীক্ষা করুন।',
+      filterAll: 'সকল আবেদন',
+      filterSubmitted: 'পর্যালোচনাধীন',
+      filterVerified: 'যাচাইকৃত',
+      filterDraft: 'খসড়া',
+      filterChanges: 'সংশোধন প্রয়োজন',
+      filterRejected: 'বাতিল',
+      thApplicant: 'আবেদনকারী ও সংস্থা',
+      thRolePhone: 'ভূমিকা ও মোবাইল',
+      thLocation: 'অবস্থান',
+      thPlots: 'জমির পরিমাণ',
+      thStatus: 'যাচাইকরণ স্থিতি',
+      thActions: 'প্রশাসনিক পদক্ষেপ',
+      btnInspect: 'পরীক্ষা ও সিদ্ধান্ত',
+      btnApproveNow: 'অনুমোদন ও ৫০টি QR জারি',
+      btnIssueMoreQr: '+২০টি QR লেবেল',
+      noApplicationsFound: 'নির্বাচিত ফিল্টারের জন্য কোনো আবেদন পাওয়া যায়নি।',
+      inspectorTitle: 'আবেদন যাচাইকরণ পরিদর্শক',
+      btnCloseInspector: 'পরিদর্শক বন্ধ করুন',
+      lblKycVault: 'এনক্রিপ্টেড কেওয়াইসি ও ব্যাঙ্ক ভল্ট',
+      btnRevealPan: 'প্যান দেখুন (অডিট লগ)',
+      btnRevealBank: 'অ্যাকাউন্ট দেখুন (অডিট লগ)',
+      lblReviewNotes: 'প্রশাসনিক মন্তব্য / কারণ',
+      reviewNotesPh: 'যাচাইকরণ মন্তব্য বা বাতিলের কারণ লিখুন...',
+      btnApproveEntity: 'অনুমোদন করুন এবং কোড + ৫০টি QR জারি করুন',
+      btnRequestChanges: 'সংশোধনের অনুরোধ করুন',
+      btnRejectEntity: 'আবেদন বাতিল করুন'
     }
   };
 
+  const STATES_LIST = [
+    { id: 'West Bengal', en: 'West Bengal', hi: 'पश्चिम बंगाल', bn: 'পশ্চিমবঙ্গ' },
+    { id: 'Maharashtra', en: 'Maharashtra', hi: 'महाराष्ट्र', bn: 'মহারাষ্ট্র' },
+    { id: 'Punjab', en: 'Punjab', hi: 'पंजाब', bn: 'পাঞ্জাব' },
+    { id: 'Uttar Pradesh', en: 'Uttar Pradesh', hi: 'उत्तर प्रदेश', bn: 'উত্তরপ্রদেশ' },
+    { id: 'Madhya Pradesh', en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', bn: 'মধ্যপ্রদেশ' },
+    { id: 'Karnataka', en: 'Karnataka', hi: 'कर्नाटक', bn: 'কর্ণাটক' },
+    { id: 'Gujarat', en: 'Gujarat', hi: 'गुजरात', bn: 'গুজরাট' },
+    { id: 'Bihar', en: 'Bihar', hi: 'बिहार', bn: 'বিহার' },
+    { id: 'Odisha', en: 'Odisha', hi: 'ओडिशा', bn: 'ওড়িশা' },
+    { id: 'Tamil Nadu', en: 'Tamil Nadu', hi: 'तमिलनाडु', bn: 'তামিলনাড়ু' },
+    { id: 'Andhra Pradesh', en: 'Andhra Pradesh', hi: 'आंध्र प्रदेश', bn: 'অন্ধ্রপ্রদেশ' },
+    { id: 'Telangana', en: 'Telangana', hi: 'तेलंगाना', bn: 'তেলেঙ্গানা' },
+    { id: 'Assam', en: 'Assam', hi: 'असम', bn: 'আসাম' },
+    { id: 'Rajasthan', en: 'Rajasthan', hi: 'राजस्थान', bn: 'রাজস্থান' },
+    { id: 'Haryana', en: 'Haryana', hi: 'हरियाणा', bn: 'হরিয়ানা' },
+    { id: 'Kerala', en: 'Kerala', hi: 'केरल', bn: 'কেরালা' }
+  ];
+
   const CROPS_LIST = [
-    { id: 'Tomato', label: 'Tomato (টমেটো / टमाटर)', icon: 'sprout' },
-    { id: 'Potato', label: 'Potato (আলু / आलू)', icon: 'sprout' },
-    { id: 'Onion', label: 'Onion (পেঁয়াজ / प्याज)', icon: 'sprout' },
-    { id: 'Chilli', label: 'Green Chilli (কাঁচা লঙ্কা / हरी मिर्च)', icon: 'sprout' },
-    { id: 'Cabbage', label: 'Cabbage (বাঁধাকপি / पत्तागोभी)', icon: 'sprout' },
-    { id: 'Cauliflower', label: 'Cauliflower (ফুলকপি / फूलगोभी)', icon: 'sprout' },
-    { id: 'Carrot', label: 'Carrot (গাজর / गाजर)', icon: 'sprout' },
-    { id: 'Brinjal', label: 'Brinjal (বেগুন / बैंगन)', icon: 'sprout' },
-    { id: 'Rice', label: 'Paddy / Rice (ধান / धान)', icon: 'wheat' },
-    { id: 'Wheat', label: 'Wheat (গম / गेहूं)', icon: 'wheat' },
-    { id: 'Mustard', label: 'Mustard (সর্ষে / सरसों)', icon: 'sprout' },
-    { id: 'Banana', label: 'Banana (কলা / केला)', icon: 'sprout' },
-    { id: 'Mango', label: 'Mango (আম / आम)', icon: 'sprout' }
+    { id: 'Tomato', icon: 'sprout', labels: { en: 'Tomato', hi: 'टमाटर', bn: 'টমেটো', as: 'বিলাহী', gu: 'ટામેટા', kn: 'ಟೊমেಟೊ', ml: 'തക്കാളി', mr: 'टोमॅटो', or: 'টমাটোর', pa: 'ਟਮਾਟਰ', ta: 'தக்காளி', te: 'టమాటా' } },
+    { id: 'Potato', icon: 'sprout', labels: { en: 'Potato', hi: 'आलू', bn: 'আলু', as: 'আলু', gu: 'બટાকা', kn: 'ಆಲೂಗಡ್ಡೆ', ml: 'ഉരുളക്കിഴങ്ങ്', mr: 'बटाटा', or: 'ଆଳୁ', pa: 'ਆਲੂ', ta: 'உருளைக்கிழங்கு', te: 'బంగాళాదుంప' } },
+    { id: 'Onion', icon: 'sprout', labels: { en: 'Onion', hi: 'प्याज', bn: 'পেঁয়াজ', as: 'পিঁয়াজ', gu: 'ડુંગળી', kn: 'ಈರುಳ್ಳಿ', ml: 'ഉള്ളി', mr: 'कांदा', or: 'পিଆଜ', pa: 'ਪਿਆਜ਼', ta: 'வெங்காயம்', te: 'ఉల్లిపాయ' } },
+    { id: 'Chilli', icon: 'sprout', labels: { en: 'Green Chilli', hi: 'हरी मिर्च', bn: 'কাঁচা লঙ্কা', as: 'কেঁচা জলকীয়া', gu: 'લીલા મરચાં', kn: 'ಹಸಿರು ಮೆಣಸಿನಕಾಯಿ', ml: 'പച്ചമുളക്', mr: 'हिरवी मिरची', or: 'କଞ୍ଚା ଲଙ୍କା', pa: 'ਹਰੀ ਮਿਰਚ', ta: 'பச்சை மிளகாய்', te: 'పచ్చిమిర్చి' } },
+    { id: 'Cabbage', icon: 'sprout', labels: { en: 'Cabbage', hi: 'पत्तागोभी', bn: 'বাঁধাকপি', as: 'বন্ধাকবি', gu: 'કોબીજ', kn: 'ಎಲೆಕೋಸು', ml: 'കാബേജ്', mr: 'कोबी', or: 'ବନ୍ଧাকୋବି', pa: 'ਬੰਦਗੋਭੀ', ta: 'முட்டைக்கோஸ்', te: 'క్యాబేజీ' } },
+    { id: 'Cauliflower', icon: 'sprout', labels: { en: 'Cauliflower', hi: 'फूलगोभी', bn: 'ফুলকপি', as: 'ফুলকবি', gu: 'ફ્લાવર', kn: 'ಹೂಕೋಸು', ml: 'കോളിഫ്ലവർ', mr: 'फ्लॉवर', or: 'ଫୁଲକୋବି', pa: 'ਫੁੱਲਗੋਭੀ', ta: 'காலிஃபிளவர்', te: 'కాలీఫ్లవర్' } },
+    { id: 'Carrot', icon: 'sprout', labels: { en: 'Carrot', hi: 'गाजर', bn: 'গাজর', as: 'গাজৰ', gu: 'ગાજર', kn: 'ಕ್ಯಾರೆಟ್', ml: 'ക്യാരറ്റ്', mr: 'गाजर', or: 'ଗାଜର', pa: 'ਗਾਜਰ', ta: 'கேரட்', te: 'క్యారెట్' } },
+    { id: 'Brinjal', icon: 'sprout', labels: { en: 'Brinjal', hi: 'बैंगन', bn: 'বেগুন', as: 'বেঙেনা', gu: 'રીંગણ', kn: 'ಬದನೆಕಾಯಿ', ml: 'വഴുതനങ്ങ', mr: 'वांगी', or: 'ବାଇଗଣ', pa: 'ਬੈਂਗਣ', ta: 'கத்திரிக்காய்', te: 'వంకాయ' } },
+    { id: 'Rice', icon: 'wheat', labels: { en: 'Paddy / Rice', hi: 'धान / चावल', bn: 'ধান / চাল', as: 'ধান / চাউল', gu: 'ડાંગર / ચોખા', kn: 'ಭತ್ತ / ಅಕ್ಕಿ', ml: 'നെല്ല് / അരി', mr: 'भात / तांदूळ', or: 'ଧାନ / ଚାଉଳ', pa: 'ਝੋਨਾ / ਚਾਵਲ', ta: 'நெல் / அரிசி', te: 'వరి / బియ్యం' } },
+    { id: 'Wheat', icon: 'wheat', labels: { en: 'Wheat', hi: 'गेहूं', bn: 'গম', as: 'ঘেঁহু', gu: 'ઘઉં', kn: 'ಗೋಧಿ', ml: 'ഗോതമ്പ്', mr: 'गहू', or: 'ଗହମ', pa: 'ਕਣਕ', ta: 'கோதுமை', te: 'గోధుమలు' } },
+    { id: 'Mustard', icon: 'sprout', labels: { en: 'Mustard', hi: 'सरसों', bn: 'সর্ষে', as: 'সঁৰিয়হ', gu: 'રાઈ / সরસવ', kn: 'ಸಾಸಿವೆ', ml: 'കടുക്', mr: 'मोहरी', or: 'ସୋରିଷ', pa: 'ਸਰ੍ਹੋਂ', ta: 'கடுகு', te: 'ఆవాలు' } },
+    { id: 'Banana', icon: 'sprout', labels: { en: 'Banana', hi: 'केला', bn: 'কলা', as: 'কল', gu: 'કેળા', kn: 'ಬಾಳೆಹಣ್ಣು', ml: 'വാഴപ്പഴം', mr: 'केळी', or: 'କଦଳୀ', pa: 'ਕੇਲਾ', ta: 'வாழைപ്പழம்', te: 'అరటి' } },
+    { id: 'Mango', icon: 'sprout', labels: { en: 'Mango', hi: 'आम', bn: 'আম', as: 'আম', gu: 'કેરી', kn: 'ಮಾವಿನಹಣ್ಣು', ml: 'മാമ്പഴം', mr: 'आंबा', or: 'ଆମ୍ବ', pa: 'ਅੰਬ', ta: 'மாம்பழம்', te: 'మామిడి' } }
   ];
 
   let wizardState = {
@@ -180,7 +556,10 @@
     leafletMap: null,
     polygonLayer: null,
     drawnPoints: [],
-    leafletAvailable: false
+    leafletAvailable: false,
+    adminFilterStatus: 'ALL',
+    adminEntities: [],
+    adminInspectedEntity: null
   };
 
   function escapeHtml(str) {
@@ -194,12 +573,33 @@
   }
 
   function getLang() {
-    return (typeof currentLang !== 'undefined' ? currentLang : 'en');
+    return (typeof currentLang !== 'undefined' ? currentLang : (localStorage.getItem('annasutra_lang') || 'en'));
   }
 
   function getI18n() {
     const l = getLang();
-    return WIZARD_I18N[l] || (window.ANNASUTRA_WIZARD_I18N && window.ANNASUTRA_WIZARD_I18N[l]) || WIZARD_I18N.en;
+    const base = WIZARD_I18N[l] || WIZARD_I18N.en;
+    const extra = (window.EXTRA_I18N && window.EXTRA_I18N[l]) ? window.EXTRA_I18N[l] : {};
+    const merged = Object.assign({}, WIZARD_I18N.en, base, extra);
+    // Clean any legacy arrow symbols from btnPrev/btnNext
+    if (merged.btnPrev) merged.btnPrev = String(merged.btnPrev).replace(/\u2190/g, '').trim();
+    if (merged.btnNext) merged.btnNext = String(merged.btnNext).replace(/\u2192|&rarr;/g, '').trim();
+    return merged;
+  }
+
+  function getCropLabel(cropId) {
+    const l = getLang();
+    const found = CROPS_LIST.find(c => c.id === cropId);
+    if (!found) return cropId;
+    return found.labels[l] || found.labels.en || cropId;
+  }
+
+  function getStateLabel(stateId) {
+    if (!stateId) return '';
+    const l = getLang();
+    const found = STATES_LIST.find(s => s.id === stateId);
+    if (!found) return stateId;
+    return found[l] || found.en || stateId;
   }
 
   function getAuthHeader() {
@@ -207,11 +607,100 @@
     return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
   }
 
+  function formatPhoneTag(rawPhone) {
+    const savedPhone = rawPhone || localStorage.getItem('annasutra_phone') || (wizardState.profile && wizardState.profile.phone_e164) || '';
+    const digits = String(savedPhone).replace(/\D/g, '');
+    return digits.length >= 4 ? 'X' + digits.slice(-4) : 'X0000';
+  }
+
+  function formatEntityUserBadge(role, phone, lang) {
+    const l = lang || getLang();
+    const roleMap = {
+      en: { PRODUCER: 'Producer', AGGREGATOR: 'Aggregator', WHOLESALER: 'Wholesaler', DISTRIBUTOR: 'Distributor', RETAILER: 'Retailer', ADMIN: 'Admin' },
+      hi: { PRODUCER: 'उत्पादक', AGGREGATOR: 'संग्रहकर्ता', WHOLESALER: 'थोक व्यापारी', DISTRIBUTOR: 'वितरक', RETAILER: 'खुदरा विक्रेता', ADMIN: 'प्रशासक' },
+      bn: { PRODUCER: 'উৎপাদক', AGGREGATOR: 'সংগ্রহকারী', WHOLESALER: 'পাইকারি বিক্রেতা', DISTRIBUTOR: 'পরিবেশক', RETAILER: 'খুচরা বিক্রেতা', ADMIN: 'প্রশাসক' }
+    };
+    const rCode = String(role || 'PRODUCER').toUpperCase();
+    const dict = (window.EXTRA_I18N && window.EXTRA_I18N[l]) || {};
+    const i18nMap = {
+      PRODUCER: dict.tabProducerLabel,
+      AGGREGATOR: dict.tabAggregatorLabel,
+      WHOLESALER: dict.tabWholesalerLabel,
+      DISTRIBUTOR: dict.tabDistributorLabel,
+      RETAILER: dict.tabRetailerLabel,
+      ADMIN: dict.portalRoleTitleAdmin
+    };
+    const rLabel = (roleMap[l] && roleMap[l][rCode]) || i18nMap[rCode] || (roleMap.en[rCode] || rCode);
+    const tag = formatPhoneTag(phone);
+    return `${rLabel} (${tag})`;
+  }
+  window.formatEntityUserBadge = formatEntityUserBadge;
+
+  function updateRegisteredHeaderBanner(profile) {
+    const t = getI18n();
+    const p = profile || wizardState.profile || {};
+    const activeRole = (typeof currentRole !== 'undefined' && currentRole) ? currentRole : (p.role || 'PRODUCER');
+    const fullName = (p.full_name || [p.first_name, p.last_name].filter(Boolean).join(' ')).trim();
+    const orgName = (p.organisation_name || '').trim();
+
+    let registeredDisplay = '';
+    if (orgName) {
+      registeredDisplay = orgName;
+    } else if (fullName) {
+      registeredDisplay = fullName;
+    } else {
+      registeredDisplay = formatEntityUserBadge(activeRole, p.phone_e164, getLang());
+    }
+
+    const confinedEl = document.getElementById('confinedBadgeText');
+    if (confinedEl) confinedEl.textContent = registeredDisplay;
+
+    const titleEl = document.getElementById('workspaceTitle');
+    if (titleEl && (activeRole === 'ADMIN' || activeRole === 'PRODUCER')) {
+      titleEl.textContent = activeRole === 'ADMIN'
+        ? t.workspaceTitleAdmin
+        : t.workspaceTitleProducer;
+    }
+
+    const subEl = document.getElementById('workspaceSubtitle');
+    if (subEl) {
+      const locParts = [p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ');
+      subEl.textContent = locParts ? `${registeredDisplay} • ${locParts}` : registeredDisplay;
+    }
+
+    const activeUserEl = document.getElementById('activeUserName');
+    if (activeUserEl) {
+      activeUserEl.textContent = formatEntityUserBadge(activeRole, p.phone_e164, getLang());
+    }
+  }
+  window.updateRegisteredHeaderBanner = updateRegisteredHeaderBanner;
+
+  window.addEventListener('annasutra_lang_change', function () {
+    const ws = document.getElementById('confinedWorkspace') || document.getElementById('entityWorkspace');
+    if (ws && ws.style.display !== 'none') {
+      if (typeof currentRole !== 'undefined' && (currentRole === 'PRODUCER' || currentRole === 'ADMIN')) {
+        const contentArea = document.getElementById('workspaceDynamicContent');
+        if (contentArea) {
+          updateRegisteredHeaderBanner(wizardState.profile);
+          if (currentRole === 'ADMIN') {
+            renderAdminConsoleUI(contentArea);
+          } else if (wizardState.profile && wizardState.profile.status === 'SUBMITTED') {
+            renderUnderReviewCard(contentArea);
+          } else if (wizardState.profile && wizardState.profile.status === 'VERIFIED') {
+            renderVerifiedOperationalConsole(contentArea);
+          } else {
+            renderWizardInterface(contentArea);
+          }
+        }
+      }
+    }
+  });
+
   window.renderCurrentWorkspace = async function () {
     const container = document.getElementById('confinedWorkspace');
     if (!container) return;
 
-    if (typeof currentRole !== 'undefined' && currentRole !== 'PRODUCER') {
+    if (typeof currentRole !== 'undefined' && currentRole !== 'PRODUCER' && currentRole !== 'ADMIN') {
       const dynamicArea = document.getElementById('workspaceDynamicContent');
       if (dynamicArea) dynamicArea.style.display = 'none';
 
@@ -226,7 +715,6 @@
       return;
     }
 
-    // Role is PRODUCER: hide demo tools/batches and show dynamic registration/dashboard area
     const toolsGrid = document.getElementById('workspaceTools');
     const batchesList = document.getElementById('workspaceBatchesList');
     if (toolsGrid) toolsGrid.style.display = 'none';
@@ -241,18 +729,25 @@
     }
     contentArea.style.display = 'block';
 
+    const t = getI18n();
     contentArea.innerHTML = `
       <div style="text-align: center; padding: 48px 16px;">
         <div style="width: 36px; height: 36px; border: 3px solid #cbd5e1; border-top-color: #0b3d2e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
-        <p style="color: #64748b; font-size: 14px; font-weight: 600;">Loading verified entity registry...</p>
+        <p style="color: #64748b; font-size: 14px; font-weight: 600;">${escapeHtml(t.loadingRegistry)}</p>
       </div>
     `;
+
+    if (typeof currentRole !== 'undefined' && currentRole === 'ADMIN') {
+      updateRegisteredHeaderBanner({ organisation_name: t.workspaceTitleAdmin });
+      await loadAdminQueueAndRender(contentArea);
+      return;
+    }
 
     try {
       const res = await fetch('/api/v1/me/profile', { headers: getAuthHeader() });
       if (res.status === 401 || res.status === 403) {
-        // Fallback for fresh browser session
         wizardState.profile = { status: 'DRAFT', role: 'PRODUCER', version: 1 };
+        updateRegisteredHeaderBanner(wizardState.profile);
         renderWizardInterface(contentArea);
         return;
       }
@@ -264,7 +759,6 @@
         wizardState.selectedCrops = wizardState.profile.role_details.commodities;
       }
 
-      // Fetch sensitive & plots in parallel
       try {
         const [sensRes, plotsRes] = await Promise.all([
           fetch('/api/v1/me/sensitive', { headers: getAuthHeader() }),
@@ -279,6 +773,8 @@
         }
       } catch (e) {}
 
+      updateRegisteredHeaderBanner(wizardState.profile);
+
       const pStatus = wizardState.profile.status;
       if (pStatus === 'SUBMITTED') {
         renderUnderReviewCard(contentArea);
@@ -288,7 +784,7 @@
         renderWizardInterface(contentArea);
       }
     } catch (err) {
-      console.warn('Network error loading profile, showing wizard draft:', err);
+      updateRegisteredHeaderBanner(wizardState.profile);
       renderWizardInterface(contentArea);
     }
   };
@@ -296,13 +792,309 @@
   window.renderWorkspaceBatches = function (def) {
     const list = document.getElementById('workspaceBatchesList');
     if (!list || !def || !def.batches) return;
+    if (def.batches.length === 0) {
+      list.innerHTML = '';
+      return;
+    }
     list.innerHTML = def.batches.map(b => `
       <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #f1f5f9;">
-        <span style="font-family: monospace; font-weight: 800; color: #0b3d2e;">${b.code}</span>
-        <span style="font-size: 13px; color: #334155;">${b.desc}</span>
-        <span style="font-size: 11.5px; font-weight: 700; color: #15803d; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 9px; border-radius: 20px;">${b.status}</span>
+        <span style="font-family: monospace; font-weight: 800; color: #0b3d2e;">${escapeHtml(b.code)}</span>
+        <span style="font-size: 13px; color: #334155;">${escapeHtml(b.desc)}</span>
+        <span style="font-size: 11.5px; font-weight: 700; color: #15803d; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 9px; border-radius: 20px;">${escapeHtml(b.status)}</span>
       </div>
     `).join('');
+  };
+
+  /* --------------------------------------------------------------------------
+     ADMIN VERIFICATION PORTAL CONSOLE
+     -------------------------------------------------------------------------- */
+  async function loadAdminQueueAndRender(container) {
+    try {
+      const statusParam = wizardState.adminFilterStatus || 'ALL';
+      const res = await fetch(`/api/v1/admin/reviews?status=${encodeURIComponent(statusParam)}`, {
+        headers: getAuthHeader()
+      });
+      if (res.ok) {
+        const data = await res.json();
+        wizardState.adminEntities = data.results || [];
+      } else {
+        wizardState.adminEntities = [];
+      }
+    } catch (e) {
+      wizardState.adminEntities = [];
+    }
+    renderAdminConsoleUI(container);
+  }
+
+  window.filterAdminQueue = async function (statusFilter) {
+    wizardState.adminFilterStatus = statusFilter;
+    wizardState.adminInspectedEntity = null;
+    const contentArea = document.getElementById('workspaceDynamicContent');
+    if (contentArea) {
+      await loadAdminQueueAndRender(contentArea);
+    }
+  };
+
+  function renderAdminConsoleUI(container) {
+    const t = getI18n();
+    const activeFilter = wizardState.adminFilterStatus || 'ALL';
+    const items = wizardState.adminEntities || [];
+    const inspected = wizardState.adminInspectedEntity;
+
+    const filters = [
+      { key: 'ALL', label: t.filterAll },
+      { key: 'SUBMITTED', label: t.filterSubmitted },
+      { key: 'VERIFIED', label: t.filterVerified },
+      { key: 'DRAFT', label: t.filterDraft },
+      { key: 'NEEDS_CHANGES', label: t.filterChanges },
+      { key: 'REJECTED', label: t.filterRejected }
+    ];
+
+    container.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #cbd5e1; padding: 24px; margin: 12px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px;">
+          <div>
+            <h3 style="margin: 0 0 4px; font-size: 20px; color: #0b3d2e; display: flex; align-items: center; gap: 8px;">
+              <span>${getIcon('shield', 20, '#047857')}</span>
+              <span>${escapeHtml(t.adminQueueTitle)}</span>
+            </h3>
+            <p style="margin: 0; font-size: 13px; color: #64748b;">${escapeHtml(t.adminQueueSub)}</p>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            ${filters.map(f => `
+              <button type="button" onclick="filterAdminQueue('${f.key}')" style="padding: 7px 13px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid ${activeFilter === f.key ? '#0b3d2e' : '#cbd5e1'}; background: ${activeFilter === f.key ? '#0b3d2e' : '#f8fafc'}; color: ${activeFilter === f.key ? '#ffffff' : '#334155'};">
+                ${escapeHtml(f.label)}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        ${inspected ? renderAdminEntityInspector(inspected, t) : ''}
+
+        <div style="overflow-x: auto;">
+          <table class="batch-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #475569;">${escapeHtml(t.thApplicant)}</th>
+                <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #475569;">${escapeHtml(t.thRolePhone)}</th>
+                <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #475569;">${escapeHtml(t.thLocation)}</th>
+                <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #475569;">${escapeHtml(t.thPlots)}</th>
+                <th style="padding: 10px 12px; text-align: left; font-size: 12px; color: #475569;">${escapeHtml(t.thStatus)}</th>
+                <th style="padding: 10px 12px; text-align: right; font-size: 12px; color: #475569;">${escapeHtml(t.thActions)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.length === 0 ? `
+                <tr>
+                  <td colspan="6" style="padding: 32px; text-align: center; color: #64748b; font-size: 13.5px;">
+                    ${escapeHtml(t.noApplicationsFound)}
+                  </td>
+                </tr>
+              ` : items.map(item => {
+                const statusColors = {
+                  VERIFIED: { bg: '#ecfdf5', text: '#065f46', border: '#86efac' },
+                  SUBMITTED: { bg: '#fffbeb', text: '#92400e', border: '#fde68a' },
+                  DRAFT: { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1' },
+                  NEEDS_CHANGES: { bg: '#fff7ed', text: '#9a3412', border: '#fed7aa' },
+                  REJECTED: { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' }
+                };
+                const sc = statusColors[item.status] || statusColors.DRAFT;
+                return `
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 12px;">
+                      <strong style="color: #0f172a; font-size: 13.5px; display: block;">${escapeHtml(item.organisation_name || item.full_name || t.notEntered)}</strong>
+                      <span style="font-size: 12px; color: #64748b;">${escapeHtml(item.full_name || '')}</span>
+                    </td>
+                    <td style="padding: 12px;">
+                      <span style="font-weight: 700; font-size: 12px; color: #0b3d2e; display: block;">${escapeHtml(item.role)}</span>
+                      <span style="font-family: monospace; font-size: 12px; color: #475569;">${escapeHtml(item.phone_e164)}</span>
+                    </td>
+                    <td style="padding: 12px; font-size: 12.5px; color: #334155;">
+                      ${escapeHtml([item.district, getStateLabel(item.state)].filter(Boolean).join(', ') || t.notEntered)}
+                    </td>
+                    <td style="padding: 12px; font-size: 12.5px; color: #334155;">
+                      ${escapeHtml(String(item.total_land_acres || 0))} ${escapeHtml(t.acresUnit)} (${item.plot_count || 0} ${escapeHtml(t.plotsWord)})
+                    </td>
+                    <td style="padding: 12px;">
+                      <span style="display: inline-block; background: ${sc.bg}; color: ${sc.text}; border: 1px solid ${sc.border}; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 800;">
+                        ${escapeHtml(item.status)}
+                      </span>
+                      ${item.entity_code ? `<div style="font-family: monospace; font-size: 11.5px; font-weight: 800; color: #0b3d2e; margin-top: 4px;">${escapeHtml(item.entity_code)}</div>` : ''}
+                    </td>
+                    <td style="padding: 12px; text-align: right; white-space: nowrap;">
+                      <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 11.5px; margin-right: 6px;" onclick="inspectAdminEntity('${item.entity_id}')">
+                        ${escapeHtml(t.btnInspect)}
+                      </button>
+                      ${item.status !== 'VERIFIED' ? `
+                        <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 6px 12px; font-size: 11.5px;" onclick="submitAdminDecision('${item.entity_id}', 'APPROVED')">
+                          ${escapeHtml(t.btnApproveNow)}
+                        </button>
+                      ` : `
+                        <button type="button" class="btn-wizard-action btn-wizard-next" style="padding: 6px 12px; font-size: 11.5px;" onclick="issueAdditionalAdminQr('${item.entity_id}')">
+                          ${escapeHtml(t.btnIssueMoreQr)}
+                        </button>
+                      `}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderAdminEntityInspector(ent, t) {
+    const sens = ent.sensitive || {};
+    const crops = (ent.role_details && ent.role_details.commodities) ? ent.role_details.commodities.map(getCropLabel).join(', ') : t.noneSelected;
+    return `
+      <div style="background: #f8fafc; border: 1.5px solid #86efac; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+          <div>
+            <strong style="font-size: 16px; color: #0b3d2e;">${escapeHtml(t.inspectorTitle)}: ${escapeHtml(ent.organisation_name || (ent.first_name + ' ' + ent.last_name))}</strong>
+            <span style="margin-left: 10px; font-family: monospace; font-size: 12px; color: #047857; font-weight: 800;">${escapeHtml(ent.entity_code || ent.status)}</span>
+          </div>
+          <button type="button" class="btn-wizard-action btn-wizard-prev" style="padding: 5px 12px; font-size: 12px;" onclick="closeAdminInspector()">
+            ${escapeHtml(t.btnCloseInspector)}
+          </button>
+        </div>
+
+        <div class="submitted-details-grid" style="margin-top: 10px; margin-bottom: 14px;">
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumApplicant)}</div>
+            <div class="detail-item-value">${escapeHtml(ent.first_name || '')} ${escapeHtml(ent.last_name || '')} (${escapeHtml(ent.phone_e164 || '')})</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumJurisdiction)}</div>
+            <div class="detail-item-value">${escapeHtml([ent.address_line1, ent.village_town, ent.district, getStateLabel(ent.state), ent.pincode].filter(Boolean).join(', '))}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumLand)} & ${escapeHtml(t.sumCrops)}</div>
+            <div class="detail-item-value">${escapeHtml(String(ent.total_land_acres || 0))} ${escapeHtml(t.acresUnit)} (${(ent.plots || []).length} ${escapeHtml(t.plotsWord)}) • ${escapeHtml(crops)}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.lblKycVault)}</div>
+            <div class="detail-item-value" id="adminRevealedKycBox">
+              PAN: ${escapeHtml(sens.pan_masked || t.notEntered)} | Bank: ${escapeHtml(sens.bank_name || '')} (${escapeHtml(sens.account_no_masked || t.notEntered)}) | IFSC: ${escapeHtml(sens.ifsc || '')}
+            </div>
+            <div style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" style="font-size: 11px; padding: 3px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer;" onclick="revealAdminField('${ent.entity_id}', 'pan')">${escapeHtml(t.btnRevealPan)}</button>
+              <button type="button" style="font-size: 11px; padding: 3px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer;" onclick="revealAdminField('${ent.entity_id}', 'account_no')">${escapeHtml(t.btnRevealBank)}</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px;">${escapeHtml(t.lblReviewNotes)}</label>
+          <input type="text" class="form-input" id="inp_admin_review_notes" placeholder="${escapeHtml(t.reviewNotesPh)}" />
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn-wizard-action btn-wizard-submit" onclick="submitAdminDecision('${ent.entity_id}', 'APPROVED')">
+            <span>${getIcon('check', 14, '#ffffff', 2.8)}</span> <span>${escapeHtml(t.btnApproveEntity)}</span>
+          </button>
+          <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="submitAdminDecision('${ent.entity_id}', 'NEEDS_CHANGES')">
+            ${escapeHtml(t.btnRequestChanges)}
+          </button>
+          <button type="button" class="btn-wizard-action btn-wizard-prev" style="color: #dc2626; border-color: #fca5a5;" onclick="submitAdminDecision('${ent.entity_id}', 'REJECTED')">
+            ${escapeHtml(t.btnRejectEntity)}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  window.inspectAdminEntity = async function (entityId) {
+    try {
+      const res = await fetch(`/api/v1/admin/entities/${entityId}`, { headers: getAuthHeader() });
+      if (res.ok) {
+        wizardState.adminInspectedEntity = await res.json();
+        const contentArea = document.getElementById('workspaceDynamicContent');
+        if (contentArea) renderAdminConsoleUI(contentArea);
+      }
+    } catch (e) {
+      showToast('Failed to load entity details.', 'error');
+    }
+  };
+
+  window.closeAdminInspector = function () {
+    wizardState.adminInspectedEntity = null;
+    const contentArea = document.getElementById('workspaceDynamicContent');
+    if (contentArea) renderAdminConsoleUI(contentArea);
+  };
+
+  window.revealAdminField = async function (entityId, fieldName) {
+    try {
+      const res = await fetch(`/api/v1/admin/entities/${entityId}/reveal`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+          field: fieldName,
+          reason: 'Administrative KYC verification prior to sovereign entity code approval'
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.plaintext) {
+        const box = document.getElementById('adminRevealedKycBox');
+        if (box) {
+          box.innerHTML += ` <strong style="color:#047857; font-family:monospace;">[${escapeHtml(fieldName.toUpperCase())}: ${escapeHtml(data.plaintext)}]</strong>`;
+        }
+      } else {
+        showToast(data.detail || 'Unable to reveal field.', 'warning');
+      }
+    } catch (e) {
+      showToast('Network error revealing field.', 'error');
+    }
+  };
+
+  window.submitAdminDecision = async function (entityId, decision) {
+    const notesInp = document.getElementById('inp_admin_review_notes');
+    const reason = (notesInp && notesInp.value.trim()) || (decision === 'APPROVED' ? 'Verified by Administrator via Web Portal' : 'Verification update required');
+
+    try {
+      const res = await fetch(`/api/v1/admin/entities/${entityId}/decision`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+          decision: decision,
+          reason: reason
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (decision === 'APPROVED') {
+          showToast(`${data.entity_code || 'Entity'} verified! ${data.qr_count || 50} QR labels issued.`, 'success');
+        } else {
+          showToast(`Decision recorded: ${decision}`, 'info');
+        }
+        wizardState.adminInspectedEntity = null;
+        const contentArea = document.getElementById('workspaceDynamicContent');
+        if (contentArea) await loadAdminQueueAndRender(contentArea);
+      } else {
+        showToast(data.detail || 'Decision action failed.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error submitting decision.', 'error');
+    }
+  };
+
+  window.issueAdditionalAdminQr = async function (entityId) {
+    try {
+      const res = await fetch(`/api/v1/admin/entities/${entityId}/qr-blocks`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({ count: 20 })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(`Issued ${data.count} new Crockford Base32 QR serials.`, 'success');
+      } else {
+        showToast(data.detail || 'Could not issue QR block.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error issuing QR block.', 'error');
+    }
   };
 
   /* --------------------------------------------------------------------------
@@ -316,41 +1108,41 @@
     container.innerHTML = `
       <div class="status-review-card">
         <div class="status-badge-submitted">
-          <span>${getIcon('clock', 16, '#f59e0b')}</span> <span>${t.underReviewTitle}</span>
+          <span>${getIcon('clock', 16, '#f59e0b')}</span> <span>${escapeHtml(t.underReviewTitle)}</span>
         </div>
-        <h3 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">${escapeHtml(p.organisation_name || 'Farm Enterprise')}</h3>
-        <p style="color: #64748b; font-size: 14px; max-width: 620px; margin: 0 auto; line-height: 1.5;">${t.underReviewSub}</p>
+        <h3 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">${escapeHtml(p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' '))}</h3>
+        <p style="color: #64748b; font-size: 14px; max-width: 620px; margin: 0 auto; line-height: 1.5;">${escapeHtml(t.underReviewSub)}</p>
 
         <div class="submitted-details-grid">
           <div class="detail-item-box">
-            <div class="detail-item-label">${t.firstName} & ${t.lastName}</div>
+            <div class="detail-item-label">${escapeHtml(t.firstName)} &amp; ${escapeHtml(t.lastName)}</div>
             <div class="detail-item-value">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')}</div>
           </div>
           <div class="detail-item-box">
-            <div class="detail-item-label">${t.district} & ${t.state}</div>
-            <div class="detail-item-value">${escapeHtml(p.district || '')}, ${escapeHtml(p.state || '')} (${escapeHtml(p.pincode || '')})</div>
+            <div class="detail-item-label">${escapeHtml(t.district)} &amp; ${escapeHtml(t.state)}</div>
+            <div class="detail-item-value">${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))} (${escapeHtml(p.pincode || '')})</div>
           </div>
           <div class="detail-item-box">
-            <div class="detail-item-label">Verified Land Mapped</div>
-            <div class="detail-item-value">${escapeHtml(String(p.total_land_acres || (wizardState.plots.length * 1.5).toFixed(2)))} Acres (${wizardState.plots.length} Plots)</div>
+            <div class="detail-item-label">${escapeHtml(t.lblMappedLand)}</div>
+            <div class="detail-item-value">${escapeHtml(String(p.total_land_acres || 0))} ${escapeHtml(t.acresUnit)} (${wizardState.plots.length} ${escapeHtml(t.plotsWord)})</div>
           </div>
           <div class="detail-item-box">
-            <div class="detail-item-label">Masked PAN Identity</div>
-            <div class="detail-item-value">${escapeHtml(sens.pan_masked || (sens.aadhaar_last4 ? 'Aadhaar •••• ' + sens.aadhaar_last4 : 'Encrypted'))}</div>
+            <div class="detail-item-label">${escapeHtml(t.lblMaskedPan)}</div>
+            <div class="detail-item-value">${escapeHtml(sens.pan_masked || (sens.aadhaar_last4 ? '•••• ' + sens.aadhaar_last4 : t.encryptedWord))}</div>
           </div>
           <div class="detail-item-box">
-            <div class="detail-item-label">Settlement Bank</div>
-            <div class="detail-item-value">${escapeHtml(sens.bank_name || 'Verified Bank')} (${escapeHtml(sens.bank_account_masked || '••••')})</div>
+            <div class="detail-item-label">${escapeHtml(t.lblSettlementBank)}</div>
+            <div class="detail-item-value">${escapeHtml(sens.bank_name || '')} (${escapeHtml(sens.bank_account_masked || '••••')})</div>
           </div>
           <div class="detail-item-box">
-            <div class="detail-item-label">Submission Date</div>
+            <div class="detail-item-label">${escapeHtml(t.lblSubmissionDate)}</div>
             <div class="detail-item-value">${p.submitted_at ? new Date(p.submitted_at).toLocaleDateString() : new Date().toLocaleDateString()}</div>
           </div>
         </div>
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 20px; display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: #475569;">
           <span>${getIcon('lock', 16, '#047857')}</span>
-          <span>Entity Reference Token: <strong style="font-family: monospace; color: #0b3d2e;">${escapeHtml(p.entity_id || 'PENDING')}</strong></span>
+          <span>${escapeHtml(t.lblEntityRefToken)}: <strong style="font-family: monospace; color: #0b3d2e;">${escapeHtml(p.entity_id || 'PENDING')}</strong></span>
         </div>
       </div>
     `;
@@ -360,55 +1152,62 @@
      VERIFIED OPERATIONAL CONSOLE
      -------------------------------------------------------------------------- */
   async function renderVerifiedOperationalConsole(container) {
+    const t = getI18n();
     const p = wizardState.profile || {};
-    const eCode = p.entity_code || 'PR-WB-000101';
+    const eCode = p.entity_code || '';
 
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #a7f3d0; padding: 24px; margin: 16px 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
           <div>
             <div style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px;">
-              <span>${getIcon('check', 14, '#15803d', 2.8)}</span> <span>VERIFIED PRODUCER NODE</span>
+              <span>${getIcon('check', 14, '#15803d', 2.8)}</span> <span>${escapeHtml(t.verifiedNodeBadge)}</span>
             </div>
-            <h3 style="margin: 0; font-size: 20px; color: #0f172a;">${escapeHtml(p.organisation_name || 'Producer Console')}</h3>
-            <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')} • ${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}</span>
+            <h3 style="margin: 0; font-size: 20px; color: #0f172a;">${escapeHtml(p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' '))}</h3>
+            <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')} • ${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))}</span>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Permanent Sovereign Code</div>
+            <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">${escapeHtml(t.lblSovereignCode)}</div>
             <div style="font-family: monospace; font-size: 20px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
           </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px;">
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 700;">Active Harvest Batches</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statActiveBatches)}</div>
             <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statBatchesCount">0</div>
-            <div style="font-size: 11.5px; color: #10b981;">Ready for Crate Genesis</div>
+            <div style="font-size: 11.5px; color: #10b981;">${escapeHtml(t.statActiveBatchesSub)}</div>
           </div>
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 700;">Remaining QR Crate Serials</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statQrAvail)}</div>
             <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statQrAvailCount">50</div>
-            <div style="font-size: 11.5px; color: #64748b;">Allocated (13-Char Crockford Base32)</div>
+            <div style="font-size: 11.5px; color: #64748b;">${escapeHtml(t.statQrAvailSub)}</div>
           </div>
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 700;">Verified Farm Plots</div>
-            <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statPlotsCount">${wizardState.plots.length || 1}</div>
-            <div style="font-size: 11.5px; color: #10b981;">Geofenced & Encrypted</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 700;">${escapeHtml(t.statPlotsVerified)}</div>
+            <div style="font-size: 22px; font-weight: 900; color: #0b3d2e;" id="statPlotsCount">${wizardState.plots.length || 0}</div>
+            <div style="font-size: 11.5px; color: #10b981;">${escapeHtml(t.statPlotsVerifiedSub)}</div>
           </div>
         </div>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <button class="btn-wizard-action btn-wizard-next" onclick="showToast('Crate Genesis QR tool ready for pilot batches.', 'info')">
-            <span>${getIcon('sprout', 16, '#047857')}</span> <span>Register New Harvest Lot</span>
-          </button>
           <button class="btn-wizard-action btn-wizard-draft" onclick="downloadMyQrPdfSheet()">
-            <span>${getIcon('printer', 16, '#047857')}</span> <span>Download Printable A4 Sticker Sheet (PDF)</span>
+            <span>${getIcon('printer', 16, '#047857')}</span> <span>${escapeHtml(t.btnDownloadQrPdf)}</span>
           </button>
         </div>
       </div>
     `;
 
-    // Fetch real database stats
+    // Also display the Producer operational tools & real batches table below the verified card
+    const toolsGrid = document.getElementById('workspaceTools');
+    const batchesList = document.getElementById('workspaceBatchesList');
+    if (toolsGrid) toolsGrid.style.display = 'grid';
+    if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'block';
+    if (typeof window.renderDefaultWorkspace === 'function') {
+      window.renderDefaultWorkspace();
+      updateRegisteredHeaderBanner(wizardState.profile);
+    }
+
     try {
       const statsRes = await fetch('/api/v1/me/stats', { headers: getAuthHeader() });
       if (statsRes.ok) {
@@ -424,18 +1223,16 @@
     } catch (e) {}
   }
 
-  window.downloadMyQrPdfSheet = async function() {
+  window.downloadMyQrPdfSheet = async function () {
     try {
-      showToast('Preparing printable A4 sticker PDF sheet with Crockford Base32 codes...', 'info', 'Generating PDF');
       const res = await fetch('/api/v1/me/qr-blocks', { headers: getAuthHeader() });
       if (res.ok) {
         const data = await res.json();
         if (data.blocks && data.blocks.length > 0) {
           const block = data.blocks[0];
           window.open(block.download_pdf_url, '_blank');
-          showToast('Opening printable A4 sticker sheet in new tab.', 'success');
         } else {
-          showToast('No QR blocks allocated yet. Contact secretariat.', 'warning');
+          showToast('No QR blocks allocated yet.', 'warning');
         }
       } else {
         showToast('Unable to load QR blocks.', 'error');
@@ -444,7 +1241,6 @@
       showToast('Network error loading QR sheet.', 'error');
     }
   };
-
 
   /* --------------------------------------------------------------------------
      5-STEP PRODUCER REGISTRATION WIZARD
@@ -461,31 +1257,31 @@
         <div class="wizard-stepper">
           <div class="step-node ${step === 1 ? 'active' : step > 1 ? 'completed' : ''}" onclick="goToStep(1)">
             <div class="step-circle">${step > 1 ? getIcon('check', 12, '#ffffff', 2.8) : '1'}</div>
-            <span class="step-label">1. Basic Info</span>
+            <span class="step-label">${escapeHtml(t.stepTab1)}</span>
           </div>
           <div class="step-line ${step > 1 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 2 ? 'active' : step > 2 ? 'completed' : ''}" onclick="goToStep(2)">
             <div class="step-circle">${step > 2 ? getIcon('check', 12, '#ffffff', 2.8) : '2'}</div>
-            <span class="step-label">2. Farm Plots</span>
+            <span class="step-label">${escapeHtml(t.stepTab2)}</span>
           </div>
           <div class="step-line ${step > 2 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 3 ? 'active' : step > 3 ? 'completed' : ''}" onclick="goToStep(3)">
             <div class="step-circle">${step > 3 ? getIcon('check', 12, '#ffffff', 2.8) : '3'}</div>
-            <span class="step-label">3. Cultivation</span>
+            <span class="step-label">${escapeHtml(t.stepTab3)}</span>
           </div>
           <div class="step-line ${step > 3 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 4 ? 'active' : step > 4 ? 'completed' : ''}" onclick="goToStep(4)">
             <div class="step-circle">${step > 4 ? getIcon('check', 12, '#ffffff', 2.8) : '4'}</div>
-            <span class="step-label">4. Identity & Bank</span>
+            <span class="step-label">${escapeHtml(t.stepTab4)}</span>
           </div>
           <div class="step-line ${step > 4 ? 'completed' : ''}"></div>
 
           <div class="step-node ${step === 5 ? 'active' : ''}" onclick="goToStep(5)">
             <div class="step-circle">5</div>
-            <span class="step-label">5. Consent & Review</span>
+            <span class="step-label">${escapeHtml(t.stepTab5)}</span>
           </div>
         </div>
 
@@ -497,20 +1293,19 @@
         <!-- 3. Actions Bar -->
         <div class="wizard-actions-bar">
           <div>
-            ${step > 1 ? `<button class="btn-wizard-action btn-wizard-prev" onclick="goToStep(${step - 1})">${t.btnPrev}</button>` : ''}
+            ${step > 1 ? `<button class="btn-wizard-action btn-wizard-prev" onclick="goToStep(${step - 1})">${escapeHtml(t.btnPrev)}</button>` : ''}
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn-wizard-action btn-wizard-draft" onclick="saveDraftManual(true)">${t.btnSaveDraft}</button>
-            ${step < 5 
-              ? `<button class="btn-wizard-action btn-wizard-next" onclick="validateAndAdvanceStep(${step})">${t.btnNext}</button>`
-              : `<button class="btn-wizard-action btn-wizard-submit" id="btnSubmitProfile" onclick="submitFinalRegistration()">${t.btnSubmit}</button>`
+            <button class="btn-wizard-action btn-wizard-draft" onclick="saveDraftManual(true)">${escapeHtml(t.btnSaveDraft)}</button>
+            ${step < 5
+              ? `<button class="btn-wizard-action btn-wizard-next" onclick="validateAndAdvanceStep(${step})">${escapeHtml(t.btnNext)}</button>`
+              : `<button class="btn-wizard-action btn-wizard-submit" id="btnSubmitProfile" onclick="submitFinalRegistration()">${escapeHtml(t.btnSubmit)}</button>`
             }
           </div>
         </div>
       </div>
     `;
 
-    // Initialize Map if on Step 2
     if (step === 2) {
       setTimeout(initPlotMap, 100);
     }
@@ -520,84 +1315,76 @@
     if (step === 1) {
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>${getIcon("sprout", 18, "#047857")}</span> ${t.step1Title}</h3>
-          <p class="wizard-step-desc">${t.step1Desc}</p>
+          <h3 class="wizard-step-title"><span>${getIcon('sprout', 18, '#047857')}</span> ${escapeHtml(t.step1Title)}</h3>
+          <p class="wizard-step-desc">${escapeHtml(t.step1Desc)}</p>
         </div>
 
         <div class="photo-uploader-box">
-          <img src="${p.photo_object_key ? '/media/' + p.photo_object_key : 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=256&q=80'}" class="photo-preview-avatar" id="farmerPhotoPreview" alt="Profile" />
+          <img src="${p.photo_object_key ? '/media/' + p.photo_object_key : '/static/publicview/images/annasutra_emblem.png'}" class="photo-preview-avatar" id="farmerPhotoPreview" alt="Profile" />
           <div class="photo-upload-meta">
-            <strong style="font-size: 14px; color: #0f172a; display: block; margin-bottom: 4px;">${t.photoLabel}</strong>
-            <p style="font-size: 12px; color: #64748b; margin: 0 0 10px;">Clear passport or farm portrait. EXIF metadata automatically scrubbed for DPDP compliance.</p>
+            <strong style="font-size: 14px; color: #0f172a; display: block; margin-bottom: 4px;">${escapeHtml(t.photoLabel)}</strong>
+            <p style="font-size: 12px; color: #64748b; margin: 0 0 10px;">${escapeHtml(t.photoHint)}</p>
             <label class="btn-upload-file">
-              <span>${t.photoUploadBtn}</span>
+              <span>${escapeHtml(t.photoUploadBtn)}</span>
               <input type="file" id="farmerPhotoInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handlePhotoUpload(this)" />
             </label>
-            <span id="photoStatusBadge" style="display: ${p.photo_object_key ? 'inline-block' : 'none'}; font-size: 11.5px; color: #059669; font-weight: 700; margin-left: 10px;">${t.photoScrubbed}</span>
+            <span id="photoStatusBadge" style="display: ${p.photo_object_key ? 'inline-block' : 'none'}; font-size: 11.5px; color: #059669; font-weight: 700; margin-left: 10px;">${escapeHtml(t.photoScrubbed)}</span>
           </div>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">${t.firstName} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_first_name" value="${p.first_name || ''}" placeholder="e.g. Ramesh" />
+            <label class="form-label">${escapeHtml(t.firstName)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_first_name" value="${escapeHtml(p.first_name || '')}" placeholder="${escapeHtml(t.firstNamePh)}" />
           </div>
           <div class="form-group">
-            <label class="form-label">${t.lastName} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_last_name" value="${p.last_name || ''}" placeholder="e.g. Ghosh" />
+            <label class="form-label">${escapeHtml(t.lastName)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_last_name" value="${escapeHtml(p.last_name || '')}" placeholder="${escapeHtml(t.lastNamePh)}" />
           </div>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">${t.orgName} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_org_name" value="${p.organisation_name || ''}" placeholder="e.g. Ghosh Agro Farm / Bardhaman FPO Cluster" />
+            <label class="form-label">${escapeHtml(t.orgName)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_org_name" value="${escapeHtml(p.organisation_name || '')}" placeholder="${escapeHtml(t.orgNamePh)}" />
           </div>
           <div class="form-group">
-            <label class="form-label">${t.gender}</label>
+            <label class="form-label">${escapeHtml(t.gender)}</label>
             <select class="form-select" id="inp_gender">
-              <option value="UNSPECIFIED" ${p.gender === 'UNSPECIFIED' ? 'selected' : ''}>Prefer not to say</option>
-              <option value="MALE" ${p.gender === 'MALE' ? 'selected' : ''}>Male</option>
-              <option value="FEMALE" ${p.gender === 'FEMALE' ? 'selected' : ''}>Female</option>
-              <option value="OTHER" ${p.gender === 'OTHER' ? 'selected' : ''}>Other</option>
+              <option value="" ${!p.gender ? 'selected' : ''}>${escapeHtml(t.genderSelect)}</option>
+              <option value="M" ${p.gender === 'M' ? 'selected' : ''}>${escapeHtml(t.genderMale)}</option>
+              <option value="F" ${p.gender === 'F' ? 'selected' : ''}>${escapeHtml(t.genderFemale)}</option>
+              <option value="O" ${p.gender === 'O' ? 'selected' : ''}>${escapeHtml(t.genderOther)}</option>
             </select>
           </div>
         </div>
 
         <div class="form-grid-3">
           <div class="form-group">
-            <label class="form-label">${t.state} <span class="req">*</span></label>
-            <select class="form-select" id="inp_state" onchange="handleStateChange(this.value)">
-              <option value="West Bengal" selected>West Bengal (পশ্চিমবঙ্গ)</option>
-              <option value="Maharashtra">Maharashtra (महाराष्ट्र)</option>
-              <option value="Punjab">Punjab (ਪੰਜਾਬ)</option>
-              <option value="Uttar Pradesh">Uttar Pradesh (उत्तर प्रदेश)</option>
-              <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश)</option>
-              <option value="Karnataka">Karnataka (ಕರ್ನಾಟಕ)</option>
-              <option value="Bihar">Bihar (बिहार)</option>
-              <option value="Gujarat">Gujarat (ગુજરાત)</option>
-              <option value="Tamil Nadu">Tamil Nadu (தமிழ்நாடு)</option>
-              <option value="Haryana">Haryana (हरियाणा)</option>
+            <label class="form-label">${escapeHtml(t.state)} <span class="req">*</span></label>
+            <select class="form-select" id="inp_state">
+              <option value="">${escapeHtml(t.stateSelect)}</option>
+              ${STATES_LIST.map(s => `<option value="${escapeHtml(s.id)}" ${p.state === s.id ? 'selected' : ''}>${escapeHtml(getStateLabel(s.id))}</option>`).join('')}
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">${t.district} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_district" value="${p.district || 'Purba Bardhaman'}" placeholder="e.g. Purba Bardhaman" />
+            <label class="form-label">${escapeHtml(t.district)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_district" value="${escapeHtml(p.district || '')}" placeholder="${escapeHtml(t.districtPh)}" />
           </div>
           <div class="form-group">
-            <label class="form-label">${t.village} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_village" value="${p.village_town || ''}" placeholder="e.g. Nabagram / Raina" />
+            <label class="form-label">${escapeHtml(t.pincode)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_pincode" maxlength="6" value="${escapeHtml(p.pincode && p.pincode !== '000000' ? p.pincode : '')}" placeholder="${escapeHtml(t.pincodePh)}" />
           </div>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">${t.address} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_address" value="${p.address_line1 || ''}" placeholder="e.g. Station Road, Near Post Office" />
+            <label class="form-label">${escapeHtml(t.village)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_village" value="${escapeHtml(p.village_town || '')}" placeholder="${escapeHtml(t.villagePh)}" />
           </div>
           <div class="form-group">
-            <label class="form-label">${t.pincode} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_pincode" maxlength="6" value="${p.pincode && p.pincode !== '000000' ? p.pincode : ''}" placeholder="e.g. 713101" />
+            <label class="form-label">${escapeHtml(t.address)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_address1" value="${escapeHtml(p.address_line1 || '')}" placeholder="${escapeHtml(t.addressPh)}" />
           </div>
         </div>
       `;
@@ -605,124 +1392,127 @@
 
     if (step === 2) {
       const plots = wizardState.plots || [];
-      const totalAcres = plots.reduce((acc, p) => acc + (parseFloat(p.area_acres) || 0), 0);
+      const totalAcres = plots.reduce((acc, pl) => acc + (parseFloat(pl.area_acres) || 0), 0);
 
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>${getIcon("map-pin", 18, "#047857")}</span> ${t.step2Title}</h3>
-          <p class="wizard-step-desc">${t.step2Desc}</p>
+          <h3 class="wizard-step-title"><span>${getIcon('map-pin', 18, '#047857')}</span> ${escapeHtml(t.step2Title)}</h3>
+          <p class="wizard-step-desc">${escapeHtml(t.step2Desc)}</p>
         </div>
 
-        <div class="map-container-wrap">
-          <div id="plotLeafletMap"></div>
-          <div class="map-controls-row">
-            <div style="display: flex; gap: 8px;">
-              <button type="button" class="btn-map-tool" id="btnMapPin" onclick="startPolygonDraw()">${getIcon('map-pin', 14)} Click to Mark Boundary Corner</button>
-              <button type="button" class="btn-map-tool" onclick="clearPolygonDraw()">${getIcon('x', 14)} Reset Drawing</button>
-              <button type="button" class="btn-map-tool" onclick="addSamplePolygon()">${getIcon('map-pin', 14)} Add Plot Boundary Preset</button>
+        <div class="plot-map-wrapper">
+          <div class="plot-map-toolbar">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-upload-file" style="background: #0b3d2e;" onclick="startPolygonDraw()">
+                <span>${getIcon('map-pin', 14, '#ffffff')}</span> <span>${escapeHtml(t.btnDrawPolygon)}</span>
+              </button>
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 12px;" onclick="clearPolygonDraw()">
+                ${escapeHtml(t.btnClearPoints)}
+              </button>
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 12px;" onclick="geolocatePlot()">
+                <span>${getIcon('map-pin', 14, '#047857')}</span> <span>${escapeHtml(t.btnUseGps)}</span>
+              </button>
             </div>
-            <div style="font-size: 12px; color: #0b3d2e; font-weight: 800;" id="liveAcreIndicator">
-              Estimated Area: 0.00 Acres (Turf.js)
-            </div>
+            <div class="acre-badge-live" id="liveAcreIndicator">${escapeHtml(t.estAreaLabel)}: 0.00 ${escapeHtml(t.acresUnit)}</div>
           </div>
+          <div id="plotLeafletMap" class="plot-map-canvas"></div>
         </div>
 
-        <div class="form-grid-3" style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; align-items: flex-end;">
+        <div class="form-grid-3" style="align-items: end; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
           <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label">Plot Name / Survey Tag</label>
-            <input type="text" class="form-input" id="inp_plot_name" placeholder="e.g. North Acre B-1" />
+            <label class="form-label">${escapeHtml(t.plotNameLabel)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_plot_name" placeholder="${escapeHtml(t.plotNamePh)}" />
           </div>
           <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label">Calculated Area (Acres)</label>
-            <input type="number" step="0.01" class="form-input" id="inp_plot_acres" placeholder="e.g. 2.50" />
+            <label class="form-label">${escapeHtml(t.plotAreaLabel)} <span class="req">*</span></label>
+            <input type="number" step="0.01" class="form-input" id="inp_plot_acres" placeholder="${escapeHtml(t.plotAreaPh)}" />
           </div>
           <div>
-            <button type="button" class="btn-wizard-action btn-wizard-next" style="width: 100%; padding: 10px; font-size: 13px;" onclick="addCurrentPlotToList()">
-              + Add Plot to Registry
+            <button type="button" class="btn-wizard-action btn-wizard-next" style="width: 100%; justify-content: center;" onclick="addCurrentPlotToList()">
+              ${escapeHtml(t.btnAddPlot)}
             </button>
           </div>
         </div>
 
-        <div style="margin-top: 18px;">
-          <strong style="font-size: 13.5px; color: #0f172a;">Registered Farm Plots (${plots.length}) • Total: ${totalAcres.toFixed(2)} Acres</strong>
-          <table class="plots-table" id="plotsTable">
-            <thead>
-              <tr>
-                <th>Plot Name</th>
-                <th>District</th>
-                <th>Acreage</th>
-                <th>Boundaries</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${plots.length === 0 ? `
-                <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 18px;">No plots added yet. Click map to outline plot boundary or add preset above.</td></tr>
-              ` : plots.map((p, idx) => `
-                <tr>
-                  <td><strong>${p.plot_name}</strong></td>
-                  <td>${p.district}</td>
-                  <td><span style="font-weight: 700; color: #0b3d2e;">${parseFloat(p.area_acres).toFixed(2)} Acres</span></td>
-                  <td><span style="background: #ecfdf5; color: #065f46; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700;"> Encrypted Polygon</span></td>
-                  <td><button type="button" onclick="removePlot(${idx})" style="background: none; border: none; color: #ef4444; font-weight: 700; cursor: pointer;">Delete</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+        <div style="margin-top: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 13px; color: #0f172a;">${escapeHtml(t.registeredPlotsTitle)} (${plots.length})</strong>
+            <span style="font-size: 13px; font-weight: 800; color: #059669;">${escapeHtml(t.totalLabel)}: ${totalAcres.toFixed(2)} ${escapeHtml(t.acresUnit)}</span>
+          </div>
+          <div class="plot-list-box" id="registeredPlotsContainer">
+            ${plots.length === 0
+              ? `<div style="padding: 16px; text-align: center; color: #64748b; font-size: 12.5px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">${escapeHtml(t.noPlotsYet)}</div>`
+              : plots.map((pl, idx) => `
+                  <div class="plot-row-item">
+                    <div>
+                      <strong style="color: #0f172a;">${escapeHtml(pl.plot_name)}</strong>
+                      <span style="color: #64748b; font-size: 12px; margin-left: 8px;">• ${escapeHtml(pl.district || p.district || '')}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <span class="acre-badge-live">${parseFloat(pl.area_acres).toFixed(2)} ${escapeHtml(t.acresUnit)}</span>
+                      <button type="button" style="background: none; border: none; color: #ef4444; cursor: pointer; font-weight: 800; font-size: 12px;" onclick="removePlot(${idx})">${escapeHtml(t.btnRemove)}</button>
+                    </div>
+                  </div>
+                `).join('')
+            }
+          </div>
         </div>
       `;
     }
 
     if (step === 3) {
-      const rd = p.role_details || {};
-      const selCrops = wizardState.selectedCrops || [];
+      const rDet = (p.role_details || {});
+      const selectedCrops = wizardState.selectedCrops || [];
 
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>${getIcon("sprout", 18, "#047857")}</span> ${t.step3Title}</h3>
-          <p class="wizard-step-desc">${t.step3Desc}</p>
+          <h3 class="wizard-step-title"><span>${getIcon('wheat', 18, '#047857')}</span> ${escapeHtml(t.step3Title)}</h3>
+          <p class="wizard-step-desc">${escapeHtml(t.step3Desc)}</p>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">${t.farmType} <span class="req">*</span></label>
+            <label class="form-label">${escapeHtml(t.farmType)} <span class="req">*</span></label>
             <select class="form-select" id="inp_farm_type">
-              <option value="INDIVIDUAL" ${rd.farm_type === 'INDIVIDUAL' ? 'selected' : ''}>Individual Smallholder Farmer</option>
-              <option value="FPO" ${rd.farm_type === 'FPO' ? 'selected' : ''}>Farmer Producer Organisation (FPO / FPC)</option>
-              <option value="COOPERATIVE" ${rd.farm_type === 'COOPERATIVE' ? 'selected' : ''}>Primary Agricultural Credit Society (PACS)</option>
-              <option value="SHG" ${rd.farm_type === 'SHG' ? 'selected' : ''}>Self-Help Group (SHG) / JLG</option>
+              <option value="INDIVIDUAL_FARMER" ${rDet.farm_type === 'INDIVIDUAL_FARMER' ? 'selected' : ''}>${escapeHtml(t.farmTypeInd)}</option>
+              <option value="FPO_PRODUCER" ${rDet.farm_type === 'FPO_PRODUCER' ? 'selected' : ''}>${escapeHtml(t.farmTypeFpo)}</option>
+              <option value="SHG_COLLECTIVE" ${rDet.farm_type === 'SHG_COLLECTIVE' ? 'selected' : ''}>${escapeHtml(t.farmTypeShg)}</option>
+              <option value="COOPERATIVE" ${rDet.farm_type === 'COOPERATIVE' ? 'selected' : ''}>${escapeHtml(t.farmTypeCoop)}</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">${t.irrigation}</label>
+            <label class="form-label">${escapeHtml(t.irrigation)} <span class="req">*</span></label>
             <select class="form-select" id="inp_irrigation">
-              <option value="TUBEWELL" ${rd.irrigation === 'TUBEWELL' ? 'selected' : ''}>Borewell / Deep Tube-well</option>
-              <option value="CANAL" ${rd.irrigation === 'CANAL' ? 'selected' : ''}>Canal Command Irrigation</option>
-              <option value="DRIP" ${rd.irrigation === 'DRIP' ? 'selected' : ''}>Drip / Micro Sprinkler</option>
-              <option value="RAINFED" ${rd.irrigation === 'RAINFED' ? 'selected' : ''}>Rainfed / Seasonal Monsoonal</option>
-              <option value="RIVER" ${rd.irrigation === 'RIVER' ? 'selected' : ''}>River Lift Irrigation</option>
+              <option value="RAINFED" ${rDet.irrigation === 'RAINFED' ? 'selected' : ''}>${escapeHtml(t.irrRain)}</option>
+              <option value="CANAL_RIVER" ${rDet.irrigation === 'CANAL_RIVER' ? 'selected' : ''}>${escapeHtml(t.irrCanal)}</option>
+              <option value="BOREWELL" ${rDet.irrigation === 'BOREWELL' ? 'selected' : ''}>${escapeHtml(t.irrBore)}</option>
+              <option value="DRIP_MICRO" ${rDet.irrigation === 'DRIP_MICRO' ? 'selected' : ''}>${escapeHtml(t.irrDrip)}</option>
             </select>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">${t.commodities} <span class="req">*</span> <span class="form-hint">(Select all crops you cultivate)</span></label>
-          <div class="crop-badges-grid" id="cropBadgesGrid">
-            ${CROPS_LIST.map(c => `
-              <div class="crop-badge-chip ${selCrops.includes(c.id) ? 'selected' : ''}" onclick="toggleCropSelection('${c.id}', this)">
-                <span>${c.icon}</span> <span>${c.label}</span>
-              </div>
-            `).join('')}
+          <label class="form-label">${escapeHtml(t.commodities)} <span class="req">*</span></label>
+          <div class="crop-chips-grid">
+            ${CROPS_LIST.map(c => {
+              const isSelected = selectedCrops.includes(c.id);
+              return `
+                <div class="crop-chip-item ${isSelected ? 'selected' : ''}" onclick="toggleCropSelection('${c.id}', this)">
+                  <span>${getIcon(c.icon, 15, isSelected ? '#047857' : '#64748b')}</span>
+                  <span>${escapeHtml(getCropLabel(c.id))}</span>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">${t.certifications}</label>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">${escapeHtml(t.certifications)}</label>
           <select class="form-select" id="inp_certifications">
-            <option value="NONE" ${rd.certifications === 'NONE' ? 'selected' : ''}>Conventional Farming / No Formal Certification</option>
-            <option value="ORGANIC_NPOP" ${rd.certifications === 'ORGANIC_NPOP' ? 'selected' : ''}>NPOP Certified Organic (Jaivik Bharat)</option>
-            <option value="PGS_INDIA" ${rd.certifications === 'PGS_INDIA' ? 'selected' : ''}>PGS-India Green / Organic</option>
-            <option value="INDGAP" ${rd.certifications === 'INDGAP' ? 'selected' : ''}>IndGAP (Good Agricultural Practices)</option>
+            <option value="NONE" ${rDet.certification === 'NONE' ? 'selected' : ''}>${escapeHtml(t.certNone)}</option>
+            <option value="NPOP_ORGANIC" ${rDet.certification === 'NPOP_ORGANIC' ? 'selected' : ''}>${escapeHtml(t.certNpop)}</option>
+            <option value="PGS_INDIA" ${rDet.certification === 'PGS_INDIA' ? 'selected' : ''}>${escapeHtml(t.certPgs)}</option>
+            <option value="GOOD_AGRI_PRACTICES" ${rDet.certification === 'GOOD_AGRI_PRACTICES' ? 'selected' : ''}>${escapeHtml(t.certGap)}</option>
           </select>
         </div>
       `;
@@ -731,110 +1521,132 @@
     if (step === 4) {
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>${getIcon('lock', 16, '#047857')}</span> ${t.step4Title}</h3>
-          <p class="wizard-step-desc">${t.step4Desc}</p>
+          <h3 class="wizard-step-title"><span>${getIcon('lock', 18, '#047857')}</span> ${escapeHtml(t.step4Title)}</h3>
+          <p class="wizard-step-desc">${escapeHtml(t.step4Desc)}</p>
         </div>
 
-        <div class="notice-box">
-          <strong>${getIcon('shield-check', 14, '#15803d')} Cryptographic Protection Guarantee (DPDP Act 2023)</strong><br />
-          All PAN, Aadhaar digits, and bank account numbers entered below are encrypted immediately at the application layer using <strong>AES-256-GCM</strong> with an isolated random initialization vector. Plaintext financial identifiers are never committed to disk unencrypted.
-        </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">${t.panLabel} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_pan" maxlength="10" placeholder="e.g. ABCDE1234F" value="${sens.pan_masked ? '' : ''}" oninput="handlePanInput(this)" style="text-transform: uppercase;" />
-            <div id="panMaskPreview" class="form-preview-masked">${sens.pan_masked ? 'Current: ' + sens.pan_masked : 'Masked Preview: AB******5C'}</div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">${t.aadhaarLabel}</label>
-            <input type="text" class="form-input" id="inp_aadhaar_last4" maxlength="4" placeholder="Last 4 digits (e.g. 4321)" value="${sens.aadhaar_last4 || ''}" oninput="this.value = this.value.replace(/\\D/g, '')" />
-            <span class="form-hint">${t.aadhaarNotice}</span>
-          </div>
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; display: flex; align-items: center; gap: 12px; font-size: 12.5px; color: #1e3a8a;">
+          <span>${getIcon('shield', 20, '#047857')}</span>
+          <div>${escapeHtml(t.kycVaultNotice)}</div>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">${t.bankName} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_bank_name" value="${escapeHtml(sens.bank_name || '')}" placeholder="e.g. State Bank of India / Bangiya Gramin Vikash Bank" />
+            <label class="form-label">${escapeHtml(t.panLabel)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_pan" maxlength="10" style="text-transform: uppercase; font-family: monospace;" placeholder="${escapeHtml(t.panPh)}" oninput="handlePanInput(this)" />
+            <div class="masked-preview-pill" id="panMaskPreview">${escapeHtml(t.maskedPreview)}: ${escapeHtml(sens.pan_masked || 'AB******5C')}</div>
           </div>
+
           <div class="form-group">
-            <label class="form-label">Bank Branch IFSC Code <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_ifsc" maxlength="11" placeholder="e.g. SBIN0001234" value="" style="text-transform: uppercase;" />
-            <div id="ifscMaskPreview" class="form-preview-masked">${sens.ifsc_masked ? 'Current: ' + escapeHtml(sens.ifsc_masked) : 'Format: SBIN0001234'}</div>
+            <label class="form-label">${escapeHtml(t.aadhaarLabel)}</label>
+            <input type="text" class="form-input" id="inp_aadhaar4" maxlength="4" value="${escapeHtml(sens.aadhaar_last4 || '')}" style="font-family: monospace; letter-spacing: 3px;" placeholder="${escapeHtml(t.aadhaarPh)}" oninput="this.value = this.value.replace(/\\D/g, '').slice(0, 4)" />
+            <span class="form-hint" style="color: #059669; font-weight: 600;">${escapeHtml(t.aadhaarNotice)}</span>
           </div>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">${t.accountNo} <span class="req">*</span></label>
-            <input type="password" class="form-input" id="inp_account_no" placeholder="Bank Account Number" value="" oninput="handleAccountInput(this)" />
-            <div id="accountMaskPreview" class="form-preview-masked">${sens.bank_account_masked ? 'Current: ' + sens.bank_account_masked : 'Masked Preview: XXXXXXXX1234'}</div>
+            <label class="form-label">${escapeHtml(t.bankName)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_bank_name" value="${escapeHtml(sens.bank_name || '')}" placeholder="${escapeHtml(t.bankNamePh)}" />
           </div>
           <div class="form-group">
-            <label class="form-label">${t.confirmAccountNo} <span class="req">*</span></label>
-            <input type="text" class="form-input" id="inp_confirm_account_no" placeholder="Re-enter to verify match" />
+            <label class="form-label">${escapeHtml(t.ifsc)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_ifsc" maxlength="11" style="text-transform: uppercase; font-family: monospace;" placeholder="${escapeHtml(t.ifscPh)}" oninput="this.value = this.value.toUpperCase()" />
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">${t.upi}</label>
-          <input type="text" class="form-input" id="inp_upi" placeholder="e.g. farmer.name@sbi" />
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label class="form-label">${escapeHtml(t.accountNo)} <span class="req">*</span></label>
+            <input type="password" class="form-input" id="inp_account_no" placeholder="${escapeHtml(t.accountNoPh)}" oninput="handleAccountInput(this)" />
+            <div class="masked-preview-pill" id="accountMaskPreview">${escapeHtml(t.maskedPreview)}: ${escapeHtml(sens.bank_account_masked || 'XXXXXXXX1234')}</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">${escapeHtml(t.confirmAccountNo)} <span class="req">*</span></label>
+            <input type="text" class="form-input" id="inp_confirm_account_no" placeholder="${escapeHtml(t.confirmAccountNoPh)}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">${escapeHtml(t.upi)}</label>
+            <input type="text" class="form-input" id="inp_upi" placeholder="${escapeHtml(t.upiPh)}" />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 12px; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <strong style="font-size: 13px; color: #0f172a; display: block;">${escapeHtml(t.docTitle)}</strong>
+              <span style="font-size: 11.5px; color: #64748b;">${escapeHtml(t.docSub)}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <select class="form-select" id="inp_doc_type" style="width: auto; padding: 6px 10px; font-size: 12px;">
+                <option value="LAND_RECORD">${escapeHtml(t.docLand)}</option>
+                <option value="FPO_REG">${escapeHtml(t.docFpo)}</option>
+                <option value="ORGANIC_CERT">${escapeHtml(t.docOrg)}</option>
+              </select>
+              <label class="btn-upload-file" style="margin: 0;">
+                <span>${getIcon('file-text', 14, '#047857')}</span> <span>${escapeHtml(t.docBtnUpload)}</span>
+                <input type="file" accept=".jpg,.jpeg,.png,.pdf" style="display: none;" onchange="handleDocumentUpload(this)" />
+              </label>
+            </div>
+          </div>
+          <div id="docUploadStatus" style="margin-top: 8px; font-size: 12px; color: #059669; font-weight: 700; display: none;"></div>
         </div>
       `;
     }
 
     if (step === 5) {
       const plots = wizardState.plots || [];
-      const totalAcres = plots.reduce((acc, p) => acc + (parseFloat(p.area_acres) || 0), 0);
-      const selCrops = wizardState.selectedCrops || [];
+      const totalAcres = plots.reduce((acc, pl) => acc + (parseFloat(pl.area_acres) || 0), 0);
+      const cropsDisplay = (wizardState.selectedCrops || []).map(getCropLabel).join(', ');
 
       return `
         <div class="wizard-step-header">
-          <h3 class="wizard-step-title"><span>${getIcon("scale", 18, "#047857")}</span> ${t.step5Title}</h3>
-          <p class="wizard-step-desc">${t.step5Desc}</p>
+          <h3 class="wizard-step-title"><span>${getIcon('check', 18, '#15803d', 2.8)}</span> ${escapeHtml(t.step5Title)}</h3>
+          <p class="wizard-step-desc">${escapeHtml(t.step5Desc)}</p>
         </div>
 
-        <!-- Summary Card -->
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 20px; margin-bottom: 22px;">
-          <h4 style="margin: 0 0 12px; font-size: 15px; color: #0b3d2e;">Declared Profile Summary (Draft v${p.version || 1})</h4>
-          <div class="submitted-details-grid" style="margin: 0 0 14px;">
-            <div class="detail-item-box">
-              <div class="detail-item-label">Producer Entity</div>
-              <div class="detail-item-value">${p.first_name || ''} ${p.last_name || ''}</div>
-              <div style="font-size: 12px; color: #64748b;">${p.organisation_name || ''}</div>
-            </div>
-            <div class="detail-item-box">
-              <div class="detail-item-label">Jurisdiction</div>
-              <div class="detail-item-value">${p.village_town || ''}, ${p.district || ''}</div>
-              <div style="font-size: 12px; color: #64748b;">PIN: ${p.pincode || ''} (${p.state || ''})</div>
-            </div>
-            <div class="detail-item-box">
-              <div class="detail-item-label">Agricultural Plots</div>
-              <div class="detail-item-value">${totalAcres.toFixed(2)} Acres</div>
-              <div style="font-size: 12px; color: #64748b;">${plots.length} geofenced boundaries</div>
-            </div>
+        <div class="submitted-details-grid" style="margin-top: 0; margin-bottom: 20px;">
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumApplicant)}</div>
+            <div class="detail-item-value">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')}</div>
           </div>
-          <div style="font-size: 12.5px; color: #334155; padding-top: 10px; border-top: 1px solid #e2e8f0;">
-            <strong>Primary Commodities:</strong> ${selCrops.length > 0 ? selCrops.join(', ') : 'None selected'} • 
-            <strong>PAN:</strong> ${sens.pan_masked || 'Encrypted'} • 
-            <strong>Bank:</strong> ${sens.bank_name || 'Configured'}
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumEnterprise)}</div>
+            <div class="detail-item-value">${escapeHtml(p.organisation_name || t.notEntered)}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumJurisdiction)}</div>
+            <div class="detail-item-value">${escapeHtml([p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ') || t.notEntered)}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumLand)}</div>
+            <div class="detail-item-value">${totalAcres.toFixed(2)} ${escapeHtml(t.acresUnit)} (${plots.length} ${escapeHtml(t.plotsWord)})</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumCrops)}</div>
+            <div class="detail-item-value">${escapeHtml(cropsDisplay || t.noneSelected)}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="detail-item-label">${escapeHtml(t.sumIdentity)}</div>
+            <div class="detail-item-value">${escapeHtml(sens.pan_masked || (sens.aadhaar_last4 ? '•••• ' + sens.aadhaar_last4 : 'AES-256'))} | ${escapeHtml(sens.bank_name || '')}</div>
           </div>
         </div>
 
-        <!-- Statutory Consent Checkboxes -->
-        <div style="margin-bottom: 22px;">
-          <label class="consent-checkbox-row">
-            <input type="checkbox" id="chk_consent_dpdp" />
-            <span class="consent-text"><strong>DPDP Act 2023 Purpose Limitation:</strong> ${t.consent1}</span>
+        <div class="consent-box- statutory">
+          <h4 style="margin: 0 0 12px; font-size: 14px; color: #0b3d2e; display: flex; align-items: center; gap: 6px;">
+            <span>${getIcon('scale', 16, '#047857')}</span> ${escapeHtml(t.consentHeader)}
+          </h4>
+          <label class="consent-check-row">
+            <input type="checkbox" id="chk_consent_1" checked />
+            <span>${escapeHtml(t.consent1)}</span>
           </label>
-          <label class="consent-checkbox-row">
-            <input type="checkbox" id="chk_consent_aadhaar" />
-            <span class="consent-text"><strong>Voluntary Aadhaar Attestation:</strong> ${t.consent2}</span>
+          <label class="consent-check-row">
+            <input type="checkbox" id="chk_consent_2" checked />
+            <span>${escapeHtml(t.consent2)}</span>
           </label>
-          <label class="consent-checkbox-row">
-            <input type="checkbox" id="chk_consent_pilot" />
-            <span class="consent-text"><strong>Pilot Trade Authenticity:</strong> ${t.consent3}</span>
+          <label class="consent-check-row">
+            <input type="checkbox" id="chk_consent_3" checked />
+            <span>${escapeHtml(t.consent3)}</span>
           </label>
         </div>
       `;
@@ -842,148 +1654,20 @@
   }
 
   /* --------------------------------------------------------------------------
-     STEP NAVIGATION & VALIDATION
+     NAVIGATION & STEP VALIDATION
      -------------------------------------------------------------------------- */
   window.goToStep = function (targetStep) {
-    saveCurrentStepData(wizardState.currentStep);
+    captureCurrentStepInputs(wizardState.currentStep);
     wizardState.currentStep = targetStep;
     const contentArea = document.getElementById('workspaceDynamicContent');
-    if (contentArea) renderWizardInterface(contentArea);
+    if (contentArea) {
+      renderWizardInterface(contentArea);
+    }
   };
 
-  window.validateAndAdvanceStep = function (currentStep) {
-    if (!validateStep(currentStep)) return;
-    saveDraftManual(false);
-    goToStep(currentStep + 1);
-  };
-
-  function validateStep(step) {
-    saveCurrentStepData(step);
-    const p = wizardState.profile || {};
-    const sens = wizardState.sensitive || {};
-
-    if (step === 1) {
-      if (!p.first_name || p.first_name.trim().length < 2) {
-        showToast('Please enter your legal first name (min 2 chars).', 'warning', 'Missing Name');
-        return false;
-      }
-      if (!p.last_name || p.last_name.trim().length < 1) {
-        showToast('Please enter your last name / surname.', 'warning', 'Missing Name');
-        return false;
-      }
-      if (!p.organisation_name || p.organisation_name.trim().length < 2) {
-        showToast('Please enter your farm or enterprise name.', 'warning', 'Missing Enterprise');
-        return false;
-      }
-      if (!p.village_town || p.village_town.trim().length < 2) {
-        showToast('Please enter your village or town name.', 'warning', 'Missing Village');
-        return false;
-      }
-      if (!p.district || p.district.trim().length < 2) {
-        showToast('Please enter your district name.', 'warning', 'Missing District');
-        return false;
-      }
-      if (!p.pincode || !/^[0-9]{6}$/.test(p.pincode)) {
-        showToast('Please enter a valid 6-digit postal PIN code.', 'warning', 'Invalid PIN');
-        return false;
-      }
-      if (!p.photo_object_key) {
-        showToast('Please upload your farmer profile photograph before proceeding.', 'warning', 'Photo Required');
-        return false;
-      }
-      return true;
-    }
-
-    if (step === 2) {
-      if (!wizardState.plots || wizardState.plots.length === 0) {
-        showToast('Please add at least one farm plot boundary to proceed.', 'warning', 'No Plots Mapped');
-        return false;
-      }
-      return true;
-    }
-
-    if (step === 3) {
-      if (!wizardState.selectedCrops || wizardState.selectedCrops.length === 0) {
-        showToast('Please select at least one primary crop commodity.', 'warning', 'No Crops Selected');
-        return false;
-      }
-      return true;
-    }
-
-    if (step === 4) {
-      const panInp = document.getElementById('inp_pan');
-      const a4Inp = document.getElementById('inp_aadhaar_last4');
-      const accInp = document.getElementById('inp_account_no');
-      const confirmAccInp = document.getElementById('inp_confirm_account_no');
-      const ifscInp = document.getElementById('inp_ifsc');
-      const bankInp = document.getElementById('inp_bank_name');
-
-      const panVal = panInp ? panInp.value.trim().toUpperCase() : '';
-      const a4Val = a4Inp ? a4Inp.value.trim() : '';
-      const accVal = accInp ? accInp.value.trim() : '';
-      const confirmVal = confirmAccInp ? confirmAccInp.value.trim() : '';
-      const ifscVal = ifscInp ? ifscInp.value.trim().toUpperCase() : '';
-      const bankVal = bankInp ? bankInp.value.trim() : '';
-
-      // 1. Identity attestation (PAN or Aadhaar last 4)
-      const hasIdentity = (sens && (sens.pan_masked || sens.aadhaar_last4)) || panVal || a4Val;
-      if (!hasIdentity) {
-        showToast('Either PAN or voluntary Aadhaar last 4 digits is required for identity attestation.', 'warning', 'Identity Required');
-        return false;
-      }
-      if (panVal && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panVal)) {
-        showToast('Invalid PAN format. Must be 5 letters, 4 numbers, 1 letter (e.g. ABCDE1234F).', 'error', 'Invalid PAN');
-        return false;
-      }
-      if (a4Val && !/^[0-9]{4}$/.test(a4Val)) {
-        showToast('Aadhaar last 4 must be exactly 4 digits.', 'error', 'Invalid Aadhaar');
-        return false;
-      }
-
-      // 2. Bank Name
-      const hasBank = (sens && sens.bank_name) || bankVal;
-      if (!hasBank) {
-        showToast('Bank name is required for custody settlement.', 'warning', 'Bank Name Required');
-        return false;
-      }
-
-      // 3. Bank Account Number
-      const hasAccount = (sens && sens.bank_account_masked) || accVal;
-      if (!hasAccount) {
-        showToast('Bank account number is required for transaction settlement.', 'warning', 'Account Required');
-        return false;
-      }
-      if (accVal) {
-        if (accVal.length < 6 || !/^\d+$/.test(accVal)) {
-          showToast('Bank account must be numeric (minimum 6 digits).', 'error', 'Invalid Account');
-          return false;
-        }
-        if (accVal !== confirmVal) {
-          showToast('Bank account numbers do not match. Please re-enter carefully.', 'error', 'Account Mismatch');
-          return false;
-        }
-      }
-
-      // 4. Bank IFSC
-      const hasIfsc = (sens && sens.ifsc_masked) || ifscVal;
-      if (!hasIfsc) {
-        showToast('Bank branch IFSC code is required.', 'warning', 'IFSC Required');
-        return false;
-      }
-      if (ifscVal && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscVal)) {
-        showToast('Invalid IFSC format. Must be 4 letters, 0, then 6 alphanumeric characters (e.g. SBIN0001234).', 'error', 'Invalid IFSC');
-        return false;
-      }
-
-      return true;
-    }
-
-    return true;
-  }
-
-  function saveCurrentStepData(step) {
+  function captureCurrentStepInputs(step) {
     if (!wizardState.profile) wizardState.profile = {};
-    if (!wizardState.profile.role_details) wizardState.profile.role_details = {};
+    const p = wizardState.profile;
 
     if (step === 1) {
       const fn = document.getElementById('inp_first_name');
@@ -992,147 +1676,283 @@
       const gen = document.getElementById('inp_gender');
       const st = document.getElementById('inp_state');
       const dist = document.getElementById('inp_district');
-      const vil = document.getElementById('inp_village');
       const pin = document.getElementById('inp_pincode');
-      const addr = document.getElementById('inp_address');
+      const vil = document.getElementById('inp_village');
+      const addr = document.getElementById('inp_address1');
 
-      if (fn) wizardState.profile.first_name = fn.value.trim();
-      if (ln) wizardState.profile.last_name = ln.value.trim();
-      if (org) wizardState.profile.organisation_name = org.value.trim();
-      if (gen) wizardState.profile.gender = gen.value;
-      if (st) wizardState.profile.state = st.value;
-      if (dist) wizardState.profile.district = dist.value.trim();
-      if (vil) wizardState.profile.village_town = vil.value.trim();
-      if (pin) wizardState.profile.pincode = pin.value.trim();
-      if (addr) wizardState.profile.address_line1 = addr.value.trim();
+      if (fn) p.first_name = fn.value.trim();
+      if (ln) p.last_name = ln.value.trim();
+      if (org) p.organisation_name = org.value.trim();
+      if (gen) p.gender = gen.value;
+      if (st) p.state = st.value;
+      if (dist) p.district = dist.value.trim();
+      if (pin) p.pincode = pin.value.trim();
+      if (vil) p.village_town = vil.value.trim();
+      if (addr) p.address_line1 = addr.value.trim();
+      updateRegisteredHeaderBanner(p);
     }
 
     if (step === 3) {
+      if (!p.role_details) p.role_details = {};
       const ft = document.getElementById('inp_farm_type');
       const irr = document.getElementById('inp_irrigation');
       const cert = document.getElementById('inp_certifications');
 
-      if (ft) wizardState.profile.role_details.farm_type = ft.value;
-      if (irr) wizardState.profile.role_details.irrigation = irr.value;
-      if (cert) wizardState.profile.role_details.certifications = cert.value;
-      wizardState.profile.role_details.commodities = wizardState.selectedCrops;
-    }
-
-    if (step === 4) {
-      const panInp = document.getElementById('inp_pan');
-      const a4Inp = document.getElementById('inp_aadhaar_last4');
-      const bankInp = document.getElementById('inp_bank_name');
-      const accInp = document.getElementById('inp_account_no');
-      const ifscInp = document.getElementById('inp_ifsc');
-      const upiInp = document.getElementById('inp_upi');
-
-      if (!wizardState.sensitive) wizardState.sensitive = {};
-      if (panInp && panInp.value.trim()) wizardState.sensitive.pan = panInp.value.trim().toUpperCase();
-      if (a4Inp && a4Inp.value.trim()) wizardState.sensitive.aadhaar_last4 = a4Inp.value.trim();
-      if (bankInp && bankInp.value.trim()) wizardState.sensitive.bank_name = bankInp.value.trim();
-      if (accInp && accInp.value.trim()) wizardState.sensitive.bank_account = accInp.value.trim();
-      if (ifscInp && ifscInp.value.trim()) wizardState.sensitive.ifsc = ifscInp.value.trim().toUpperCase();
-      if (upiInp && upiInp.value.trim()) wizardState.sensitive.upi_id = upiInp.value.trim();
+      if (ft) p.role_details.farm_type = ft.value;
+      if (irr) p.role_details.irrigation = irr.value;
+      if (cert) p.role_details.certification = cert.value;
+      p.role_details.commodities = wizardState.selectedCrops || [];
     }
   }
 
-  /* --------------------------------------------------------------------------
-     API SAVE & SUBMIT HANDLERS
-     -------------------------------------------------------------------------- */
-  window.saveDraftManual = async function (showToastNotification) {
-    saveCurrentStepData(wizardState.currentStep);
+  window.validateAndAdvanceStep = async function (step) {
+    captureCurrentStepInputs(step);
     const p = wizardState.profile || {};
-    const sens = wizardState.sensitive || {};
 
-    try {
-      // 1. Save profile
-      const profPayload = {
-        role: 'PRODUCER',
-        first_name: p.first_name || '',
-        last_name: p.last_name || '',
-        organisation_name: p.organisation_name || '',
-        gender: p.gender || 'UNSPECIFIED',
-        state: p.state || 'West Bengal',
-        district: p.district || '',
-        village_town: p.village_town || '',
-        address_line1: p.address_line1 || '',
-        pincode: p.pincode || '',
-        photo_object_key: p.photo_object_key || '',
-        role_details: p.role_details || {},
-        version: p.version || 1
-      };
-
-      const profRes = await fetch('/api/v1/me/profile', {
-        method: 'PUT',
-        headers: getAuthHeader(),
-        body: JSON.stringify(profPayload)
-      });
-
-      if (profRes.ok) {
-        const updated = await profRes.json();
-        wizardState.profile = updated;
-      } else if (profRes.status === 401 || profRes.status === 403) {
-        if (showToastNotification) {
-          showToast('Your session has expired. Please sign in again to save your draft.', 'warning', 'Session Expired');
-        }
+    if (step === 1) {
+      if (!p.first_name || p.first_name.length < 2) {
+        showToast('Please enter your First Name (minimum 2 characters).', 'warning');
+        return;
+      }
+      if (!p.last_name) {
+        showToast('Please enter your Last Name.', 'warning');
+        return;
+      }
+      if (!p.organisation_name || p.organisation_name.length < 2) {
+        showToast('Please enter your Farm or Enterprise Name.', 'warning');
+        return;
+      }
+      if (!p.state) {
+        showToast('Please select your State.', 'warning');
+        return;
+      }
+      if (!p.district) {
+        showToast('Please enter your District.', 'warning');
+        return;
+      }
+      if (!p.pincode || !/^[0-9]{6}$/.test(p.pincode)) {
+        showToast('Please enter a valid 6-digit PIN Code.', 'warning');
+        return;
+      }
+      if (!p.village_town) {
+        showToast('Please enter your Village or Town.', 'warning');
+        return;
+      }
+      if (!p.address_line1 || p.address_line1.length < 3) {
+        showToast('Please enter your Street Address / Plot Location.', 'warning');
         return;
       }
 
-      // 2. Save sensitive details if entered
-      if (sens && (sens.pan || sens.bank_account || sens.ifsc || sens.aadhaar_last4)) {
-        await fetch('/api/v1/me/sensitive', {
-          method: 'PUT',
-          headers: getAuthHeader(),
-          body: JSON.stringify(sens)
-        });
+      await saveDraftManual(false);
+      goToStep(2);
+      return;
+    }
+
+    if (step === 2) {
+      const nameInp = document.getElementById('inp_plot_name');
+      const acresInp = document.getElementById('inp_plot_acres');
+      if (nameInp && nameInp.value.trim() && acresInp && parseFloat(acresInp.value) > 0) {
+        addCurrentPlotToList();
       }
 
-      // 3. Save plots if entered
-      if (wizardState.plots && wizardState.plots.length > 0) {
-        await fetch('/api/v1/me/plots', {
-          method: 'PUT',
-          headers: getAuthHeader(),
-          body: JSON.stringify({ plots: wizardState.plots })
-        });
+      if (!wizardState.plots || wizardState.plots.length === 0) {
+        showToast('Please add at least one Farm Plot boundary to proceed.', 'warning');
+        return;
       }
 
-      if (showToastNotification) {
-        showToast('Draft application saved securely to registry.', 'success', 'Draft Saved');
+      await savePlotsToServer();
+      goToStep(3);
+      return;
+    }
+
+    if (step === 3) {
+      if (!wizardState.selectedCrops || wizardState.selectedCrops.length === 0) {
+        showToast('Please select at least one primary agricultural crop.', 'warning');
+        return;
       }
-    } catch (err) {
-      console.error('Draft save failed:', err);
-      if (showToastNotification) {
-        showToast('Unable to connect to server. Draft retained locally.', 'warning', 'Offline Draft');
+      await saveDraftManual(false);
+      goToStep(4);
+      return;
+    }
+
+    if (step === 4) {
+      const ok = await saveSensitiveToServer();
+      if (!ok) return;
+      goToStep(5);
+      return;
+    }
+  };
+
+  /* --------------------------------------------------------------------------
+     API PERSISTENCE HANDLERS
+     -------------------------------------------------------------------------- */
+  window.saveDraftManual = async function (notifyUser) {
+    captureCurrentStepInputs(wizardState.currentStep);
+    const p = wizardState.profile || {};
+
+    const payload = {
+      role: 'PRODUCER',
+      first_name: p.first_name || '',
+      last_name: p.last_name || '',
+      organisation_name: p.organisation_name || '',
+      gender: p.gender || '',
+      state: p.state || '',
+      district: p.district || '',
+      village_town: p.village_town || '',
+      pincode: p.pincode || '000000',
+      address_line1: p.address_line1 || '',
+      role_details: p.role_details || { commodities: wizardState.selectedCrops || [] }
+    };
+
+    try {
+      const res = await fetch('/api/v1/me/profile', {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        wizardState.profile = updated;
+        updateRegisteredHeaderBanner(updated);
+        if (notifyUser) {
+          showToast('Draft profile saved.', 'success');
+        }
+      } else if (notifyUser) {
+        showToast('Could not save draft.', 'warning');
+      }
+    } catch (e) {
+      if (notifyUser) {
+        showToast('Network error saving draft.', 'error');
       }
     }
   };
 
+  async function savePlotsToServer() {
+    try {
+      const res = await fetch('/api/v1/me/plots', {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify({ plots: wizardState.plots })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        wizardState.plots = data.plots || wizardState.plots;
+        if (wizardState.profile) {
+          wizardState.profile.total_land_acres = data.total_acres;
+        }
+      }
+    } catch (e) {}
+  }
+
+  async function saveSensitiveToServer() {
+    const panEl = document.getElementById('inp_pan');
+    const a4El = document.getElementById('inp_aadhaar4');
+    const bankEl = document.getElementById('inp_bank_name');
+    const ifscEl = document.getElementById('inp_ifsc');
+    const accEl = document.getElementById('inp_account_no');
+    const confAccEl = document.getElementById('inp_confirm_account_no');
+    const upiEl = document.getElementById('inp_upi');
+
+    const pan = panEl ? panEl.value.trim().toUpperCase() : '';
+    const a4 = a4El ? a4El.value.trim() : '';
+    const bank = bankEl ? bankEl.value.trim() : '';
+    const ifsc = ifscEl ? ifscEl.value.trim().toUpperCase() : '';
+    const acc = accEl ? accEl.value.trim() : '';
+    const confAcc = confAccEl ? confAccEl.value.trim() : '';
+    const upi = upiEl ? upiEl.value.trim() : '';
+
+    const existingSens = wizardState.sensitive || {};
+
+    if (!pan && !a4 && !existingSens.pan_masked && !existingSens.aadhaar_last4) {
+      showToast('Please provide either a 10-character PAN or voluntary Aadhaar last-4 digits.', 'warning');
+      return false;
+    }
+
+    if (pan && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) {
+      showToast('Invalid PAN format. Must be 5 letters, 4 digits, and 1 letter.', 'error');
+      return false;
+    }
+
+    if (a4 && !/^[0-9]{4}$/.test(a4)) {
+      showToast('Voluntary Aadhaar field must contain exactly 4 digits.', 'error');
+      return false;
+    }
+
+    if (!bank && !existingSens.bank_name) {
+      showToast('Please enter your Bank Name.', 'warning');
+      return false;
+    }
+
+    if (ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) {
+      showToast('Invalid IFSC format (11 characters, 5th character must be 0).', 'error');
+      return false;
+    }
+
+    if (!ifsc && !existingSens.ifsc_masked) {
+      showToast('Please enter your Bank IFSC code.', 'warning');
+      return false;
+    }
+
+    if (acc) {
+      if (acc.length < 6 || !/^\d+$/.test(acc)) {
+        showToast('Bank account number must contain digits only (minimum 6 digits).', 'error');
+        return false;
+      }
+      if (acc !== confAcc) {
+        showToast('Bank account numbers do not match.', 'error');
+        return false;
+      }
+    } else if (!existingSens.bank_account_masked) {
+      showToast('Please enter your Bank Account Number.', 'warning');
+      return false;
+    }
+
+    const payload = { bank_name: bank };
+    if (pan) payload.pan = pan;
+    if (a4) payload.aadhaar_last4 = a4;
+    if (ifsc) payload.ifsc = ifsc;
+    if (acc) payload.bank_account = acc;
+    if (upi) payload.upi_id = upi;
+
+    try {
+      const res = await fetch('/api/v1/me/sensitive', {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const sData = await res.json();
+        wizardState.sensitive = Object.assign({}, wizardState.sensitive, sData);
+        return true;
+      } else {
+        const err = await res.json();
+        showToast(err.detail || 'Validation error saving encrypted identity details.', 'error');
+        return false;
+      }
+    } catch (e) {
+      showToast('Network error saving identity details.', 'error');
+      return false;
+    }
+  }
+
   window.submitFinalRegistration = async function () {
-    const c1 = document.getElementById('chk_consent_dpdp');
-    const c2 = document.getElementById('chk_consent_aadhaar');
-    const c3 = document.getElementById('chk_consent_pilot');
+    const c1 = document.getElementById('chk_consent_1');
+    const c2 = document.getElementById('chk_consent_2');
+    const c3 = document.getElementById('chk_consent_3');
 
-    if (!c1 || !c1.checked) {
-      showToast('Mandatory: Please accept the DPDP Act 2023 purpose limitation consent.', 'warning', 'Consent Required');
-      return;
-    }
-    if (!c2 || !c2.checked) {
-      showToast('Mandatory: Please accept the voluntary Aadhaar attestation notice.', 'warning', 'Consent Required');
-      return;
-    }
-    if (!c3 || !c3.checked) {
-      showToast('Mandatory: Please certify the agricultural pilot trade declaration.', 'warning', 'Consent Required');
+    if ((c1 && !c1.checked) || (c2 && !c2.checked) || (c3 && !c3.checked)) {
+      showToast('Please accept all three statutory DPDP Act 2023 declarations.', 'warning');
       return;
     }
 
+    const t = getI18n();
     const btn = document.getElementById('btnSubmitProfile');
     if (btn) {
       btn.disabled = true;
-      btn.innerText = 'Submitting Application...';
+      btn.innerText = t.submitting;
     }
 
     try {
-      // Record consent first
       await fetch('/api/v1/me/consent', {
         method: 'POST',
         headers: getAuthHeader(),
@@ -1143,7 +1963,6 @@
         })
       });
 
-      // Submit profile
       const res = await fetch('/api/v1/me/profile/submit', {
         method: 'POST',
         headers: getAuthHeader()
@@ -1151,58 +1970,48 @@
 
       const data = await res.json();
       if (res.ok) {
-        showToast('Application successfully submitted for verification!', 'success', 'Application Submitted');
+        showToast(t.underReviewTitle, 'success');
         wizardState.profile = data.profile;
+        updateRegisteredHeaderBanner(wizardState.profile);
         const contentArea = document.getElementById('workspaceDynamicContent');
         if (contentArea) renderUnderReviewCard(contentArea);
       } else {
         if (btn) {
           btn.disabled = false;
-          btn.innerText = 'Submit Application for Verification';
-        }
-        if (res.status === 401 || res.status === 403) {
-          showToast('Your session has expired. Please sign in again to submit your application.', 'warning', 'Session Expired');
-          return;
+          btn.innerText = t.btnSubmit;
         }
         if (data.errors) {
           const firstErr = Object.values(data.errors)[0];
-          showToast(firstErr, 'error', 'Validation Incomplete');
+          showToast(firstErr, 'error');
         } else {
-          showToast(data.detail || 'Failed to submit application. Please review fields.', 'error', 'Submission Error');
+          showToast(data.detail || 'Failed to submit application.', 'error');
         }
       }
     } catch (err) {
       if (btn) {
         btn.disabled = false;
-        btn.innerText = 'Submit Application for Verification';
+        btn.innerText = t.btnSubmit;
       }
-      showToast('Network error during submission. Please check connection.', 'error', 'Network Error');
+      showToast('Network error during submission.', 'error');
     }
   };
 
   /* --------------------------------------------------------------------------
-     PHOTO UPLOAD WITH EXIF STRIP
+     PHOTO & DOCUMENT UPLOAD WITH EXIF STRIP & SHA-256
      -------------------------------------------------------------------------- */
   window.handlePhotoUpload = function (input) {
     const file = input.files && input.files[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      showToast('Photo exceeds 5MB size limit.', 'error', 'File Too Large');
+      showToast('Photo exceeds 5MB size limit.', 'error');
       return;
     }
 
     const reader = new FileReader();
-    reader.onerror = function () {
-      showToast('Failed to read image file.', 'error', 'File Error');
-    };
     reader.onload = function (e) {
       const img = new Image();
-      img.onerror = function () {
-        showToast('Unable to decode image file. Please select a valid JPEG, PNG, or WebP photo.', 'error', 'Invalid Image');
-      };
       img.onload = function () {
-        // Scrub EXIF by rendering to fresh HTML5 canvas
         const canvas = document.createElement('canvas');
         const maxDim = 800;
         let w = img.width;
@@ -1222,11 +2031,7 @@
         ctx.drawImage(img, 0, 0, w, h);
 
         canvas.toBlob(async function (blob) {
-          if (!blob) {
-            showToast('Failed to generate image buffer from canvas.', 'error', 'Canvas Error');
-            return;
-          }
-
+          if (!blob) return;
           const previewImg = document.getElementById('farmerPhotoPreview');
           if (previewImg) previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
 
@@ -1235,14 +2040,10 @@
 
           try {
             const token = localStorage.getItem('annasutra_access_token');
-            if (!token) {
-              showToast('Please sign in with your mobile OTP before uploading your photograph.', 'warning', 'Authentication Required');
-              return;
-            }
-            const h = { 'Authorization': 'Bearer ' + token };
+            if (!token) return;
             const upRes = await fetch('/api/v1/me/photo', {
               method: 'POST',
-              headers: h,
+              headers: { 'Authorization': 'Bearer ' + token },
               body: formData
             });
 
@@ -1252,24 +2053,12 @@
               wizardState.profile.photo_object_key = resData.photo_object_key;
               const badge = document.getElementById('photoStatusBadge');
               if (badge) badge.style.display = 'inline-block';
-              showToast('Photo uploaded and EXIF metadata scrubbed.', 'success', 'Photo Verified');
+              showToast(getI18n().photoScrubbed, 'success');
             } else {
-              let errMsg = 'Failed to save photo to server.';
-              try {
-                const errData = await upRes.json();
-                if (errData && errData.detail) {
-                  errMsg = errData.detail;
-                } else if (errData && typeof errData === 'object') {
-                  errMsg = Object.values(errData).flat().join(' ');
-                }
-              } catch (_) {}
-              if (upRes.status === 401 || upRes.status === 403) {
-                errMsg = 'Your session has expired. Please log in again to upload photos.';
-              }
-              showToast(errMsg, 'error', 'Upload Notice');
+              showToast('Failed to upload photo.', 'error');
             }
           } catch (err) {
-            showToast('Network error uploading photo. Please check connection.', 'error', 'Network Error');
+            showToast('Network error uploading photo.', 'error');
           }
         }, 'image/jpeg', 0.85);
       };
@@ -1278,20 +2067,60 @@
     reader.readAsDataURL(file);
   };
 
+  window.handleDocumentUpload = async function (input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Document exceeds 5MB limit.', 'error');
+      return;
+    }
+
+    const docTypeEl = document.getElementById('inp_doc_type');
+    const docType = docTypeEl ? docTypeEl.value : 'LAND_RECORD';
+
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('doc_type', docType);
+
+    try {
+      const token = localStorage.getItem('annasutra_access_token');
+      const res = await fetch('/api/v1/me/documents', {
+        method: 'POST',
+        headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+        body: formData
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const statusEl = document.getElementById('docUploadStatus');
+        const t = getI18n();
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.innerHTML = `${getIcon('check', 14, '#059669', 2.8)} ${escapeHtml(file.name)} — ${escapeHtml(t.docUploadedBadge)} (SHA-256: <code>${escapeHtml(data.sha256.slice(0, 16))}...</code>)`;
+        }
+        showToast(t.docUploadedBadge, 'success');
+      } else {
+        showToast('Document upload failed.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error uploading document.', 'error');
+    }
+  };
+
   /* --------------------------------------------------------------------------
      LEAFLET MAP & TURF.JS PLOT MANAGEMENT
      -------------------------------------------------------------------------- */
   function initPlotMap() {
     const mapDiv = document.getElementById('plotLeafletMap');
     if (!mapDiv) return;
+    const t = getI18n();
 
-    // Check if Leaflet is available in window
     if (typeof L === 'undefined') {
       mapDiv.innerHTML = `
         <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1f5f9; color: #475569; padding: 20px; text-align: center;">
-          <span style="display:inline-block; margin-bottom: 8px;">${getIcon("map-pin", 32, "#94a3b8")}</span>
-          <strong style="font-size: 14px; color: #0b3d2e;">Interactive Satellite Plot Mapper Active</strong>
-          <p style="font-size: 12px; max-width: 420px; margin: 4px 0 12px;">Satellite tiles loaded. Click "Add Plot Boundary Preset" below to generate verified GPS polygon boundaries.</p>
+          <span style="display:inline-block; margin-bottom: 8px;">${getIcon('map-pin', 32, '#94a3b8')}</span>
+          <strong style="font-size: 14px; color: #0b3d2e;">${escapeHtml(t.step2Title)}</strong>
+          <p style="font-size: 12px; max-width: 420px; margin: 4px 0 12px;">${escapeHtml(t.plotMapInstructions)}</p>
         </div>
       `;
       return;
@@ -1306,10 +2135,10 @@
         delete mapDiv._leaflet_id;
       }
 
-      const defaultLat = 23.24;
-      const defaultLng = 87.86; // Purba Bardhaman default
+      const defaultLat = 22.9868;
+      const defaultLng = 87.8550;
 
-      wizardState.leafletMap = L.map('plotLeafletMap').setView([defaultLat, defaultLng], 14);
+      wizardState.leafletMap = L.map('plotLeafletMap').setView([defaultLat, defaultLng], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
@@ -1318,21 +2147,15 @@
       wizardState.leafletMap.on('click', onMapClick);
       wizardState.leafletAvailable = true;
 
-      // Draw existing plots if present
       renderExistingPlotPolygons();
-    } catch (e) {
-      console.warn('Leaflet map initialization notice:', e);
-    }
+    } catch (e) {}
   }
 
   function onMapClick(e) {
     if (!wizardState.leafletMap) return;
     const lat = parseFloat(e.latlng.lat.toFixed(6));
     const lng = parseFloat(e.latlng.lng.toFixed(6));
-
     wizardState.drawnPoints.push([lng, lat]);
-
-    // Redraw polygon
     updateDrawnPolygonLayer();
   }
 
@@ -1356,12 +2179,13 @@
   }
 
   function calculateAcreageFromPoints() {
+    const t = getI18n();
     const pts = wizardState.drawnPoints;
     const indicator = document.getElementById('liveAcreIndicator');
     const acresInp = document.getElementById('inp_plot_acres');
 
     if (pts.length < 3) {
-      if (indicator) indicator.innerText = 'Estimated Area: 0.00 Acres (Turf.js)';
+      if (indicator) indicator.innerText = `${t.estAreaLabel}: 0.00 ${t.acresUnit}`;
       return;
     }
 
@@ -1376,38 +2200,54 @@
         calculatedAcres = (pts.length * 0.75);
       }
     } catch (e) {
-      calculatedAcres = 2.10;
+      calculatedAcres = 1.00;
     }
 
     const formatted = calculatedAcres.toFixed(2);
-    if (indicator) indicator.innerText = `Estimated Area: ${formatted} Acres (Turf.js)`;
+    if (indicator) indicator.innerText = `${t.estAreaLabel}: ${formatted} ${t.acresUnit}`;
     if (acresInp && (!acresInp.value || acresInp.value === '0')) acresInp.value = formatted;
   }
 
   window.startPolygonDraw = function () {
-    showToast('Click anywhere on the map to place plot boundary corner pins.', 'info', 'Plot Drawer Active');
+    showToast(getI18n().plotMapInstructions, 'info');
   };
 
   window.clearPolygonDraw = function () {
+    const t = getI18n();
     wizardState.drawnPoints = [];
     if (wizardState.polygonLayer && wizardState.leafletMap) {
       wizardState.leafletMap.removeLayer(wizardState.polygonLayer);
     }
     const indicator = document.getElementById('liveAcreIndicator');
-    if (indicator) indicator.innerText = 'Estimated Area: 0.00 Acres (Turf.js)';
+    if (indicator) indicator.innerText = `${t.estAreaLabel}: 0.00 ${t.acresUnit}`;
   };
 
-  window.addSamplePolygon = function () {
-    wizardState.drawnPoints = [
-      [87.8520, 23.2380],
-      [87.8580, 23.2380],
-      [87.8590, 23.2440],
-      [87.8510, 23.2430]
-    ];
-    updateDrawnPolygonLayer();
-    const nameInp = document.getElementById('inp_plot_name');
-    if (nameInp && !nameInp.value) nameInp.value = 'North Agro Field';
-    showToast('Boundary polygon loaded. Click "+ Add Plot to Registry" to save.', 'success');
+  window.geolocatePlot = function () {
+    if (!navigator.geolocation) {
+      showToast('Geolocation is not supported on this device.', 'warning');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lng = parseFloat(pos.coords.longitude.toFixed(6));
+        if (wizardState.leafletMap) {
+          wizardState.leafletMap.setView([lat, lng], 16);
+        }
+        const d = 0.0012;
+        wizardState.drawnPoints = [
+          [lng - d, lat - d],
+          [lng + d, lat - d],
+          [lng + d, lat + d],
+          [lng - d, lat + d]
+        ];
+        updateDrawnPolygonLayer();
+      },
+      function () {
+        showToast('Unable to retrieve GPS coordinates. Please click on the map to draw your plot.', 'warning');
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
   };
 
   window.addCurrentPlotToList = function () {
@@ -1417,22 +2257,22 @@
     const acres = acresInp ? parseFloat(acresInp.value) : 0;
 
     if (!name) {
-      showToast('Please specify a Plot Name or survey label.', 'warning', 'Missing Plot Name');
+      showToast('Please enter a Plot Name or survey reference.', 'warning');
       return;
     }
     if (!acres || acres <= 0) {
-      showToast('Plot area must be greater than 0 acres.', 'warning', 'Invalid Area');
+      showToast('Plot area must be greater than 0 acres.', 'warning');
       return;
     }
 
-    const pts = wizardState.drawnPoints.length >= 3 
+    const pts = wizardState.drawnPoints.length >= 3
       ? [...wizardState.drawnPoints, wizardState.drawnPoints[0]]
       : [[87.852, 23.238], [87.858, 23.238], [87.858, 23.244], [87.852, 23.238]];
 
     const newPlot = {
       plot_name: name,
       area_acres: acres,
-      district: (wizardState.profile && wizardState.profile.district) || 'Purba Bardhaman',
+      district: (wizardState.profile && wizardState.profile.district) || '',
       geojson: {
         type: 'Polygon',
         coordinates: [pts]
@@ -1446,20 +2286,19 @@
     if (nameInp) nameInp.value = '';
     if (acresInp) acresInp.value = '';
 
-    showToast(`Added '${name}' (${acres.toFixed(2)} Acres) to registry.`, 'success', 'Plot Added');
     goToStep(2);
   };
 
   window.removePlot = function (idx) {
     if (wizardState.plots && wizardState.plots[idx]) {
-      const removed = wizardState.plots.splice(idx, 1);
-      showToast(`Removed plot '${removed[0].plot_name}'.`, 'info');
+      wizardState.plots.splice(idx, 1);
       goToStep(2);
     }
   };
 
   function renderExistingPlotPolygons() {
     if (!wizardState.leafletMap || !window.L || !wizardState.plots) return;
+    const t = getI18n();
     wizardState.plots.forEach(p => {
       try {
         if (p.geojson && p.geojson.coordinates && p.geojson.coordinates[0]) {
@@ -1469,7 +2308,7 @@
             fillColor: '#10b981',
             fillOpacity: 0.35,
             weight: 2
-          }).bindPopup(`<b>${p.plot_name}</b><br/>${parseFloat(p.area_acres).toFixed(2)} Acres`).addTo(wizardState.leafletMap);
+          }).bindPopup(`<b>${escapeHtml(p.plot_name)}</b><br/>${parseFloat(p.area_acres).toFixed(2)} ${escapeHtml(t.acresUnit)}`).addTo(wizardState.leafletMap);
         }
       } catch (e) {}
     });
@@ -1491,45 +2330,32 @@
   };
 
   window.handlePanInput = function (input) {
+    const t = getI18n();
     input.value = input.value.toUpperCase();
     const clean = input.value.trim();
     const preview = document.getElementById('panMaskPreview');
     if (preview) {
       if (clean.length === 10) {
-        preview.innerText = `Masked Preview: ${clean.slice(0, 2)}******${clean.slice(8)}`;
+        preview.innerText = `${t.maskedPreview}: ${clean.slice(0, 2)}******${clean.slice(8)}`;
       } else {
-        preview.innerText = 'Masked Preview: AB******5C';
+        preview.innerText = `${t.maskedPreview}: AB******5C`;
       }
     }
   };
 
   window.handleAccountInput = function (input) {
+    const t = getI18n();
     const clean = input.value.trim().replace(/\D/g, '');
     const preview = document.getElementById('accountMaskPreview');
     if (preview) {
       if (clean.length >= 6) {
-        preview.innerText = `Masked Preview: ${'X'.repeat(clean.length - 4)}${clean.slice(-4)}`;
+        preview.innerText = `${t.maskedPreview}: ${'X'.repeat(clean.length - 4)}${clean.slice(-4)}`;
       } else {
-        preview.innerText = 'Masked Preview: XXXXXXXX1234';
+        preview.innerText = `${t.maskedPreview}: XXXXXXXX1234`;
       }
     }
   };
 
-  window.handleStateChange = function (stateName) {
-    const distInp = document.getElementById('inp_district');
-    if (!distInp) return;
-    const defaults = {
-      'West Bengal': 'Purba Bardhaman',
-      'Maharashtra': 'Nashik',
-      'Punjab': 'Ludhiana',
-      'Uttar Pradesh': 'Varanasi',
-      'Madhya Pradesh': 'Indore',
-      'Karnataka': 'Belagavi',
-      'Gujarat': 'Anand'
-    };
-    if (defaults[stateName]) {
-      distInp.value = defaults[stateName];
-    }
-  };
-
+  window.renderAdminConsoleUI = renderAdminConsoleUI;
+  window.renderWizardInterface = renderWizardInterface;
 })();

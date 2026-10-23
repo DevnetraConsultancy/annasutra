@@ -148,6 +148,8 @@ class AuthController extends StateNotifier<AuthState> {
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
+        orgName: name,
+        orgType: orgType,
         orgVerification: orgVerification,
       );
       return true;

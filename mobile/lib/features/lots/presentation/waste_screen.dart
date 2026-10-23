@@ -109,7 +109,7 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Record Waste / ক্ষতি নথিভুক্ত করুন'),
+        title: const Text('Record Waste'),
       ),
       body: SafeArea(
         child: Form(
@@ -138,7 +138,7 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
                 controller: _qtyController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  labelText: 'Waste Quantity (kg) / বর্জ্য পরিমাণ',
+                  labelText: 'Waste Quantity (kg)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.delete_outline),
                 ),
@@ -154,7 +154,7 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
               DropdownButtonFormField<String>(
                 value: _selectedReason,
                 decoration: const InputDecoration(
-                  labelText: 'Reason for Waste / কারণ',
+                  labelText: 'Reason for Waste',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.report_problem_outlined),
                 ),
@@ -171,7 +171,7 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
               OutlinedButton.icon(
                 icon: Icon(_photoAttached ? Icons.check_circle : Icons.camera_alt,
                     color: _photoAttached ? Colors.green : null),
-                label: Text(_photoAttached ? 'Evidence Attached / প্রমাণ যুক্ত' : 'Upload Photo Evidence / ছবি আপলোড'),
+                label: Text(_photoAttached ? 'Evidence Attached' : 'Upload Photo Evidence'),
                 onPressed: () {
                   setState(() => _photoAttached = !_photoAttached);
                 },
@@ -186,7 +186,7 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
                 onPressed: _isSubmitting ? null : _submitWaste,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Record Waste / ক্ষতি নথিভুক্ত করুন'),
+                    : const Text('Record Waste'),
               ),
             ],
           ),

@@ -99,7 +99,7 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন'),
+        title: const Text('Record Retail Sale'),
       ),
       body: SafeArea(
         child: Form(
@@ -133,7 +133,7 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
                 controller: _qtyController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  labelText: 'Sold Quantity (kg) / বিক্রির পরিমাণ',
+                  labelText: 'Sold Quantity (kg)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.point_of_sale),
                 ),
@@ -155,7 +155,7 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
                 onPressed: _isSubmitting ? null : _submitSale,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Record Retail Sale / বিক্রি নথিভুক্ত করুন'),
+                    : const Text('Record Retail Sale'),
               ),
             ],
           ),

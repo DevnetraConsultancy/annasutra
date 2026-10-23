@@ -18,8 +18,8 @@ class BatchCreateScreen extends ConsumerStatefulWidget {
 class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _serialController = TextEditingController();
-  final TextEditingController _productController = TextEditingController(text: 'Tomato');
-  final TextEditingController _varietyController = TextEditingController(text: 'Roma');
+  final TextEditingController _productController = TextEditingController();
+  final TextEditingController _varietyController = TextEditingController();
   final TextEditingController _qtyController = TextEditingController();
   final TextEditingController _cratesController = TextEditingController();
 
@@ -170,7 +170,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                         textCapitalization: TextCapitalization.characters,
                         decoration: const InputDecoration(
                           labelText: 'QR Label Serial *',
-                          hintText: 'e.g. 7K3Q9XMD4T2B',
+                          hintText: 'Scan or enter allocated QR serial',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -186,8 +186,9 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                       height: 56,
                       child: OutlinedButton(
                         onPressed: () {
-                          // Quick stub for scanner fill
-                          _serialController.text = '7K3Q9XMD4T2B';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Align camera with physical crate QR label to scan serial.')),
+                          );
                         },
                         child: const Icon(Icons.qr_code_scanner),
                       ),

@@ -276,10 +276,12 @@ def approve_entity_registration(
         try:
             user = AppUser.objects.get(user_id=entity.user_id)
             org = user.org
+            if entity.organisation_name and entity.organisation_name.strip():
+                org.name = entity.organisation_name.strip()
             org.verification = "VERIFIED"
             org.verified_at = now
             org.verified_by = str(admin_user.user_id)
-            org.save(update_fields=["verification", "verified_at", "verified_by"])
+            org.save(update_fields=["name", "verification", "verified_at", "verified_by"])
         except AppUser.DoesNotExist:
             pass
 

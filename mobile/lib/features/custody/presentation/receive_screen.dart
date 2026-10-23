@@ -15,7 +15,7 @@ class ReceiveScreen extends ConsumerStatefulWidget {
     super.key,
     required this.handoverId,
     this.lotCode = 'BATCH',
-    this.declaredQtyKg = 500.0,
+    this.declaredQtyKg = 0.0,
   });
 
   @override
@@ -33,8 +33,9 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
   @override
   void initState() {
     super.initState();
-    _receivedController.text = widget.declaredQtyKg.toString();
-    _rejectedController.text = '0.0';
+    if (widget.declaredQtyKg > 0) {
+      _receivedController.text = widget.declaredQtyKg.toString();
+    }
     _receivedController.addListener(_onWeightChanged);
     _rejectedController.addListener(_onWeightChanged);
   }
@@ -134,7 +135,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Receive Batch / গ্রহণ করুন'),
+        title: const Text('Receive Batch'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -176,7 +177,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
               onPressed: _isSubmitting ? null : () => _submitReceipt(isMatches: true),
               icon: const Icon(Icons.check_circle, size: 28),
               label: const Text(
-                'Matches (1-Tap) / একই আছে',
+                'Matches Declared Weight',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
@@ -192,7 +193,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                 setState(() => _showScaleForm = !_showScaleForm);
               },
               icon: Icon(_showScaleForm ? Icons.expand_less : Icons.scale),
-              label: Text(_showScaleForm ? 'Hide Scale Entry' : 'Weigh on Scale / ওজনের পার্থক্য লিখুন'),
+              label: Text(_showScaleForm ? 'Hide Scale Entry' : 'Weigh on Scale'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
               ),
@@ -215,7 +216,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                         controller: _receivedController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: const InputDecoration(
-                          labelText: 'Received Net Weight (kg) / প্রাপ্ত ওজন',
+                          labelText: 'Received Net Weight (kg)',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.check),
                         ),
@@ -225,7 +226,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                         controller: _rejectedController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: const InputDecoration(
-                          labelText: 'Rejected Weight (kg) / বাতিল ওজন',
+                          labelText: 'Rejected Weight (kg)',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.remove_circle_outline),
                         ),
@@ -234,7 +235,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                       TextFormField(
                         controller: _conditionController,
                         decoration: const InputDecoration(
-                          labelText: 'Produce Condition / অবস্থা (e.g. Good, Ripe)',
+                          labelText: 'Produce Condition',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -243,7 +244,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                         controller: _cratesController,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                          labelText: 'Crates Counted / ক্রেট সংখ্যা',
+                          labelText: 'Crates Counted',
                           border: OutlineInputBorder(),
                         ),
                       ),

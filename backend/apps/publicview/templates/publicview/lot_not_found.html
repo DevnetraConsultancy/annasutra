@@ -11,7 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="/static/publicview/js/annasutra_i18n.js"></script>
+  <script src="/static/publicview/js/annasutra_i18n.js?v=20261023"></script>
+  <script src="/static/publicview/js/producer_wizard.js?v=20261023" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -1218,7 +1219,7 @@
           name="code" 
           id="navLotInput" 
           class="nav-search-input" 
-          placeholder="Lot (e.g. 7K3Q9XMD4T2B)" 
+          placeholder="Enter 12-Character Lot Code" 
           autocomplete="off" 
           required 
         />
@@ -1263,7 +1264,7 @@
             type="text" 
             name="code" 
             class="search-input" 
-            placeholder="e.g. 7K3Q9XMD4T2B" 
+            placeholder="Enter 12-Character Lot Code" 
             required 
             autocomplete="off" 
           />
@@ -1279,7 +1280,7 @@
       </div>
 
       <a href="/" class="btn-return-home" id="btnReturnHome">
-        ← <span id="btnReturnHomeText">Return to Home Portal</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span id="btnReturnHomeText">Return to Home Portal</span>
       </a>
     </div>
   </main>
@@ -1342,6 +1343,12 @@
               <button type="button" onclick="openEntityPortalModal()">
                 <span class="ataraxis-link-arrow">›</span>
                 <span id="footerLinkLogin">Universal Entity Log In</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" onclick="selectRoleFromPortal('ADMIN')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkAdmin">Admin Verification Portal</span>
               </button>
             </li>
             <li>
@@ -1445,7 +1452,7 @@
               <option value="+977">+977</option>
             </select>
           </div>
-          <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="Mobile number (e.g. 8444997803)" maxlength="15" />
+          <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="10-Digit Mobile Number" maxlength="15" />
         </div>
         <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
           Send Verification OTP
@@ -1509,7 +1516,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescProducer">
               Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer</button>
           </div>
 
           <!-- 2. Aggregator -->
@@ -1531,7 +1538,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
               Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator</button>
           </div>
 
           <!-- 3. Wholesaler -->
@@ -1556,7 +1563,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescWholesaler">
               Terminal warehouse receipt, lot splitting into pallets, and IoT cold-chain telemetry logging.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler</button>
           </div>
 
           <!-- 4. Distributor -->
@@ -1577,7 +1584,7 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescDistributor">
               Accept cold-chain transit, reefer temperature monitoring, and electronic store dispatch.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor</button>
           </div>
 
           <!-- 5. Retailer -->
@@ -1597,7 +1604,26 @@
             <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescRetailer">
               Record store intake, generate customer shelf QR standees, and complete tamper-proof final sale.
             </p>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer</button>
+          </div>
+
+          <!-- 6. Admin / Verifier -->
+          <div class="portal-card-item tier-admin" onclick="selectRoleFromPortal('ADMIN')" style="border-color: #cbd5e1; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar" style="background: #0f172a; color: #fde047;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge" style="background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;" id="portalTierBadgeAdmin">Governance • KYC</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAdmin">Admin / Verifier</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="portalRoleSubAdmin">Entity Verification &amp; Audit Authority</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAdmin">
+              Inspect pending producer &amp; entity registrations, audit DPDP encrypted credentials, and approve or reject nodes with QR allocation.
+            </p>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #0f172a; color: #ffffff;" id="btnPortalAdmin">Sign In as Admin</button>
           </div>
         </div>
       </div>
@@ -1642,13 +1668,7 @@
         </label>
       </div>
 
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; text-align: center;">
-        <span style="font-size: 11.5px; font-weight: 700; color: #64748b;" id="qrSampleCodesLabel">Or test with verified lots:</span>
-        <div style="display: flex; justify-content: center; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
-          <span class="chip-code" onclick="selectQrCode('7K3Q9XMD4T2B')">7K3Q9XMD4T2B</span>
-          <span class="chip-code" onclick="selectQrCode('AS-TOM-2026-X1')">AS-TOM-2026-X1</span>
-        </div>
-      </div>
+
     </div>
   </div>
 
@@ -1698,7 +1718,7 @@
 
       <div class="help-section-card">
         <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
-        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code (e.g. 7K3Q9XMD4T2B) into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
+        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
       </div>
 
       <div class="help-section-card">
@@ -1731,7 +1751,7 @@
       en: {
         navSearchText: "Verify Lot",
         navVerifyText: "Verify",
-        navLotPlaceholder: "Lot (e.g. 7K3Q9XMD4T2B)",
+        navLotPlaceholder: "Enter 12-Character Lot Code",
         navLoginText: "Log In",
         navQrBtnLabel: "Scan QR",
         titleNotFound: "Batch Not Found",
@@ -1780,23 +1800,23 @@
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO Cultivator",
         portalRoleDescProducer: "Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.",
-        btnPortalProducer: "Sign In as Producer &rarr;",
+        btnPortalProducer: "Sign In as Producer",
         portalRoleTitleAggregator: "Aggregator",
         portalRoleSubAggregator: "APMC Yard / Mandi Arhatiya",
         portalRoleDescAggregator: "Accept farmer crate handover, attest weighbridge slips, assign Agmarknet grades, and issue e-NAM gate passes.",
-        btnPortalAggregator: "Sign In as Aggregator &rarr;",
+        btnPortalAggregator: "Sign In as Aggregator",
         portalRoleTitleWholesaler: "Wholesaler",
         portalRoleSubWholesaler: "Terminal Trader / Cold Storage",
         portalRoleDescWholesaler: "Terminal warehouse receipt, lot splitting into pallets, and IoT cold-chain telemetry logging.",
-        btnPortalWholesaler: "Sign In as Wholesaler &rarr;",
+        btnPortalWholesaler: "Sign In as Wholesaler",
         portalRoleTitleDistributor: "Distributor",
         portalRoleSubDistributor: "Logistics Fleet / Regional Depot",
         portalRoleDescDistributor: "Accept cold-chain transit, reefer temperature monitoring, and electronic store dispatch.",
-        btnPortalDistributor: "Sign In as Distributor &rarr;",
+        btnPortalDistributor: "Sign In as Distributor",
         portalRoleTitleRetailer: "Retailer",
         portalRoleSubRetailer: "Kirana / POS / Supermarket",
         portalRoleDescRetailer: "Record store intake, generate customer shelf QR standees, and complete tamper-proof final sale.",
-        btnPortalRetailer: "Sign In as Retailer &rarr;",
+        btnPortalRetailer: "Sign In as Retailer",
         qrModalTitle: "Instant QR Code Scanner",
         qrModalSubtitle: "Point your device camera at any produce crate QR tag or upload an image.",
         btnSwitchCameraText: "Toggle Camera",
@@ -1807,7 +1827,7 @@
       hi: {
         navSearchText: "लॉट जांचें",
         navVerifyText: "सत्यापित करें",
-        navLotPlaceholder: "लॉट (उदा. 7K3Q9XMD4T2B)",
+        navLotPlaceholder: "12-अक्षरों का लॉट कोड दर्ज करें",
         navLoginText: "लॉग इन",
         navQrBtnLabel: "क्यूआर स्कैन",
         titleNotFound: "बैच नहीं मिला",
@@ -1856,23 +1876,23 @@
         portalRoleTitleProducer: "उत्पादक",
         portalRoleSubProducer: "किसान / एफपीओ / उत्पादक",
         portalRoleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
-        btnPortalProducer: "उत्पादक के रूप में साइन इन &rarr;",
+        btnPortalProducer: "उत्पादक के रूप में साइन इन",
         portalRoleTitleAggregator: "संग्रहकर्ता",
         portalRoleSubAggregator: "मंडी आढ़ती / एपीएमसी यार्ड",
         portalRoleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
-        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन &rarr;",
+        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन",
         portalRoleTitleWholesaler: "थोक व्यापारी",
         portalRoleSubWholesaler: "टर्मिनल बाजार / थोक व्यापारी",
         portalRoleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
-        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन &rarr;",
+        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन",
         portalRoleTitleDistributor: "वितरक",
         portalRoleSubDistributor: "लॉजिस्टिक्स फ्लीट / द्वितीयक डिपो",
         portalRoleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
-        btnPortalDistributor: "वितरक के रूप में साइन इन &rarr;",
+        btnPortalDistributor: "वितरक के रूप में साइन इन",
         portalRoleTitleRetailer: "खुदरा विक्रेता",
         portalRoleSubRetailer: "किराना / सुपरमार्केट / पीओएस",
         portalRoleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
-        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन &rarr;",
+        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन",
         qrModalTitle: "त्वरित क्यूआर कोड स्कैनर",
         qrModalSubtitle: "क्रेट क्यूआर टैग पर अपना कैमरा केंद्रित करें अथवा चित्र अपलोड करें।",
         btnSwitchCameraText: "कैमरा बदलें",
@@ -1883,7 +1903,7 @@
       bn: {
         navSearchText: "লট যাচাই",
         navVerifyText: "যাচাই করুন",
-        navLotPlaceholder: "লট (যেমন 7K3Q9XMD4T2B)",
+        navLotPlaceholder: "১২-অক্ষরের লট কোড লিখুন",
         navLoginText: "লগ ইন",
         navQrBtnLabel: "কিউআর স্ক্যান",
         titleNotFound: "ব্যাচ পাওয়া যায়নি",
@@ -1932,23 +1952,23 @@
         portalRoleTitleProducer: "উৎপাদক",
         portalRoleSubProducer: "কৃষক / এফপিও / উৎপাদক",
         portalRoleDescProducer: "ফসল লট তৈরি করুন, ক্রেট ট্যাগ জারি করুন ও মণ্ডিতে প্রেরণ করুন।",
-        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন &rarr;",
+        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন",
         portalRoleTitleAggregator: "সংগ্রহকারী",
         portalRoleSubAggregator: "মণ্ডি আড়তদার / এপিএমসি ইয়ার্ড",
         portalRoleDescAggregator: "খামার চালান গ্রহণ, ওজন যাচাই, অ্যাগমার্কনেট গ্রেড প্রদান ও পাইকারি বিক্রেতার কাছে হস্তান্তর।",
-        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন &rarr;",
+        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন",
         portalRoleTitleWholesaler: "পাইকারি বিক্রেতা",
         portalRoleSubWholesaler: "টার্মিনাল মার্কেট / পাইকারি বিক্রেতা",
         portalRoleDescWholesaler: "টার্মিনাল চালান গ্রহণ, বাণিজ্যিক লট বিভাজন ও হিমাগার সংরক্ষণ।",
-        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন &rarr;",
+        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন",
         portalRoleTitleDistributor: "পরিবেশক",
         portalRoleSubDistributor: "লজিস্টিকস ফ্লিট / আঞ্চলিক ডিপো",
         portalRoleDescDistributor: "পরিবহন হেফাজত গ্রহণ, জিপিএস ও তাপমাত্রা নথিভুক্তকরণ ও দোকানে সরবরাহ।",
-        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন &rarr;",
+        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন",
         portalRoleTitleRetailer: "খুচরা বিক্রেতা",
         portalRoleSubRetailer: "মুদি / সুপারমার্কেট / পিওএস",
         portalRoleDescRetailer: "দোকানে পণ্য গ্রহণ, ক্রেতার জন্য কিউআর প্রদর্শন ও বিক্রয় নথি।",
-        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন &rarr;",
+        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন",
         qrModalTitle: "ত্বরিত কিউআর কোড স্ক্যানার",
         qrModalSubtitle: "ক্রেট কিউআর ট্যাগে ক্যামেরা নির্দেশ করুন অথবা ছবি আপলোড করুন।",
         btnSwitchCameraText: "ক্যামেরা পরিবর্তন করুন",
@@ -2058,12 +2078,34 @@
       setTxt('portalRoleDescRetailer', t.portalRoleDescRetailer);
       setTxt('btnPortalRetailer', t.btnPortalRetailer);
 
+      setTxt('portalTierBadgeAdmin', t.portalTierBadgeAdmin);
+      setTxt('portalRoleTitleAdmin', t.portalRoleTitleAdmin);
+      setTxt('portalRoleSubAdmin', t.portalRoleSubAdmin);
+      setTxt('portalRoleDescAdmin', t.portalRoleDescAdmin);
+      setTxt('btnPortalAdmin', t.btnPortalAdmin);
+      setTxt('footerLinkAdmin', t.footerLinkAdmin);
+
       setTxt('qrModalTitle', t.qrModalTitle);
       setTxt('qrModalSubtitle', t.qrModalSubtitle);
       setTxt('btnSwitchCameraText', t.btnSwitchCameraText);
       setTxt('btnUploadQrText', t.btnUploadQrText);
-      setTxt('qrSampleCodesLabel', t.qrSampleCodesLabel);
       setTxt('btnGovModalClose', t.btnGovModalClose);
+
+      const userPill = document.getElementById('userPill');
+      if (userPill && userPill.style.display !== 'none') {
+        const savedRole = localStorage.getItem('annasutra_role') || 'PRODUCER';
+        const savedPhone = localStorage.getItem('annasutra_phone') || '';
+        const nameEl = document.getElementById('activeUserName');
+        if (nameEl) {
+          if (window.formatEntityUserBadge) {
+            nameEl.innerText = window.formatEntityUserBadge(savedRole, savedPhone, lang);
+          } else {
+            const digits = String(savedPhone).replace(/\D/g, '');
+            const last4 = digits.length >= 4 ? digits.slice(-4) : '0000';
+            nameEl.innerText = savedRole + ' (X' + last4 + ')';
+          }
+        }
+      }
     }
 
     function applyFontSize(level) {
@@ -2133,10 +2175,10 @@
       };
 
       const defaultTitles = {
-        error: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'त्रुटि (Error)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'ত্রুটি (Error)' : 'Attention Required',
-        success: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सफल (Success)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'সফল (Success)' : 'Success',
-        warning: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सूचना (Notice)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'বিজ্ঞপ্তি (Notice)' : 'Notice',
-        info: 'AnnaSutra'
+        error: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'त्रुटि' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'ত্রুটি' : 'Attention Required',
+        success: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सफल' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'সফল' : 'Success',
+        warning: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सूचना' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'বিজ্ঞপ্তি' : 'Notice',
+        info: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'अन्नसूत्र' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'অন্নসূত্র' : 'AnnaSutra'
       };
 
       const toast = document.createElement('div');
@@ -2238,23 +2280,23 @@
             notice.innerText = (currentLang === 'hi' ? '' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway');
           }
           startOtpCountdown(60);
-          showToast((currentLang === 'hi' ? '' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
+          showToast((currentLang === 'hi' ? '' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway'), 'success');
           const codeInput = document.getElementById('otpCodeInput');
           if (codeInput) {
             codeInput.value = data.debug_code || '';
             codeInput.focus();
           }
         } else if (res.status === 429) {
-          showToast(data.detail || 'Too many OTP requests. Please wait a moment before trying again.', 'warning', 'Rate Limited');
+          showToast(data.detail || 'Too many OTP requests. Please wait a moment before trying again.', 'warning');
         } else if (res.status === 502 || data.code === 'GATEWAY_ERROR') {
-          showToast(data.detail || 'Unable to dispatch SMS. Please ensure the Android SMS Gateway is running on your phone.', 'error', 'SMS Gateway Error');
+          showToast(data.detail || 'Unable to dispatch SMS. Please ensure the Android SMS Gateway is running on your phone.', 'error');
         } else {
-          showToast(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি पाठাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'), 'error', 'Dispatch Error');
+          showToast(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি पाठাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'), 'error');
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিपी পাঠান' : 'Send Verification OTP');
-        showToast('Gateway communication error. Please check your network connection.', 'error', 'Connection Error');
+        showToast('Gateway communication error. Please check your network connection.', 'error');
       }
     }
 
@@ -2307,16 +2349,16 @@
           if (phone) {
             localStorage.setItem('annasutra_phone', phone);
           }
-          showToast((currentLang === 'hi' ? 'पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? 'পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : 'Identity verified! Launching operational console...'), 'success', 'Access Granted');
+          showToast((currentLang === 'hi' ? 'पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? 'পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : 'Identity verified! Launching operational console...'), 'success');
           verifySuccess = true;
         } else {
-          showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error', 'Verification Failed');
+          showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error');
           return;
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন এবং প্রবেশ করুন' : 'Verify & Enter Console');
-        showToast('Verification service temporarily unavailable. Please check your network connection.', 'error', 'Connection Error');
+        showToast('Verification service temporarily unavailable. Please check your network connection.', 'error');
         return;
       }
 
@@ -2405,7 +2447,7 @@
             <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'Visit Agmarknet National Portal &rarr;'
+          actionText: 'Visit Agmarknet National Portal'
         },
         hi: {
           title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
@@ -2416,7 +2458,7 @@
             <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं &rarr;'
+          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं'
         },
         bn: {
           title: 'অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
@@ -2427,7 +2469,7 @@
             <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান &rarr;'
+          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান'
         }
       },
       health: {
@@ -2441,7 +2483,7 @@
             <p><strong>End-to-End Latency:</strong> Sub-50ms API response time ensures rapid QR verification at fast-paced retail checkout counters and APMC weighbridge gates.</p>
           `,
           actionLink: '/health/',
-          actionText: 'View Live /health Telemetry &rarr;'
+          actionText: 'View Live /health Telemetry'
         },
         hi: {
           title: 'सिस्टम स्वास्थ्य एवं अवसंरचना टेलीमेट्री',
@@ -2452,7 +2494,7 @@
             <p><strong>त्वरित प्रतिक्रिया:</strong> 50ms से कम प्रतिक्रिया समय खुदरा काउंटरों और मंडी वेज-ब्रिज पर त्वरित क्यूआर सत्यापन सुनिश्चित करता है।</p>
           `,
           actionLink: '/health/',
-          actionText: 'लाइव /health टेलीमेट्री देखें &rarr;'
+          actionText: 'लाइव /health टेलीमेट्री देखें'
         },
         bn: {
           title: 'সিস্টেম স্থিতি ও ক্লাউড অবকাঠামো টেলিমেট্রি',
@@ -2463,7 +2505,7 @@
             <p><strong>দ্রুত প্রতিক্রিয়া:</strong> ৫০ মিলি-সেকেন্ডের কম সময়ে উত্তর প্রদান নিশ্চিত করে চেকআউট কাউন্টারে দ্রুত কিউআর স্ক্যান সুবিধা।</p>
           `,
           actionLink: '/health/',
-          actionText: 'লাইভ /health টেলিমেট্রি দেখুন &rarr;'
+          actionText: 'লাইভ /health টেলিমেট্রি দেখুন'
         }
       },
       security: {
@@ -2540,7 +2582,7 @@
             <p><strong>Decentralized & Role-Confined:</strong> Built on append-only event records, mutual custody confirmation, and data-protection design principles aligned with Indian agricultural ecosystems.</p>
           `,
           actionLink: '#',
-          actionText: 'Platform Architecture Notice &rarr;'
+          actionText: 'Platform Architecture Notice'
         },
         hi: {
           title: 'अन्नसूत्र परियोजना वास्तुकला एवं सिद्धांत',
@@ -2551,7 +2593,7 @@
             <p><strong>भूमिका-सीमित संरचना:</strong> अपरिवर्तनीय इवेंट रिकॉर्ड, पारस्परिक कस्टडी पुष्टि और डेटा सुरक्षा सिद्धांतों पर आधारित।</p>
           `,
           actionLink: '#',
-          actionText: 'परियोजना सूचना &rarr;'
+          actionText: 'परियोजना सूचना'
         },
         bn: {
           title: 'অন্নসূত্র প্রকল্প স্থাপত্য ও রূপরেখা',
@@ -2562,7 +2604,7 @@
             <p><strong>ভূমিকা-সীমাবদ্ধ কাঠামো:</strong> অপরিবর্তনীয় ইভেন্ট রেকর্ড, পারস্পরিক হেফাজত নিশ্চিতকরণ এবং ডেটা সুরক্ষা নীতির ভিত্তিতে নির্মিত।</p>
           `,
           actionLink: '#',
-          actionText: 'প্রকল্প তথ্য &rarr;'
+          actionText: 'প্রকল্প তথ্য'
         }
       }
     };
@@ -2699,7 +2741,13 @@
             }
           } catch (e) {}
         }
-        selectQrCode('7K3Q9XMD4T2B');
+        if (statusEl) {
+          statusEl.innerText = (currentLang === 'bn' ? 'ছবিতে কোনো বৈধ কিউআর কোড পাওয়া যায়নি' : currentLang === 'hi' ? 'चित्र में कोई मान्य क्यूआर कोड नहीं मिला' : 'No valid QR code found in image');
+        }
+        showToast(
+          currentLang === 'bn' ? 'আপলোড করা ছবিতে কোনো কিউআর কোড শনাক্ত করা যায়নি।' : currentLang === 'hi' ? 'अपलोड किए गए चित्र में कोई क्यूआर कोड नहीं मिला।' : 'Could not detect a valid QR code in the uploaded image.',
+          'warning'
+        );
       };
       img.src = URL.createObjectURL(file);
     }
@@ -2736,7 +2784,7 @@
           const iconEl = document.getElementById('weatherIcon');
           const tempEl = document.getElementById('weatherTemp');
           const locEl = document.getElementById('weatherLoc');
-          if (iconEl && cached.icon) iconEl.textContent = cached.icon;
+          if (iconEl && cached.icon) { iconEl.innerHTML = window.renderUniformIcon ? window.renderUniformIcon(cached.icon, 14, '#fde047') : ''; }
           if (tempEl && cached.temp !== undefined) tempEl.textContent = Math.round(cached.temp) + '°C';
           if (locEl) locEl.textContent = cached.city + (cached.label ? ' • ' + cached.label : '');
         }
@@ -2760,8 +2808,13 @@
         if (userPill) userPill.style.display = 'inline-flex';
         const nameEl = document.getElementById('activeUserName');
         if (nameEl) {
-          const suffix = savedPhone ? '•' + savedPhone.slice(-4) : 'Active';
-          nameEl.innerText = savedRole + ' (' + suffix + ')';
+          if (window.formatEntityUserBadge) {
+            nameEl.innerText = window.formatEntityUserBadge(savedRole, savedPhone, savedLang);
+          } else {
+            const digits = String(savedPhone || '').replace(/\D/g, '');
+            const last4 = digits.length >= 4 ? digits.slice(-4) : '0000';
+            nameEl.innerText = savedRole + ' (X' + last4 + ')';
+          }
         }
       }
     });

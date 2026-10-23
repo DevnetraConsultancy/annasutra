@@ -215,8 +215,16 @@ class MyProfileView(APIView):
             if "photo_object_key" in request.data:
                 profile.photo_object_key = str(request.data["photo_object_key"]).strip()
 
+            if "role" in request.data and request.data["role"] in dict(EntityProfile.ROLE_CHOICES):
+                profile.role = request.data["role"]
+
             profile.version += 1
             profile.save()
+
+            if getattr(request.user, "org", None) and profile.organisation_name and profile.organisation_name.strip():
+                org = request.user.org
+                org.name = profile.organisation_name.strip()
+                org.save(update_fields=["name"])
 
             # Update role details if provided
             if "role_details" in request.data and isinstance(request.data["role_details"], dict):

@@ -13,7 +13,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final TextEditingController _phoneController = TextEditingController(text: '+919876543210');
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -46,7 +46,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAF7),
       appBar: AppBar(
-        title: const Text('AnnaSutra / অন্নসূত্র / अन्नसूत्र'),
+        title: const Text('AnnaSutra'),
         actions: [
           IconButton(
             icon: const Icon(Icons.shield_outlined),
@@ -130,79 +130,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    // Quick Role Demo Shortcuts
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0FDF4),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF86EFAC)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Icon(Icons.bolt, color: Color(0xFF15803D), size: 18),
-                              SizedBox(width: 6),
-                              Text(
-                                '1-Tap Rapid Access for Field Entities:',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF14532D)),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              ActionChip(
-                                label: const Text('🌾 Farmer / FPO', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-                                onPressed: () {
-                                  authNotifier.quickLoginAsEntity(
-                                    entityRole: 'FARMER',
-                                    orgName: 'Bardhaman Farmer Coop (FPO-WB-0492)',
-                                    phone: '+919876543210',
-                                  );
-                                },
-                              ),
-                              ActionChip(
-                                label: const Text('🏢 Mandi APMC', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-                                onPressed: () {
-                                  authNotifier.quickLoginAsEntity(
-                                    entityRole: 'MANDI',
-                                    orgName: 'Kolkata Central APMC Traders Ltd',
-                                    phone: '+919876543211',
-                                  );
-                                },
-                              ),
-                              ActionChip(
-                                label: const Text('❄️ Cold Storage', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-                                onPressed: () {
-                                  authNotifier.quickLoginAsEntity(
-                                    entityRole: 'COLD_STORAGE',
-                                    orgName: 'Hooghly Cold Chain Logistics Ltd',
-                                    phone: '+919876543212',
-                                  );
-                                },
-                              ),
-                              ActionChip(
-                                label: const Text('🛒 Retailer', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-                                onPressed: () {
-                                  authNotifier.quickLoginAsEntity(
-                                    entityRole: 'RETAILER',
-                                    orgName: 'Maa Durga Retail Fresh Mart',
-                                    phone: '+919876543213',
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
                     // Phone Input Field
                     TextFormField(
                       controller: _phoneController,
@@ -210,7 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       enabled: !isOtpSent && !isLoading,
                       decoration: const InputDecoration(
                         labelText: 'Registered Mobile Number (+91)',
-                        hintText: '+919876543210',
+                        hintText: 'Enter 10-digit mobile number',
                         prefixIcon: Icon(Icons.phone),
                         border: OutlineInputBorder(),
                       ),

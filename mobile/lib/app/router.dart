@@ -40,7 +40,7 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/dispatch',
         name: 'dispatch',
         builder: (context, state) {
-          final lotCode = state.uri.queryParameters['code'] ?? '7K3Q9XMD4T2B';
+          final lotCode = state.uri.queryParameters['code'] ?? '';
           return DispatchScreen(lotCode: lotCode);
         },
       ),
@@ -48,9 +48,9 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/receive',
         name: 'receive',
         builder: (context, state) {
-          final handoverId = state.uri.queryParameters['handover_id'] ?? '00000000-0000-0000-0000-000000000001';
-          final lotCode = state.uri.queryParameters['code'] ?? '7K3Q9XMD4T2B';
-          final declaredQty = double.tryParse(state.uri.queryParameters['qty'] ?? '500.0') ?? 500.0;
+          final handoverId = state.uri.queryParameters['handover_id'] ?? '';
+          final lotCode = state.uri.queryParameters['code'] ?? '';
+          final declaredQty = double.tryParse(state.uri.queryParameters['qty'] ?? '0.0') ?? 0.0;
           return ReceiveScreen(handoverId: handoverId, lotCode: lotCode, declaredQtyKg: declaredQty);
         },
       ),
@@ -58,8 +58,8 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/split',
         name: 'split',
         builder: (context, state) {
-          final lotCode = state.uri.queryParameters['code'] ?? '7K3Q9XMD4T2B';
-          final onHand = double.tryParse(state.uri.queryParameters['qty'] ?? '100.0') ?? 100.0;
+          final lotCode = state.uri.queryParameters['code'] ?? '';
+          final onHand = double.tryParse(state.uri.queryParameters['qty'] ?? '0.0') ?? 0.0;
           return SplitScreen(lotCode: lotCode, onHandKg: onHand);
         },
       ),
@@ -67,8 +67,8 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/waste',
         name: 'waste',
         builder: (context, state) {
-          final lotCode = state.uri.queryParameters['code'] ?? '7K3Q9XMD4T2B';
-          final onHand = double.tryParse(state.uri.queryParameters['qty'] ?? '100.0') ?? 100.0;
+          final lotCode = state.uri.queryParameters['code'] ?? '';
+          final onHand = double.tryParse(state.uri.queryParameters['qty'] ?? '0.0') ?? 0.0;
           return WasteScreen(lotCode: lotCode, onHandKg: onHand);
         },
       ),
@@ -76,8 +76,8 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/sale',
         name: 'sale',
         builder: (context, state) {
-          final lotCode = state.uri.queryParameters['code'] ?? '7K3Q9XMD4T2B';
-          final onHand = double.tryParse(state.uri.queryParameters['qty'] ?? '100.0') ?? 100.0;
+          final lotCode = state.uri.queryParameters['code'] ?? '';
+          final onHand = double.tryParse(state.uri.queryParameters['qty'] ?? '0.0') ?? 0.0;
           return SaleScreen(lotCode: lotCode, onHandKg: onHand);
         },
       ),
@@ -85,7 +85,7 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/inspection',
         name: 'inspection',
         builder: (context, state) {
-          final lotCode = state.uri.queryParameters['code'] ?? '7K3Q9XMD4T2B';
+          final lotCode = state.uri.queryParameters['code'] ?? '';
           return InspectionScreen(lotCode: lotCode);
         },
       ),

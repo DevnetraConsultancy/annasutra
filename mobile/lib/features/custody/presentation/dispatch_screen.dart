@@ -95,7 +95,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dispatch Batch / প্রেরণ করুন'),
+        title: const Text('Dispatch Batch'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -124,7 +124,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
               TextFormField(
                 controller: _toOrgController,
                 decoration: const InputDecoration(
-                  labelText: 'Receiver Organisation ID / প্রাপক সংস্থা',
+                  labelText: 'Receiver Organisation ID',
                   hintText: 'Enter partner UUID or select partner',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.business),
@@ -141,7 +141,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
                 controller: _qtyController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  labelText: 'Quantity to Dispatch (kg) / পরিমাণ (কেজি)',
+                  labelText: 'Quantity to Dispatch (kg)',
                   hintText: 'e.g. 500.0',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.scale),
@@ -162,7 +162,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
                 controller: _cratesController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Crates Count / ক্রেটের সংখ্যা (Optional)',
+                  labelText: 'Crates Count (Optional)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.inbox),
                 ),
@@ -171,7 +171,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
               TextFormField(
                 controller: _vehicleController,
                 decoration: const InputDecoration(
-                  labelText: 'Vehicle Number / গাড়ির নম্বর (Optional)',
+                  labelText: 'Vehicle Number (Optional)',
                   hintText: 'e.g. WB-02-AB-1234',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.local_shipping),
@@ -181,7 +181,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
               TextFormField(
                 controller: _destinationController,
                 decoration: const InputDecoration(
-                  labelText: 'Destination / গন্তব্য (Optional)',
+                  labelText: 'Destination (Optional)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.location_on),
                 ),
@@ -197,7 +197,7 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
                       )
                     : const Icon(Icons.send),
                 label: Text(
-                  _isSubmitting ? 'Signing & Dispatching...' : 'Sign & Dispatch / প্রেরণ করুন',
+                  _isSubmitting ? 'Signing & Dispatching...' : 'Sign & Dispatch',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(

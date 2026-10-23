@@ -24,7 +24,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
   final _formKey = GlobalKey<FormState>();
   String _selectedGrade = 'Grade A';
   double _defectPct = 2.0;
-  final _tempController = TextEditingController(text: '18.0');
+  final _tempController = TextEditingController();
   final _notesController = TextEditingController();
   bool _photoAttached = false;
   bool _isSubmitting = false;
@@ -99,7 +99,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inspect Quality / গুণমান পরীক্ষা'),
+        title: const Text('Inspect Quality'),
       ),
       body: SafeArea(
         child: Form(
@@ -120,7 +120,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
               DropdownButtonFormField<String>(
                 value: _selectedGrade,
                 decoration: const InputDecoration(
-                  labelText: 'Quality Grade / গ্রেড',
+                  labelText: 'Quality Grade',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.verified),
                 ),
@@ -153,7 +153,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
                 controller: _tempController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  labelText: 'Storage Temperature (°C) / তাপমাত্রা',
+                  labelText: 'Storage Temperature (°C)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.thermostat),
                 ),
@@ -163,7 +163,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
                 controller: _notesController,
                 maxLines: 2,
                 decoration: const InputDecoration(
-                  labelText: 'Inspection Notes / বিবরণ',
+                  labelText: 'Inspection Notes',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.note),
                 ),
@@ -172,7 +172,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
               OutlinedButton.icon(
                 icon: Icon(_photoAttached ? Icons.check_circle : Icons.camera_alt,
                     color: _photoAttached ? Colors.green : null),
-                label: Text(_photoAttached ? 'Evidence Attached / প্রমাণ যুক্ত' : 'Upload Photo Evidence / ছবি আপলোড'),
+                label: Text(_photoAttached ? 'Evidence Attached' : 'Upload Photo Evidence'),
                 onPressed: () {
                   setState(() => _photoAttached = !_photoAttached);
                 },
@@ -187,7 +187,7 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
                 onPressed: _isSubmitting ? null : _submitInspection,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Inspect Quality / গুণমান পরীক্ষা'),
+                    : const Text('Inspect Quality'),
               ),
             ],
           ),

@@ -146,7 +146,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Split Batch / লট ভাগ করুন'),
+        title: const Text('Split Batch'),
       ),
       body: SafeArea(
         child: Form(
@@ -240,7 +240,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
               }),
               OutlinedButton.icon(
                 icon: const Icon(Icons.add),
-                label: const Text('Add Child Lot / নতুন উপ-লট যোগ করুন'),
+                label: const Text('Add Child Lot'),
                 onPressed: _addChild,
               ),
               const SizedBox(height: 24),
@@ -253,7 +253,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                 onPressed: _isSubmitting ? null : _submitSplit,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Split Lot / লট ভাগ করুন'),
+                    : const Text('Split Lot'),
               ),
             ],
           ),

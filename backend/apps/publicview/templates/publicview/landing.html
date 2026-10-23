@@ -2159,7 +2159,7 @@
           name="code" 
           id="navLotInput" 
           class="nav-search-input" 
-          placeholder="Lot (e.g. 7K3Q9XMD4T2B)" 
+          placeholder="Enter 12-Character Lot Code" 
           autocomplete="off" 
           required 
         />
@@ -2230,7 +2230,7 @@
         <span id="tickerTitle">LIVE CUSTODY TICKER</span>
       </span>
       <span class="ledger-ticker-stream" id="tickerStream">
-        [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
+        [00:14:02 IST] Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #LOT-VERIFIED-01) • Hash: 0x9e8a...3f12 • Custody transferred to Aggregator
       </span>
     </div>
   </div>
@@ -2703,7 +2703,7 @@
             <span id="previewRoleIcon" style="display:inline-flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></span>
             <div>
               <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
-              <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Bardhaman Organic Farmers Producer Co-op • Cluster Farm Yard #4</div>
+              <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Tier 1 • Primary Agricultural Producer Node</div>
             </div>
           </div>
           <span class="preview-org-badge" id="previewBadgeText">SIMULATED LIVE NODE</span>
@@ -2732,7 +2732,7 @@
             Want to operate this console live? Click below to access the role workspace.
           </span>
           <button type="button" class="btn-preview-launch" id="btnPreviewLaunch" onclick="launchFromPreview()">
-            <span id="btnPreviewLaunchText">Sign In as Producer &rarr;</span>
+            <span id="btnPreviewLaunchText">Sign In as Producer</span>
           </button>
         </div>
       </div>
@@ -2748,9 +2748,9 @@
     <div class="confined-workspace" id="confinedWorkspace" style="display: none;">
       <div class="confined-banner">
         <div class="confined-badge">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span id="confinedBadgeText">ROLE CONFINED: Operating strictly within authorized domain.</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span id="confinedBadgeText">Registered Entity</span>
         </div>
-        <button class="btn-logout" onclick="logoutEntity()" id="btnLogout">Log Out / Switch Entity</button>
+        <button class="btn-logout" onclick="logoutEntity()" id="btnLogout">Log Out</button>
       </div>
 
       <div class="workspace-header">
@@ -2927,6 +2927,12 @@
               </button>
             </li>
             <li>
+              <button type="button" onclick="selectRoleFromPortal('ADMIN')">
+                <span class="ataraxis-link-arrow">›</span>
+                <span id="footerLinkAdmin">Admin Verification Portal</span>
+              </button>
+            </li>
+            <li>
               <button type="button" onclick="document.getElementById('entityDashPreviewWrap').scrollIntoView({behavior: 'smooth'})">
                 <span class="ataraxis-link-arrow">›</span>
                 <span id="footerLinkSim">Entity Dashboard Simulator</span>
@@ -3027,7 +3033,7 @@
               <option value="+977">+977</option>
             </select>
           </div>
-          <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="Mobile number (e.g. 8444997803)" maxlength="15" />
+          <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="10-Digit Mobile Number" maxlength="15" />
         </div>
         <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
           Send Verification OTP
@@ -3095,7 +3101,7 @@
               <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill1A">Farm Genesis</span>
               <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill1B">Crate QR Labels</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer</button>
           </div>
 
           <!-- 2. Aggregator -->
@@ -3117,7 +3123,7 @@
               <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2A">Weighbridge Attest</span>
               <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2B">Agmarknet Grade</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator</button>
           </div>
 
           <!-- 3. Wholesaler -->
@@ -3140,7 +3146,7 @@
               <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill3A">Mass-Balance Split</span>
               <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill3B">Cold Bay Control</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler</button>
           </div>
 
           <!-- 4. Distributor -->
@@ -3165,7 +3171,7 @@
               <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill4A">GPS Geofence</span>
               <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill4B">Reefer Telemetry</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor</button>
           </div>
 
           <!-- 5. Retailer -->
@@ -3189,7 +3195,30 @@
               <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill5A">Shelf QR Standee</span>
               <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill5B">POS Deduct</span>
             </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer &rarr;</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer</button>
+          </div>
+
+          <!-- 6. Admin / Verifier -->
+          <div class="portal-card-item tier-admin" onclick="selectRoleFromPortal('ADMIN')" style="border-color: #cbd5e1; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
+            <div class="portal-card-top">
+              <div class="portal-card-avatar" style="background: #0f172a; color: #fde047;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <span class="portal-tier-badge" style="background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;" id="portalTierBadgeAdmin">Governance • KYC</span>
+            </div>
+            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAdmin">Admin / Verifier</strong>
+            <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="portalRoleSubAdmin">Entity Verification &amp; Audit Authority</div>
+            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAdmin">
+              Inspect pending producer &amp; entity registrations, audit DPDP encrypted credentials, and approve or reject nodes with QR allocation.
+            </p>
+            <div class="pillar-pills" style="margin-bottom: 14px;">
+              <span style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPillAdminA">KYC Verification</span>
+              <span style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPillAdminB">QR Allocation</span>
+            </div>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #0f172a; color: #ffffff;" id="btnPortalAdmin">Sign In as Admin</button>
           </div>
         </div>
 
@@ -3242,13 +3271,7 @@
         </label>
       </div>
 
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; text-align: center;">
-        <span style="font-size: 11.5px; font-weight: 700; color: #64748b;" id="qrSampleCodesLabel">Or test with verified lots:</span>
-        <div style="display: flex; justify-content: center; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
-          <span class="chip-code" onclick="selectQrCode('7K3Q9XMD4T2B')">7K3Q9XMD4T2B</span>
-          <span class="chip-code" onclick="selectQrCode('AS-TOM-2026-X1')">AS-TOM-2026-X1</span>
-        </div>
-      </div>
+
     </div>
   </div>
 
@@ -3331,7 +3354,7 @@
 
       <div class="help-section-card">
         <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
-        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code (e.g. 7K3Q9XMD4T2B) into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
+        <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and Agmarknet grade.</p>
       </div>
 
       <div class="help-section-card">
@@ -3361,7 +3384,7 @@
       en: {
         navSearchText: "Verify Lot",
         navVerifyText: "Verify",
-        navLotPlaceholder: "Lot (e.g. 7K3Q9XMD4T2B)",
+        navLotPlaceholder: "Enter 12-Character Lot Code",
         navLoginText: "Log In",
         heroHeadline: "From Soil to Shelf, Every Grain Accounted For.",
         heroTagline: "India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.",
@@ -3418,7 +3441,7 @@
         dpdpNoticeP1: "AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.",
         dpdpGrievanceLabel: "Grievance Redressal Officer:",
         btnDpdpClose: "I Understand & Continue",
-        btnLogout: "Log Out / Switch Entity",
+        btnLogout: "Log Out",
         tickerTitle: "LIVE CUSTODY TICKER",
         statProduceKgLabel: "Kg Produce Tracked",
         statFarmersLabel: "Registered Farmers",
@@ -3452,23 +3475,23 @@
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO / Cultivator",
         portalRoleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
-        btnPortalProducer: "Sign In as Producer &rarr;",
+        btnPortalProducer: "Sign In as Producer",
         portalRoleTitleAggregator: "Aggregator",
         portalRoleSubAggregator: "Mandi Arhatiya / APMC Yard",
         portalRoleDescAggregator: "Receive consignments, record weight, inspect Agmarknet quality grade, and dispatch to Wholesaler.",
-        btnPortalAggregator: "Sign In as Aggregator &rarr;",
+        btnPortalAggregator: "Sign In as Aggregator",
         portalRoleTitleWholesaler: "Wholesaler",
         portalRoleSubWholesaler: "Terminal Market / Bulk Trader",
         portalRoleDescWholesaler: "Terminal intake, split bulk lots into trading consignments, and allocate cold storage.",
-        btnPortalWholesaler: "Sign In as Wholesaler &rarr;",
+        btnPortalWholesaler: "Sign In as Wholesaler",
         portalRoleTitleDistributor: "Distributor",
         portalRoleSubDistributor: "Logistics Fleet & Secondary Depot",
         portalRoleDescDistributor: "Accept transport custody, log vehicle GPS & cold-chain temperatures, and deliver to retailers.",
-        btnPortalDistributor: "Sign In as Distributor &rarr;",
+        btnPortalDistributor: "Sign In as Distributor",
         portalRoleTitleRetailer: "Retailer",
         portalRoleSubRetailer: "Kirana / Supermarket / POS",
         portalRoleDescRetailer: "Inbound store receipt, generate customer shelf QR codes, and record retail checkout sales.",
-        btnPortalRetailer: "Sign In as Retailer &rarr;",
+        btnPortalRetailer: "Sign In as Retailer",
         qrModalTitle: "Instant QR Code Scanner",
         qrModalSubtitle: "Point your device camera at any produce crate QR tag or upload an image.",
         btnSwitchCameraText: "Toggle Camera",
@@ -3479,7 +3502,7 @@
       hi: {
         navSearchText: "लॉट जांचें",
         navVerifyText: "जांचें",
-        navLotPlaceholder: "लॉट (उदा. 7K3Q9XMD4T2B)",
+        navLotPlaceholder: "12-अक्षरों का लॉट कोड दर्ज करें",
         navLoginText: "लॉग इन",
         heroHeadline: "खेत से थाली तक, हर दाने का हिसाब।",
         heroTagline: "भारत का एकीकृत कृषि उत्पाद कस्टडी प्लेटफॉर्म जो किसानों के सशक्तिकरण और पारदर्शी आपूर्ति-श्रृंखला की गारंटी देता है।",
@@ -3536,7 +3559,7 @@
         dpdpNoticeP1: "अन्नसूत्र केवल खाद्य सुरक्षा और ट्रैसेबिलिटी के लिए आवश्यक आपूर्ति-श्रृंखला घटना रिकॉर्ड एकत्र करता है। किसान की व्यक्तिगत पहचान, सटीक जीपीएस निर्देशांक और कीमतें कभी भी सार्वजनिक नहीं की जाती हैं।",
         dpdpGrievanceLabel: "शिकायत निवारण अधिकारी:",
         btnDpdpClose: "मैं समझ गया और आगे बढ़ें",
-        btnLogout: "लॉग आउट / संस्था बदलें",
+        btnLogout: "लॉग आउट",
         tickerTitle: "लाइव कस्टडी टिकर",
         statProduceKgLabel: "ट्रैक किया गया उत्पाद (किग्रा)",
         statFarmersLabel: "पंजीकृत किसान",
@@ -3570,23 +3593,23 @@
         portalRoleTitleProducer: "उत्पादक",
         portalRoleSubProducer: "किसान / एफपीओ / उत्पादक",
         portalRoleDescProducer: "फसल लॉट बनाएं, क्रेट टैग जारी करें और मंडी को प्रेषित करें।",
-        btnPortalProducer: "उत्पादक के रूप में साइन इन &rarr;",
+        btnPortalProducer: "उत्पादक के रूप में साइन इन",
         portalRoleTitleAggregator: "संग्रहकर्ता",
         portalRoleSubAggregator: "मंडी आढ़ती / एपीएमसी यार्ड",
         portalRoleDescAggregator: "खेत से आवक प्राप्त करें, वजन जांचें, एगमार्कनेट ग्रेड दें और थोक व्यापारी को भेजें।",
-        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन &rarr;",
+        btnPortalAggregator: "संग्रहकर्ता के रूप में साइन इन",
         portalRoleTitleWholesaler: "थोक व्यापारी",
         portalRoleSubWholesaler: "टर्मिनल बाजार / थोक व्यापारी",
         portalRoleDescWholesaler: "टर्मिनल आवक, व्यापारिक लॉट विभाजन, शीत गृह आवंटन और वितरकों को प्रेषण।",
-        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन &rarr;",
+        btnPortalWholesaler: "थोक व्यापारी के रूप में साइन इन",
         portalRoleTitleDistributor: "वितरक",
         portalRoleSubDistributor: "लॉजिस्टिक्स फ्लीट / द्वितीयक डिपो",
         portalRoleDescDistributor: "परिवहन कस्टडी स्वीकार करें, जीपीएस व तापमान दर्ज करें और खुदरा दुकानों तक पहुंचाएं।",
-        btnPortalDistributor: "वितरक के रूप में साइन इन &rarr;",
+        btnPortalDistributor: "वितरक के रूप में साइन इन",
         portalRoleTitleRetailer: "खुदरा विक्रेता",
         portalRoleSubRetailer: "किराना / सुपरमार्केट / पीओएस",
         portalRoleDescRetailer: "दुकान आवक रसीद, ग्राहकों के लिए शेल्फ क्यूआर स्टैंडी और बिक्री दर्ज करें।",
-        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन &rarr;",
+        btnPortalRetailer: "खुदरा विक्रेता के रूप में साइन इन",
         qrModalTitle: "त्वरित क्यूआर कोड स्कैनर",
         qrModalSubtitle: "क्रेट क्यूआर टैग पर अपना कैमरा केंद्रित करें अथवा चित्र अपलोड करें।",
         btnSwitchCameraText: "कैमरा बदलें",
@@ -3597,7 +3620,7 @@
       bn: {
         navSearchText: "লট যাচাই",
         navVerifyText: "যাচাই",
-        navLotPlaceholder: "লট (যেমন 7K3Q9XMD4T2B)",
+        navLotPlaceholder: "১২-অক্ষরের লট কোড লিখুন",
         navLoginText: "লগ ইন",
         heroHeadline: "মাটি থেকে থালা, প্রতিটি শস্যের হিসাব।",
         heroTagline: "ভারতের সমন্বিত কৃষি পণ্য ক্রিপ্টোগ্রাফিক হেফাজত প্ল্যাটফর্ম যা স্বচ্ছ ও প্রামাণিক সরবরাহ শৃঙ্খল নিশ্চিত করে।",
@@ -3654,7 +3677,7 @@
         dpdpNoticeP1: "অন্নসূত্র শুধুমাত্র খাদ্য নিরাপত্তা ও ট্রেসেবিলিটির জন্য প্রয়োজনীয় সরবরাহ-শৃঙ্খল ইভেন্ট রেকর্ড সংগ্রহ করে। কৃষকের ব্যক্তিগত পরিচয়, খামারের সঠিক জিপিএস স্থানাঙ্ক এবং বাণিজ্যিক লেনদেনের মূল্য কখনও জনসমক্ষে প্রকাশ করা হয় না।",
         dpdpGrievanceLabel: "অভিযোগ নিষ্পত্তি আধিকারিক:",
         btnDpdpClose: "আমি বুঝতে পেরেছি ও এগিয়ে যান",
-        btnLogout: "লগ আউট / সংস্থা পরিবর্তন করুন",
+        btnLogout: "লগ আউট",
         tickerTitle: "লাইভ হেফাজত টিকার",
         statProduceKgLabel: "ট্র্যাককৃত পণ্য (কেজি)",
         statFarmersLabel: "নিবন্ধিত কৃষক",
@@ -3688,23 +3711,23 @@
         portalRoleTitleProducer: "উৎপাদক",
         portalRoleSubProducer: "কৃষক / সমবায় / চাষী",
         portalRoleDescProducer: "ফসল লট নথিভুক্ত করুন, কিউআর ট্যাগ ইস্যু করুন এবং মণ্ডিতে পাঠান।",
-        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন &rarr;",
+        btnPortalProducer: "উৎপাদক হিসেবে সাইন ইন",
         portalRoleTitleAggregator: "সংগ্রহকারী",
         portalRoleSubAggregator: "মণ্ডি আড়তদার / এপিএমসি ইয়ার্ড",
         portalRoleDescAggregator: "খামার থেকে পণ্য গ্রহণ, ওজন রেকর্ড ও পাইকারি বিক্রেতার নিকট প্রেরণ।",
-        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন &rarr;",
+        btnPortalAggregator: "সংগ্রহকারী হিসেবে সাইন ইন",
         portalRoleTitleWholesaler: "পাইকারি বিক্রেতা",
         portalRoleSubWholesaler: "টার্মিনাল মার্কেট / পাইকারি ব্যবসায়ী",
         portalRoleDescWholesaler: "টার্মিনাল চালান গ্রহণ, লট বিভাজন ও পরিবেশকের নিকট প্রেরণ।",
-        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন &rarr;",
+        btnPortalWholesaler: "পাইকারি বিক্রেতা হিসেবে সাইন ইন",
         portalRoleTitleDistributor: "পরিবেশক",
         portalRoleSubDistributor: "লজিস্টিকস ফ্লিট / দ্বিতীয় ডিপো",
         portalRoleDescDistributor: "পরিবহন হেফাজত গ্রহণ, তাপমাত্রা ট্র্যাকিং ও দোকানে চালান সরবরাহ।",
-        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন &rarr;",
+        btnPortalDistributor: "পরিবেশক হিসেবে সাইন ইন",
         portalRoleTitleRetailer: "খুচরা বিক্রেতা",
         portalRoleSubRetailer: "মুদি দোকান / সুপারমার্কেট / পিওএস",
         portalRoleDescRetailer: "দোকানে চালান গ্রহণ, কাউন্টার কিউআর স্ট্যান্ডি ও চূড়ান্ত বিক্রয় নথিভুক্ত।",
-        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন &rarr;",
+        btnPortalRetailer: "খুচরা বিক্রেতা হিসেবে সাইন ইন",
         qrModalTitle: "তাত্ক্ষণিক কিউআর কোড স্ক্যানার",
         qrModalSubtitle: "ক্রেট কিউআর ট্যাগে আপনার ক্যামেরা রাখুন অথবা ছবি আপলোড করুন।",
         btnSwitchCameraText: "ক্যামেরা পরিবর্তন",
@@ -3722,7 +3745,7 @@
           station: 'Cluster Farm Yard #4, Bardhaman',
           lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [PRODUCER] boundary.',
           batchHeading: 'Active Batches in Custody:',
-          executeBtn: 'Execute Action &rarr;',
+          executeBtn: 'Execute Action',
           tools: [
             {
               id: 'harvestLot',
@@ -3744,7 +3767,7 @@
               tag: 'Serialization',
               desc: 'Print serialized tamper-evident QR code labels for harvest transport crates.',
               fields: [
-                { name: 'lotCode', label: 'Active Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'Active Lot Code', type: 'text', value: '' },
                 { name: 'crateSize', label: 'Crate Weight Capacity (Kg)', type: 'number', value: '25.0' },
                 { name: 'crateCount', label: 'Number of Crate Labels', type: 'number', value: '30' }
               ]
@@ -3799,8 +3822,8 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 kg • Harvested at Cluster Yard #4', status: 'In Farm Custody' },
-            { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) • 1,200.0 kg • Packed in 24 crates', status: 'Ready for Mandi Dispatch' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 kg • Harvested at Cluster Yard #4', status: 'In Farm Custody' },
+            { code: 'LOT-VERIFIED-02', desc: 'Potato (Jyoti) • 1,200.0 kg • Packed in 24 crates', status: 'Ready for Mandi Dispatch' },
             { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) • 320.0 kg • Graded Farm Stock', status: 'Quality Inspected' }
           ]
         },
@@ -3810,7 +3833,7 @@
           station: 'Gate #2 Weighment & Grading Complex',
           lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [AGGREGATOR] boundary.',
           batchHeading: 'Active Consignments in Custody:',
-          executeBtn: 'Execute Action &rarr;',
+          executeBtn: 'Execute Action',
           tools: [
             {
               id: 'acceptHandover',
@@ -3819,7 +3842,7 @@
               tag: 'Mandi Inward',
               desc: 'Scan farmer crate QR code, verify vehicle gate pass and sign mutual custody receipt.',
               fields: [
-                { name: 'lotCode', label: 'Farmer Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'Farmer Lot Code', type: 'text', value: '' },
                 { name: 'consignor', label: 'Consignor FPO Name', type: 'text', value: 'Bardhaman Farmer Producer Co.' },
                 { name: 'condition', label: 'Arrival Crates Condition', type: 'text', value: 'Sound / Undamaged (30 Crates)' }
               ]
@@ -3856,7 +3879,7 @@
               tag: 'Mass-Balance DAG',
               desc: 'Subdivide bulk farmer consignments into commercial auction lots preserving cryptographic parent links.',
               fields: [
-                { name: 'parentLot', label: 'Parent Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'parentLot', label: 'Parent Lot Code', type: 'text', value: '' },
                 { name: 'subLotA', label: 'Sub-Lot A Allocation (Kg)', type: 'number', value: '300.0' },
                 { name: 'subLotB', label: 'Sub-Lot B Allocation (Kg)', type: 'number', value: '200.0' }
               ]
@@ -3887,7 +3910,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Grade A) • 500.0 kg • Auction clearance granted', status: 'In Mandi Custody' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Grade A) • 500.0 kg • Auction clearance granted', status: 'In Mandi Custody' },
             { code: 'HGH-LOT-9921-A', desc: 'Potato (Jyoti Grade A) • 700.0 kg • Weighbridge certified', status: 'Auction Cleared' },
             { code: 'HGH-LOT-9921-B', desc: 'Potato (Jyoti Grade B) • 500.0 kg • Sub-lot dispatch ready', status: 'Ready for Wholesaler' }
           ]
@@ -3898,7 +3921,7 @@
           station: 'Posta Terminal Complex, Kolkata',
           lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [WHOLESALER] boundary.',
           batchHeading: 'Active Terminal Inventories:',
-          executeBtn: 'Execute Action &rarr;',
+          executeBtn: 'Execute Action',
           tools: [
             {
               id: 'terminalInward',
@@ -3974,7 +3997,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid) • 500.0 kg • Stored in Cold Bay #3', status: 'In Cold Storage' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid) • 500.0 kg • Stored in Cold Bay #3', status: 'In Cold Storage' },
             { code: 'CCW-PLT-4401', desc: 'Onion (Nasik Red) • 1,800.0 kg • Pallet G-02', status: 'Terminal Stock' },
             { code: 'CCW-PLT-4402', desc: 'Green Chilli • 250.0 kg • AC Chamber #1', status: 'Ready for Dispatch' }
           ]
@@ -3985,7 +4008,7 @@
           station: 'Central Transit Depot, New Town, Kolkata',
           lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [DISTRIBUTOR] boundary.',
           batchHeading: 'Active Transit Consignments:',
-          executeBtn: 'Execute Action &rarr;',
+          executeBtn: 'Execute Action',
           tools: [
             {
               id: 'acceptLogistics',
@@ -4061,7 +4084,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 kg • Reefer Truck WB-19-AX-4402', status: 'In Transit (Kolkata Route)' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 kg • Reefer Truck WB-19-AX-4402', status: 'In Transit (Kolkata Route)' },
             { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 kg • En route to New Town Retail Depot', status: 'In Transit' },
             { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) • 450.0 kg • Cold-chain verified', status: 'Arrival at Depot' }
           ]
@@ -4072,7 +4095,7 @@
           station: 'Main Store Produce Aisle, Lake Gardens, Kolkata',
           lockedBadge: 'ROLE CONFINED: Operating strictly within authorized [RETAILER] boundary.',
           batchHeading: 'Active Shelf Batches on Sale:',
-          executeBtn: 'Execute Action &rarr;',
+          executeBtn: 'Execute Action',
           tools: [
             {
               id: 'storeReceipt',
@@ -4093,7 +4116,7 @@
               tag: 'Consumer Trace',
               desc: 'Print customer-facing QR cards and price standees enabling consumer smartphone verification.',
               fields: [
-                { name: 'lotCode', label: 'Active Retail Lot Code', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'Active Retail Lot Code', type: 'text', value: '' },
                 { name: 'shelfBay', label: 'Store Shelf Display Bay', type: 'text', value: 'Organic Veg Rack #3' },
                 { name: 'retailPrice', label: 'Retail Price (₹ / Kg)', type: 'number', value: '42.0' }
               ]
@@ -4129,7 +4152,7 @@
               tag: 'Provenance Audit',
               desc: 'Audit packages on the retail floor to display full farm-to-shelf cryptographic timeline.',
               fields: [
-                { name: 'auditCode', label: 'Shelf Lot Code Under Audit', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'auditCode', label: 'Shelf Lot Code Under Audit', type: 'text', value: '' },
                 { name: 'verificationResult', label: 'Cryptographic Chain Status', type: 'text', value: '100% UNBROKEN (Genesis to Retail)' },
                 { name: 'provenanceOrigin', label: 'Attested Farm Origin', type: 'text', value: 'Bardhaman Organic FPO Cluster A-4' }
               ]
@@ -4148,7 +4171,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • On Shelf: 120.0 kg • Grade A Organic', status: 'Active on Retail Shelf' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • On Shelf: 120.0 kg • Grade A Organic', status: 'Active on Retail Shelf' },
             { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • On Shelf: 80.0 kg • 24 Verified Customer Scans', status: 'Active on Retail Shelf' },
             { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) • On Shelf: 45.0 kg • Premium Crisp Grade', status: 'Active on Retail Shelf' }
           ]
@@ -4161,7 +4184,7 @@
           station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
           lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [PRODUCER] कार्यक्षेत्र में संचालन।',
           batchHeading: 'कस्टडी में सक्रिय बैच:',
-          executeBtn: 'कार्य निष्पादित करें &rarr;',
+          executeBtn: 'कार्य निष्पादित करें',
           tools: [
             {
               id: 'harvestLot',
@@ -4183,7 +4206,7 @@
               tag: 'क्रमांकन',
               desc: 'परिवहन क्रेटों के लिए सुरक्षित क्यूआर कोड लेबल प्रिंट करें।',
               fields: [
-                { name: 'lotCode', label: 'सक्रिय लॉट कोड', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'सक्रिय लॉट कोड', type: 'text', value: '' },
                 { name: 'crateSize', label: 'क्रेट क्षमता (किग्रा)', type: 'number', value: '25.0' },
                 { name: 'crateCount', label: 'क्रेट लेबल संख्या', type: 'number', value: '30' }
               ]
@@ -4238,8 +4261,8 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • क्लस्टर यार्ड #4 में उत्पादित', status: 'खेत कस्टडी में' },
-            { code: 'AS-TOM-2026-X1', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट में पैक', status: 'मंडी प्रेषण हेतु तैयार' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • क्लस्टर यार्ड #4 में उत्पादित', status: 'खेत कस्टडी में' },
+            { code: 'LOT-VERIFIED-02', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट में पैक', status: 'मंडी प्रेषण हेतु तैयार' },
             { code: 'WB-FPO-RABI-04', desc: 'फूलगोभी (स्नोबॉल) • 320.0 किग्रा • ग्रेडेड फार्म स्टॉक', status: 'गुणवत्ता सत्यापित' }
           ]
         },
@@ -4249,7 +4272,7 @@
           station: 'गेट #2 वजन एवं ग्रेडिंग परिसर',
           lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [AGGREGATOR] कार्यक्षेत्र में संचालन।',
           batchHeading: 'कस्टडी में सक्रिय आवक लॉट:',
-          executeBtn: 'कार्य निष्पादित करें &rarr;',
+          executeBtn: 'कार्य निष्पादित करें',
           tools: [
             {
               id: 'acceptHandover',
@@ -4258,7 +4281,7 @@
               tag: 'मंडी आवक',
               desc: 'किसान क्रेट क्यूआर स्कैन करें, वाहन गेट पास सत्यापित करें और कस्टडी रसीद पर हस्ताक्षर करें।',
               fields: [
-                { name: 'lotCode', label: 'किसान लॉट कोड', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'किसान लॉट कोड', type: 'text', value: '' },
                 { name: 'consignor', label: 'प्रेषक एफपीओ नाम', type: 'text', value: 'बर्धमान फार्मर प्रोड्यूसर कं.' },
                 { name: 'condition', label: 'आगमन क्रेट स्थिति', type: 'text', value: 'उत्कृष्ट / अक्षुण्ण (30 क्रेट)' }
               ]
@@ -4295,7 +4318,7 @@
               tag: 'द्रव्यमान-संतुलन डीएजी',
               desc: 'मूल लॉट लिंक सुरक्षित रखते हुए नीलामी के लिए खेप को उप-लॉट्स में विभाजित करें।',
               fields: [
-                { name: 'parentLot', label: 'मूल लॉट कोड', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'parentLot', label: 'मूल लॉट कोड', type: 'text', value: '' },
                 { name: 'subLotA', label: 'उप-लॉट ए आवंटन (किग्रा)', type: 'number', value: '300.0' },
                 { name: 'subLotB', label: 'उप-लॉट बी आवंटन (किग्रा)', type: 'number', value: '200.0' }
               ]
@@ -4326,7 +4349,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • नीलामी निकासी स्वीकृत', status: 'मंडी कस्टडी में' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • नीलामी निकासी स्वीकृत', status: 'मंडी कस्टडी में' },
             { code: 'HGH-LOT-9921-A', desc: 'आलू (ज्योति ग्रेड ए) • 700.0 किग्रा • वजन सत्यापित', status: 'नीलामी संपन्न' },
             { code: 'HGH-LOT-9921-B', desc: 'आलू (ज्योति ग्रेड बी) • 500.0 किग्रा • प्रेषण तैयार', status: 'थोक व्यापारी हेतु तैयार' }
           ]
@@ -4337,7 +4360,7 @@
           station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
           lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [WHOLESALER] कार्यक्षेत्र में संचालन।',
           batchHeading: 'सक्रिय टर्मिनल इन्वेंटरी:',
-          executeBtn: 'कार्य निष्पादित करें &rarr;',
+          executeBtn: 'कार्य निष्पादित करें',
           tools: [
             {
               id: 'terminalInward',
@@ -4413,7 +4436,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बे #3 में सुरक्षित', status: 'शीत गृह में सुरक्षित' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बे #3 में सुरक्षित', status: 'शीत गृह में सुरक्षित' },
             { code: 'CCW-PLT-4401', desc: 'प्याज (नासिक लाल) • 1,800.0 किग्रा • पैलेट जी-02', status: 'टर्मिनल स्टॉक' },
             { code: 'CCW-PLT-4402', desc: 'हरी मिर्च • 250.0 किग्रा • एसी कक्ष #1', status: 'प्रेषण तैयार' }
           ]
@@ -4424,7 +4447,7 @@
           station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
           lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [DISTRIBUTOR] कार्यक्षेत्र में संचालन।',
           batchHeading: 'पारगमन में सक्रिय खेप:',
-          executeBtn: 'कार्य निष्पादित करें &rarr;',
+          executeBtn: 'कार्य निष्पादित करें',
           tools: [
             {
               id: 'acceptLogistics',
@@ -4500,7 +4523,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ट्रक WB-19-AX-4402', status: 'पारगमन में (कोलकाता मार्ग)' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ट्रक WB-19-AX-4402', status: 'पारगमन में (कोलकाता मार्ग)' },
             { code: '6R3T8PLM2K9V', desc: 'सेब (किन्नौर) • 300.0 किग्रा • न्यू टाउन डिपो मार्ग पर', status: 'पारगमन में' },
             { code: 'DIST-VEG-4401', desc: 'हरी मटर (ताजा) • 450.0 किग्रा • कोल्ड-चेन सत्यापित', status: 'डिपो पर आगमन' }
           ]
@@ -4511,7 +4534,7 @@
           station: 'मुख्य सब्जी अनुभाग, लेक गार्डन्स, कोलकाता',
           lockedBadge: 'भूमिका-सीमित: केवल अधिकृत [RETAILER] कार्यक्षेत्र में संचालन।',
           batchHeading: 'शेल्फ पर सक्रिय बिक्री लॉट:',
-          executeBtn: 'कार्य निष्पादित करें &rarr;',
+          executeBtn: 'कार्य निष्पादित करें',
           tools: [
             {
               id: 'storeReceipt',
@@ -4532,7 +4555,7 @@
               tag: 'उपभोक्ता ट्रेस',
               desc: 'ग्राहकों के स्मार्टफोन से सत्यापन हेतु शेल्फ क्यूआर कार्ड प्रिंट करें।',
               fields: [
-                { name: 'lotCode', label: 'सक्रिय खुदरा लॉट कोड', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'सक्रिय खुदरा लॉट कोड', type: 'text', value: '' },
                 { name: 'shelfBay', label: 'स्टोर शेल्फ रैक संख्या', type: 'text', value: 'ऑर्गेनिक वेज रैक #3' },
                 { name: 'retailPrice', label: 'खुदरा मूल्य (₹ / किग्रा)', type: 'number', value: '42.0' }
               ]
@@ -4568,7 +4591,7 @@
               tag: 'स्रोत ऑडिट',
               desc: 'खेत से शेल्फ तक 100% निर्बाध क्रिप्टोग्राफ़िक श्रृंखला की पुष्टि करें।',
               fields: [
-                { name: 'auditCode', label: 'सत्यापन हेतु शेल्फ लॉट कोड', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'auditCode', label: 'सत्यापन हेतु शेल्फ लॉट कोड', type: 'text', value: '' },
                 { name: 'verificationResult', label: 'क्रिप्टोग्राफ़िक श्रृंखला स्थिति', type: 'text', value: '100% अटूट (उत्पत्ति से खुदरा तक)' },
                 { name: 'provenanceOrigin', label: 'सत्यापित फार्म स्रोत', type: 'text', value: 'बर्धमान ऑर्गेनिक एफपीओ क्लस्टर ए-4' }
               ]
@@ -4587,7 +4610,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • शेल्फ पर: 120.0 किग्रा • ग्रेड ए ऑर्गेनिक', status: 'खुदरा शेल्फ पर उपलब्ध' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • शेल्फ पर: 120.0 किग्रा • ग्रेड ए ऑर्गेनिक', status: 'खुदरा शेल्फ पर उपलब्ध' },
             { code: '4T9Q2XMD7K1B', desc: 'गाजर (नारंगी) • शेल्फ पर: 80.0 किग्रा • 24 सत्यापित ग्राहक स्कैन', status: 'खुदरा शेल्फ पर उपलब्ध' },
             { code: 'RET-APP-9901', desc: 'सेब (किन्नौर) • शेल्फ पर: 45.0 किग्रा • प्रीमियम क्रिस्प ग्रेड', status: 'खुदरा शेल्फ पर उपलब्ध' }
           ]
@@ -4600,7 +4623,7 @@
           station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
           lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [PRODUCER] সীমার মধ্যে কার্যকর।',
           batchHeading: 'হেফাজতে থাকা সক্রিয় ব্যাচসমূহ:',
-          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
+          executeBtn: 'কার্য সম্পাদন করুন',
           tools: [
             {
               id: 'harvestLot',
@@ -4622,7 +4645,7 @@
               tag: 'সিরিয়ালাইজেশন',
               desc: 'ফসল পরিবহন ক্রেটের জন্য সুরক্ষিত কিউআর কোড লেবেল প্রিন্ট করুন।',
               fields: [
-                { name: 'lotCode', label: 'সক্রিয় লট কোড', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'সক্রিয় লট কোড', type: 'text', value: '' },
                 { name: 'crateSize', label: 'প্রতি ক্রেটের ওজন ক্ষমতা (কেজি)', type: 'number', value: '25.0' },
                 { name: 'crateCount', label: 'ক্রেট লেবেলের সংখ্যা', type: 'number', value: '30' }
               ]
@@ -4677,8 +4700,8 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • ক্লাস্টার ইয়ার্ড #৪-এ উৎপাদিত', status: 'খামার হেফাজতে সংরক্ষিত' },
-            { code: 'AS-TOM-2026-X1', desc: 'আলু (জ্যোতি) • ১২০০.০ কেজি • ২৪টি ক্রেটে প্যাক করা', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • ক্লাস্টার ইয়ার্ড #৪-এ উৎপাদিত', status: 'খামার হেফাজতে সংরক্ষিত' },
+            { code: 'LOT-VERIFIED-02', desc: 'আলু (জ্যোতি) • ১২০০.০ কেজি • ২৪টি ক্রেটে প্যাক করা', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
             { code: 'WB-FPO-RABI-04', desc: 'ফুলকপি (স্নোবল) • ৩২০.০ কেজি • গ্রেডেড খামার স্টক', status: 'গুণমান পরীক্ষিত' }
           ]
         },
@@ -4688,7 +4711,7 @@
           station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
           lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [AGGREGATOR] সীমার মধ্যে কার্যকর।',
           batchHeading: 'হেফাজতে থাকা সক্রিয় চালান:',
-          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
+          executeBtn: 'কার্য সম্পাদন করুন',
           tools: [
             {
               id: 'acceptHandover',
@@ -4697,7 +4720,7 @@
               tag: 'মণ্ডি ইনওয়ার্ড',
               desc: 'কৃষকের ক্রেট কিউআর কোড স্ক্যান করুন, গাড়ির গেট পাস যাচাই করুন এবং দ্বিপাক্ষিক হেফাজত রসিদে স্বাক্ষর করুন।',
               fields: [
-                { name: 'lotCode', label: 'কৃষক লট কোড', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'কৃষক লট কোড', type: 'text', value: '' },
                 { name: 'consignor', label: 'প্রেরক সমবায় নাম', type: 'text', value: 'বর্ধমান ফারমার্স প্রডিউসার কো.' },
                 { name: 'condition', label: 'আগত ক্রেটের অবস্থা', type: 'text', value: 'অক্ষত / ত্রুটিহীন (৩০টি ক্রেট)' }
               ]
@@ -4734,7 +4757,7 @@
               tag: 'ভর-ভারসাম্য ডিএজি',
               desc: 'ক্রিপ্টোগ্রাফিক অভিভাবক লিঙ্ক বজায় রেখে পাইকারি নিলামের জন্য কৃষকের চালানকে উপ-লটে বিভক্ত করুন।',
               fields: [
-                { name: 'parentLot', label: 'মূল লট কোড', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'parentLot', label: 'মূল লট কোড', type: 'text', value: '' },
                 { name: 'subLotA', label: 'উপ-লট এ বরাদ্দ (কেজি)', type: 'number', value: '300.0' },
                 { name: 'subLotB', label: 'উপ-লট বি বরাদ্দ (কেজি)', type: 'number', value: '200.0' }
               ]
@@ -4765,7 +4788,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • নিলাম ক্লিয়ারেন্স প্রাপ্ত', status: 'মণ্ডি কাস্টডিতে রক্ষিত' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • নিলাম ক্লিয়ারেন্স প্রাপ্ত', status: 'মণ্ডি কাস্টডিতে রক্ষিত' },
             { code: 'HGH-LOT-9921-A', desc: 'আলু (জ্যোতি গ্রেড এ) • ৭০০.০ কেজি • ওয়েব্রিজ প্রত্যয়িত', status: 'নিলাম সম্পন্ন' },
             { code: 'HGH-LOT-9921-B', desc: 'আলু (জ্যোতি গ্রেড বি) • ৫০০.০ কেজি • প্রেষণ প্রস্তুত', status: 'পাইকারি ক্রেতার জন্য প্রস্তুত' }
           ]
@@ -4776,7 +4799,7 @@
           station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
           lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [WHOLESALER] সীমার মধ্যে কার্যকর।',
           batchHeading: 'সক্রিয় টার্মিনাল ইনভেন্টরি:',
-          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
+          executeBtn: 'কার্য সম্পাদন করুন',
           tools: [
             {
               id: 'terminalInward',
@@ -4852,7 +4875,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সংরক্ষিত', status: 'হিমাগারে সংরক্ষিত' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সংরক্ষিত', status: 'হিমাগারে সংরক্ষিত' },
             { code: 'CCW-PLT-4401', desc: 'পেঁয়াজ (নাসিক লাল) • ১৮০০.০ কেজি • প্যালেট জি-০২', status: 'পাইকারি মজুদ' },
             { code: 'CCW-PLT-4402', desc: 'কাঁচা লঙ্কা • ২৫০.০ কেজি • এসি চেম্বার #১', status: 'বিতরণের জন্য প্রস্তুত' }
           ]
@@ -4863,7 +4886,7 @@
           station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
           lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [DISTRIBUTOR] সীমার মধ্যে কার্যকর।',
           batchHeading: 'পরিবহনরত সক্রিয় চালান:',
-          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
+          executeBtn: 'কার্য সম্পাদন করুন',
           tools: [
             {
               id: 'acceptLogistics',
@@ -4939,7 +4962,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার ট্রাক WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা রুট)' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার ট্রাক WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা রুট)' },
             { code: '6R3T8PLM2K9V', desc: 'আপেল (কিন্নর) • ৩০০.০ কেজি • নিউ টাউন রিটেইল ডিপোর পথে', status: 'পরিবহনরত' },
             { code: 'DIST-VEG-4401', desc: 'মটরশুঁটি (তাজা) • ৪৫০.০ কেজি • কোল্ড-চেন যাচাইকৃত', status: 'ডিপোতে পৌঁছেছে' }
           ]
@@ -4950,7 +4973,7 @@
           station: 'প্রধান সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
           lockedBadge: 'ভূমিকা-সীমাবদ্ধ: শুধুমাত্র অনুমোদিত [RETAILER] সীমার মধ্যে কার্যকর।',
           batchHeading: 'বিক্রির জন্য সেলফে থাকা ব্যাচসমূহ:',
-          executeBtn: 'কার্য সম্পাদন করুন &rarr;',
+          executeBtn: 'কার্য সম্পাদন করুন',
           tools: [
             {
               id: 'storeReceipt',
@@ -4971,7 +4994,7 @@
               tag: 'ভোক্তা ট্রেস',
               desc: 'গ্রাহকদের স্মার্টফোন দিয়ে যাচাইয়ের জন্য কাউন্টার কিউআর কার্ড এবং মূল্যের স্ট্যান্ডি প্রিন্ট করুন।',
               fields: [
-                { name: 'lotCode', label: 'সক্রিয় খুচরা লট কোড', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'lotCode', label: 'সক্রিয় খুচরা লট কোড', type: 'text', value: '' },
                 { name: 'shelfBay', label: 'দোকানের ডিসপ্লে র্যাক', type: 'text', value: 'অর্গানিক ভেজ র্যাক #৩' },
                 { name: 'retailPrice', label: 'খুচরা মূল্য (টাকা / কেজি)', type: 'number', value: '42.0' }
               ]
@@ -5007,7 +5030,7 @@
               tag: 'উৎস অডিট',
               desc: 'দোকানের মেঝেতে থাকা প্যাকেজ স্ক্যান করে সম্পূর্ণ খামার-থেকে-থালা ডিজিটাল টাইমলাইন প্রদর্শন করুন।',
               fields: [
-                { name: 'auditCode', label: 'অডিটকৃত সেলফ লট কোড', type: 'text', value: '7K3Q9XMD4T2B' },
+                { name: 'auditCode', label: 'অডিটকৃত সেলফ লট কোড', type: 'text', value: '' },
                 { name: 'verificationResult', label: 'ক্রিপ্টোগ্রাফিক চেইন স্থিতি', type: 'text', value: '১০০% অক্ষত (উৎপাদন থেকে খুচরা)' },
                 { name: 'provenanceOrigin', label: 'প্রত্যয়িত খামার উৎস', type: 'text', value: 'বর্ধমান অর্গানিক এফপিও ক্লাস্টার এ-৪' }
               ]
@@ -5026,7 +5049,7 @@
             }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • সেলফে আছে: ১২০.০ কেজি • গ্রেড এ অর্গানিক', status: 'খুচরা সেলফে সক্রিয়' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • সেলফে আছে: ১২০.০ কেজি • গ্রেড এ অর্গানিক', status: 'খুচরা সেলফে সক্রিয়' },
             { code: '4T9Q2XMD7K1B', desc: 'গাজর (কমলা) • সেলফে আছে: ৮০.০ কেজি • ২৪টি সফল গ্রাহক স্ক্যান', status: 'খুচরা সেলফে সক্রিয়' },
             { code: 'RET-APP-9901', desc: 'আপেল (কিন্নর) • সেলফে আছে: ৪৫.০ কেজি • প্রিমিয়াম গ্রেড', status: 'খুচরা সেলফে সক্রিয়' }
           ]
@@ -5041,15 +5064,15 @@
           title: 'Producer Operations Console',
           org: 'Bardhaman Organic Farmers Producer Co-op',
           station: 'Cluster Farm Yard #4, Bardhaman',
-          launchBtn: 'Sign In as Producer &rarr;',
+          launchBtn: 'Sign In as Producer',
           metrics: [
-            { title: 'Total Harvested', val: '18,450 Kg', tag: '↑ 14% vs last month' },
+            { title: 'Total Harvested', val: '18,450 Kg', tag: '+14% vs last month' },
             { title: 'Active QR Batches', val: '12 Batches', tag: 'All tamper-evident sealed' },
             { title: 'Dispatched to Mandi', val: '14,200 Kg', tag: 'Dual-signed transfer' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Grade A Organic', status: 'In Farm Custody' },
-            { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) • 1,200.0 Kg • 24 Crates Sealed', status: 'Ready for Mandi' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Grade A Organic', status: 'In Farm Custody' },
+            { code: 'LOT-VERIFIED-02', desc: 'Potato (Jyoti) • 1,200.0 Kg • 24 Crates Sealed', status: 'Ready for Mandi' },
             { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) • 320.0 Kg • Verified Lot', status: 'Quality Certified' }
           ]
         },
@@ -5058,14 +5081,14 @@
           title: 'Aggregator Mandi Console',
           org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
           station: 'Gate #2 Weighbridge & Grading Yard',
-          launchBtn: 'Sign In as Aggregator &rarr;',
+          launchBtn: 'Sign In as Aggregator',
           metrics: [
             { title: 'Mandi Inward Intake', val: '42,800 Kg', tag: 'Digital weighbridge certified' },
             { title: 'Agmarknet Grade A', val: '99.4%', tag: 'Official quality tested' },
             { title: 'Auction Cleared', val: '₹ 14.8 Lakh', tag: 'e-NAM settlements' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Grade A) • 500.0 Kg • Mandi Weighbridge Slip #8812', status: 'In Mandi Custody' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Grade A) • 500.0 Kg • Mandi Weighbridge Slip #8812', status: 'In Mandi Custody' },
             { code: 'HGH-LOT-9921-A', desc: 'Potato (Jyoti Grade A) • 700.0 Kg • Auction Cleared', status: 'Auction Settled' },
             { code: 'HGH-LOT-9921-B', desc: 'Potato (Jyoti Grade B) • 500.0 Kg • Transit Pass Issued', status: 'Ready for Wholesaler' }
           ]
@@ -5075,14 +5098,14 @@
           title: 'Wholesaler Terminal Console',
           org: 'Kolkata Central Wholesalers Ltd (Posta Market)',
           station: 'Posta Terminal Complex, Kolkata',
-          launchBtn: 'Sign In as Wholesaler &rarr;',
+          launchBtn: 'Sign In as Wholesaler',
           metrics: [
             { title: 'Cold Bay Inventory', val: '65,200 Kg', tag: 'Controlled 4°C - 8°C chambers' },
             { title: 'Consignments Split', val: '38 Lots', tag: 'Mass-balance preserved' },
             { title: 'Fleet Dispatches', val: '24 Shipments', tag: 'Locked reefer trucks' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid) • 500.0 Kg • Cold Bay #3 Active', status: 'In Cold Storage' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid) • 500.0 Kg • Cold Bay #3 Active', status: 'In Cold Storage' },
             { code: 'CCW-PLT-4401', desc: 'Onion (Nasik Red) • 1,800.0 Kg • Pallet G-02', status: 'Terminal Stock' },
             { code: 'CCW-PLT-4402', desc: 'Green Chilli • 250.0 Kg • AC Chamber #1', status: 'Ready for Fleet' }
           ]
@@ -5092,14 +5115,14 @@
           title: 'Distributor Logistics Console',
           org: 'Bengal Cold-Chain Express Logistics (WB-LOG-004)',
           station: 'Central Transit Depot, New Town, Kolkata',
-          launchBtn: 'Sign In as Distributor &rarr;',
+          launchBtn: 'Sign In as Distributor',
           metrics: [
             { title: 'Active Reefer Trucks', val: '18 Trucks', tag: 'Live GPS geofenced' },
             { title: 'Mean Cargo Temp', val: '7.4 °C', tag: 'Zero thermal excursions' },
             { title: 'On-Time Retail Drops', val: '99.8%', tag: '42 Store destinations' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Reefer WB-19-AX-4402', status: 'In Transit (Kolkata)' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 500.0 Kg • Reefer WB-19-AX-4402', status: 'In Transit (Kolkata)' },
             { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) • 300.0 Kg • Highway Toll Checkpoint', status: 'In Transit' },
             { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) • 450.0 Kg • Cold-chain verified', status: 'Arrived at Depot' }
           ]
@@ -5109,14 +5132,14 @@
           title: 'Retailer Point-of-Sale Console',
           org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
           station: 'Produce Aisle, Lake Gardens, Kolkata',
-          launchBtn: 'Sign In as Retailer &rarr;',
+          launchBtn: 'Sign In as Retailer',
           metrics: [
             { title: 'Shelf Stock Volume', val: '1,420 Kg', tag: 'Active on display counters' },
             { title: 'Consumer QR Scans', val: '1,890 Scans', tag: '4.9/5.0 Customer trust score' },
             { title: 'Freshness Retention', val: '99.2%', tag: '< 0.8% organic waste rate' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) • 120.0 Kg on shelf • Grade A Organic', status: 'Active on Shelf' },
+            { code: 'LOT-VERIFIED-01', desc: 'Tomato (Hybrid Red) • 120.0 Kg on shelf • Grade A Organic', status: 'Active on Shelf' },
             { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) • 80.0 Kg • 24 Verified Customer Scans', status: 'Active on Shelf' },
             { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) • 45.0 Kg • Standee QR Verified', status: 'Active on Shelf' }
           ]
@@ -5128,15 +5151,15 @@
           title: 'उत्पादक संचालन कंसोल',
           org: 'बर्धमान ऑर्गेनिक फार्मर्स प्रोड्यूसर को-ऑप',
           station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
-          launchBtn: 'उत्पादक के रूप में लॉगिन करें &rarr;',
+          launchBtn: 'उत्पादक के रूप में लॉगिन करें',
           metrics: [
-            { title: 'कुल कटाई उपज', val: '18,450 किग्रा', tag: '↑ पिछले माह से 14% अधिक' },
+            { title: 'कुल कटाई उपज', val: '18,450 किग्रा', tag: '+14% पिछले माह से अधिक' },
             { title: 'सक्रिय क्यूआर बैच', val: '12 लॉट्स', tag: 'सभी क्रेट सुरक्षित रूप से सीलबंद' },
             { title: 'मंडी को प्रेषित', val: '14,200 किग्रा', tag: 'द्विपक्षीय हस्ताक्षरित प्रेषण' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ग्रेड ए जैविक', status: 'खेत कस्टडी में' },
-            { code: 'AS-TOM-2026-X1', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट सील', status: 'मंडी प्रेषण हेतु तैयार' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • ग्रेड ए जैविक', status: 'खेत कस्टडी में' },
+            { code: 'LOT-VERIFIED-02', desc: 'आलू (ज्योति) • 1,200.0 किग्रा • 24 क्रेट सील', status: 'मंडी प्रेषण हेतु तैयार' },
             { code: 'WB-FPO-RABI-04', desc: 'फूलगोभी (स्नोबॉल) • 320.0 किग्रा • सत्यापित लॉट', status: 'गुणवत्ता प्रमाणित' }
           ]
         },
@@ -5145,14 +5168,14 @@
           title: 'संग्रहकर्ता मंडी कंसोल',
           org: 'हुगली एपीएमसी संग्रह यार्ड (MANDI-WB-012)',
           station: 'गेट #2 वेज-ब्रिज एवं ग्रेडिंग परिसर',
-          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें &rarr;',
+          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें',
           metrics: [
             { title: 'मंडी आवक वजन', val: '42,800 किग्रा', tag: 'डिजिटल वेज-ब्रिज द्वारा प्रमाणित' },
             { title: 'एगमार्कनेट ग्रेड ए', val: '99.4%', tag: 'आधिकारिक गुणवत्ता जांच' },
             { title: 'नीलामी निकासी', val: '₹ 14.8 लाख', tag: 'ई-नाम द्वारा निपटान' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • वेज-ब्रिज पर्ची #8812', status: 'मंडी कस्टडी में' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (ग्रेड ए) • 500.0 किग्रा • वेज-ब्रिज पर्ची #8812', status: 'मंडी कस्टडी में' },
             { code: 'HGH-LOT-9921-A', desc: 'आलू (ज्योति ग्रेड ए) • 700.0 किग्रा • नीलामी पूर्ण', status: 'नीलामी संपन्न' },
             { code: 'HGH-LOT-9921-B', desc: 'आलू (ज्योति ग्रेड बी) • 500.0 किग्रा • ट्रांजिट पास जारी', status: 'थोक व्यापारी हेतु तैयार' }
           ]
@@ -5162,14 +5185,14 @@
           title: 'थोक व्यापारी टर्मिनल कंसोल',
           org: 'कोलकाता सेंट्रल होलसेलर्स लि. (पोस्ता बाजार)',
           station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
-          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें &rarr;',
+          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें',
           metrics: [
             { title: 'शीत गृह भंडार', val: '65,200 किग्रा', tag: 'नियंत्रित 4°C - 8°C तापमान' },
             { title: 'लॉट विभाजन', val: '38 लॉट्स', tag: 'द्रव्यमान-संतुलन सुरक्षित' },
             { title: 'फ्लीट प्रेषण', val: '24 खेपें', tag: 'सीलबंद रीफर वाहन' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बेयर #3 में सुरक्षित', status: 'हिमागार में सुरक्षित' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड) • 500.0 किग्रा • कोल्ड बेयर #3 में सुरक्षित', status: 'हिमागार में सुरक्षित' },
             { code: 'CCW-PLT-4401', desc: 'प्याज (नासिक लाल) • 1,800.0 किग्रा • पैलेट जी-02', status: 'टर्मिनल स्टॉक' },
             { code: 'CCW-PLT-4402', desc: 'हरी मिर्च • 250.0 किग्रा • एसी चैंबर #1', status: 'फ्लीट हेतु तैयार' }
           ]
@@ -5179,14 +5202,14 @@
           title: 'वितरक लॉजिस्टिक्स कंसोल',
           org: 'बंगाल कोल्ड-चेन एक्सप्रेस लॉजिस्टिक्स (WB-LOG-004)',
           station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
-          launchBtn: 'वितरक के रूप में लॉगिन करें &rarr;',
+          launchBtn: 'वितरक के रूप में लॉगिन करें',
           metrics: [
             { title: 'सक्रिय रीफर ट्रक', val: '18 ट्रक', tag: 'लाइव जीपीएस जियोफेंस्ड' },
             { title: 'औसत तापमान', val: '7.4 °C', tag: 'शून्य तापीय विचलन' },
             { title: 'समय पर डिलीवरी', val: '99.8%', tag: '42 खुदरा गंतव्य' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • रीफर WB-19-AX-4402', status: 'परिवहन में (कोलकाता)' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 500.0 किग्रा • रीफर WB-19-AX-4402', status: 'परिवहन में (कोलकाता)' },
             { code: '6R3T8PLM2K9V', desc: 'सेब (किन्नौर) • 300.0 किग्रा • टोल चेकपॉइंट पर', status: 'मार्ग में' },
             { code: 'DIST-VEG-4401', desc: 'हरी मटर (ताजा) • 450.0 किग्रा • कोल्ड-चेन प्रमाणित', status: 'डिपो में आगमन' }
           ]
@@ -5196,14 +5219,14 @@
           title: 'खुदरा विक्रेता पीओएस कंसोल',
           org: 'मां दुर्गा रिटेल फ्रेश मार्ट (कोलकाता आउटलेट #4)',
           station: 'सब्जी विभाग, लेक गार्डन्स, कोलकाता',
-          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें &rarr;',
+          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें',
           metrics: [
             { title: 'काउंटर स्टॉक', val: '1,420 किग्रा', tag: 'दुकान के डिस्प्ले रैक पर सक्रिय' },
             { title: 'उपभोक्ता क्यूआर स्कैन', val: '1,890 स्कैन', tag: '4.9/5.0 ग्राहक विश्वास स्कोर' },
             { title: 'ताजगी प्रतिधारण', val: '99.2%', tag: '< 0.8% जैविक नुकसान' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) • 120.0 किग्रा शेल्फ पर • ग्रेड ए जैविक', status: 'शेल्फ पर सक्रिय' },
+            { code: 'LOT-VERIFIED-01', desc: 'टमाटर (हाइब्रिड लाल) • 120.0 किग्रा शेल्फ पर • ग्रेड ए जैविक', status: 'शेल्फ पर सक्रिय' },
             { code: '4T9Q2XMD7K1B', desc: 'गाजर (नारंगी) • 80.0 किग्रा • 24 सत्यापित ग्राहक स्कैन', status: 'शेल्फ पर सक्रिय' },
             { code: 'RET-APP-9901', desc: 'सेब (किन्नौर) • 45.0 किग्रा • स्टैंडी क्यूआर सत्यापित', status: 'शेल्फ पर सक्रिय' }
           ]
@@ -5215,15 +5238,15 @@
           title: 'উৎপাদক পরিচালনা কনসোল',
           org: 'বর্ধমান অর্গানিক ফার্মার্স প্রডিউসার কো-অপ',
           station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
-          launchBtn: 'উৎপাদক হিসেবে লগইন করুন &rarr;',
+          launchBtn: 'উৎপাদক হিসেবে লগইন করুন',
           metrics: [
-            { title: 'মোট ফসল ফলন', val: '১৮,৪৫০ কেজি', tag: '↑ গত মাসের চেয়ে ১৪% বেশি' },
+            { title: 'মোট ফসল ফলন', val: '১৮,৪৫০ কেজি', tag: '+১৪% গত মাসের চেয়ে বেশি' },
             { title: 'সক্রিয় কিউআর ব্যাচ', val: '১২টি ব্যাচ', tag: 'সব ক্রেট সুরক্ষিত সিলযুক্ত' },
             { title: 'মণ্ডিতে প্রেরিত', val: '১৪,২০০ কেজি', tag: 'দ্বিপাক্ষিক স্বাক্ষরে প্রেরিত' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • গ্রেড এ জৈব', status: 'খামার হেফাজতে' },
-            { code: 'AS-TOM-2026-X1', desc: 'আলু (জ্যোতি) • ১,২০০.০ কেজি • ২৪টি ক্রেট সিলযুক্ত', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • গ্রেড এ জৈব', status: 'খামার হেফাজতে' },
+            { code: 'LOT-VERIFIED-02', desc: 'আলু (জ্যোতি) • ১,২০০.০ কেজি • ২৪টি ক্রেট সিলযুক্ত', status: 'মণ্ডি প্রেরণের জন্য প্রস্তুত' },
             { code: 'WB-FPO-RABI-04', desc: 'ফুলকপি (স্নোবল) • ৩২০.০ কেজি • প্রত্যয়িত লট', status: 'গুণমান প্রত্যয়িত' }
           ]
         },
@@ -5232,14 +5255,14 @@
           title: 'সংগ্রহকারী মণ্ডি কনসোল',
           org: 'হুগলি এপিএমসি সংগ্রহ ইয়ার্ড (MANDI-WB-012)',
           station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
-          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন &rarr;',
+          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন',
           metrics: [
             { title: 'মণ্ডি চালান ওজন', val: '৪২,৮০০ কেজি', tag: 'ডিজিটাল ওয়েজ-ব্রিজ দ্বারা প্রত্যয়িত' },
             { title: 'অ্যাগমার্কনেট গ্রেড এ', val: '৯৯.৪%', tag: 'অফিসিয়াল গুণমান পরীক্ষিত' },
             { title: 'নিলাম নিষ্পত্তি', val: '₹ ১৪.৮ লাখ', tag: 'ই-নাম দ্বারা নিষ্পত্তি' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • ওয়েজ-ব্রিজ স্লিপ #৮৮১২', status: 'মণ্ডি হেফাজতে' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (গ্রেড এ) • ৫০০.০ কেজি • ওয়েজ-ব্রিজ স্লিপ #৮৮১২', status: 'মণ্ডি হেফাজতে' },
             { code: 'HGH-LOT-9921-A', desc: 'আলু (জ্যোতি গ্রেড এ) • ৭০০.০ কেজি • নিলাম সম্পন্ন', status: 'নিলাম সম্পন্ন' },
             { code: 'HGH-LOT-9921-B', desc: 'আলু (জ্যোতি গ্রেড বি) • ৫০০.০ কেজি • ট্রানজিট পাস ইস্যু', status: 'পাইকারদের জন্য প্রস্তুত' }
           ]
@@ -5249,14 +5272,14 @@
           title: 'পাইকারি টার্মিনাল কনসোল',
           org: 'কলকাতা সেন্ট্রাল হোলসেলার্স প্রাঃ লিঃ (পোস্তা বাজার)',
           station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
-          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন &rarr;',
+          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন',
           metrics: [
             { title: 'হিমাগার মজুদ', val: '৬৫,২০০ কেজি', tag: 'নিয়ন্ত্রিত ৪°সে - ৮°সে তাপমাত্রা' },
             { title: 'চালান বিভাজন', val: '৩৮টি লট', tag: 'ভর-ভারসাম্য অক্ষত' },
             { title: 'ফ্লিট প্রেরণ', val: '২৪টি চালান', tag: 'সিলযুক্ত রিফার ভ্যান' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সক্রিয়', status: 'হিমাগারে সংরক্ষিত' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড) • ৫০০.০ কেজি • কোল্ড বেয়ার #৩-এ সক্রিয়', status: 'হিমাগারে সংরক্ষিত' },
             { code: 'CCW-PLT-4401', desc: 'পেঁয়াজ (নাসিক লাল) • ১,৮০০.০ কেজি • প্যালেট জি-০২', status: 'টার্মিনাল মজুদ' },
             { code: 'CCW-PLT-4402', desc: 'কাঁচা লঙ্কা • ২৫০.০ কেজি • এসি চেম্বার #১', status: 'ফ্লিটের জন্য প্রস্তুত' }
           ]
@@ -5266,14 +5289,14 @@
           title: 'পরিবেশক লজিস্টিকস কনসোল',
           org: 'বেঙ্গল কোল্ড-চেন এক্সপ্রেস লজিস্টিকস (WB-LOG-004)',
           station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
-          launchBtn: 'পরিবেশক হিসেবে লগইন করুন &rarr;',
+          launchBtn: 'পরিবেশক হিসেবে লগইন করুন',
           metrics: [
             { title: 'সক্রিয় রিফার ট্রাক', val: '১৮টি ট্রাক', tag: 'লাইভ জিপিএস জিওফেন্সড' },
             { title: 'গড় তাপমাত্রা', val: '৭.৪ °সে', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
             { title: 'অন-টাইম ডেলিভারি', val: '৯৯.৮%', tag: '৪২টি খুচরা আউটলেট' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা)' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ৫০০.০ কেজি • রিফার WB-19-AX-4402', status: 'পরিবহনরত (কলকাতা)' },
             { code: '6R3T8PLM2K9V', desc: 'আপেল (কিন্নর) • ৩০০.০ কেজি • টোল চেকপয়েন্টে', status: 'পথিমধ্যে' },
             { code: 'DIST-VEG-4401', desc: 'মটরশুঁটি (তাজা) • ৪৫০.০ কেজি • কোল্ড-চেন প্রত্যয়িত', status: 'ডিপোতে পৌঁছেছে' }
           ]
@@ -5283,14 +5306,14 @@
           title: 'খুচরা বিক্রেতা পিওএস কনসোল',
           org: 'মা দুর্গা রিটেইল ফ্রেশ মার্ট (কলকাতা আউটলেট #৪)',
           station: 'সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
-          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন &rarr;',
+          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন',
           metrics: [
             { title: 'কাউন্টার মজুদ', val: '১,৪২০ কেজি', tag: 'দোকানের ডিসপ্লে র্যাকে সক্রিয়' },
             { title: 'ভোক্তা কিউআর স্ক্যান', val: '১,৮৯০টি স্ক্যান', tag: '৪.৯/৫.০ গ্রাহক আস্থা স্কোর' },
             { title: 'তাজাত্ব ধারণ', val: '৯৯.২%', tag: '< ০.৮% জৈব অপচয়' }
           ],
           batches: [
-            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) • ১২০.০ কেজি সেলফে • গ্রেড এ অর্গানিক', status: 'সেলফে সক্রিয়' },
+            { code: 'LOT-VERIFIED-01', desc: 'টমেটো (হাইব্রিড লাল) • ১২০.০ কেজি সেলফে • গ্রেড এ অর্গানিক', status: 'সেলফে সক্রিয়' },
             { code: '4T9Q2XMD7K1B', desc: 'গাজর (কমলা) • ৮০.০ কেজি • ২৪টি গ্রাহক স্ক্যান সম্পন্ন', status: 'সেলফে সক্রিয়' },
             { code: 'RET-APP-9901', desc: 'আপেল (কিন্নর) • ৪৫.০ কেজি • স্ট্যান্ডি কিউআর যাচাইকৃত', status: 'সেলফে সক্রিয়' }
           ]
@@ -5305,22 +5328,22 @@
 
     const tickerEvents = {
       en: [
-        "Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #7K3Q9XMD4T2B) • Hash: 0x9e8a...3f12 • Custody to Aggregator",
-        "Bardhaman Organic FPO registered 750 Kg Hybrid Tomato (Lot #AS-TOM-2026-X1) • Plot B-4 Geofence • Hash: 0x3d41...b891",
+        "Mandi APMC Azadpur attested 1,200 Kg Alphonso Mango (Lot #LOT-VERIFIED-01) • Hash: 0x9e8a...3f12 • Custody to Aggregator",
+        "Bardhaman Organic FPO registered 750 Kg Hybrid Tomato (Lot #LOT-VERIFIED-02) • Plot B-4 Geofence • Hash: 0x3d41...b891",
         "Bengal Cold-Chain Reefer WB-19-AX-4402 recorded in-transit temp 7.8°C • Zero thermal excursions • Route on track",
         "Maa Durga Fresh Mart (Kolkata) dispensed 2.5 Kg via consumer QR checkout • Append-only inventory adjusted",
         "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Agmarknet Grade A certified • e-NAM settlement"
       ],
       hi: [
-        "मंडी एपीएमसी आजादपुर ने 1,200 किग्रा अल्फांसो आम प्रमाणित किया (लॉट #7K3Q9XMD4T2B) • हैश: 0x9e8a...3f12 • संग्रहकर्ता को कस्टडी",
-        "बर्धमान ऑर्गेनिक एफपीओ ने 750 किग्रा हाइब्रिड टमाटर पंजीकृत किया (लॉट #AS-TOM-2026-X1) • प्लॉट बी-4 • हैश: 0x3d41...b891",
+        "मंडी एपीएमसी आजादपुर ने 1,200 किग्रा अल्फांसो आम प्रमाणित किया (लॉट #LOT-VERIFIED-01) • हैश: 0x9e8a...3f12 • संग्रहकर्ता को कस्टडी",
+        "बर्धमान ऑर्गेनिक एफपीओ ने 750 किग्रा हाइब्रिड टमाटर पंजीकृत किया (लॉट #LOT-VERIFIED-02) • प्लॉट बी-4 • हैश: 0x3d41...b891",
         "बंगाल कोल्ड-चेन रीफर WB-19-AX-4402 ने परिवहन तापमान 7.8°C दर्ज किया • शून्य तापीय विचलन • समय पर मार्ग",
         "मां दुर्गा फ्रेश मार्ट (कोलकाता) ने उपभोक्ता क्यूआर द्वारा 2.5 किग्रा बिक्री दर्ज की • अपरिवर्तनीय लेज़र समायोजित",
         "हुगली एपीएमसी वेज-ब्रिज ने 4,250 किग्रा भार सत्यापित किया • एगमार्कनेट ग्रेड ए प्रमाणित • ई-नाम निपटान"
       ],
       bn: [
-        "মণ্ডি এপিএমসি আজাদপুর ১,২০০ কেজি আলফানসো আম প্রত্যয়িত করেছে (লট #7K3Q9XMD4T2B) • হ্যাশ: 0x9e8a...3f12 • সংগ্রহকারীর নিকট হেফাজত",
-        "বর্ধমান অর্গানিক এফপিও ৭৫০ কেজি হাইব্রিড টমেটো নিবন্ধন করেছে (লট #AS-TOM-2026-X1) • প্লট বি-৪ • হ্যাশ: 0x3d41...b891",
+        "মণ্ডি এপিএমসি আজাদপুর ১,২০০ কেজি আলফানসো আম প্রত্যয়িত করেছে (লট #LOT-VERIFIED-01) • হ্যাশ: 0x9e8a...3f12 • সংগ্রহকারীর নিকট হেফাজত",
+        "বর্ধমান অর্গানিক এফপিও ৭৫০ কেজি হাইব্রিড টমেটো নিবন্ধন করেছে (লট #LOT-VERIFIED-02) • প্লট বি-৪ • হ্যাশ: 0x3d41...b891",
         "বেঙ্গল কোল্ড-চেন রিফার WB-19-AX-4402 চলন্ত তাপমাত্রা ৭.৮°সে রেকর্ড করেছে • শূন্য বিচ্যুতি • সঠিক ট্রানজিট",
         "মা দুর্গা ফ্রেশ মার্ট (কলকাতা) ভোক্তা কিউআর স্ক্যানে ২.৫ কেজি বিক্রয় সম্পন্ন করেছে • লেজার হালনাগাদ",
         "হুগলি এপিএমসি ওয়েজ-ব্রিজ ৪,২৫০ কেজি ওজন যাচাই করেছে • অ্যাগমার্কনেট গ্রেড এ প্রত্যয়িত • ই-নাম নিষ্পত্তি"
@@ -5361,7 +5384,10 @@
         if (el && val !== undefined) el.innerText = val;
       };
 
-      setTxt('previewRoleIcon', data.icon);
+      const roleIconEl = document.getElementById('previewRoleIcon');
+      if (roleIconEl) {
+        roleIconEl.innerHTML = window.renderUniformIcon ? window.renderUniformIcon(data.icon, 20, '#047857') : '';
+      }
       setTxt('previewOrgTitle', data.title);
       setTxt('previewOrgSub', data.org + ' • ' + data.station);
       setTxt('btnPreviewLaunchText', data.launchBtn);
@@ -5544,12 +5570,20 @@
       setTxt('portalRoleDescRetailer', t.portalRoleDescRetailer);
       setTxt('btnPortalRetailer', t.btnPortalRetailer);
 
+      setTxt('portalTierBadgeAdmin', t.portalTierBadgeAdmin);
+      setTxt('portalPillAdminA', t.portalPillAdminA);
+      setTxt('portalPillAdminB', t.portalPillAdminB);
+      setTxt('portalRoleTitleAdmin', t.portalRoleTitleAdmin);
+      setTxt('portalRoleSubAdmin', t.portalRoleSubAdmin);
+      setTxt('portalRoleDescAdmin', t.portalRoleDescAdmin);
+      setTxt('btnPortalAdmin', t.btnPortalAdmin);
+      setTxt('footerLinkAdmin', t.footerLinkAdmin);
+
       // QR Scanner Modal
       setTxt('qrModalTitle', t.qrModalTitle);
       setTxt('qrModalSubtitle', t.qrModalSubtitle);
       setTxt('btnSwitchCameraText', t.btnSwitchCameraText);
       setTxt('btnUploadQrText', t.btnUploadQrText);
-      setTxt('qrSampleCodesLabel', t.qrSampleCodesLabel);
       setTxt('btnGovModalClose', t.btnGovModalClose);
 
       // Re-render active workspace immediately if visible
@@ -5558,19 +5592,17 @@
         renderCurrentWorkspace();
       }
 
-      // Update user pill in navbar if active
+      // Update user pill in navbar if active using <Role> (X<last4>) template
       const userPill = document.getElementById('userPill');
       if (userPill && userPill.style.display !== 'none') {
-        const rMap = {
-          PRODUCER: t.tabProducerLabel || 'Producer',
-          AGGREGATOR: t.tabAggregatorLabel || 'Aggregator',
-          WHOLESALER: t.tabWholesalerLabel || 'Wholesaler',
-          DISTRIBUTOR: t.tabDistributorLabel || 'Distributor',
-          RETAILER: t.tabRetailerLabel || 'Retailer'
-        };
-        const rName = rMap[currentRole] || currentRole;
-        const orgLoc = (currentRole === 'PRODUCER' ? (lang === 'bn' ? 'বর্ধমান' : lang === 'hi' ? 'बर्धमान' : 'Bardhaman') : 'Active');
-        document.getElementById('activeUserName').innerText = rName + ' (' + orgLoc + ')';
+        const savedPhone = localStorage.getItem('annasutra_phone') || '';
+        if (window.formatEntityUserBadge) {
+          document.getElementById('activeUserName').innerText = window.formatEntityUserBadge(currentRole, savedPhone, lang);
+        } else {
+          const digits = String(savedPhone).replace(/\D/g, '');
+          const last4 = digits.length >= 4 ? digits.slice(-4) : '0000';
+          document.getElementById('activeUserName').innerText = currentRole + ' (X' + last4 + ')';
+        }
       }
     }
 
@@ -5704,7 +5736,13 @@
             }
           } catch (e) {}
         }
-        selectQrCode('7K3Q9XMD4T2B');
+        if (statusEl) {
+          statusEl.innerText = (currentLang === 'bn' ? 'ছবিতে কোনো বৈধ কিউআর কোড পাওয়া যায়নি' : currentLang === 'hi' ? 'चित्र में कोई मान्य क्यूआर कोड नहीं मिला' : 'No valid QR code found in image');
+        }
+        showToast(
+          currentLang === 'bn' ? 'আপলোড করা ছবিতে কোনো কিউআর কোড শনাক্ত করা যায়নি।' : currentLang === 'hi' ? 'अपलोड किए गए चित्र में कोई क्यूआर कोड नहीं मिला।' : 'Could not detect a valid QR code in the uploaded image.',
+          'warning'
+        );
       };
       img.src = URL.createObjectURL(file);
     }
@@ -5722,7 +5760,7 @@
             <p><strong>Digital Assaying Slips:</strong> Quality certificates are cryptographically linked to the lot's append-only ledger block, enabling consumers and retailers to verify genuine grade authenticity at every retail shelf.</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'Visit Agmarknet National Portal &rarr;'
+          actionText: 'Visit Agmarknet National Portal'
         },
         hi: {
           title: 'एगमार्कनेट मानक एवं एपीएमसी मंडी संरचना',
@@ -5733,7 +5771,7 @@
             <p><strong>डिजिटल जांच पर्ची:</strong> गुणवत्ता प्रमाण पत्र क्रिप्टोग्राफ़िक रूप से लॉट के अपरिवर्तनीय लेज़र से जुड़े होते हैं, जिससे उपभोक्ता और खुदरा विक्रेता शेल्फ पर ही प्रामाणिकता सत्यापित कर सकते हैं।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं &rarr;'
+          actionText: 'एगमार्कनेट राष्ट्रीय पोर्टल पर जाएं'
         },
         bn: {
           title: 'অ্যাগমার্কনেট মানদণ্ড ও এপিএমসি মণ্ডি কাঠামো',
@@ -5744,7 +5782,7 @@
             <p><strong>ডিজিটাল গ্রেডিং স্লিপ:</strong> গুণমান সার্টিফিকেট ক্রিপ্টোগ্রাফিকভাবে চালানের লেজারের সাথে সংযুক্ত থাকে, যা খুচরা দোকানে যেকোনো ক্রেতাকে আসল গ্রেড যাচাই করার সুযোগ দেয়।</p>
           `,
           actionLink: 'https://agmarknet.gov.in/',
-          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান &rarr;'
+          actionText: 'অ্যাগমার্কনেট জাতীয় পোর্টালে যান'
         }
       },
       health: {
@@ -5758,7 +5796,7 @@
             <p><strong>End-to-End Latency:</strong> Sub-50ms API response time ensures rapid QR verification at fast-paced retail checkout counters and APMC weighbridge gates.</p>
           `,
           actionLink: '/health/',
-          actionText: 'View Live /health Telemetry &rarr;'
+          actionText: 'View Live /health Telemetry'
         },
         hi: {
           title: 'सिस्टम स्वास्थ्य एवं अवसंरचना टेलीमेट्री',
@@ -5769,7 +5807,7 @@
             <p><strong>त्वरित प्रतिक्रिया:</strong> 50ms से कम प्रतिक्रिया समय खुदरा काउंटरों और मंडी वेज-ब्रिज पर त्वरित क्यूआर सत्यापन सुनिश्चित करता है।</p>
           `,
           actionLink: '/health/',
-          actionText: 'लाइव /health टेलीमेट्री देखें &rarr;'
+          actionText: 'लाइव /health टेलीमेट्री देखें'
         },
         bn: {
           title: 'সিস্টেম স্থিতি ও ক্লাউড অবকাঠামো টেলিমেট্রি',
@@ -5780,7 +5818,7 @@
             <p><strong>দ্রুত প্রতিক্রিয়া:</strong> ৫০ মিলি-সেকেন্ডের কম সময়ে উত্তর প্রদান নিশ্চিত করে চেকআউট কাউন্টারে দ্রুত কিউআর স্ক্যান সুবিধা।</p>
           `,
           actionLink: '/health/',
-          actionText: 'লাইভ /health টেলিমেট্রি দেখুন &rarr;'
+          actionText: 'লাইভ /health টেলিমেট্রি দেখুন'
         }
       },
       security: {
@@ -5857,7 +5895,7 @@
             <p><strong>Decentralized & Role-Confined:</strong> Built on append-only event records, mutual custody confirmation, and data-protection design principles aligned with Indian agricultural ecosystems.</p>
           `,
           actionLink: '#',
-          actionText: 'Platform Architecture Notice &rarr;'
+          actionText: 'Platform Architecture Notice'
         },
         hi: {
           title: 'अन्नसूत्र परियोजना वास्तुकला एवं सिद्धांत',
@@ -5868,7 +5906,7 @@
             <p><strong>भूमिका-सीमित संरचना:</strong> अपरिवर्तनीय इवेंट रिकॉर्ड, पारस्परिक कस्टडी पुष्टि और डेटा सुरक्षा सिद्धांतों पर आधारित।</p>
           `,
           actionLink: '#',
-          actionText: 'परियोजना सूचना &rarr;'
+          actionText: 'परियोजना सूचना'
         },
         bn: {
           title: 'অন্নসূত্র প্রকল্প স্থাপত্য ও রূপরেখা',
@@ -5879,7 +5917,7 @@
             <p><strong>ভূমিকা-সীমাবদ্ধ কাঠামো:</strong> অপরিবর্তনীয় ইভেন্ট রেকর্ড, পারস্পরিক হেফাজত নিশ্চিতকরণ এবং ডেটা সুরক্ষা নীতির ভিত্তিতে নির্মিত।</p>
           `,
           actionLink: '#',
-          actionText: 'প্রকল্প তথ্য &rarr;'
+          actionText: 'প্রকল্প তথ্য'
         }
       }
     };
@@ -5930,10 +5968,10 @@
       };
 
       const defaultTitles = {
-        error: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'त्रुटि (Error)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'ত্রুটি (Error)' : 'Attention Required',
-        success: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सफल (Success)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'সফল (Success)' : 'Success',
-        warning: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सूचना (Notice)' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'বিজ্ঞপ্তি (Notice)' : 'Notice',
-        info: 'AnnaSutra'
+        error: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'त्रुटि' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'ত্রুটি' : 'Attention Required',
+        success: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सफल' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'সফল' : 'Success',
+        warning: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'सूचना' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'বিজ্ঞপ্তি' : 'Notice',
+        info: (typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'अन्नसूत्र' : (typeof currentLang !== 'undefined' && currentLang === 'bn') ? 'অন্নসূত্র' : 'AnnaSutra'
       };
 
       const toast = document.createElement('div');
@@ -6035,23 +6073,23 @@
             notice.innerText = (currentLang === 'hi' ? '' + phone + ' पर एसएमएस गेटवे से ओटीपी भेजा गया' : currentLang === 'bn' ? '' + phone + ' নম্বরে এসএমএস গেটওয়ে দিয়ে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway');
           }
           startOtpCountdown(60);
-          showToast((currentLang === 'hi' ? '' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway'), 'success', 'OTP Sent');
+          showToast((currentLang === 'hi' ? '' + phone + ' पर ओटीपी कोड भेज दिया गया है' : currentLang === 'bn' ? '' + phone + ' নম্বরে ওটিপি পাঠানো হয়েছে' : 'OTP dispatched to ' + phone + ' via SMS Gateway'), 'success');
           const codeInput = document.getElementById('otpCodeInput');
           if (codeInput) {
             codeInput.value = data.debug_code || '';
             codeInput.focus();
           }
         } else if (res.status === 429) {
-          showToast(data.detail || 'Too many OTP requests. Please wait a moment before trying again.', 'warning', 'Rate Limited');
+          showToast(data.detail || 'Too many OTP requests. Please wait a moment before trying again.', 'warning');
         } else if (res.status === 502 || data.code === 'GATEWAY_ERROR') {
-          showToast(data.detail || 'Unable to dispatch SMS. Please ensure the Android SMS Gateway is running on your phone.', 'error', 'SMS Gateway Error');
+          showToast(data.detail || 'Unable to dispatch SMS. Please ensure the Android SMS Gateway is running on your phone.', 'error');
         } else {
-          showToast(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি পাঠাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'), 'error', 'Dispatch Error');
+          showToast(data.detail || (currentLang === 'hi' ? 'ओटीपी भेजने में त्रुटि हुई' : currentLang === 'bn' ? 'ওটিপি পাঠাতে ত্রুটি হয়েছে' : 'Failed to send OTP. Please try again.'), 'error');
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'ओटीपी भेजें' : currentLang === 'bn' ? 'ওটিপি পাঠান' : 'Send Verification OTP');
-        showToast('Gateway communication error. Please check your network connection.', 'error', 'Connection Error');
+        showToast('Gateway communication error. Please check your network connection.', 'error');
       }
     }
 
@@ -6104,16 +6142,16 @@
           if (phone) {
             localStorage.setItem('annasutra_phone', phone);
           }
-          showToast((currentLang === 'hi' ? 'पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? 'পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : 'Identity verified! Launching operational console...'), 'success', 'Access Granted');
+          showToast((currentLang === 'hi' ? 'पहचान सत्यापित! कंसोल में प्रवेश किया जा रहा है...' : currentLang === 'bn' ? 'পরিচয় যাচাই সম্পন্ন! কনসোলে প্রবেশ করা হচ্ছে...' : 'Identity verified! Launching operational console...'), 'success');
           verifySuccess = true;
         } else {
-          showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error', 'Verification Failed');
+          showToast(data.detail || (currentLang === 'hi' ? 'अमान्य या समाप्त हो चुका ओटीपी कोड' : currentLang === 'bn' ? 'অবৈধ বা মেয়াদোত্তীর্ণ ওটিপি কোড' : 'Invalid or expired OTP code. Please enter the correct code.'), 'error');
           return;
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerText = (currentLang === 'hi' ? 'सत्यापित करें और प्रवेश करें' : currentLang === 'bn' ? 'যাচাই করুন और प्रवेश करें' : 'Verify & Enter Console');
-        showToast('Verification service temporarily unavailable. Please check your network connection.', 'error', 'Connection Error');
+        showToast('Verification service temporarily unavailable. Please check your network connection.', 'error');
         return;
       }
 
@@ -6130,14 +6168,16 @@
       let remaining = seconds;
       const countEl = document.getElementById('otpCountdown');
       if (otpCooldownTimer) clearInterval(otpCooldownTimer);
-      countEl.innerText = 'Resend in ' + remaining + 's';
+      const fmtWait = (sec) => currentLang === 'hi' ? (sec + ' सेकंड में पुनः भेजें') : currentLang === 'bn' ? (sec + ' সেকেন্ড পর পুনরায় পাঠান') : ('Resend in ' + sec + 's');
+      const resendLbl = currentLang === 'hi' ? 'ओटीपी पुनः भेजें' : currentLang === 'bn' ? 'ওটিপি পুনরায় পাঠান' : 'Resend OTP';
+      countEl.innerText = fmtWait(remaining);
       otpCooldownTimer = setInterval(() => {
         remaining--;
         if (remaining <= 0) {
           clearInterval(otpCooldownTimer);
-          countEl.innerHTML = '<a href="javascript:void(0)" onclick="requestOtpLogin()" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Resend OTP</a>';
+          countEl.innerHTML = '<a href="javascript:void(0)" onclick="requestOtpLogin()" style="color: var(--primary); font-weight: 700; text-decoration: underline;">' + resendLbl + '</a>';
         } else {
-          countEl.innerText = 'Resend in ' + remaining + 's';
+          countEl.innerText = fmtWait(remaining);
         }
       }, 1000);
     }
@@ -6246,7 +6286,7 @@
           ${tool.fields.map(f => `
             <div>
               <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">${f.label}</label>
-              <input type="${f.type}" class="modal-input" style="margin-bottom: 0;" id="input_${f.name}" value="${f.value}" />
+              <input type="${f.type}" class="modal-input" style="margin-bottom: 0;" id="input_${f.name}" value="" placeholder="${f.placeholder || f.value || ''}" />
             </div>
           `).join('')}
         </div>
@@ -6306,19 +6346,34 @@
 
       const newLotCode = vals.lotCode || (hexHash.slice(2, 14).toUpperCase());
       const newDesc = (vals.crop || activeTool.label) + ' • ' + (vals.qty ? vals.qty + ' Kg • ' : '') + (currentLang === 'bn' ? 'এইমাত্র প্রত্যয়িত' : currentLang === 'hi' ? 'अभी प्रमाणित' : 'Attested just now');
-      def.batches.unshift({
+      const newEntry = {
         code: newLotCode,
         desc: newDesc,
         status: (currentLang === 'bn' ? 'প্রত্যয়িত (' + activeTool.tag + ')' : currentLang === 'hi' ? 'प्रमाणित (' + activeTool.tag + ')' : 'Attested (' + activeTool.tag + ')')
-      });
+      };
+      window._sessionCommittedBatches = window._sessionCommittedBatches || [];
+      window._sessionCommittedBatches.unshift(newEntry);
+      if (Array.isArray(def._liveBatches)) def._liveBatches.unshift(newEntry);
       renderWorkspaceBatches(def);
     }
 
+    window._sessionCommittedBatches = window._sessionCommittedBatches || [];
+
     function renderWorkspaceBatches(def) {
       const batchesContainer = document.getElementById('workspaceBatchesList');
-      if (!batchesContainer || !def || !def.batches) return;
+      if (!batchesContainer) return;
+      const list = (def && Array.isArray(def._liveBatches)) ? def._liveBatches : window._sessionCommittedBatches;
       batchesContainer.innerHTML = '';
-      def.batches.forEach(b => {
+      if (!list || list.length === 0) {
+        const emptyMsg = currentLang === 'hi'
+          ? 'कस्टडी में अभी कोई सक्रिय बैच नहीं है। नया रिकॉर्ड जोड़ने के लिए ऊपर दिए गए टूल का उपयोग करें।'
+          : currentLang === 'bn'
+          ? 'হেফাজতে এখনও কোনো সক্রিয় ব্যাচ নেই। নতুন রেকর্ড যোগ করতে উপরের টুল ব্যবহার করুন।'
+          : 'No active batches in custody yet. Use the operational tools above to record a new custody event.';
+        batchesContainer.innerHTML = `<div style="padding: 18px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; color: #64748b; font-size: 13px; text-align: center; font-weight: 600;">${emptyMsg}</div>`;
+        return;
+      }
+      list.forEach(b => {
         const item = document.createElement('div');
         item.className = 'batch-item-card';
         item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px;';
@@ -6333,25 +6388,61 @@
       });
     }
 
+    async function syncWorkspaceProfileAndLots(def) {
+      const token = localStorage.getItem('annasutra_access_token');
+      if (!token) return;
+      try {
+        const profRes = await fetch('/api/v1/me/profile', {
+          headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+        });
+        if (profRes.ok) {
+          const prof = await profRes.json();
+          if (window.updateRegisteredHeaderBanner) {
+            window.updateRegisteredHeaderBanner(prof);
+          }
+          if (prof && prof.organisation_name) {
+            def.org = prof.organisation_name;
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const lotsRes = await fetch('/api/v1/lots', {
+          headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+        });
+        if (lotsRes.ok) {
+          const lotsData = await lotsRes.json();
+          const results = Array.isArray(lotsData) ? lotsData : (lotsData.results || []);
+          const mapped = results.map(l => ({
+            code: l.public_code || l.lot_id || '-',
+            desc: `${l.crop || ''} • ${l.quantity || ''} ${l.unit || 'kg'}`,
+            status: l.grade ? `Grade ${l.grade}` : 'Verified'
+          }));
+          def._liveBatches = [...window._sessionCommittedBatches, ...mapped];
+          renderWorkspaceBatches(def);
+        }
+      } catch (e) {}
+    }
+
     function renderDefaultWorkspace() {
       const langRoles = (typeof roleDefinitions !== 'undefined' && (roleDefinitions[currentLang] || roleDefinitions['en'])) || {};
       const def = langRoles[currentRole] || (roleDefinitions && roleDefinitions['en'] && roleDefinitions['en'][currentRole]) || null;
       if (!def) return;
 
-      const badge = document.getElementById('confinedBadgeText');
-      if (badge && def.lockedBadge) badge.innerText = def.lockedBadge;
-
       const title = document.getElementById('workspaceTitle');
       if (title && def.title) title.innerText = def.title;
 
-      const sub = document.getElementById('workspaceSubtitle');
-      if (sub) sub.innerText = (def.org || '') + (def.station ? ' • ' + def.station : '');
+      if (window.updateRegisteredHeaderBanner) {
+        window.updateRegisteredHeaderBanner(null);
+      }
 
       const heading = document.getElementById('workspaceBatchHeading');
       if (heading && def.batchHeading) heading.innerText = def.batchHeading;
+      if (heading) heading.style.display = 'block';
 
       const toolsContainer = document.getElementById('workspaceTools');
       if (toolsContainer && def.tools) {
+        toolsContainer.style.display = 'grid';
         toolsContainer.innerHTML = '';
         def.tools.forEach(tool => {
           const card = document.createElement('div');
@@ -6367,7 +6458,7 @@
               <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.4;">${tool.desc}</p>
             </div>
             <button class="btn-primary" style="padding: 8px 14px; font-size: 12.5px; width: 100%; border-radius: 6px; cursor: pointer;" onclick="openOperationModal('${tool.id}')">
-              ${def.executeBtn || 'Execute Action &rarr;'}
+              ${def.executeBtn || 'Execute Action'}
             </button>
           `;
           toolsContainer.appendChild(card);
@@ -6375,6 +6466,7 @@
       }
 
       renderWorkspaceBatches(def);
+      syncWorkspaceProfileAndLots(def);
     }
     window.renderDefaultWorkspace = renderDefaultWorkspace;
 
@@ -6403,15 +6495,16 @@
       const userPill = document.getElementById('userPill');
       if (userPill) userPill.style.display = 'inline-flex';
 
-      const roleMap = {
-        en: { PRODUCER: 'Producer', AGGREGATOR: 'Aggregator', WHOLESALER: 'Wholesaler', DISTRIBUTOR: 'Distributor', RETAILER: 'Retailer' },
-        hi: { PRODUCER: 'उत्पादक', AGGREGATOR: 'संग्रहकर्ता', WHOLESALER: 'थोक व्यापारी', DISTRIBUTOR: 'वितरक', RETAILER: 'खुदरा विक्रेता' },
-        bn: { PRODUCER: 'উৎপাদক', AGGREGATOR: 'সংগ্রহকারী', WHOLESALER: 'পাইকারি বিক্রেতা', DISTRIBUTOR: 'পরিবেশক', RETAILER: 'খুচরা বিক্রেতা' }
-      };
-      const rName = (roleMap[currentLang] && roleMap[currentLang][currentRole]) || currentRole;
-      const phoneSuffix = verifiedPhone ? '•' + verifiedPhone.slice(-4) : (currentRole === 'PRODUCER' ? (currentLang === 'bn' ? 'বর্ধমান' : currentLang === 'hi' ? 'बर्धमान' : 'Bardhaman') : 'Active');
       const activeUserName = document.getElementById('activeUserName');
-      if (activeUserName) activeUserName.innerText = rName + ' (' + phoneSuffix + ')';
+      if (activeUserName) {
+        if (window.formatEntityUserBadge) {
+          activeUserName.innerText = window.formatEntityUserBadge(currentRole, verifiedPhone, currentLang);
+        } else {
+          const digits = String(verifiedPhone || '').replace(/\D/g, '');
+          const last4 = digits.length >= 4 ? digits.slice(-4) : '0000';
+          activeUserName.innerText = currentRole + ' (X' + last4 + ')';
+        }
+      }
 
       ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
@@ -6457,7 +6550,7 @@
         bgVid.play().catch(() => {});
       }
 
-      showToast((currentLang === 'hi' ? 'सत्र समाप्त हुआ। सार्वजनिक दृश्य पर वापस।' : currentLang === 'bn' ? 'সেশন শেষ হয়েছে। সর্বজনীন দৃশ্যে ফেরত।' : 'Logged out. Returned to public view.'), 'info', 'Session Ended');
+      showToast((currentLang === 'hi' ? 'सत्र समाप्त हुआ। सार्वजनिक दृश्य पर वापस।' : currentLang === 'bn' ? 'সেশন শেষ হয়েছে। সর্বজনীন দৃশ্যে ফেরত।' : 'Logged out. Returned to public view.'), 'info');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -6556,7 +6649,7 @@
         const tempEl = document.getElementById('weatherTemp');
         const locEl = document.getElementById('weatherLoc');
 
-        if (iconEl && weather.icon) iconEl.textContent = weather.icon;
+        if (iconEl && weather.icon) { iconEl.innerHTML = window.renderUniformIcon ? window.renderUniformIcon(weather.icon, 14, '#fde047') : ''; }
         if (tempEl && weather.temp !== undefined) tempEl.textContent = Math.round(weather.temp) + '°C';
         if (locEl) {
           const locName = weather.city || 'India';
