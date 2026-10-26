@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +32,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   IconData _weatherIcon = Icons.wb_sunny_outlined;
   String _weatherText = 'Detecting...';
   String _dateTimeText = '';
-  Timer? _clockTimer;
 
   static const Map<String, Map<String, String>> _strings = {
     'en': {
@@ -200,15 +201,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _updateClock();
-    if (!const bool.fromEnvironment('FLUTTER_TEST')) {
-      _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
+    if (kIsWeb || !Platform.environment.containsKey('FLUTTER_TEST')) {
       _fetchWeather();
     }
   }
 
   @override
   void dispose() {
-    _clockTimer?.cancel();
     _tabController.dispose();
     super.dispose();
   }
