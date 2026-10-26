@@ -1041,11 +1041,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
+        title: const Row(
           children: [
-            const Icon(Icons.qr_code, color: Color(0xFF047857)),
-            const SizedBox(width: 8),
-            const Text('Verifiable Sovereign QR', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Icon(Icons.qr_code, color: Color(0xFF047857)),
+            SizedBox(width: 8),
+            Text('Verifiable Sovereign QR', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
         content: Column(
@@ -1132,11 +1132,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
+        title: const Row(
           children: [
-            const Icon(Icons.local_shipping, color: Color(0xFF047857)),
-            const SizedBox(width: 8),
-            const Text('Dispatch to Mandi / Buyer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Icon(Icons.local_shipping, color: Color(0xFF047857)),
+            SizedBox(width: 8),
+            Text('Dispatch to Mandi / Buyer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
         content: Column(

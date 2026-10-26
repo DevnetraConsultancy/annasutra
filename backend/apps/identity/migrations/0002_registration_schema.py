@@ -27,7 +27,7 @@ MYSQL_REGISTRATION_STATEMENTS = [
       state            VARCHAR(100) NOT NULL,
       pincode          CHAR(6)      NOT NULL,
       photo_object_key VARCHAR(255) NOT NULL,
-      status           ENUM('DRAFT','SUBMITTED','NEEDS_CHANGES','VERIFIED','REJECTED','SUSPENDED') NOT NULL DEFAULT 'DRAFT',
+      status           ENUM('DRAFT','SUBMITTED','NEEDS_CHANGES','VERIFIED','REJECTED','SUSPENDED','TRASH') NOT NULL DEFAULT 'DRAFT',
       version          INT NOT NULL DEFAULT 1,
       submitted_at     DATETIME NULL,
       verified_at      DATETIME NULL,
@@ -114,7 +114,7 @@ MYSQL_REGISTRATION_STATEMENTS = [
       review_id  CHAR(36) PRIMARY KEY,
       entity_id  CHAR(36) NOT NULL,
       reviewer_id CHAR(36) NOT NULL,
-      decision   ENUM('APPROVED','REJECTED','NEEDS_CHANGES','SUSPENDED') NOT NULL,
+      decision   ENUM('APPROVED','REJECTED','NEEDS_CHANGES','SUSPENDED','TRASH','RESTORED') NOT NULL,
       reason     VARCHAR(500) NULL,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT fk_rev_entity FOREIGN KEY (entity_id) REFERENCES entity_profile(entity_id)

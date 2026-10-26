@@ -54,30 +54,11 @@ class IsAdminOrStaff(permissions.BasePermission):
         return getattr(request.user, "role", None) in ("OWNER", "STAFF")
 
 
-_trash_enums_ensured = False
+_trash_enums_ensured = True
 
 
 def _ensure_trash_enums():
-    global _trash_enums_ensured
-    if _trash_enums_ensured:
-        return
-    try:
-        from django.db import connection
-        if connection.vendor == "mysql":
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "ALTER TABLE entity_profile MODIFY COLUMN status "
-                    "ENUM('DRAFT','SUBMITTED','NEEDS_CHANGES','VERIFIED','REJECTED','SUSPENDED','TRASH') "
-                    "NOT NULL DEFAULT 'DRAFT';"
-                )
-                cursor.execute(
-                    "ALTER TABLE verification_review MODIFY COLUMN decision "
-                    "ENUM('APPROVED','REJECTED','NEEDS_CHANGES','SUSPENDED','TRASH','RESTORED') "
-                    "NOT NULL;"
-                )
-        _trash_enums_ensured = True
-    except Exception:
-        _trash_enums_ensured = True
+    pass
 
 
 class AdminReviewQueueView(APIView):
