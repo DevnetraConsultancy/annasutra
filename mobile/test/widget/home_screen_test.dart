@@ -26,6 +26,9 @@ void main() {
       find.textContaining('Records are based on information entered by supply-chain participants', findRichText: true),
       findsOneWidget,
     );
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
   });
 
   testWidgets('HomeScreen renders authenticated dual-tab navigation and KPI cards', (WidgetTester tester) async {
@@ -47,6 +50,9 @@ void main() {
 
     // Verify action button
     expect(find.textContaining('Register New Harvest Lot'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
   });
 }
 

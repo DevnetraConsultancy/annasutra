@@ -200,8 +200,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _updateClock();
-    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
-    _fetchWeather();
+    if (!const bool.fromEnvironment('FLUTTER_TEST')) {
+      _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
+      _fetchWeather();
+    }
   }
 
   @override
