@@ -245,5 +245,5 @@ def mobile_preview_view(request):
 def download_apk_view(request):
     """Direct download redirect for the latest AnnaSutra Android Mobile APK (<50MB)."""
     from django.http import HttpResponseRedirect
-    apk_url = "https://github.com/DevnetraConsultancy/annasutra/releases/download/v1.0.0/app-debug.apk"
+    apk_url = "https://github.com/DevnetraConsultancy/annasutra/releases/download/v1.0.0/app-release.apk"
     return HttpResponseRedirect(apk_url)
