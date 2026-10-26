@@ -229,19 +229,6 @@ def landing_page_view(request):
 
 
 
-def mobile_preview_view(request):
-    """Interactive Mobile Simulator & Live Development Testing View."""
-    user_lang = request.COOKIES.get("annasutra_lang", "en")
-    if user_lang not in SUPPORTED_LANGS:
-        user_lang = "en"
-    return render(request, "publicview/mobile_preview.html", {
-        "user_lang": user_lang,
-        "brand_logo": ANNASUTRA_LOGO_URI,
-        "cdac_logo": CDAC_LOGO_URI,
-        "app_icon": APP_ICON_URI,
-    })
-
-
 def download_apk_view(request):
     """Direct download redirect for the latest AnnaSutra Android Mobile APK (<50MB)."""
     from django.http import HttpResponseRedirect
