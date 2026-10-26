@@ -279,7 +279,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     final AuthState authState = ref.watch(authControllerProvider);
     final LotsState lotsState = ref.watch(lotsControllerProvider);
     final SyncState syncState = ref.watch(syncControllerProvider);
-    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 900;
 
@@ -851,7 +850,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.sprout_outlined, size: 48, color: Color(0xFF047857)),
+            const Icon(Icons.eco_outlined, size: 48, color: Color(0xFF047857)),
             const SizedBox(height: 12),
             const Text(
               'No harvest lots in custody matching your filters.',
@@ -1038,7 +1037,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
   // MODALS & DIALOGS
   void _showUnlimitedQrDialog(BuildContext context, HarvestLot lot) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -1129,7 +1128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     final vehicleCtrl = TextEditingController(text: 'WB-25-A-8902');
     final driverCtrl = TextEditingController(text: '+919876500000');
 
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -1571,7 +1570,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
   void _showAccountDialog(BuildContext context) {
     final authState = ref.read(authControllerProvider);
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Node Identity'),
@@ -1579,7 +1578,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Entity: ${authState.orgName ?? "Dr. Niladri\'s Farm"}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text("Entity: ${authState.orgName ?? \"Dr. Niladri's Farm\"}", style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             Text('Phone: ${authState.phone ?? "+919876543210"}'),
             const SizedBox(height: 4),

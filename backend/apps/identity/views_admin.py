@@ -623,6 +623,10 @@ class AdminEntityPurgeView(APIView):
                 entity.role_details.delete()
             except Exception:
                 pass
+            from django.db import connection
+            with connection.cursor() as cursor:
+                cursor.execute("DELETE FROM verification_review WHERE entity_id = %s", [str(entity.entity_id)])
+                cursor.execute("DELETE FROM profile_change_log WHERE entity_id = %s", [str(entity.entity_id)])
             entity.delete()
 
         return Response({"message": "Producer data permanently purged from system."}, status=status.HTTP_200_OK)

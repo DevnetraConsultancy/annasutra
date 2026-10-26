@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,8 +8,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:annasutra_mobile/data/platform/platform_providers.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
-import '../controllers/lots_controller.dart';
-import '../../domain/harvest_lot.dart';
+import 'controllers/lots_controller.dart';
+import '../domain/harvest_lot.dart';
 
 class BatchCreateScreen extends ConsumerStatefulWidget {
   final String? lotCode; // If provided, edit mode

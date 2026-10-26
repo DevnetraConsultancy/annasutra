@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 /// Domain entity representing a traceable harvest batch in AnnaSutra.
 /// Conforms to the 29-field agricultural & custodial ledger schema from the web portal.
 class HarvestLot {

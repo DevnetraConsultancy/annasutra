@@ -58,12 +58,20 @@ class LotsState {
       if (searchQuery.isNotEmpty) {
         final query = searchQuery.toLowerCase();
         final text = '${lot.publicCode} ${lot.crop} ${lot.variety} ${lot.originPlotName} ${lot.qualityGrade}'.toLowerCase();
-        if (!text.contains(query)) return false;
+        if (!text.contains(query)) {
+          return false;
+        }
       }
       if (selectedCustody != 'ALL') {
-        if (selectedCustody == 'IN_CUSTODY' && !(lot.state == 'IN_CUSTODY' || lot.state == 'CREATED')) return false;
-        if (selectedCustody == 'IN_TRANSIT' && lot.state != 'IN_TRANSIT') return false;
-        if (selectedCustody == 'CLOSED' && lot.state != 'CLOSED') return false;
+        if (selectedCustody == 'IN_CUSTODY' && !(lot.state == 'IN_CUSTODY' || lot.state == 'CREATED')) {
+          return false;
+        }
+        if (selectedCustody == 'IN_TRANSIT' && lot.state != 'IN_TRANSIT') {
+          return false;
+        }
+        if (selectedCustody == 'CLOSED' && lot.state != 'CLOSED') {
+          return false;
+        }
       }
       if (selectedCrop != 'ALL' && lot.crop.toLowerCase() != selectedCrop.toLowerCase()) {
         return false;
