@@ -509,26 +509,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             ),
           ),
           if (authState.isAuthenticated) ...[
-            InkWell(
-              onTap: () => _showAccountDialog(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.verified, color: Color(0xFF10B981), size: 16),
-                    const SizedBox(width: 6),
-                    Text(
-                      authState.orgName ?? 'Verified Node',
-                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+            Flexible(
+              child: InkWell(
+                onTap: () => _showAccountDialog(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.verified, color: Color(0xFF10B981), size: 16),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          authState.orgName ?? 'Verified Node',
+                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -584,12 +588,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                       color: _currentMainTab == 0 ? const Color(0xFFFCD34D) : const Color(0xFF475569),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      _t('tabLedger'),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: _currentMainTab == 0 ? Colors.white : const Color(0xFF475569),
+                    Flexible(
+                      child: Text(
+                        _t('tabLedger'),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: _currentMainTab == 0 ? Colors.white : const Color(0xFF475569),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -620,12 +627,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                       color: _currentMainTab == 1 ? const Color(0xFFFCD34D) : const Color(0xFF475569),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      _t('tabAnalytics'),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: _currentMainTab == 1 ? Colors.white : const Color(0xFF475569),
+                    Flexible(
+                      child: Text(
+                        _t('tabAnalytics'),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: _currentMainTab == 1 ? Colors.white : const Color(0xFF475569),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -752,27 +762,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Top row: Search input + "+ Register New Harvest Lot" Button
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 44,
-                  child: TextField(
-                    onChanged: (val) => notifier.setSearchQuery(val),
-                    decoration: InputDecoration(
-                      hintText: _t('searchPlaceholder'),
-                      hintStyle: const TextStyle(fontSize: 12.5, color: Color(0xFF94A3B8)),
-                      prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF64748B)),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
-                      filled: true,
-                      fillColor: const Color(0xFFF8FAFC),
-                    ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 540;
+              final searchField = SizedBox(
+                height: 44,
+                child: TextField(
+                  onChanged: (val) => notifier.setSearchQuery(val),
+                  decoration: InputDecoration(
+                    hintText: _t('searchPlaceholder'),
+                    hintStyle: const TextStyle(fontSize: 12.5, color: Color(0xFF94A3B8)),
+                    prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF64748B)),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                    filled: true,
+                    fillColor: const Color(0xFFF8FAFC),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton.icon(
+              );
+
+              final registerBtn = ElevatedButton.icon(
                 onPressed: () => context.push('/create-batch'),
                 icon: const Icon(Icons.add, size: 18),
                 label: Text(
@@ -782,12 +791,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF047857),
                   foregroundColor: Colors.white,
-                  minimumSize: const Size(130, 44),
+                  minimumSize: Size(isNarrow ? double.infinity : 130, 44),
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-              ),
-            ],
+              );
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    searchField,
+                    const SizedBox(height: 10),
+                    registerBtn,
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: searchField),
+                  const SizedBox(width: 10),
+                  registerBtn,
+                ],
+              );
+            },
           ),
           const SizedBox(height: 12),
 
