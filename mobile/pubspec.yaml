@@ -27,6 +27,7 @@ dependencies:
   local_auth: ^2.3.0
   mobile_scanner: ^5.2.3
   connectivity_plus: ^6.0.5
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

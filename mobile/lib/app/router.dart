@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/org_registration_screen.dart';
 import '../features/home/presentation/home_screen.dart';
+import '../features/home/presentation/web_portal_screen.dart';
 import '../features/lots/presentation/batch_create_screen.dart';
 import '../features/custody/presentation/dispatch_screen.dart';
 import '../features/custody/presentation/receive_screen.dart';
@@ -19,6 +20,11 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
       GoRoute(
         path: '/',
         name: 'home',
+        builder: (context, state) => WebPortalScreen(onLocaleChanged: onLocaleChanged),
+      ),
+      GoRoute(
+        path: '/offline-home',
+        name: 'offline-home',
         builder: (context, state) => HomeScreen(onLocaleChanged: onLocaleChanged),
       ),
       GoRoute(
