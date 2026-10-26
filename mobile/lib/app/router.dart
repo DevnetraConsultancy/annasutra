@@ -34,7 +34,10 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
       GoRoute(
         path: '/create-batch',
         name: 'create-batch',
-        builder: (context, state) => const BatchCreateScreen(),
+        builder: (context, state) {
+          final lotCode = state.uri.queryParameters['code'];
+          return BatchCreateScreen(lotCode: lotCode);
+        },
       ),
       GoRoute(
         path: '/dispatch',

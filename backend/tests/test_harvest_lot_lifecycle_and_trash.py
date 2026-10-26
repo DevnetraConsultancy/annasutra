@@ -20,7 +20,7 @@ def test_setup(db):
         user_id=uuid.uuid4(),
         org=org,
         role="OWNER",
-        phone_e164="+919876543210",
+        phone_e164="+919876500001",
     )
     token = TokenService.issue_token_pair(user)["access_token"]
 
@@ -35,7 +35,7 @@ def test_setup(db):
         user_id=uuid.uuid4(),
         org=admin_org,
         role="STAFF",
-        phone_e164="+919999999999",
+        phone_e164="+919999900001",
     )
     admin_token = TokenService.issue_token_pair(admin_user)["access_token"]
 
@@ -47,7 +47,7 @@ def test_setup(db):
         first_name="Ramesh",
         last_name="Biswas",
         organisation_name="Biswas Agro Test",
-        phone_e164="+919876543210",
+        phone_e164="+919876500001",
         village_town="Naihati",
         district="North 24 Parganas",
         state="West Bengal",
