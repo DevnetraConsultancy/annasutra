@@ -889,12 +889,50 @@
     contentArea.style.display = 'block';
 
     const t = getI18n();
-    contentArea.innerHTML = `
-      <div style="text-align: center; padding: 48px 16px;">
-        <div style="width: 36px; height: 36px; border: 3px solid #cbd5e1; border-top-color: #0b3d2e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
-        <p style="color: #64748b; font-size: 14px; font-weight: 600;">${escapeHtml(t.loadingRegistry)}</p>
-      </div>
-    `;
+
+    // SWR STEP 1: Check for cached profile in localStorage for 0ms INSTANT HYDRATION!
+    let hasRenderedCached = false;
+    let cachedProfile = null;
+    try {
+      cachedProfile = JSON.parse(localStorage.getItem('annasutra_cached_profile'));
+    } catch (e) {}
+
+    if (cachedProfile && currentRole === 'PRODUCER') {
+      wizardState.profile = cachedProfile;
+      if (cachedProfile.role_details && cachedProfile.role_details.commodities) {
+        wizardState.selectedCrops = cachedProfile.role_details.commodities;
+      }
+      try {
+        const cachedPlots = JSON.parse(localStorage.getItem('annasutra_cached_plots') || '[]');
+        if (Array.isArray(cachedPlots)) wizardState.plots = cachedPlots;
+      } catch (e) {}
+      try {
+        const cachedLots = JSON.parse(localStorage.getItem('annasutra_cached_lots') || '[]');
+        if (Array.isArray(cachedLots)) window._producerLots = cachedLots;
+      } catch (e) {}
+
+      updateRegisteredHeaderBanner(wizardState.profile);
+
+      if (cachedProfile.status === 'VERIFIED') {
+        renderVerifiedOperationalConsole(contentArea);
+        updateLotMetrics();
+        applyLotFilters();
+        hasRenderedCached = true;
+      } else if (cachedProfile.status === 'SUBMITTED') {
+        renderUnderReviewCard(contentArea);
+        hasRenderedCached = true;
+      }
+    }
+
+    // Only show loading spinner if we didn't have cached data to render immediately
+    if (!hasRenderedCached) {
+      contentArea.innerHTML = `
+        <div style="text-align: center; padding: 48px 16px;">
+          <div style="width: 36px; height: 36px; border: 3px solid #cbd5e1; border-top-color: #0b3d2e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+          <p style="color: #64748b; font-size: 14px; font-weight: 600;">${escapeHtml(t.loadingRegistry)}</p>
+        </div>
+      `;
+    }
 
     if (typeof currentRole !== 'undefined' && currentRole === 'ADMIN') {
       updateRegisteredHeaderBanner({ organisation_name: t.workspaceTitleAdmin });
@@ -902,35 +940,49 @@
       return;
     }
 
+    // SWR STEP 2: Parallel Background Revalidation (No waterfall, no blocking)
     try {
-      const res = await fetch('/api/v1/me/profile', { headers: getAuthHeader() });
-      if (res.status === 401 || res.status === 403) {
+      const [profileRes, lotsRes, plotsRes] = await Promise.all([
+        fetch('/api/v1/me/profile', { headers: getAuthHeader() }),
+        fetch('/api/v1/lots/', { headers: getAuthHeader() }),
+        fetch('/api/v1/me/plots', { headers: getAuthHeader() })
+      ]);
+
+      if (profileRes.status === 401 || profileRes.status === 403) {
+        localStorage.removeItem('annasutra_cached_profile');
+        localStorage.removeItem('annasutra_cached_lots');
+        localStorage.removeItem('annasutra_cached_plots');
         wizardState.profile = { status: 'DRAFT', role: 'PRODUCER', version: 1 };
         updateRegisteredHeaderBanner(wizardState.profile);
         renderWizardInterface(contentArea);
         return;
       }
 
-      const data = await res.json();
+      const data = await profileRes.json();
       wizardState.profile = data.profile || data;
+      try {
+        localStorage.setItem('annasutra_cached_profile', JSON.stringify(wizardState.profile));
+      } catch (e) {}
 
       if (wizardState.profile.role_details && wizardState.profile.role_details.commodities) {
         wizardState.selectedCrops = wizardState.profile.role_details.commodities;
       }
 
-      try {
-        const [sensRes, plotsRes] = await Promise.all([
-          fetch('/api/v1/me/sensitive', { headers: getAuthHeader() }),
-          fetch('/api/v1/me/plots', { headers: getAuthHeader() })
-        ]);
-        if (sensRes.ok) {
-          wizardState.sensitive = await sensRes.json();
-        }
-        if (plotsRes.ok) {
-          const pData = await plotsRes.json();
-          wizardState.plots = pData.plots || [];
-        }
-      } catch (e) {}
+      if (plotsRes && plotsRes.ok) {
+        const pData = await plotsRes.json();
+        wizardState.plots = pData.plots || [];
+        try {
+          localStorage.setItem('annasutra_cached_plots', JSON.stringify(wizardState.plots));
+        } catch (e) {}
+      }
+
+      if (lotsRes && lotsRes.ok) {
+        const lData = await lotsRes.json();
+        window._producerLots = lData.items || [];
+        try {
+          localStorage.setItem('annasutra_cached_lots', JSON.stringify(window._producerLots));
+        } catch (e) {}
+      }
 
       updateRegisteredHeaderBanner(wizardState.profile);
 
@@ -938,13 +990,22 @@
       if (pStatus === 'SUBMITTED') {
         renderUnderReviewCard(contentArea);
       } else if (pStatus === 'VERIFIED') {
-        renderVerifiedOperationalConsole(contentArea);
+        if (!hasRenderedCached) {
+          renderVerifiedOperationalConsole(contentArea);
+        }
+        updateLotMetrics();
+        applyLotFilters();
+        if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
+          renderProducerAnalytics();
+        }
       } else {
         renderWizardInterface(contentArea);
       }
     } catch (err) {
-      updateRegisteredHeaderBanner(wizardState.profile);
-      renderWizardInterface(contentArea);
+      if (!hasRenderedCached) {
+        updateRegisteredHeaderBanner(wizardState.profile);
+        renderWizardInterface(contentArea);
+      }
     }
   };
 
@@ -1522,6 +1583,9 @@ function renderAdminConsoleUI(container) {
       if (res.ok) {
         const data = await res.json();
         window._producerLots = data.items || [];
+        try {
+          localStorage.setItem('annasutra_cached_lots', JSON.stringify(window._producerLots));
+        } catch (e) {}
       } else {
         window._producerLots = [];
       }
@@ -1530,6 +1594,9 @@ function renderAdminConsoleUI(container) {
     }
     updateLotMetrics();
     applyLotFilters();
+    if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
+      renderProducerAnalytics();
+    }
   }
 
   function updateLotMetrics() {

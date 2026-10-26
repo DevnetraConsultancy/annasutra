@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.http import JsonResponse
 from django.db import connection
-from apps.publicview.views import landing_page_view, public_lot_html_view, serve_static_asset
+from apps.publicview.views import landing_page_view, public_lot_html_view, serve_static_asset, download_apk_view
 
 
 def health_check(request):
@@ -44,6 +44,11 @@ urlpatterns = [
     path("public/lot/<str:code>", public_lot_html_view, name="public_lot_html_canonical_noslash"),
     path("q/<str:code>", public_lot_html_view, name="qr_short_link"),
     path("q/<str:code>/", public_lot_html_view, name="qr_short_link_slash"),
+    path("download/apk", download_apk_view, name="download_apk"),
+    path("download/apk/", download_apk_view, name="download_apk_slash"),
+    path("download/android", download_apk_view, name="download_android"),
+    path("download/android/", download_apk_view, name="download_android_slash"),
+
     # API v1 routes conforming to api/openapi.yaml (supports both /api/v1/ and /v1/)
     path("api/v1/auth/", include("apps.identity.urls")),
     path("api/v1/auth", include("apps.identity.urls")),

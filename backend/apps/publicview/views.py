@@ -227,3 +227,10 @@ def landing_page_view(request):
     })
 
 
+
+
+def download_apk_view(request):
+    """Direct download redirect for the latest AnnaSutra Android Mobile APK."""
+    from django.http import HttpResponseRedirect
+    apk_url = "https://github.com/DevnetraConsultancy/annasutra/releases/download/v1.0.0/app-debug.apk"
+    return HttpResponseRedirect(apk_url)

@@ -1314,6 +1314,32 @@
             </div>
           </div>
 
+          <!-- Android APK Direct Download Card (Professional Locked Footer Component) -->
+          <div class="footer-apk-card" style="margin: 16px 0; background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 78, 59, 0.35) 100%); border: 1.5px solid #10b981; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 42px; height: 42px; background: #10b981; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
+                <!-- Official Android SVG -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#064e3b">
+                  <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9996.4482.9996.9993.0001.5511-.4485.9997-.9996.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9996.4482.9996.9993 0 .5511-.4485.9997-.9996.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.411 13.8567 8.134 12 8.134c-1.8567 0-3.5902.277-5.1378.8157L4.8399 5.4467a.416.416 0 00-.5676-.1521.416.416 0 00-.1521.5676l1.9973 3.4592C2.6889 10.9443 0 14.5422 0 18.7778h24c0-4.2356-2.6889-7.8335-6.1185-9.4564"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: #a7f3d0; text-transform: uppercase; letter-spacing: 0.5px;" id="lblApkSub">Official Android Application</div>
+                <div style="font-size: 14.5px; font-weight: 800; color: #ffffff;" id="lblApkTitle">AnnaSutra Mobile APK</div>
+                <div style="font-size: 11.5px; color: #cbd5e1;" id="lblApkMeta">Direct Install • v1.0.0 (Android 8.0+)</div>
+              </div>
+            </div>
+            <a href="/download/apk" class="btn-download-apk" style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: #064e3b; font-weight: 800; font-size: 13px; padding: 10px 18px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); flex-shrink: 0; transition: transform 0.15s ease;" title="Direct Download AnnaSutra Android APK (v1.0.0)">
+              <!-- Downward Download Arrow SVG -->
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span id="btnDownloadApkText">Download APK</span>
+            </a>
+          </div>
+
           <button type="button" class="btn-ataraxis-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><polyline points="18 15 12 9 6 15"/></svg><span id="btnBackToTopText">BACK TO TOP</span>
           </button>
@@ -1327,6 +1353,16 @@
               <a href="/" title="National Homepage">
                 <span class="ataraxis-link-arrow">›</span>
                 <span id="footerLinkHome">National Homepage</span>
+              </a>
+            </li>
+            <li>
+              <a href="/download/apk" title="Download Android Mobile APK" style="color: #6ee7b7; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span id="footerLinkApk">Android APK Download (v1.0.0)</span>
               </a>
             </li>
             <li>
@@ -2038,6 +2074,11 @@
       setTxt('footerColLegalTitle', t.footerColLegalTitle);
       setTxt('footerLinkDpdp', t.footerLinkDpdp);
       setTxt('footerLinkQuality', t.footerLinkQuality);
+      setTxt('lblApkSub', t.lblApkSub);
+      setTxt('lblApkTitle', t.lblApkTitle);
+      setTxt('lblApkMeta', t.lblApkMeta);
+      setTxt('btnDownloadApkText', t.btnDownloadApkText);
+      setTxt('footerLinkApk', t.footerLinkApk);
       setTxt('footerLinkHealth', t.footerLinkHealth);
       setTxt('footerLinkSecurity', t.footerLinkSecurity);
       setTxt('footerLinkGrievance', t.footerLinkGrievance);
