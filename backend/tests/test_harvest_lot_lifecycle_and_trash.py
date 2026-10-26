@@ -1,10 +1,9 @@
 import uuid
 import pytest
 from rest_framework import status
-from apps.identity.models import AppUser, EntityProfile, VerificationReview
+from apps.identity.models import AppUser, EntityProfile
 from apps.organisations.models import Organisation, Plot
-from apps.lots.models import Lot, Product
-from apps.inventory.models import LotBalance
+from apps.lots.models import Lot
 from apps.identity.services.token import TokenService
 
 

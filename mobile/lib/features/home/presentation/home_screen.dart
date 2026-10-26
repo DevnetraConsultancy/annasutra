@@ -1570,6 +1570,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
   void _showAccountDialog(BuildContext context) {
     final authState = ref.read(authControllerProvider);
+    final entityDisplay = authState.orgName ?? "Dr. Niladri's Farm";
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1578,7 +1579,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Entity: ${authState.orgName ?? \"Dr. Niladri's Farm\"}", style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('Entity: $entityDisplay', style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             Text('Phone: ${authState.phone ?? "+919876543210"}'),
             const SizedBox(height: 4),

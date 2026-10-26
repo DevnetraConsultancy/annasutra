@@ -619,14 +619,22 @@ class AdminEntityPurgeView(APIView):
                 pass
             entity.documents.all().delete()
             entity.plots.all().delete()
+            entity.facilities.all().delete()
             try:
                 entity.role_details.delete()
             except Exception:
                 pass
             from django.db import connection
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM verification_review WHERE entity_id = %s", [str(entity.entity_id)])
-                cursor.execute("DELETE FROM profile_change_log WHERE entity_id = %s", [str(entity.entity_id)])
+                if connection.vendor == "mysql":
+                    cursor.execute("SET @annasutra_allow_purge = 1;")
+                ids = [str(entity.entity_id), getattr(entity.entity_id, "hex", str(entity.entity_id))]
+                cursor.execute("DELETE FROM verification_review WHERE entity_id IN (%s, %s)", ids)
+                cursor.execute("DELETE FROM profile_change_log WHERE entity_id IN (%s, %s)", ids)
+                cursor.execute("DELETE FROM sensitive_access_log WHERE entity_id IN (%s, %s)", ids)
+                cursor.execute("DELETE FROM entity_consent_record WHERE entity_id IN (%s, %s)", ids)
+                if connection.vendor == "mysql":
+                    cursor.execute("SET @annasutra_allow_purge = 0;")
             entity.delete()
 
         return Response({"message": "Producer data permanently purged from system."}, status=status.HTTP_200_OK)

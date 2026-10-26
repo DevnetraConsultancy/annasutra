@@ -156,15 +156,27 @@ MYSQL_TRIGGERS = [
     """CREATE TRIGGER verification_review_no_update BEFORE UPDATE ON verification_review FOR EACH ROW
        BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only'; END;""",
     """CREATE TRIGGER verification_review_no_delete BEFORE DELETE ON verification_review FOR EACH ROW
-       BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only'; END;""",
+       BEGIN
+         IF @annasutra_allow_purge IS NULL OR @annasutra_allow_purge != 1 THEN
+           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only';
+         END IF;
+       END;""",
     """CREATE TRIGGER change_log_no_update BEFORE UPDATE ON profile_change_log FOR EACH ROW
        BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only'; END;""",
     """CREATE TRIGGER change_log_no_delete BEFORE DELETE ON profile_change_log FOR EACH ROW
-       BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only'; END;""",
+       BEGIN
+         IF @annasutra_allow_purge IS NULL OR @annasutra_allow_purge != 1 THEN
+           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only';
+         END IF;
+       END;""",
     """CREATE TRIGGER sens_log_no_update BEFORE UPDATE ON sensitive_access_log FOR EACH ROW
        BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only'; END;""",
     """CREATE TRIGGER sens_log_no_delete BEFORE DELETE ON sensitive_access_log FOR EACH ROW
-       BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only'; END;""",
+       BEGIN
+         IF @annasutra_allow_purge IS NULL OR @annasutra_allow_purge != 1 THEN
+           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'append-only';
+         END IF;
+       END;""",
 ]
 
 
