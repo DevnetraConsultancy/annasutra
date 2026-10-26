@@ -18,7 +18,7 @@ void main() {
     );
 
     // Matches 1-tap button is prominent
-    expect(find.textContaining('Matches (1-Tap)'), findsOneWidget);
+    expect(find.textContaining('Matches Declared Weight'), findsOneWidget);
     expect(find.textContaining('500.0 kg'), findsOneWidget);
 
     // Toggle scale form

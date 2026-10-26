@@ -436,6 +436,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     Expanded(
                       flex: 4,
                       child: DropdownButtonFormField<String>(
+                        isExpanded: true,
                         value: _selectedUnit,
                         decoration: const InputDecoration(
                           labelText: 'Unit',
@@ -456,6 +457,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     Expanded(
                       flex: 5,
                       child: DropdownButtonFormField<String>(
+                        isExpanded: true,
                         value: _selectedPackageType,
                         decoration: const InputDecoration(
                           labelText: 'Package Type',
@@ -531,7 +533,8 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<String>(
-                  value: _selectedGrade,
+                  isExpanded: true,
+                        value: _selectedGrade,
                   decoration: const InputDecoration(
                     labelText: 'Quality Grade',
                     border: OutlineInputBorder(),
@@ -580,6 +583,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
+                        isExpanded: true,
                         value: _selectedFarmingMethod,
                         decoration: const InputDecoration(
                           labelText: 'Farming Method',
@@ -594,6 +598,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<String>(
+                        isExpanded: true,
                         value: _selectedPesticideStatus,
                         decoration: const InputDecoration(
                           labelText: 'Pesticide Test',
@@ -627,6 +632,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
+                        isExpanded: true,
                         value: _selectedStorageFacility,
                         decoration: const InputDecoration(
                           labelText: 'Storage Facility',
