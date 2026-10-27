@@ -71,7 +71,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
         }).toList(),
       };
 
-      final response = await _dio.post<dynamic>('/v1/sync/events', data: batchPayload);
+      final response =
+          await _dio.post<dynamic>('/v1/sync/events', data: batchPayload);
 
       if (response.statusCode == 200) {
         // Successful sync batch execution
@@ -100,7 +101,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
   }
 }
 
-final syncControllerProvider = StateNotifierProvider<SyncNotifier, SyncState>((ref) {
+final syncControllerProvider =
+    StateNotifierProvider<SyncNotifier, SyncState>((ref) {
   final localDb = ref.watch(localDatabaseProvider);
   final dio = Dio(
     BaseOptions(

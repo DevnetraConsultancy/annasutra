@@ -1,7 +1,11 @@
 /// Domain entity representing a traceable harvest batch in AnnaSutra.
-/// Conforms to the 29-field agricultural & custodial ledger schema from the web portal.
+/// Conforms to the deterministic ID scheme (YYYYDDHHMMSS+CountryCodeMobileNumber+ProductCode+Seq)
+/// and the 2-way custody handover + retailer-gated consumer passport ledger.
 class HarvestLot {
   final String publicCode;
+  final String farmerUid;
+  final String productCategoryCode; // FG, PU, OI, FR, VG, SP, CC, LS, SC, OT
+  final String productCategoryName;
   final String crop;
   final String variety;
   final double netQtyKg;
@@ -35,8 +39,14 @@ class HarvestLot {
   final String packagingDate;
   final String mandiGatepass;
 
-  // Custody & Dispatch
+  // Custody & 2-Way Handover
   final String initialCustodyHolder;
+  final String
+      currentCustodianRole; // 'PRODUCER', 'AGGREGATOR', 'WHOLESALER', 'DISTRIBUTOR', 'RETAILER'
+  final String currentCustodianName;
+  final bool isRetailerVerified;
+  final Map<String, dynamic>? pendingHandover;
+  final List<Map<String, dynamic>> journeyCheckpoints;
   final String intendedBuyer;
   final String vehicleNo;
   final String driverContact;
@@ -51,15 +61,18 @@ class HarvestLot {
 
   const HarvestLot({
     required this.publicCode,
+    this.farmerUid = '',
+    this.productCategoryCode = 'VG',
+    this.productCategoryName = 'Vegetables',
     required this.crop,
     this.variety = '',
     required this.netQtyKg,
     this.unit = 'Kg',
     this.packageType = 'Crates',
     this.packagesCount = 0,
-    this.originPlotName = 'Plot #1',
-    this.originPlotId = 'PLOT-01',
-    this.plotAreaAcres = 2.0,
+    this.originPlotName = '',
+    this.originPlotId = '',
+    this.plotAreaAcres = 0.0,
     this.surveyNumber = '',
     this.gpsLat,
     this.gpsLng,
@@ -70,13 +83,18 @@ class HarvestLot {
     this.farmingMethod = 'Organic',
     this.pesticideTested = 'CLEAN',
     this.seedCertificationNo = '',
-    this.fertilizerLog = 'Vermicompost + Neem Cake',
+    this.fertilizerLog = '',
     this.storageFacility = 'Farm Packhouse',
     this.storageTempC = 20.0,
     this.packagingDate = '',
     this.mandiGatepass = '',
-    this.initialCustodyHolder = 'Self Producer',
-    this.intendedBuyer = 'APMC Mandi',
+    this.initialCustodyHolder = 'Producer Farm',
+    this.currentCustodianRole = 'PRODUCER',
+    this.currentCustodianName = 'Producer Farm',
+    this.isRetailerVerified = false,
+    this.pendingHandover,
+    this.journeyCheckpoints = const [],
+    this.intendedBuyer = '',
     this.vehicleNo = '',
     this.driverContact = '',
     this.state = 'IN_CUSTODY',
@@ -87,11 +105,17 @@ class HarvestLot {
     required this.createdAt,
   });
 
-  /// Lot is editable ONLY while in farm custody before counterparty handover.
-  bool get isEditable => state == 'IN_CUSTODY' || state == 'CREATED';
+  /// Lot is editable ONLY while in initial farm custody before counterparty handover.
+  bool get isEditable =>
+      (state == 'IN_CUSTODY' || state == 'CREATED') &&
+      currentCustodianRole == 'PRODUCER' &&
+      pendingHandover == null;
 
   HarvestLot copyWith({
     String? publicCode,
+    String? farmerUid,
+    String? productCategoryCode,
+    String? productCategoryName,
     String? crop,
     String? variety,
     double? netQtyKg,
@@ -117,6 +141,11 @@ class HarvestLot {
     String? packagingDate,
     String? mandiGatepass,
     String? initialCustodyHolder,
+    String? currentCustodianRole,
+    String? currentCustodianName,
+    bool? isRetailerVerified,
+    Map<String, dynamic>? pendingHandover,
+    List<Map<String, dynamic>>? journeyCheckpoints,
     String? intendedBuyer,
     String? vehicleNo,
     String? driverContact,
@@ -129,6 +158,9 @@ class HarvestLot {
   }) {
     return HarvestLot(
       publicCode: publicCode ?? this.publicCode,
+      farmerUid: farmerUid ?? this.farmerUid,
+      productCategoryCode: productCategoryCode ?? this.productCategoryCode,
+      productCategoryName: productCategoryName ?? this.productCategoryName,
       crop: crop ?? this.crop,
       variety: variety ?? this.variety,
       netQtyKg: netQtyKg ?? this.netQtyKg,
@@ -154,6 +186,11 @@ class HarvestLot {
       packagingDate: packagingDate ?? this.packagingDate,
       mandiGatepass: mandiGatepass ?? this.mandiGatepass,
       initialCustodyHolder: initialCustodyHolder ?? this.initialCustodyHolder,
+      currentCustodianRole: currentCustodianRole ?? this.currentCustodianRole,
+      currentCustodianName: currentCustodianName ?? this.currentCustodianName,
+      isRetailerVerified: isRetailerVerified ?? this.isRetailerVerified,
+      pendingHandover: pendingHandover ?? this.pendingHandover,
+      journeyCheckpoints: journeyCheckpoints ?? this.journeyCheckpoints,
       intendedBuyer: intendedBuyer ?? this.intendedBuyer,
       vehicleNo: vehicleNo ?? this.vehicleNo,
       driverContact: driverContact ?? this.driverContact,
@@ -169,6 +206,9 @@ class HarvestLot {
   Map<String, dynamic> toJson() {
     return {
       'public_code': publicCode,
+      'farmer_uid': farmerUid,
+      'product_category_code': productCategoryCode,
+      'product_category_name': productCategoryName,
       'crop': crop,
       'variety': variety,
       'net_qty_kg': netQtyKg,
@@ -194,6 +234,11 @@ class HarvestLot {
       'packaging_date': packagingDate,
       'mandi_gatepass': mandiGatepass,
       'initial_custody_holder': initialCustodyHolder,
+      'current_custodian_role': currentCustodianRole,
+      'current_custodian_name': currentCustodianName,
+      'is_retailer_verified': isRetailerVerified,
+      'pending_handover': pendingHandover,
+      'journey_checkpoints': journeyCheckpoints,
       'intended_buyer': intendedBuyer,
       'vehicle_no': vehicleNo,
       'driver_contact': driverContact,
@@ -208,45 +253,99 @@ class HarvestLot {
 
   factory HarvestLot.fromJson(Map<String, dynamic> json) {
     final qty = (json['net_qty_kg'] ?? json['on_hand_kg'] ?? 0.0);
-    final price = (json['base_price_per_unit'] ?? 30.0);
-    final val = (json['estimated_value'] ?? (qty is num && price is num ? qty * price : 0.0));
+    final price =
+        (json['base_price_per_unit'] ?? json['price_per_unit'] ?? 30.0);
+    final val = (json['estimated_value'] ??
+        json['total_value'] ??
+        (qty is num && price is num ? qty * price : 0.0));
+
+    final rawCheckpoints = json['journey_checkpoints'];
+    final List<Map<String, dynamic>> checkpoints = [];
+    if (rawCheckpoints is List) {
+      for (final item in rawCheckpoints) {
+        if (item is Map) {
+          checkpoints.add(Map<String, dynamic>.from(item));
+        }
+      }
+    }
+
+    Map<String, dynamic>? pendingHo;
+    if (json['pending_handover'] is Map) {
+      pendingHo = Map<String, dynamic>.from(json['pending_handover'] as Map);
+    }
 
     return HarvestLot(
-      publicCode: json['public_code']?.toString() ?? 'AS-UNKNOWN',
-      crop: json['crop']?.toString() ?? 'Tomato',
+      publicCode: json['public_code']?.toString() ?? '',
+      farmerUid: json['farmer_uid']?.toString() ?? '',
+      productCategoryCode: json['product_category_code']?.toString() ?? 'VG',
+      productCategoryName:
+          json['product_category_name']?.toString() ?? 'Vegetables',
+      crop: json['crop']?.toString() ?? '',
       variety: json['variety']?.toString() ?? '',
-      netQtyKg: (qty is num) ? qty.toDouble() : double.tryParse(qty.toString()) ?? 0.0,
+      netQtyKg: (qty is num)
+          ? qty.toDouble()
+          : double.tryParse(qty.toString()) ?? 0.0,
       unit: json['unit']?.toString() ?? 'Kg',
       packageType: json['package_type']?.toString() ?? 'Crates',
-      packagesCount: (json['packages_count'] is num) ? (json['packages_count'] as num).toInt() : 0,
-      originPlotName: json['origin_plot_name']?.toString() ?? 'Plot #1',
-      originPlotId: json['origin_plot_id']?.toString() ?? 'PLOT-01',
-      plotAreaAcres: (json['plot_area_acres'] is num) ? (json['plot_area_acres'] as num).toDouble() : 2.0,
+      packagesCount: (json['packages_count'] is num)
+          ? (json['packages_count'] as num).toInt()
+          : 0,
+      originPlotName: json['origin_plot_name']?.toString() ?? '',
+      originPlotId: json['origin_plot_id']?.toString() ?? '',
+      plotAreaAcres: (json['plot_area_acres'] is num)
+          ? (json['plot_area_acres'] as num).toDouble()
+          : 0.0,
       surveyNumber: json['survey_number']?.toString() ?? '',
-      gpsLat: (json['gps_lat'] is num) ? (json['gps_lat'] as num).toDouble() : null,
-      gpsLng: (json['gps_lng'] is num) ? (json['gps_lng'] as num).toDouble() : null,
-      qualityGrade: json['quality_grade']?.toString() ?? json['grade']?.toString() ?? 'Grade A (Super)',
-      moisturePct: (json['moisture_pct'] is num) ? (json['moisture_pct'] as num).toDouble() : 12.0,
-      foreignMatterPct: (json['foreign_matter_pct'] is num) ? (json['foreign_matter_pct'] as num).toDouble() : 0.5,
-      grainSize: json['grain_size']?.toString() ?? 'Medium-Large',
+      gpsLat: (json['gps_lat'] is num)
+          ? (json['gps_lat'] as num).toDouble()
+          : (json['origin_lat'] is num
+              ? (json['origin_lat'] as num).toDouble()
+              : null),
+      gpsLng: (json['gps_lng'] is num)
+          ? (json['gps_lng'] as num).toDouble()
+          : (json['origin_lng'] is num
+              ? (json['origin_lng'] as num).toDouble()
+              : null),
+      qualityGrade: json['quality_grade']?.toString() ??
+          json['grade']?.toString() ??
+          'Grade A',
+      moisturePct: (json['moisture_pct'] is num)
+          ? (json['moisture_pct'] as num).toDouble()
+          : 12.0,
+      foreignMatterPct: (json['foreign_matter_pct'] is num)
+          ? (json['foreign_matter_pct'] as num).toDouble()
+          : 0.5,
+      grainSize: json['grain_size']?.toString() ?? 'Standard',
       farmingMethod: json['farming_method']?.toString() ?? 'Organic',
       pesticideTested: json['pesticide_tested']?.toString() ?? 'CLEAN',
       seedCertificationNo: json['seed_certification_no']?.toString() ?? '',
-      fertilizerLog: json['fertilizer_log']?.toString() ?? 'Vermicompost + Neem Cake',
+      fertilizerLog: json['fertilizer_log']?.toString() ?? '',
       storageFacility: json['storage_facility']?.toString() ?? 'Farm Packhouse',
-      storageTempC: (json['storage_temp_c'] is num) ? (json['storage_temp_c'] as num).toDouble() : 20.0,
+      storageTempC: (json['storage_temp_c'] is num)
+          ? (json['storage_temp_c'] as num).toDouble()
+          : 20.0,
       packagingDate: json['packaging_date']?.toString() ?? '',
       mandiGatepass: json['mandi_gatepass']?.toString() ?? '',
-      initialCustodyHolder: json['initial_custody_holder']?.toString() ?? 'Self Producer',
-      intendedBuyer: json['intended_buyer']?.toString() ?? 'APMC Mandi',
+      initialCustodyHolder:
+          json['initial_custody_holder']?.toString() ?? 'Producer Farm',
+      currentCustodianRole:
+          json['current_custodian_role']?.toString() ?? 'PRODUCER',
+      currentCustodianName:
+          json['current_custodian_name']?.toString() ?? 'Producer Farm',
+      isRetailerVerified: json['is_retailer_verified'] == true,
+      pendingHandover: pendingHo,
+      journeyCheckpoints: checkpoints,
+      intendedBuyer: json['intended_buyer']?.toString() ?? '',
       vehicleNo: json['vehicle_no']?.toString() ?? '',
       driverContact: json['driver_contact']?.toString() ?? '',
       state: json['state']?.toString() ?? 'IN_CUSTODY',
       paymentStatus: json['payment_status']?.toString() ?? 'PENDING',
       basePricePerUnit: (price is num) ? price.toDouble() : 30.0,
       estimatedValue: (val is num) ? val.toDouble() : 0.0,
-      harvestDate: json['harvest_date']?.toString() ?? DateTime.now().toIso8601String(),
-      createdAt: json['created_at']?.toString() ?? DateTime.now().toIso8601String(),
+      harvestDate:
+          json['harvest_date']?.toString() ?? DateTime.now().toIso8601String(),
+      createdAt:
+          json['created_at']?.toString() ?? DateTime.now().toIso8601String(),
     );
   }
 }

@@ -7,7 +7,8 @@ class DonutSlice {
   final double value;
   final Color color;
 
-  const DonutSlice({required this.label, required this.value, required this.color});
+  const DonutSlice(
+      {required this.label, required this.value, required this.color});
 }
 
 /// Vector Donut Chart for Crop Volume & Valuation Breakdown
@@ -41,7 +42,8 @@ class CropDonutChart extends StatelessWidget {
       return Container(
         height: height,
         alignment: Alignment.center,
-        child: const Text('No yield data recorded.', style: TextStyle(color: Color(0xFF64748B))),
+        child: const Text('No yield data recorded.',
+            style: TextStyle(color: Color(0xFF64748B))),
       );
     }
 
@@ -123,13 +125,19 @@ class CropDonutChart extends StatelessWidget {
                         Expanded(
                           child: Text(
                             s.label,
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF1E293B)),
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1E293B)),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Text(
                           '$pct%',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF64748B)),
                         ),
                       ],
                     );
@@ -222,18 +230,25 @@ class CustodyFunnelWidget extends StatelessWidget {
                       Container(
                         width: 8,
                         height: 8,
-                        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                        decoration:
+                            BoxDecoration(color: color, shape: BoxShape.circle),
                       ),
                       const SizedBox(width: 6),
                       Text(
                         entry.key,
-                        style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+                        style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0F172A)),
                       ),
                     ],
                   ),
                   Text(
                     '${weight.toStringAsFixed(0)} Kg ($pctDisplay%)',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: color),
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: color),
                   ),
                 ],
               ),
@@ -310,9 +325,12 @@ class SettlementHealthWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildStatItem('Settled', '₹${settled.toStringAsFixed(0)}', const Color(0xFF059669)),
-            _buildStatItem('Advance', '₹${advance.toStringAsFixed(0)}', const Color(0xFF2563EB)),
-            _buildStatItem('Pending', '₹${pending.toStringAsFixed(0)}', const Color(0xFFD97706)),
+            _buildStatItem('Settled', '₹${settled.toStringAsFixed(0)}',
+                const Color(0xFF059669)),
+            _buildStatItem('Advance', '₹${advance.toStringAsFixed(0)}',
+                const Color(0xFF2563EB)),
+            _buildStatItem('Pending', '₹${pending.toStringAsFixed(0)}',
+                const Color(0xFFD97706)),
           ],
         ),
       ],
@@ -326,13 +344,23 @@ class SettlementHealthWidget extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            Container(
+                width: 8,
+                height: 8,
+                decoration:
+                    BoxDecoration(color: color, shape: BoxShape.circle)),
             const SizedBox(width: 5),
-            Text(label, style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 11.5,
+                    color: Color(0xFF64748B),
+                    fontWeight: FontWeight.w600)),
           ],
         ),
         const SizedBox(height: 2),
-        Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: color)),
+        Text(value,
+            style: TextStyle(
+                fontSize: 13, fontWeight: FontWeight.w800, color: color)),
       ],
     );
   }

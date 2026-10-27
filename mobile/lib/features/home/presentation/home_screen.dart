@@ -24,7 +24,8 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _currentMainTab = 0; // 0: Ledger, 1: Analytics
   bool _isAnalyticsValuationMode = false;
@@ -39,23 +40,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'brandSubtitle': 'National Agri-Produce Traceability Platform',
       'navLogin': 'Entity Login',
       'heroHead': 'Empowering Farmers.\nProtecting Consumers.',
-      'heroSub': 'Direct cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable tables and offline-ready verification.',
+      'heroSub':
+          'Direct cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable tables and offline-ready verification.',
       'scanQrHero': 'Scan QR Code',
       'newBatchHero': 'New Harvest Lot',
       'entityTitle': 'Universal Entity Access',
-      'entitySub': 'Select your supply-chain tier for dedicated operations and custody tools',
+      'entitySub':
+          'Select your supply-chain tier for dedicated operations and custody tools',
       'roleFarmer': 'Farmer / FPO Producer',
-      'roleFarmerDesc': 'Harvest lot creation, farm bag QR codes, dispatch to mandi.',
+      'roleFarmerDesc':
+          'Harvest lot creation, farm bag QR codes, dispatch to mandi.',
       'roleMandi': 'Mandi Aggregator / APMC',
-      'roleMandiDesc': 'Inbound receipt, lot grading, lot splitting & auction dispatch.',
+      'roleMandiDesc':
+          'Inbound receipt, lot grading, lot splitting & auction dispatch.',
       'roleCold': 'Cold Storage / Warehouse',
-      'roleColdDesc': 'Inward custody receipt, temperature log, cold-chain outward.',
+      'roleColdDesc':
+          'Inward custody receipt, temperature log, cold-chain outward.',
       'roleProcessor': 'Packhouse & Processor',
-      'roleProcessorDesc': 'Raw intake, milling/sorting, retail pack QR generation.',
+      'roleProcessorDesc':
+          'Raw intake, milling/sorting, retail pack QR generation.',
       'roleRetailer': 'Wholesaler & Retailer',
-      'roleRetailerDesc': 'Point-of-sale verification, batch sales recording, consumer audit.',
+      'roleRetailerDesc':
+          'Point-of-sale verification, batch sales recording, consumer audit.',
       'roleAdmin': 'Admin / Verifier',
-      'roleAdminDesc': 'Entity verification, KYC reveal audit, and QR label issuance.',
+      'roleAdminDesc':
+          'Entity verification, KYC reveal audit, and QR label issuance.',
       'loginBtn': 'Login as',
       'tabLedger': 'Harvest Lots & Custody Ledger',
       'tabAnalytics': 'Analytics & Farm Insights',
@@ -84,18 +93,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'analyticsCropVolume': 'Crop Volume & Valuation Share',
       'analyticsCustodyFunnel': 'Custody Pipeline Funnel',
       'analyticsSettlement': 'Settlement & Payment Health',
-      'disclaimer': 'Records are based on information entered by supply-chain participants. It does not prove the contents of this package.',
+      'disclaimer':
+          'Records are based on information entered by supply-chain participants. It does not prove the contents of this package.',
     },
     'hi': {
       'brandTitle': 'अन्नसूत्र',
       'brandSubtitle': 'राष्ट्रीय कृषि उपज ट्रेसेबिलिटी मंच',
       'navLogin': 'इकाई लॉगिन',
       'heroHead': 'किसानों का सशक्तिकरण।\nउपभोक्ताओं की सुरक्षा।',
-      'heroSub': 'बीज से थाली तक डिजिटल कस्टडी। अपरिवर्तनीय लेजर पर बैच ट्रैकिंग एवं ऑफ़लाइन सत्यापन।',
+      'heroSub':
+          'बीज से थाली तक डिजिटल कस्टडी। अपरिवर्तनीय लेजर पर बैच ट्रैकिंग एवं ऑफ़लाइन सत्यापन।',
       'scanQrHero': 'क्यूआर कोड स्कैन करें',
       'newBatchHero': 'नया फ़सल लॉट',
       'entityTitle': 'सार्वभौमिक इकाई पहुंच',
-      'entitySub': 'समर्पित संचालन और कस्टडी टूल के लिए अपनी आपूर्ति-श्रृंखला श्रेणी चुनें',
+      'entitySub':
+          'समर्पित संचालन और कस्टडी टूल के लिए अपनी आपूर्ति-श्रृंखला श्रेणी चुनें',
       'roleFarmer': 'किसान / एफपीओ उत्पादक',
       'roleFarmerDesc': 'फ़सल लॉट निर्माण, बैग क्यूआर कोड, मंडी प्रेषण।',
       'roleMandi': 'मंडी एग्रीगेटर / एपीएमसी',
@@ -116,7 +128,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'tabWaiting': 'प्रतीक्षारत',
       'emptyIncoming': 'प्राप्ति की प्रतीक्षा में कोई आवक खेप नहीं है।',
       'emptyStock': 'कस्टडी में कोई सक्रिय उत्पाद बैच नहीं है।',
-      'emptyWaiting': 'प्रतिपक्ष की पुष्टि के लिए कोई प्रेषित हैंडओवर लंबित नहीं है।',
+      'emptyWaiting':
+          'प्रतिपक्ष की पुष्टि के लिए कोई प्रेषित हैंडओवर लंबित नहीं है।',
       'receiveBatch': 'बैच प्राप्त करें',
       'dispatchBatch': 'बैच प्रेषित करें',
       'splitLot': 'लॉट विभाजित करें',
@@ -136,18 +149,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'analyticsCropVolume': 'फ़सल मात्रा एवं मूल्यांकन अनुपात',
       'analyticsCustodyFunnel': 'कस्टडी पाइपलाइन फ़नल',
       'analyticsSettlement': 'भुगतान एवं सेटलमेंट स्वास्थ्य',
-      'disclaimer': 'रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज जानकारी पर आधारित हैं। यह पैकेज की आंतरिक सामग्री को सिद्ध नहीं करता है।',
+      'disclaimer':
+          'रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज जानकारी पर आधारित हैं। यह पैकेज की आंतरिक सामग्री को सिद्ध नहीं करता है।',
     },
     'bn': {
       'brandTitle': 'অন্নসূত্র',
       'brandSubtitle': 'জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম',
       'navLogin': 'সংস্থা লগইন',
       'heroHead': 'কৃষকের ক্ষমতায়ন।\nভোক্তার সুরক্ষা।',
-      'heroSub': 'বীজ থেকে ভোক্তা পর্যন্ত ডিজিটাল হেফাজত। অপরিবর্তনীয় লেজারে স্বচ্ছ ট্র্যাকিং ও অফলাইন যাচাইকরণ।',
+      'heroSub':
+          'বীজ থেকে ভোক্তা পর্যন্ত ডিজিটাল হেফাজত। অপরিবর্তনীয় লেজারে স্বচ্ছ ট্র্যাকিং ও অফলাইন যাচাইকরণ।',
       'scanQrHero': 'কিউআর স্ক্যান করুন',
       'newBatchHero': 'নতুন ফসল লট',
       'entityTitle': 'সার্বজনীন সংস্থা প্রবেশাধিকার',
-      'entitySub': 'নির্দিষ্ট কার্যক্রম ও হেফাজত সরঞ্জামের জন্য আপনার সরবরাহ স্তর নির্বাচন করুন',
+      'entitySub':
+          'নির্দিষ্ট কার্যক্রম ও হেফাজত সরঞ্জামের জন্য আপনার সরবরাহ স্তর নির্বাচন করুন',
       'roleFarmer': 'কৃষক / এফপিও উৎপাদক',
       'roleFarmerDesc': 'ফসল লট তৈরি, বস্তা কিউআর কোড, মান্ডিতে প্রেরণ।',
       'roleMandi': 'মান্ডি অ্যাগ্রিগেটর / এপিএমসি',
@@ -188,7 +204,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       'analyticsCropVolume': 'ফসল উৎপাদনের পরিমাণ ও মূল্য অনুপাত',
       'analyticsCustodyFunnel': 'হেফাজত পাইপলাইন ফানেল',
       'analyticsSettlement': 'মূল্য প্রাপ্তি ও পেমেন্ট স্থিতি',
-      'disclaimer': 'রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি প্যাকেজের অভ্যন্তরীণ সামগ্রী প্রমাণ করে না।',
+      'disclaimer':
+          'রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি প্যাকেজের অভ্যন্তরীণ সামগ্রী প্রমাণ করে না।',
     },
   };
 
@@ -228,7 +245,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         connectTimeout: const Duration(seconds: 4),
         receiveTimeout: const Duration(seconds: 4),
       ));
-      final Response<dynamic> ipRes = await dio.get<dynamic>('https://ipwho.is/');
+      final Response<dynamic> ipRes =
+          await dio.get<dynamic>('https://ipwho.is/');
       if (ipRes.statusCode == 200 && ipRes.data is Map) {
         final data = ipRes.data as Map;
         final lat = data['latitude'] ?? 22.57;
@@ -299,7 +317,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               child: SingleChildScrollView(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: isDesktop ? 1160 : double.infinity),
+                    constraints: BoxConstraints(
+                        maxWidth: isDesktop ? 1160 : double.infinity),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -313,11 +332,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
                         // Authenticated Entity Workspace View
                         if (authState.isAuthenticated) ...[
-                          _buildSyncAndVerificationAlerts(context, authState, syncState),
+                          _buildSyncAndVerificationAlerts(
+                              context, authState, syncState),
                           const SizedBox(height: 12),
                           _buildDualTabNavigation(context),
                           const SizedBox(height: 12),
-
                           if (_currentMainTab == 0) ...[
                             // TAB 0: Harvest Lots & Custody Ledger
                             _buildProducerKpiCards(lotsState),
@@ -404,9 +423,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _selectedLang,
-                icon: const Icon(Icons.arrow_drop_down, color: Colors.white, size: 18),
+                icon: const Icon(Icons.arrow_drop_down,
+                    color: Colors.white, size: 18),
                 dropdownColor: const Color(0xFF0B3D2E),
-                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
                 items: const [
                   DropdownMenuItem(value: 'en', child: Text('English (EN)')),
                   DropdownMenuItem(value: 'hi', child: Text('हिन्दी (HI)')),
@@ -423,7 +446,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           ),
           const SizedBox(width: 8),
           IconButton(
-            icon: const Icon(Icons.shield_outlined, color: Color(0xFFF59E0B), size: 18),
+            icon: const Icon(Icons.shield_outlined,
+                color: Color(0xFFF59E0B), size: 18),
             tooltip: 'DPDP 2023',
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
@@ -460,7 +484,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => const CircleAvatar(
                     backgroundColor: Color(0xFF14532D),
-                    child: Text('AS', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                    child: Text('AS',
+                        style: TextStyle(
+                            color: Colors.amber, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ),
@@ -485,14 +511,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE67E22),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
                         'GOV IN',
-                        style: TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w900),
                       ),
                     ),
                   ],
@@ -514,7 +544,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               child: InkWell(
                 onTap: () => _showAccountDialog(context),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(8),
@@ -523,12 +554,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.verified, color: Color(0xFF10B981), size: 16),
+                      const Icon(Icons.verified,
+                          color: Color(0xFF10B981), size: 16),
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           authState.orgName ?? 'Verified Node',
-                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -545,9 +580,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE67E22),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 minimumSize: const Size(80, 36),
-                textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                textStyle:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -574,10 +611,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: _currentMainTab == 0 ? const Color(0xFF0B3D2E) : Colors.transparent,
+                  color: _currentMainTab == 0
+                      ? const Color(0xFF0B3D2E)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(9),
                   boxShadow: _currentMainTab == 0
-                      ? const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1))]
+                      ? const [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 1))
+                        ]
                       : null,
                 ),
                 child: Row(
@@ -586,7 +630,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     Icon(
                       Icons.inventory_2_outlined,
                       size: 16,
-                      color: _currentMainTab == 0 ? const Color(0xFFFCD34D) : const Color(0xFF475569),
+                      color: _currentMainTab == 0
+                          ? const Color(0xFFFCD34D)
+                          : const Color(0xFF475569),
                     ),
                     const SizedBox(width: 8),
                     Flexible(
@@ -595,7 +641,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: _currentMainTab == 0 ? Colors.white : const Color(0xFF475569),
+                          color: _currentMainTab == 0
+                              ? Colors.white
+                              : const Color(0xFF475569),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -613,10 +661,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: _currentMainTab == 1 ? const Color(0xFF0B3D2E) : Colors.transparent,
+                  color: _currentMainTab == 1
+                      ? const Color(0xFF0B3D2E)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(9),
                   boxShadow: _currentMainTab == 1
-                      ? const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1))]
+                      ? const [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 1))
+                        ]
                       : null,
                 ),
                 child: Row(
@@ -625,7 +680,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                     Icon(
                       Icons.insights_outlined,
                       size: 16,
-                      color: _currentMainTab == 1 ? const Color(0xFFFCD34D) : const Color(0xFF475569),
+                      color: _currentMainTab == 1
+                          ? const Color(0xFFFCD34D)
+                          : const Color(0xFF475569),
                     ),
                     const SizedBox(width: 8),
                     Flexible(
@@ -634,7 +691,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: _currentMainTab == 1 ? Colors.white : const Color(0xFF475569),
+                          color: _currentMainTab == 1
+                              ? Colors.white
+                              : const Color(0xFF475569),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -713,14 +772,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: const [
-          BoxShadow(color: Color(0x08000000), blurRadius: 3, offset: Offset(0, 1)),
+          BoxShadow(
+              color: Color(0x08000000), blurRadius: 3, offset: Offset(0, 1)),
         ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+                color: iconBg, borderRadius: BorderRadius.circular(10)),
             child: Icon(icon, size: 20, color: color),
           ),
           const SizedBox(width: 10),
@@ -731,13 +792,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF64748B)),
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900, color: color),
+                  style: TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w900, color: color),
                 ),
               ],
             ),
@@ -748,7 +813,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   }
 
   // LOT CONTROLS & FILTER BAR
-  Widget _buildLotControlsAndFilterBar(BuildContext context, LotsState lotsState) {
+  Widget _buildLotControlsAndFilterBar(
+      BuildContext context, LotsState lotsState) {
     final notifier = ref.read(lotsControllerProvider.notifier);
 
     return Container(
@@ -772,10 +838,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                   onChanged: (val) => notifier.setSearchQuery(val),
                   decoration: InputDecoration(
                     hintText: _t('searchPlaceholder'),
-                    hintStyle: const TextStyle(fontSize: 12.5, color: Color(0xFF94A3B8)),
-                    prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF64748B)),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                    hintStyle: const TextStyle(
+                        fontSize: 12.5, color: Color(0xFF94A3B8)),
+                    prefixIcon: const Icon(Icons.search,
+                        size: 18, color: Color(0xFF64748B)),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
                     filled: true,
                     fillColor: const Color(0xFFF8FAFC),
                   ),
@@ -787,14 +858,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 icon: const Icon(Icons.add, size: 18),
                 label: Text(
                   _t('btnRegisterLot'),
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF047857),
                   foregroundColor: Colors.white,
                   minimumSize: Size(isNarrow ? double.infinity : 130, 44),
                   padding: const EdgeInsets.symmetric(horizontal: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
               );
 
@@ -825,13 +898,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip('ALL', _t('filterCustodyAll'), lotsState.selectedCustody == 'ALL', () => notifier.setCustodyFilter('ALL')),
+                _buildFilterChip(
+                    'ALL',
+                    _t('filterCustodyAll'),
+                    lotsState.selectedCustody == 'ALL',
+                    () => notifier.setCustodyFilter('ALL')),
                 const SizedBox(width: 6),
-                _buildFilterChip('IN_CUSTODY', _t('filterInCustody'), lotsState.selectedCustody == 'IN_CUSTODY', () => notifier.setCustodyFilter('IN_CUSTODY')),
+                _buildFilterChip(
+                    'IN_CUSTODY',
+                    _t('filterInCustody'),
+                    lotsState.selectedCustody == 'IN_CUSTODY',
+                    () => notifier.setCustodyFilter('IN_CUSTODY')),
                 const SizedBox(width: 6),
-                _buildFilterChip('IN_TRANSIT', _t('filterInTransit'), lotsState.selectedCustody == 'IN_TRANSIT', () => notifier.setCustodyFilter('IN_TRANSIT')),
+                _buildFilterChip(
+                    'IN_TRANSIT',
+                    _t('filterInTransit'),
+                    lotsState.selectedCustody == 'IN_TRANSIT',
+                    () => notifier.setCustodyFilter('IN_TRANSIT')),
                 const SizedBox(width: 6),
-                _buildFilterChip('CLOSED', _t('filterClosed'), lotsState.selectedCustody == 'CLOSED', () => notifier.setCustodyFilter('CLOSED')),
+                _buildFilterChip(
+                    'CLOSED',
+                    _t('filterClosed'),
+                    lotsState.selectedCustody == 'CLOSED',
+                    () => notifier.setCustodyFilter('CLOSED')),
               ],
             ),
           ),
@@ -840,7 +929,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildFilterChip(String value, String label, bool isSelected, VoidCallback onTap) {
+  Widget _buildFilterChip(
+      String value, String label, bool isSelected, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -849,7 +939,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF047857) : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? const Color(0xFF047857) : const Color(0xFFCBD5E1)),
+          border: Border.all(
+              color: isSelected
+                  ? const Color(0xFF047857)
+                  : const Color(0xFFCBD5E1)),
         ),
         child: Text(
           label,
@@ -883,7 +976,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             const SizedBox(height: 12),
             const Text(
               'No harvest lots in custody matching your filters.',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0F172A)),
             ),
             const SizedBox(height: 6),
             const Text(
@@ -927,7 +1023,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   }
 
   // TAB 1: ANALYTICS & FARM INSIGHTS VIEW
-  Widget _buildProducerAnalyticsView(BuildContext context, LotsState lotsState) {
+  Widget _buildProducerAnalyticsView(
+      BuildContext context, LotsState lotsState) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -946,21 +1043,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.auto_graph, color: Color(0xFF047857), size: 18),
+                    const Icon(Icons.auto_graph,
+                        color: Color(0xFF047857), size: 18),
                     const SizedBox(width: 8),
                     Text(
                       _t('tabAnalytics'),
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A)),
                     ),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text('All Recorded Lots', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF334155))),
+                  child: const Text('All Recorded Lots',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF334155))),
                 ),
               ],
             ),
@@ -983,21 +1089,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                   children: [
                     Text(
                       _t('analyticsCropVolume'),
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A)),
                     ),
                     InkWell(
-                      onTap: () => setState(() => _isAnalyticsValuationMode = !_isAnalyticsValuationMode),
+                      onTap: () => setState(() => _isAnalyticsValuationMode =
+                          !_isAnalyticsValuationMode),
                       borderRadius: BorderRadius.circular(6),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: const Color(0xFFECFDF5),
                           border: Border.all(color: const Color(0xFFA7F3D0)),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          _isAnalyticsValuationMode ? 'Switch to Weight (Kg)' : 'Switch to Value (₹)',
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
+                          _isAnalyticsValuationMode
+                              ? 'Switch to Weight (Kg)'
+                              : 'Switch to Value (₹)',
+                          style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF047857)),
                         ),
                       ),
                     ),
@@ -1005,7 +1121,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 ),
                 const SizedBox(height: 14),
                 CropDonutChart(
-                  data: _isAnalyticsValuationMode ? lotsState.cropValuationDistribution : lotsState.cropVolumeDistribution,
+                  data: _isAnalyticsValuationMode
+                      ? lotsState.cropValuationDistribution
+                      : lotsState.cropVolumeDistribution,
                   unit: _isAnalyticsValuationMode ? '₹' : 'Kg',
                   height: 180,
                 ),
@@ -1027,7 +1145,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               children: [
                 Text(
                   _t('analyticsCustodyFunnel'),
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A)),
                 ),
                 const SizedBox(height: 12),
                 CustodyFunnelWidget(
@@ -1052,7 +1173,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               children: [
                 Text(
                   _t('analyticsSettlement'),
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A)),
                 ),
                 const SizedBox(height: 12),
                 SettlementHealthWidget(stats: lotsState.paymentSettlementStats),
@@ -1064,153 +1188,518 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  // MODALS & DIALOGS
+  // MODALS & DIALOGS: Unlimited 2D QR + 1D Code-128 Barcode Sticker Generator
   void _showUnlimitedQrDialog(BuildContext context, HarvestLot lot) {
+    int stickerCount = 4;
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.qr_code, color: Color(0xFF047857)),
-            SizedBox(width: 8),
-            Text('Verifiable Sovereign QR', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFF0B3D2E), width: 3),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.qr_code_2, size: 100, color: Color(0xFF0B3D2E)),
-                          Text(
-                            lot.publicCode,
-                            style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w900, fontSize: 13),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    '${lot.crop} (${lot.variety}) • ${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Govt. of India AgriTrace Compliant • Unlimited Generator',
-                    style: TextStyle(fontSize: 10.5, color: Color(0xFF64748B)),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
-          ),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Preparing print sheet for ${lot.publicCode}...'),
-                  backgroundColor: const Color(0xFF047857),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.qr_code, color: Color(0xFF047857)),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Unlimited 2D QR & 1D Barcode Stickers',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-              );
-            },
-            icon: const Icon(Icons.print, size: 16),
-            label: const Text('Print Labels'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF047857),
-              foregroundColor: Colors.white,
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border:
+                        Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0B3D2E),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'CATEGORY: ${lot.productCategoryCode} • ${lot.crop.toUpperCase()}',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        width: 140,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFF0B3D2E), width: 2.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.qr_code_2,
+                              size: 110, color: Color(0xFF0B3D2E)),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // 1D Code-128 Barcode Visual Strip
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                28,
+                                (i) => Container(
+                                  width: (i % 3 == 0) ? 3.0 : 1.5,
+                                  height: 28,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 1.2),
+                                  color: const Color(0xFF0F172A),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              lot.publicCode,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w900,
+                                fontSize: 11,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${lot.crop} (${lot.variety}) • ${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12.5),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [1, 4, 12, 24].map((count) {
+                          final active = stickerCount == count;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: ChoiceChip(
+                              label: Text('${count}x'),
+                              selected: active,
+                              onSelected: (_) =>
+                                  setModalState(() => stickerCount = count),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Close'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Generated $stickerCount QR + 1D Barcode stickers for ${lot.publicCode}.'),
+                    backgroundColor: const Color(0xFF047857),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.print, size: 16),
+              label: Text('Print $stickerCount Stickers'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF047857),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
+  // 2-Way Custody Handover Request Modal (No prefilled template values)
   void _showQuickDispatchDialog(BuildContext context, HarvestLot lot) {
-    final vehicleCtrl = TextEditingController(text: 'WB-25-A-8902');
-    final driverCtrl = TextEditingController(text: '+919876500000');
+    String selectedTargetRole = 'AGGREGATOR';
+    final targetNameCtrl = TextEditingController();
+    final driverCtrl = TextEditingController();
+    final vehicleCtrl = TextEditingController();
+    final authState = ref.read(authControllerProvider);
 
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.local_shipping, color: Color(0xFF047857)),
-            SizedBox(width: 8),
-            Text('Dispatch to Mandi / Buyer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Lot: ${lot.publicCode} (${lot.crop} • ${lot.netQtyKg} ${lot.unit})', style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            TextField(
-              controller: vehicleCtrl,
-              decoration: const InputDecoration(labelText: 'Vehicle Number', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: driverCtrl,
-              decoration: const InputDecoration(labelText: 'Driver Phone', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Notice: Upon dispatch, lot status switches to "In Transit" and immutability lock is enforced.',
-              style: TextStyle(fontSize: 11, color: Color(0xFFC2410C), fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              ref.read(lotsControllerProvider.notifier).dispatchLot(
-                lot.publicCode,
-                vehicleNo: vehicleCtrl.text.trim(),
-                driverContact: driverCtrl.text.trim(),
-              );
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Lot ${lot.publicCode} dispatched! Status locked to In Transit.'),
-                  backgroundColor: const Color(0xFF047857),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.handshake_outlined, color: Color(0xFF047857)),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Request 2-Way Custody Handover',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF047857), foregroundColor: Colors.white),
-            child: const Text('Confirm Handover'),
+              ),
+            ],
           ),
-        ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Batch: ${lot.publicCode}\n${lot.crop} • ${lot.netQtyKg} ${lot.unit}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 12.5),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: selectedTargetRole,
+                  decoration: const InputDecoration(
+                    labelText: 'Next Custodian Role *',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'AGGREGATOR', child: Text('Aggregator / APMC')),
+                    DropdownMenuItem(
+                        value: 'WHOLESALER', child: Text('Wholesaler')),
+                    DropdownMenuItem(
+                        value: 'DISTRIBUTOR',
+                        child: Text('Distributor / Fleet')),
+                    DropdownMenuItem(
+                        value: 'RETAILER', child: Text('Retailer Shop')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) {
+                      setModalState(() => selectedTargetRole = val);
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: targetNameCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Receiving Party Name *',
+                    hintText: 'Enter next party name or business',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: driverCtrl,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Receiving Party Mobile (+91) *',
+                    hintText: '+91...',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: vehicleCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Transport Vehicle Number',
+                    hintText: 'Optional vehicle registration',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Security Rule: Next party must confirm custody acceptance in their dashboard. Once accepted, your record is permanently locked (🔒).',
+                  style: TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFFC2410C),
+                      fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                ref
+                    .read(lotsControllerProvider.notifier)
+                    .requestCustodyHandover(
+                      lot.publicCode,
+                      targetRole: selectedTargetRole,
+                      targetName: targetNameCtrl.text.trim().isNotEmpty
+                          ? targetNameCtrl.text.trim()
+                          : selectedTargetRole,
+                      targetPhone: driverCtrl.text.trim(),
+                      vehicleNo: vehicleCtrl.text.trim(),
+                      declaredQtyKg: lot.netQtyKg,
+                      accessToken: authState.accessToken,
+                      senderPhone: authState.phone,
+                    );
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Custody handover request sent to $selectedTargetRole for ${lot.publicCode}. Awaiting next-party confirmation.',
+                    ),
+                    backgroundColor: const Color(0xFF047857),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF047857),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Send Handover Request'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Next-Party Custody Acceptance & Append-Only Scan Modal
+  void _showNextPartyScanAppendDialog(BuildContext context) {
+    final codeCtrl = TextEditingController();
+    final actorNameCtrl = TextEditingController();
+    final weightCtrl = TextEditingController();
+    final tempCtrl = TextEditingController();
+    String selectedRole = 'AGGREGATOR';
+    String selectedCondition = 'FRESH_GRADE_A';
+    bool isAcceptingHandover = true;
+    final authState = ref.read(authControllerProvider);
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.qr_code_scanner, color: Color(0xFF047857)),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Next-Party Custody Accept & Scan Append',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Accept Handover'),
+                        selected: isAcceptingHandover,
+                        onSelected: (_) =>
+                            setModalState(() => isAcceptingHandover = true),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Append Telemetry'),
+                        selected: !isAcceptingHandover,
+                        onSelected: (_) =>
+                            setModalState(() => isAcceptingHandover = false),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: codeCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Scanned Batch / Lot ID *',
+                    hintText: 'Scan or paste lot QR code',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedRole,
+                  decoration: const InputDecoration(
+                    labelText: 'Your Supply-Chain Role *',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'AGGREGATOR', child: Text('Aggregator')),
+                    DropdownMenuItem(
+                        value: 'WHOLESALER', child: Text('Wholesaler')),
+                    DropdownMenuItem(
+                        value: 'DISTRIBUTOR', child: Text('Distributor')),
+                    DropdownMenuItem(
+                        value: 'RETAILER',
+                        child: Text('Retailer (Unlocks Consumer View)')),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) setModalState(() => selectedRole = v);
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: actorNameCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Organisation / Shop Name *',
+                    hintText: 'Enter your business name',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: weightCtrl,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        decoration: const InputDecoration(
+                          labelText: 'Current Weight (kg) *',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: tempCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Storage Temp',
+                          hintText: 'e.g. 4°C',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedCondition,
+                  decoration: const InputDecoration(
+                    labelText: 'Product Condition *',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'FRESH_GRADE_A',
+                        child: Text('Fresh & Intact (Grade A)')),
+                    DropdownMenuItem(
+                        value: 'COLD_CHAIN_INTACT',
+                        child: Text('Cold-Chain Sealed')),
+                    DropdownMenuItem(
+                        value: 'GOOD_MARKET_READY',
+                        child: Text('Retail Shelf Ready')),
+                    DropdownMenuItem(
+                        value: 'MINOR_HANDLING_LOSS',
+                        child: Text('Minor Transit Loss')),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) setModalState(() => selectedCondition = v);
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                final code = codeCtrl.text.trim();
+                if (code.isEmpty) return;
+                final w = double.tryParse(weightCtrl.text.trim()) ?? 100.0;
+                final name = actorNameCtrl.text.trim().isNotEmpty
+                    ? actorNameCtrl.text.trim()
+                    : (authState.orgName ?? selectedRole);
+                final notifier = ref.read(lotsControllerProvider.notifier);
+                if (isAcceptingHandover) {
+                  notifier.acceptCustodyHandover(
+                    code,
+                    actorRole: selectedRole,
+                    actorName: name,
+                    receivedQtyKg: w,
+                    condition: selectedCondition,
+                    storageTemp: tempCtrl.text.trim().isNotEmpty
+                        ? tempCtrl.text.trim()
+                        : 'Ambient',
+                    accessToken: authState.accessToken,
+                    phone: authState.phone,
+                  );
+                } else {
+                  notifier.appendCustodyScan(
+                    code,
+                    actorRole: selectedRole,
+                    actorName: name,
+                    currentWeightKg: w,
+                    condition: selectedCondition,
+                    storageTemp: tempCtrl.text.trim().isNotEmpty
+                        ? tempCtrl.text.trim()
+                        : 'Ambient',
+                    accessToken: authState.accessToken,
+                    phone: authState.phone,
+                  );
+                }
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      selectedRole == 'RETAILER'
+                          ? 'Retailer custody confirmed for $code! Consumer Trust Passport is now unlocked.'
+                          : 'Appended verified $selectedRole telemetry for $code.',
+                    ),
+                    backgroundColor: const Color(0xFF047857),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF047857),
+                foregroundColor: Colors.white,
+              ),
+              child: Text(
+                  isAcceptingHandover ? 'Confirm Custody' : 'Append Scan Data'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1223,19 +1712,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
       decoration: BoxDecoration(
         color: const Color(0xFF0B3D2E),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))],
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             _t('heroHead'),
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white, height: 1.2),
+            style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                height: 1.2),
           ),
           const SizedBox(height: 8),
           Text(
             _t('heroSub'),
-            style: const TextStyle(fontSize: 12.5, color: Color(0xFFA7F3D0), height: 1.4),
+            style: const TextStyle(
+                fontSize: 12.5, color: Color(0xFFA7F3D0), height: 1.4),
           ),
           const SizedBox(height: 16),
           Row(
@@ -1254,7 +1750,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               OutlinedButton.icon(
                 onPressed: () => context.push('/create-batch'),
                 icon: const Icon(Icons.add, size: 16, color: Colors.white),
-                label: Text(_t('newBatchHero'), style: const TextStyle(color: Colors.white)),
+                label: Text(_t('newBatchHero'),
+                    style: const TextStyle(color: Colors.white)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.white54),
                   minimumSize: const Size(120, 42),
@@ -1267,7 +1764,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildUniversalEntityLoginSection(BuildContext context, AuthState authState) {
+  Widget _buildUniversalEntityLoginSection(
+      BuildContext context, AuthState authState) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -1281,7 +1779,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         children: [
           Text(
             _t('entityTitle'),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+            style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A)),
           ),
           Text(
             _t('entitySub'),
@@ -1297,63 +1798,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 children: [
                   _buildEntityCard(
                     context: context,
-                    roleKey: 'FARMER',
+                    roleKey: 'PRODUCER',
                     icon: Icons.grass,
                     title: _t('roleFarmer'),
                     description: _t('roleFarmerDesc'),
-                    width: isWide ? (constraints.maxWidth - 20) / 2 : constraints.maxWidth,
-                    onTapLogin: () {
-                      ref.read(authControllerProvider.notifier).quickLoginAsEntity(
-                        entityRole: 'FARMER',
-                        orgName: "Dr. Niladri's Farm (WB-PROD-2026-X7803)",
-                        phone: '+919876543210',
-                      );
-                    },
+                    width: isWide
+                        ? (constraints.maxWidth - 20) / 2
+                        : constraints.maxWidth,
+                    onTapLogin: () => context.push('/login?role=PRODUCER'),
                   ),
                   _buildEntityCard(
                     context: context,
-                    roleKey: 'MANDI',
+                    roleKey: 'AGGREGATOR',
                     icon: Icons.storefront,
                     title: _t('roleMandi'),
                     description: _t('roleMandiDesc'),
-                    width: isWide ? (constraints.maxWidth - 20) / 2 : constraints.maxWidth,
-                    onTapLogin: () {
-                      ref.read(authControllerProvider.notifier).quickLoginAsEntity(
-                        entityRole: 'MANDI',
-                        orgName: 'Kolkata APMC Mandi Hub',
-                        phone: '+919876543211',
-                      );
-                    },
+                    width: isWide
+                        ? (constraints.maxWidth - 20) / 2
+                        : constraints.maxWidth,
+                    onTapLogin: () => context.push('/login?role=AGGREGATOR'),
                   ),
                   _buildEntityCard(
                     context: context,
-                    roleKey: 'COLD_STORAGE',
+                    roleKey: 'DISTRIBUTOR',
                     icon: Icons.ac_unit,
                     title: _t('roleCold'),
                     description: _t('roleColdDesc'),
-                    width: isWide ? (constraints.maxWidth - 20) / 2 : constraints.maxWidth,
-                    onTapLogin: () {
-                      ref.read(authControllerProvider.notifier).quickLoginAsEntity(
-                        entityRole: 'COLD_STORAGE',
-                        orgName: 'Bengal Cold Chain Terminal',
-                        phone: '+919876543212',
-                      );
-                    },
+                    width: isWide
+                        ? (constraints.maxWidth - 20) / 2
+                        : constraints.maxWidth,
+                    onTapLogin: () => context.push('/login?role=DISTRIBUTOR'),
                   ),
                   _buildEntityCard(
                     context: context,
-                    roleKey: 'ADMIN',
-                    icon: Icons.verified_user_outlined,
-                    title: _t('roleAdmin'),
-                    description: _t('roleAdminDesc'),
-                    width: isWide ? (constraints.maxWidth - 20) / 2 : constraints.maxWidth,
-                    onTapLogin: () {
-                      ref.read(authControllerProvider.notifier).quickLoginAsEntity(
-                        entityRole: 'ADMIN',
-                        orgName: 'AnnaSutra Sovereign Registry Node',
-                        phone: '+919999999999',
-                      );
-                    },
+                    roleKey: 'RETAILER',
+                    icon: Icons.shopping_basket_outlined,
+                    title: _t('roleRetailer'),
+                    description: _t('roleRetailerDesc'),
+                    width: isWide
+                        ? (constraints.maxWidth - 20) / 2
+                        : constraints.maxWidth,
+                    onTapLogin: () => context.push('/login?role=RETAILER'),
                   ),
                 ],
               );
@@ -1388,17 +1873,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: const Color(0xFF0B3D2E), borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFF0B3D2E),
+                    borderRadius: BorderRadius.circular(8)),
                 child: Icon(icon, color: Colors.white, size: 18),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                child: Text(title,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 13)),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(description, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), height: 1.3)),
+          Text(description,
+              style: const TextStyle(
+                  fontSize: 11, color: Color(0xFF64748B), height: 1.3)),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
@@ -1409,10 +1900,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 backgroundColor: const Color(0xFF0B3D2E),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               icon: const Icon(Icons.login, size: 16),
-              label: Text('${_t('loginBtn')} $title', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              label: Text('${_t('loginBtn')} $title',
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -1436,7 +1930,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           Expanded(
             child: Text(
               'National Agriculture Traceability Standard • Tamper-Evident Ledger • DPDP 2023 Conforming',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF065F46)),
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF065F46)),
             ),
           ),
         ],
@@ -1444,10 +1941,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildSyncAndVerificationAlerts(BuildContext context, AuthState authState, SyncState syncState) {
-    final registeredName = (authState.orgName != null && authState.orgName!.trim().isNotEmpty)
-        ? authState.orgName!
-        : 'Dr. Niladri\'s Farm (WB-PROD-2026-X7803)';
+  Widget _buildSyncAndVerificationAlerts(
+      BuildContext context, AuthState authState, SyncState syncState) {
+    final registeredName =
+        (authState.orgName != null && authState.orgName!.trim().isNotEmpty)
+            ? authState.orgName!
+            : (authState.phone ?? 'Verified Farmer / Supply-Chain Node');
+    final farmerUid = authState.farmerUid ??
+        (authState.phone != null
+            ? LotsController.generateFarmerUid(phone: authState.phone)
+            : '');
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -1461,8 +1964,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: const Color(0xFFECFDF5), borderRadius: BorderRadius.circular(8)),
-            child: const Icon(Icons.verified, color: Color(0xFF047857), size: 20),
+            decoration: BoxDecoration(
+                color: const Color(0xFFECFDF5),
+                borderRadius: BorderRadius.circular(8)),
+            child:
+                const Icon(Icons.verified, color: Color(0xFF047857), size: 20),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1471,17 +1977,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               children: [
                 Text(
                   registeredName,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF0F172A)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      color: Color(0xFF0F172A)),
                 ),
-                const Row(
-                  children: [
-                    Text('Active Sovereign Node', style: TextStyle(fontSize: 11, color: Color(0xFF047857), fontWeight: FontWeight.bold)),
-                    SizedBox(width: 6),
-                    Text('• 100% Cryptographically Bound', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                  ],
+                Text(
+                  farmerUid.isNotEmpty
+                      ? 'Unique Farmer ID: $farmerUid'
+                      : 'Active Sovereign Node • 100% Cryptographically Bound',
+                  style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFF047857),
+                      fontWeight: FontWeight.bold),
                 ),
               ],
             ),
+          ),
+          TextButton.icon(
+            onPressed: () => _showNextPartyScanAppendDialog(context),
+            icon: const Icon(Icons.qr_code_scanner,
+                size: 16, color: Color(0xFF047857)),
+            label: const Text('Custody Scan',
+                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1505,14 +2023,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => context.push('/receive'),
+                  onPressed: () => _showNextPartyScanAppendDialog(context),
                   icon: const Icon(Icons.qr_code_scanner, size: 18),
-                  label: const Text('Scan QR', style: TextStyle(fontWeight: FontWeight.bold)),
+                  label: const Text('Scan QR',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0B3D2E),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(120, 48),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
               ),
@@ -1521,12 +2041,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 child: OutlinedButton.icon(
                   onPressed: () => context.push('/create-batch'),
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Create Batch', style: TextStyle(fontWeight: FontWeight.bold)),
+                  label: const Text('Create Batch',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF0B3D2E),
-                    side: const BorderSide(color: Color(0xFF0B3D2E), width: 1.5),
+                    side:
+                        const BorderSide(color: Color(0xFF0B3D2E), width: 1.5),
                     minimumSize: const Size(120, 48),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
               ),
@@ -1574,7 +2097,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         children: [
           Text(
             _t('disclaimer'),
-            style: const TextStyle(color: Color(0xFFA7F3D0), fontSize: 11.5, height: 1.4),
+            style: const TextStyle(
+                color: Color(0xFFA7F3D0), fontSize: 11.5, height: 1.4),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
@@ -1583,13 +2107,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
             children: [
               Icon(Icons.phone, color: Color(0xFFFCD34D), size: 14),
               SizedBox(width: 5),
-              Text('Kisan Helpline: 1800-180-1551', style: TextStyle(color: Color(0xFFFCD34D), fontSize: 11, fontWeight: FontWeight.bold)),
+              Text('Kisan Helpline: 1800-180-1551',
+                  style: TextStyle(
+                      color: Color(0xFFFCD34D),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold)),
               SizedBox(width: 12),
               Text('|', style: TextStyle(color: Colors.white24)),
               SizedBox(width: 12),
               Icon(Icons.shield, color: Colors.white70, size: 14),
               SizedBox(width: 5),
-              Text('Consumer Helpline: 1915', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+              Text('Consumer Helpline: 1915',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold)),
             ],
           ),
         ],
@@ -1599,7 +2131,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
 
   void _showAccountDialog(BuildContext context) {
     final authState = ref.read(authControllerProvider);
-    final entityDisplay = authState.orgName ?? "Dr. Niladri's Farm";
+    final entityDisplay =
+        authState.orgName ?? authState.phone ?? 'Authenticated User';
+    final farmerUid = authState.farmerUid ??
+        (authState.phone != null
+            ? LotsController.generateFarmerUid(phone: authState.phone)
+            : 'N/A');
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1608,22 +2145,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Entity: $entityDisplay', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('Entity: $entityDisplay',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text('Phone: ${authState.phone ?? "+919876543210"}'),
+            Text('Phone: ${authState.phone ?? "Not Linked"}'),
             const SizedBox(height: 4),
-            const Text('Status: VERIFIED SOVEREIGN NODE', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+            Text('Unique Farmer ID: $farmerUid',
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+            const SizedBox(height: 4),
+            const Text('Status: VERIFIED SOVEREIGN NODE',
+                style: TextStyle(
+                    color: Colors.green, fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              ref.read(authControllerProvider.notifier).checkSavedAuth();
+              ref.read(authControllerProvider.notifier).logout();
               context.go('/login');
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade700,
+                foregroundColor: Colors.white),
             child: const Text('Switch Account'),
           ),
         ],

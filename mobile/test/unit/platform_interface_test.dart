@@ -34,7 +34,8 @@ void main() {
   });
 
   group('SecureStore Platform Interface Tests', () {
-    test('WebSecureStore writes, reads, and deletes safely in memory', () async {
+    test('WebSecureStore writes, reads, and deletes safely in memory',
+        () async {
       final SecureStore store = WebSecureStore();
       await store.write('token', 'sample_secret_token');
       expect(await store.read('token'), 'sample_secret_token');
@@ -45,7 +46,9 @@ void main() {
   });
 
   group('LocalDatabase Platform Interface Tests', () {
-    test('AndroidLocalDatabase and WebLocalDatabase initialize and close cleanly', () async {
+    test(
+        'AndroidLocalDatabase and WebLocalDatabase initialize and close cleanly',
+        () async {
       final androidDb = AndroidLocalDatabase();
       await androidDb.initialize();
       expect(androidDb.isInitialized, isTrue);

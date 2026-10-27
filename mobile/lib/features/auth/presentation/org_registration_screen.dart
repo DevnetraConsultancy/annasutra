@@ -8,7 +8,8 @@ class OrgRegistrationScreen extends ConsumerStatefulWidget {
   const OrgRegistrationScreen({super.key});
 
   @override
-  ConsumerState<OrgRegistrationScreen> createState() => _OrgRegistrationScreenState();
+  ConsumerState<OrgRegistrationScreen> createState() =>
+      _OrgRegistrationScreenState();
 }
 
 class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
@@ -42,7 +43,8 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
     final theme = Theme.of(context);
 
     ref.listen<AuthState>(authControllerProvider, (previous, next) {
-      if (previous?.status == AuthStatus.loading && next.status == AuthStatus.authenticated) {
+      if (previous?.status == AuthStatus.loading &&
+          next.status == AuthStatus.authenticated) {
         context.go('/');
       }
     });
@@ -62,7 +64,8 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
                 const SizedBox(height: 12),
                 Text(
                   'Set Up Your Organisation',
-                  style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -157,14 +160,17 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
                 SizedBox(
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: (!_consentGiven || authState.status == AuthStatus.loading)
+                    onPressed: (!_consentGiven ||
+                            authState.status == AuthStatus.loading)
                         ? null
                         : () {
                             if (_formKey.currentState?.validate() ?? false) {
                               authNotifier.registerOrganisation(
                                 name: _nameController.text.trim(),
                                 orgType: _selectedOrgType,
-                                fssaiNo: _fssaiController.text.trim().isEmpty ? null : _fssaiController.text.trim(),
+                                fssaiNo: _fssaiController.text.trim().isEmpty
+                                    ? null
+                                    : _fssaiController.text.trim(),
                                 consentNoticeVersion: '1.0',
                               );
                             }
@@ -173,7 +179,8 @@ class _OrgRegistrationScreenState extends ConsumerState<OrgRegistrationScreen> {
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
                             'Register Organisation',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                   ),
                 ),

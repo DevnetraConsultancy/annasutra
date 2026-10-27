@@ -23,9 +23,24 @@ class LotCard extends StatelessWidget {
 
     // Payment styling
     final paymentMeta = switch (lot.paymentStatus) {
-      'SETTLED' => (label: 'Fully Settled', bg: const Color(0xFFECFDF5), text: const Color(0xFF065F46), border: const Color(0xFF86EFAC)),
-      'ADVANCE' => (label: 'Advance Received', bg: const Color(0xFFEFF6FF), text: const Color(0xFF1E40AF), border: const Color(0xFFBFDBFE)),
-      _ => (label: 'Pending Settlement', bg: const Color(0xFFFFFBEB), text: const Color(0xFF92400E), border: const Color(0xFFFDE68A)),
+      'SETTLED' => (
+          label: 'Fully Settled',
+          bg: const Color(0xFFECFDF5),
+          text: const Color(0xFF065F46),
+          border: const Color(0xFF86EFAC)
+        ),
+      'ADVANCE' => (
+          label: 'Advance Received',
+          bg: const Color(0xFFEFF6FF),
+          text: const Color(0xFF1E40AF),
+          border: const Color(0xFFBFDBFE)
+        ),
+      _ => (
+          label: 'Pending Settlement',
+          bg: const Color(0xFFFFFBEB),
+          text: const Color(0xFF92400E),
+          border: const Color(0xFFFDE68A)
+        ),
     };
 
     String harvestFormatted = lot.harvestDate;
@@ -44,7 +59,8 @@ class LotCard extends StatelessWidget {
           width: 1.5,
         ),
         boxShadow: const [
-          BoxShadow(color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1)),
+          BoxShadow(
+              color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1)),
         ],
       ),
       padding: const EdgeInsets.all(16),
@@ -67,7 +83,8 @@ class LotCard extends StatelessWidget {
                         Clipboard.setData(ClipboardData(text: lot.publicCode));
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Copied lot code ${lot.publicCode} to clipboard'),
+                            content: Text(
+                                'Copied lot code ${lot.publicCode} to clipboard'),
                             duration: const Duration(seconds: 2),
                             backgroundColor: const Color(0xFF047857),
                           ),
@@ -75,7 +92,8 @@ class LotCard extends StatelessWidget {
                       },
                       borderRadius: BorderRadius.circular(6),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3.5),
                         decoration: BoxDecoration(
                           color: const Color(0xFFECFDF5),
                           border: Border.all(color: const Color(0xFFA7F3D0)),
@@ -95,7 +113,8 @@ class LotCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 4),
-                            const Icon(Icons.copy, size: 12, color: Color(0xFF047857)),
+                            const Icon(Icons.copy,
+                                size: 12, color: Color(0xFF047857)),
                           ],
                         ),
                       ),
@@ -104,17 +123,24 @@ class LotCard extends StatelessWidget {
                     // Crop Name & Variety
                     Text(
                       lot.crop,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A)),
                     ),
                     if (lot.variety.isNotEmpty)
                       Text(
                         '• ${lot.variety}',
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF475569)),
+                        style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF475569)),
                       ),
 
                     // Quality Grade Chip
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEFF6FF),
                         border: Border.all(color: const Color(0xFFBFDBFE)),
@@ -122,13 +148,17 @@ class LotCard extends StatelessWidget {
                       ),
                       child: Text(
                         lot.qualityGrade,
-                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF1E40AF)),
+                        style: const TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1E40AF)),
                       ),
                     ),
 
                     // Payment Status Chip
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
                         color: paymentMeta.bg,
                         border: Border.all(color: paymentMeta.border),
@@ -136,7 +166,10 @@ class LotCard extends StatelessWidget {
                       ),
                       child: Text(
                         paymentMeta.label,
-                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: paymentMeta.text),
+                        style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: paymentMeta.text),
                       ),
                     ),
                   ],
@@ -149,7 +182,8 @@ class LotCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: const Color(0xFFECFDF5),
                         border: Border.all(color: const Color(0xFF86EFAC)),
@@ -158,18 +192,23 @@ class LotCard extends StatelessWidget {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.check_circle_outline, size: 13, color: Color(0xFF10B981)),
+                          Icon(Icons.check_circle_outline,
+                              size: 13, color: Color(0xFF10B981)),
                           SizedBox(width: 4),
                           Text(
                             'In Farm Custody',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF065F46)),
+                            style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF065F46)),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 6),
                     IconButton(
-                      icon: const Icon(Icons.edit, size: 18, color: Color(0xFF047857)),
+                      icon: const Icon(Icons.edit,
+                          size: 18, color: Color(0xFF047857)),
                       tooltip: 'Edit Harvest Lot',
                       visualDensity: VisualDensity.compact,
                       onPressed: onEdit,
@@ -178,7 +217,8 @@ class LotCard extends StatelessWidget {
                 ),
               ] else ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF7ED),
                     border: Border.all(color: const Color(0xFFFDBA74)),
@@ -187,11 +227,17 @@ class LotCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.lock, size: 13, color: Color(0xFFC2410C)),
+                      const Icon(Icons.lock,
+                          size: 13, color: Color(0xFFC2410C)),
                       const SizedBox(width: 4),
                       Text(
-                        lot.state == 'IN_TRANSIT' ? 'In Transit (Locked)' : 'Handover Done (Locked)',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF9A3412)),
+                        lot.state == 'IN_TRANSIT'
+                            ? 'In Transit (Locked)'
+                            : 'Handover Done (Locked)',
+                        style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF9A3412)),
                       ),
                     ],
                   ),
@@ -211,15 +257,25 @@ class LotCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('QUANTITY', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
+                    const Text('QUANTITY',
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF64748B))),
                     const SizedBox(height: 2),
                     Text(
                       '${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E)),
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF0B3D2E)),
                     ),
                     Text(
-                      lot.packagesCount > 0 ? '${lot.packagesCount} ${lot.packageType}' : 'Bulk Produce',
-                      style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                      lot.packagesCount > 0
+                          ? '${lot.packagesCount} ${lot.packageType}'
+                          : 'Bulk Produce',
+                      style: const TextStyle(
+                          fontSize: 11.5, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
@@ -230,16 +286,24 @@ class LotCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('ORIGIN PLOT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
+                    const Text('ORIGIN PLOT',
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF64748B))),
                     const SizedBox(height: 2),
                     Text(
                       lot.originPlotName,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                      style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A)),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       '${lot.plotAreaAcres} Ac • ${lot.farmingMethod}',
-                      style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                      style: const TextStyle(
+                          fontSize: 11.5, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
@@ -250,15 +314,25 @@ class LotCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('VALUATION', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
+                    const Text('VALUATION',
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF64748B))),
                     const SizedBox(height: 2),
                     Text(
                       '₹${lot.basePricePerUnit.toStringAsFixed(0)} / ${lot.unit}',
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                      style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A)),
                     ),
                     Text(
                       'Total: ₹${lot.estimatedValue.toStringAsFixed(0)}',
-                      style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
+                      style: const TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF047857)),
                     ),
                   ],
                 ),
@@ -269,16 +343,21 @@ class LotCard extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.event_outlined, size: 14, color: Color(0xFF64748B)),
+              const Icon(Icons.event_outlined,
+                  size: 14, color: Color(0xFF64748B)),
               const SizedBox(width: 4),
               Text(
                 'Harvested: $harvestFormatted',
-                style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                style:
+                    const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
               ),
               const Spacer(),
               Text(
                 'Target: ${lot.intendedBuyer}',
-                style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Color(0xFF475569)),
+                style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF475569)),
               ),
             ],
           ),
@@ -292,16 +371,21 @@ class LotCard extends StatelessWidget {
               // Print QR Labels (Unlimited)
               OutlinedButton.icon(
                 onPressed: onShowQr,
-                icon: const Icon(Icons.qr_code, size: 16, color: Color(0xFF047857)),
+                icon: const Icon(Icons.qr_code,
+                    size: 16, color: Color(0xFF047857)),
                 label: const Text(
                   'QR Labels',
-                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
+                  style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF047857)),
                 ),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(100, 40),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   side: const BorderSide(color: Color(0xFFA7F3D0)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
 
@@ -312,14 +396,16 @@ class LotCard extends StatelessWidget {
                   icon: const Icon(Icons.local_shipping_outlined, size: 16),
                   label: const Text(
                     'Dispatch to Mandi',
-                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF047857),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(120, 40),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
             ],

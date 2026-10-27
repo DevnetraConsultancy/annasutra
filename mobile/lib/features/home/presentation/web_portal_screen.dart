@@ -41,6 +41,9 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
   void _initWebView() {
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setUserAgent(
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36',
+      )
       ..setBackgroundColor(const Color(0xFF062319))
       ..setNavigationDelegate(
         NavigationDelegate(
@@ -112,7 +115,8 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                 backgroundColor: const Color(0xFF064E3B),
                 foregroundColor: Colors.white,
                 icon: const Icon(Icons.public, size: 20),
-                label: const Text('Back to Web Portal', style: TextStyle(fontWeight: FontWeight.bold)),
+                label: const Text('Back to Web Portal',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 onPressed: _toggleNativeOfflineMode,
               ),
             ),
@@ -149,7 +153,8 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   color: const Color(0xFF022C22),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Icon(Icons.eco, color: Color(0xFF10B981), size: 18),
+                child:
+                    const Icon(Icons.eco, color: Color(0xFF10B981), size: 18),
               ),
               const SizedBox(width: 8),
               const Column(
@@ -158,17 +163,34 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                 children: [
                   Text(
                     'AnnaSutra',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.3),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.3),
                   ),
                   Text(
                     'Government of India AgriTrace',
-                    style: TextStyle(fontSize: 10, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFFA7F3D0),
+                        fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
             ],
           ),
           actions: [
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFA7F3D0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              ),
+              icon: const Icon(Icons.phone_android, size: 16),
+              label: const Text('Native Console',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+              onPressed: _toggleNativeOfflineMode,
+            ),
             IconButton(
               icon: const Icon(Icons.arrow_back_ios, size: 16),
               tooltip: 'Go Back',
@@ -191,9 +213,11 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   value: 'offline',
                   child: Row(
                     children: [
-                      Icon(Icons.offline_pin_outlined, color: Color(0xFF10B981), size: 18),
+                      Icon(Icons.offline_pin_outlined,
+                          color: Color(0xFF10B981), size: 18),
                       SizedBox(width: 8),
-                      Text('Offline Farm Ledger', style: TextStyle(color: Colors.white, fontSize: 13)),
+                      Text('Offline Farm Ledger',
+                          style: TextStyle(color: Colors.white, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -201,9 +225,11 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   value: 'home',
                   child: Row(
                     children: [
-                      Icon(Icons.home_outlined, color: Color(0xFF10B981), size: 18),
+                      Icon(Icons.home_outlined,
+                          color: Color(0xFF10B981), size: 18),
                       SizedBox(width: 8),
-                      Text('Portal Home', style: TextStyle(color: Colors.white, fontSize: 13)),
+                      Text('Portal Home',
+                          style: TextStyle(color: Colors.white, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -224,7 +250,8 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   child: LinearProgressIndicator(
                     value: _progress > 0 ? _progress : null,
                     backgroundColor: const Color(0xFF04241A),
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
                     minHeight: 3,
                   ),
                 )
@@ -256,12 +283,16 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFF10B981), width: 2),
               ),
-              child: const Icon(Icons.wifi_off_rounded, size: 48, color: Color(0xFFF59E0B)),
+              child: const Icon(Icons.wifi_off_rounded,
+                  size: 48, color: Color(0xFFF59E0B)),
             ),
             const SizedBox(height: 20),
             const Text(
               'No Internet Connection',
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -269,7 +300,8 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   ? _errorMessage
                   : 'Unable to reach AnnaSutra servers. Please check your data connection.',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13, height: 1.5),
+              style: const TextStyle(
+                  color: Color(0xFF94A3B8), fontSize: 13, height: 1.5),
             ),
             const SizedBox(height: 24),
             Row(
@@ -279,11 +311,14 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF10B981),
                     foregroundColor: const Color(0xFF064E3B),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   icon: const Icon(Icons.refresh, size: 18),
-                  label: const Text('Retry Connection', style: TextStyle(fontWeight: FontWeight.w800)),
+                  label: const Text('Retry Connection',
+                      style: TextStyle(fontWeight: FontWeight.w800)),
                   onPressed: _handleRefresh,
                 ),
                 const SizedBox(width: 12),
@@ -291,11 +326,14 @@ class _WebPortalScreenState extends State<WebPortalScreen> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFFA7F3D0),
                     side: const BorderSide(color: Color(0xFF10B981)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   icon: const Icon(Icons.offline_pin, size: 18),
-                  label: const Text('Offline Mode', style: TextStyle(fontWeight: FontWeight.w700)),
+                  label: const Text('Offline Mode',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
                   onPressed: _toggleNativeOfflineMode,
                 ),
               ],

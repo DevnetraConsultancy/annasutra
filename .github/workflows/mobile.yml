@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: write
+
 jobs:
   build-and-test:
     name: Flutter Analyze, Test & Multiplatform Build
@@ -33,15 +36,86 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
-      - name: Scaffold platform targets
+      - name: Scaffold platform targets & Configure Release Signing
         run: |
-          flutter create . --platforms web,android --org in.example.annasutra
+          cp android/app/src/main/AndroidManifest.xml /tmp/AndroidManifest.xml.bak
+          flutter create . --platforms web,android --org org.cdac --project-name annasutra
+          cp /tmp/AndroidManifest.xml.bak android/app/src/main/AndroidManifest.xml
           rm -f test/widget_test.dart
-          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/g' android/app/build.gradle || true
-          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 35/g' android/app/build.gradle || true
-          sed -i 's/compileSdk flutter.compileSdkVersion/compileSdk 35/g' android/app/build.gradle || true
-          sed -i 's/package in.example.annasutra/package `in`.example.annasutra/g' android/app/src/main/kotlin/in/example/annasutra/MainActivity.kt || true
-          sed -i 's/package="in.example.annasutra"//g' android/app/src/main/AndroidManifest.xml || true
+          rm -rf android/app/src/main/kotlin/in
+          rm -rf android/app/src/main/kotlin/org/cdac/annasutra_mobile
+          mkdir -p android/app/src/main/kotlin/org/cdac/annasutra
+          cat << 'EOF' > android/app/src/main/kotlin/org/cdac/annasutra/MainActivity.kt
+          package org.cdac.annasutra
+
+          import io.flutter.embedding.android.FlutterFragmentActivity
+
+          class MainActivity: FlutterFragmentActivity()
+          EOF
+
+          keytool -genkeypair -v \
+            -keystore android/app/release-key.jks \
+            -alias annasutra \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass annasutra2026 \
+            -keypass annasutra2026 \
+            -dname "CN=AnnaSutra CDAC, OU=AgriTrace, O=CDAC, L=Kolkata, ST=WB, C=IN"
+
+          cat << 'EOF' > android/app/build.gradle
+          plugins {
+              id "com.android.application"
+              id "kotlin-android"
+              id "dev.flutter.flutter-gradle-plugin"
+          }
+
+          android {
+              namespace = "org.cdac.annasutra"
+              compileSdk = 35
+              ndkVersion = flutter.ndkVersion
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_1_8
+                  targetCompatibility = JavaVersion.VERSION_1_8
+              }
+
+              kotlinOptions {
+                  jvmTarget = JavaVersion.VERSION_1_8
+              }
+
+              defaultConfig {
+                  applicationId = "org.cdac.annasutra"
+                  minSdk = 24
+                  targetSdk = 34
+                  versionCode = 2
+                  versionName = "1.0.0"
+              }
+
+              signingConfigs {
+                  release {
+                      storeFile file("release-key.jks")
+                      storePassword "annasutra2026"
+                      keyAlias "annasutra"
+                      keyPassword "annasutra2026"
+                      v1SigningEnabled true
+                      v2SigningEnabled true
+                  }
+              }
+
+              buildTypes {
+                  release {
+                      signingConfig = signingConfigs.release
+                      minifyEnabled false
+                      shrinkResources false
+                  }
+              }
+          }
+
+          flutter {
+              source = "../.."
+          }
+          EOF
 
       - name: Install dependencies
         run: flutter pub get
@@ -58,11 +132,25 @@ jobs:
       - name: Build Web application
         run: flutter build web --release
 
-      - name: Build Android Release APKs (Sub-50MB Universal & Split-per-ABI)
+      - name: Build & Verify Android Release APKs (Sub-50MB Universal & Split-per-ABI)
         run: |
           flutter build apk --release --split-per-abi
           flutter build apk --release
           ls -lh build/app/outputs/flutter-apk/
+          APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | sort -V | tail -n 1)
+          if [ -n "$APKSIGNER" ]; then
+            "$APKSIGNER" verify --verbose --print-certs build/app/outputs/flutter-apk/app-release.apk
+          fi
+
+      - name: Publish Release APKs to GitHub Release v1.0.0
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload v1.0.0 \
+            build/app/outputs/flutter-apk/app-release.apk \
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
+            --clobber
 
       - name: Upload Android Release APKs
         uses: actions/upload-artifact@v4

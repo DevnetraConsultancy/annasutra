@@ -70,12 +70,14 @@ class DpdpConsentDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
         children: [
-          Icon(Icons.shield_outlined, color: theme.colorScheme.primary, size: 28),
+          Icon(Icons.shield_outlined,
+              color: theme.colorScheme.primary, size: 28),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               DpdpStrings.title(lang),
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -98,7 +100,8 @@ class DpdpConsentDialog extends StatelessWidget {
               ),
               child: Text(
                 DpdpStrings.grievance(lang),
-                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ],

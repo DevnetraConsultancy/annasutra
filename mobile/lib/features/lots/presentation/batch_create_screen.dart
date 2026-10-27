@@ -23,14 +23,12 @@ class BatchCreateScreen extends ConsumerStatefulWidget {
 class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for all required & agricultural fields
   late TextEditingController _serialController;
   late TextEditingController _productController;
   late TextEditingController _varietyController;
   late TextEditingController _qtyController;
   late TextEditingController _cratesController;
 
-  // Additional 29-field controllers
   late TextEditingController _plotNameController;
   late TextEditingController _plotAreaController;
   late TextEditingController _surveyNoController;
@@ -42,7 +40,8 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
   late TextEditingController _intendedBuyerController;
   late TextEditingController _basePriceController;
 
-  // Dropdown selections
+  // 10 Official Product Category Codes (Mentor Specification)
+  String _selectedCategoryCode = 'VG';
   String _selectedUnit = 'Kg';
   String _selectedPackageType = 'Crates';
   String _selectedGrade = 'Grade A (Super)';
@@ -60,52 +59,74 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
     super.initState();
     _isEdit = widget.lotCode != null && widget.lotCode!.isNotEmpty;
 
+    // Clean empty controllers — NO prebuilt template strings
     _serialController = TextEditingController();
-    _productController = TextEditingController(text: 'Tomato');
-    _varietyController = TextEditingController(text: 'Hybrid Red (Abhinav)');
-    _qtyController = TextEditingController(text: '500.0');
-    _cratesController = TextEditingController(text: '25');
+    _productController = TextEditingController();
+    _varietyController = TextEditingController();
+    _qtyController = TextEditingController();
+    _cratesController = TextEditingController();
 
-    _plotNameController = TextEditingController(text: 'Plot #1 (North Yard)');
-    _plotAreaController = TextEditingController(text: '2.5');
-    _surveyNoController = TextEditingController(text: 'LR-442/19');
-    _moistureController = TextEditingController(text: '12.0');
-    _foreignMatterController = TextEditingController(text: '0.5');
-    _fertilizerController = TextEditingController(text: 'Vermicompost + Neem Cake');
-    _storageTempController = TextEditingController(text: '18.0');
+    _plotNameController = TextEditingController();
+    _plotAreaController = TextEditingController();
+    _surveyNoController = TextEditingController();
+    _moistureController = TextEditingController();
+    _foreignMatterController = TextEditingController();
+    _fertilizerController = TextEditingController();
+    _storageTempController = TextEditingController();
     _mandiGatepassController = TextEditingController();
-    _intendedBuyerController = TextEditingController(text: 'APMC Mandi');
-    _basePriceController = TextEditingController(text: '32.0');
+    _intendedBuyerController = TextEditingController();
+    _basePriceController = TextEditingController();
 
-    // Auto-generate sovereign code if creating new
     if (!_isEdit) {
-      _serialController.text = LotsController.generateSovereignCode();
+      _serialController.text = LotsController.generateSovereignCode(
+        categoryCode: _selectedCategoryCode,
+        seq: 1,
+      );
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final authState = ref.read(authControllerProvider);
+    final lotsState = ref.read(lotsControllerProvider);
+
+    if (!_isEdit &&
+        _serialController.text.contains('910000000000') &&
+        authState.phone != null) {
+      _serialController.text = LotsController.generateSovereignCode(
+        phone: authState.phone,
+        categoryCode: _selectedCategoryCode,
+        seq: lotsState.lots.length + 1,
+      );
+    }
+
     if (_isEdit) {
-      final lotsState = ref.read(lotsControllerProvider);
       final existing = lotsState.lots.firstWhere(
         (l) => l.publicCode == widget.lotCode,
         orElse: () => HarvestLot(
           publicCode: widget.lotCode!,
-          crop: 'Tomato',
-          netQtyKg: 500.0,
+          crop: '',
+          netQtyKg: 0.0,
           harvestDate: DateTime.now().toIso8601String(),
           createdAt: DateTime.now().toIso8601String(),
         ),
       );
 
       _serialController.text = existing.publicCode;
+      _selectedCategoryCode =
+          kProductCategoryCodes.containsKey(existing.productCategoryCode)
+              ? existing.productCategoryCode
+              : 'VG';
       _productController.text = existing.crop;
       _varietyController.text = existing.variety;
-      _qtyController.text = existing.netQtyKg.toString();
-      _cratesController.text = existing.packagesCount.toString();
+      _qtyController.text =
+          existing.netQtyKg > 0 ? existing.netQtyKg.toString() : '';
+      _cratesController.text =
+          existing.packagesCount > 0 ? existing.packagesCount.toString() : '';
       _plotNameController.text = existing.originPlotName;
-      _plotAreaController.text = existing.plotAreaAcres.toString();
+      _plotAreaController.text =
+          existing.plotAreaAcres > 0 ? existing.plotAreaAcres.toString() : '';
       _surveyNoController.text = existing.surveyNumber;
       _moistureController.text = existing.moisturePct.toString();
       _foreignMatterController.text = existing.foreignMatterPct.toString();
@@ -148,6 +169,18 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
     super.dispose();
   }
 
+  void _regenerateDeterministicBatchId() {
+    final authState = ref.read(authControllerProvider);
+    final lotsState = ref.read(lotsControllerProvider);
+    setState(() {
+      _serialController.text = LotsController.generateSovereignCode(
+        phone: authState.phone,
+        categoryCode: _selectedCategoryCode,
+        seq: lotsState.lots.length + 1,
+      );
+    });
+  }
+
   Future<void> _submitBatch() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
@@ -158,15 +191,22 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
     });
 
     try {
+      final authState = ref.read(authControllerProvider);
       final signer = ref.read(signerProvider);
       final localDb = ref.read(localDatabaseProvider);
       final serial = _serialController.text.trim().toUpperCase();
       final netQty = double.tryParse(_qtyController.text.trim()) ?? 0.0;
       final price = double.tryParse(_basePriceController.text.trim()) ?? 30.0;
       final estVal = netQty * price;
+      final farmerUid = authState.farmerUid ??
+          LotsController.generateFarmerUid(phone: authState.phone);
 
       final lot = HarvestLot(
         publicCode: serial,
+        farmerUid: farmerUid,
+        productCategoryCode: _selectedCategoryCode,
+        productCategoryName:
+            kProductCategoryCodes[_selectedCategoryCode] ?? 'Vegetables (VG)',
         crop: _productController.text.trim(),
         variety: _varietyController.text.trim(),
         netQtyKg: netQty,
@@ -174,17 +214,21 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
         packageType: _selectedPackageType,
         packagesCount: int.tryParse(_cratesController.text.trim()) ?? 0,
         originPlotName: _plotNameController.text.trim(),
-        originPlotId: 'PLOT-01',
-        plotAreaAcres: double.tryParse(_plotAreaController.text.trim()) ?? 2.0,
+        originPlotId: _surveyNoController.text.trim().isNotEmpty
+            ? _surveyNoController.text.trim()
+            : 'PLOT-01',
+        plotAreaAcres: double.tryParse(_plotAreaController.text.trim()) ?? 0.0,
         surveyNumber: _surveyNoController.text.trim(),
         qualityGrade: _selectedGrade,
         moisturePct: double.tryParse(_moistureController.text.trim()) ?? 12.0,
-        foreignMatterPct: double.tryParse(_foreignMatterController.text.trim()) ?? 0.5,
+        foreignMatterPct:
+            double.tryParse(_foreignMatterController.text.trim()) ?? 0.5,
         farmingMethod: _selectedFarmingMethod,
         pesticideTested: _selectedPesticideStatus,
         fertilizerLog: _fertilizerController.text.trim(),
         storageFacility: _selectedStorageFacility,
-        storageTempC: double.tryParse(_storageTempController.text.trim()) ?? 18.0,
+        storageTempC:
+            double.tryParse(_storageTempController.text.trim()) ?? 18.0,
         mandiGatepass: _mandiGatepassController.text.trim(),
         intendedBuyer: _intendedBuyerController.text.trim(),
         basePricePerUnit: price,
@@ -192,14 +236,29 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
         paymentStatus: _selectedPaymentStatus,
         harvestDate: _harvestDate.toIso8601String(),
         createdAt: DateTime.now().toIso8601String(),
+        journeyCheckpoints: [
+          {
+            'step': 1,
+            'event_type': 'HARVEST_CREATE',
+            'role': 'PRODUCER',
+            'actor_name': authState.orgName ?? 'Producer Farm',
+            'location_name': _plotNameController.text.trim().isNotEmpty
+                ? _plotNameController.text.trim()
+                : 'Origin Farm Plot',
+            'weight_kg': netQty,
+            'condition': 'Fresh Harvest ($_selectedGrade)',
+            'storage_temp': _storageTempController.text.trim().isNotEmpty
+                ? '${_storageTempController.text.trim()}°C'
+                : 'Ambient',
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        ],
       );
 
-      // Sign locally on device
       final canonicalJson = jsonEncode(lot.toJson());
       final payloadBytes = Uint8List.fromList(utf8.encode(canonicalJson));
       final deviceSignature = await signer.sign(payloadBytes);
 
-      // Save locally to offline-first outbox in LocalDatabase
       await localDb.saveQueuedEvent({
         'event_id': const Uuid().v4(),
         'public_code': serial,
@@ -209,7 +268,6 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      // Update reactive lots controller
       final lotsNotifier = ref.read(lotsControllerProvider.notifier);
       if (_isEdit) {
         lotsNotifier.updateLot(lot);
@@ -221,7 +279,9 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_isEdit ? 'Harvest lot $serial updated successfully!' : 'Harvest lot $serial created and queued for sync!'),
+          content: Text(_isEdit
+              ? 'Harvest lot $serial updated successfully!'
+              : 'Harvest lot $serial created and queued for sync!'),
           backgroundColor: const Color(0xFF047857),
         ),
       );
@@ -247,9 +307,9 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final lotsState = ref.watch(lotsControllerProvider);
     final theme = Theme.of(context);
 
-    // If organisation is unverified, show blocking banner per docs/14
     if (!authState.isOrgVerified && authState.orgVerification == 'PENDING') {
       return Scaffold(
         appBar: AppBar(title: const Text('Create Harvest Batch')),
@@ -259,11 +319,13 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.pending_actions, size: 64, color: Colors.orange.shade700),
+                Icon(Icons.pending_actions,
+                    size: 64, color: Colors.orange.shade700),
                 const SizedBox(height: 16),
                 Text(
                   'Organisation Pending Verification',
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -299,9 +361,38 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // SECTION 1: QR Label Serial & Crop Identification
-                _buildSectionHeader('1. Crop Identification & Sovereign Code', Icons.qr_code_2),
+                // SECTION 1: QR Label Serial & 10 Product Category Codes
+                _buildSectionHeader(
+                    '1. Deterministic Batch ID & 10 Product Categories',
+                    Icons.qr_code_2),
                 const SizedBox(height: 12),
+
+                // Product Category Code (FG, PU, OI, FR, VG, SP, CC, LS, SC, OT)
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  value: _selectedCategoryCode,
+                  decoration: const InputDecoration(
+                    labelText: 'Product Category Code (Mentor Scheme) *',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: kProductCategoryCodes.entries
+                      .map((e) => DropdownMenuItem<String>(
+                            value: e.key,
+                            child: Text(e.value),
+                          ))
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() {
+                        _selectedCategoryCode = val;
+                      });
+                      if (!_isEdit) {
+                        _regenerateDeterministicBatchId();
+                      }
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
 
                 // QR Label Serial *
                 Row(
@@ -313,7 +404,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                         textCapitalization: TextCapitalization.characters,
                         decoration: const InputDecoration(
                           labelText: 'QR Label Serial *',
-                          hintText: 'Scan or generate QR serial',
+                          hintText: 'YYYYDDHHMMSS+CountryCodeMobile+Code+Seq',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -329,11 +420,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                       height: 56,
                       child: OutlinedButton(
                         onPressed: () {
-                          setState(() {
-                            _serialController.text = LotsController.generateSovereignCode();
-                          });
+                          _regenerateDeterministicBatchId();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Generated fresh sovereign lot code.')),
+                            const SnackBar(
+                                content: Text(
+                                    'Generated fresh deterministic batch ID.')),
                           );
                         },
                         child: const Icon(Icons.refresh),
@@ -348,7 +439,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                   controller: _productController,
                   decoration: const InputDecoration(
                     labelText: 'Produce Name *',
-                    hintText: 'e.g. Tomato, Potato, Paddy, Wheat',
+                    hintText: 'Enter crop or produce name',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -365,7 +456,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                   controller: _varietyController,
                   decoration: const InputDecoration(
                     labelText: 'Variety *',
-                    hintText: 'e.g. Roma, Hybrid Red, Jyoti, Basmati',
+                    hintText: 'Enter seed or crop variety',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -407,17 +498,17 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                 _buildSectionHeader('2. Quantity & Packaging', Icons.scale),
                 const SizedBox(height: 12),
 
-                // Net Quantity (kg) *
                 Row(
                   children: [
                     Expanded(
                       flex: 6,
                       child: TextFormField(
                         controller: _qtyController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Net Quantity (kg) *',
-                          hintText: 'e.g. 500.0',
+                          hintText: 'Enter net weight in kg',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -443,9 +534,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                           border: OutlineInputBorder(),
                         ),
                         items: ['Kg', 'Quintal', 'Metric Ton']
-                            .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                            .map((u) =>
+                                DropdownMenuItem(value: u, child: Text(u)))
                             .toList(),
-                        onChanged: (v) => setState(() => _selectedUnit = v ?? 'Kg'),
+                        onChanged: (v) =>
+                            setState(() => _selectedUnit = v ?? 'Kg'),
                       ),
                     ),
                   ],
@@ -463,10 +556,17 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                           labelText: 'Package Type',
                           border: OutlineInputBorder(),
                         ),
-                        items: ['Crates', 'Gunny Bags', 'Corrugated Boxes', 'Loose Bulk']
-                            .map((p) => DropdownMenuItem(value: p, child: Text(p)))
+                        items: [
+                          'Crates',
+                          'Gunny Bags',
+                          'Corrugated Boxes',
+                          'Loose Bulk'
+                        ]
+                            .map((p) =>
+                                DropdownMenuItem(value: p, child: Text(p)))
                             .toList(),
-                        onChanged: (v) => setState(() => _selectedPackageType = v ?? 'Crates'),
+                        onChanged: (v) => setState(
+                            () => _selectedPackageType = v ?? 'Crates'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -477,7 +577,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           labelText: 'Packages Count',
-                          hintText: 'e.g. 25',
+                          hintText: 'Number of crates/bags',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -487,14 +587,15 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                 const SizedBox(height: 24),
 
                 // SECTION 3: Origin Plot & Geo-tagging
-                _buildSectionHeader('3. Farm & Plot Geo-tagging', Icons.place_outlined),
+                _buildSectionHeader(
+                    '3. Farm & Plot Geo-tagging', Icons.place_outlined),
                 const SizedBox(height: 12),
 
                 TextFormField(
                   controller: _plotNameController,
                   decoration: const InputDecoration(
                     labelText: 'Origin Plot Name',
-                    hintText: 'e.g. Plot #1 (North Yard)',
+                    hintText: 'Enter registered farm plot name',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -505,10 +606,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _plotAreaController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Area (Acres)',
-                          hintText: 'e.g. 2.5',
+                          hintText: 'Plot acreage',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -519,7 +621,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                         controller: _surveyNoController,
                         decoration: const InputDecoration(
                           labelText: 'Survey / Khasra No.',
-                          hintText: 'e.g. LR-442/19',
+                          hintText: 'Land plot survey number',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -529,20 +631,27 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                 const SizedBox(height: 24),
 
                 // SECTION 4: Quality & Grading
-                _buildSectionHeader('4. Quality & Grading', Icons.verified_outlined),
+                _buildSectionHeader(
+                    '4. Quality & Grading', Icons.verified_outlined),
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<String>(
                   isExpanded: true,
-                        value: _selectedGrade,
+                  value: _selectedGrade,
                   decoration: const InputDecoration(
                     labelText: 'Quality Grade',
                     border: OutlineInputBorder(),
                   ),
-                  items: ['Grade A (Super)', 'Grade B', 'Grade C', 'Fair Average Quality']
+                  items: [
+                    'Grade A (Super)',
+                    'Grade B',
+                    'Grade C',
+                    'Fair Average Quality'
+                  ]
                       .map((g) => DropdownMenuItem(value: g, child: Text(g)))
                       .toList(),
-                  onChanged: (v) => setState(() => _selectedGrade = v ?? 'Grade A (Super)'),
+                  onChanged: (v) =>
+                      setState(() => _selectedGrade = v ?? 'Grade A (Super)'),
                 ),
                 const SizedBox(height: 16),
 
@@ -551,10 +660,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _moistureController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Moisture Content (%)',
-                          hintText: 'e.g. 11.5',
+                          hintText: 'Moisture %',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -563,10 +673,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _foreignMatterController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Foreign Matter (%)',
-                          hintText: 'e.g. 0.2',
+                          hintText: 'Foreign matter %',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -576,7 +687,8 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                 const SizedBox(height: 24),
 
                 // SECTION 5: Agri-Inputs & Sustainability
-                _buildSectionHeader('5. Agri-Inputs & Sustainability', Icons.eco_outlined),
+                _buildSectionHeader(
+                    '5. Agri-Inputs & Sustainability', Icons.eco_outlined),
                 const SizedBox(height: 12),
 
                 Row(
@@ -590,9 +702,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                           border: OutlineInputBorder(),
                         ),
                         items: ['Organic', 'Natural / ZBNF', 'Conventional']
-                            .map((f) => DropdownMenuItem(value: f, child: Text(f)))
+                            .map((f) =>
+                                DropdownMenuItem(value: f, child: Text(f)))
                             .toList(),
-                        onChanged: (v) => setState(() => _selectedFarmingMethod = v ?? 'Organic'),
+                        onChanged: (v) => setState(
+                            () => _selectedFarmingMethod = v ?? 'Organic'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -605,9 +719,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                           border: OutlineInputBorder(),
                         ),
                         items: ['CLEAN', 'ORGANIC', 'UNTESTED']
-                            .map((p) => DropdownMenuItem(value: p, child: Text(p)))
+                            .map((p) =>
+                                DropdownMenuItem(value: p, child: Text(p)))
                             .toList(),
-                        onChanged: (v) => setState(() => _selectedPesticideStatus = v ?? 'CLEAN'),
+                        onChanged: (v) => setState(
+                            () => _selectedPesticideStatus = v ?? 'CLEAN'),
                       ),
                     ),
                   ],
@@ -618,14 +734,15 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                   controller: _fertilizerController,
                   decoration: const InputDecoration(
                     labelText: 'Fertilizer & Soil Amendments Log',
-                    hintText: 'e.g. Vermicompost, Neem Cake, Bio-N',
+                    hintText: 'Enter organic or soil inputs applied',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 24),
 
                 // SECTION 6: Post-Harvest & Storage
-                _buildSectionHeader('6. Post-Harvest & Storage', Icons.inventory_2_outlined),
+                _buildSectionHeader(
+                    '6. Post-Harvest & Storage', Icons.inventory_2_outlined),
                 const SizedBox(height: 12),
 
                 Row(
@@ -638,20 +755,27 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                           labelText: 'Storage Facility',
                           border: OutlineInputBorder(),
                         ),
-                        items: ['Farm Packhouse', 'Cold Storage Ambient Bay', 'Village Yard']
-                            .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                        items: [
+                          'Farm Packhouse',
+                          'Cold Storage Ambient Bay',
+                          'Village Yard'
+                        ]
+                            .map((s) =>
+                                DropdownMenuItem(value: s, child: Text(s)))
                             .toList(),
-                        onChanged: (v) => setState(() => _selectedStorageFacility = v ?? 'Farm Packhouse'),
+                        onChanged: (v) => setState(() =>
+                            _selectedStorageFacility = v ?? 'Farm Packhouse'),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: TextFormField(
                         controller: _storageTempController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Storage Temp (°C)',
-                          hintText: 'e.g. 18.0',
+                          hintText: 'Temperature in °C',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -664,14 +788,15 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                   controller: _mandiGatepassController,
                   decoration: const InputDecoration(
                     labelText: 'Mandi Gatepass / E-Waybill Reference',
-                    hintText: 'e.g. WB-GP-2026-904',
+                    hintText: 'Optional gatepass or e-waybill number',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 24),
 
                 // SECTION 7: Valuation & Commercial Target
-                _buildSectionHeader('7. Valuation & Buyer Target', Icons.currency_rupee),
+                _buildSectionHeader(
+                    '7. Valuation & Buyer Target', Icons.currency_rupee),
                 const SizedBox(height: 12),
 
                 Row(
@@ -679,10 +804,11 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _basePriceController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Base Price (₹/unit)',
-                          hintText: 'e.g. 32.0',
+                          hintText: 'Price per unit',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -693,14 +819,14 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                         controller: _intendedBuyerController,
                         decoration: const InputDecoration(
                           labelText: 'Intended Buyer',
-                          hintText: 'e.g. APMC Mandi, FPO Hub',
+                          hintText: 'Target Aggregator / Wholesaler / Retailer',
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
                 // SUBMIT BUTTON (Matches test assertion: "Sign & Create Batch")
                 ElevatedButton.icon(
@@ -710,21 +836,30 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 54),
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     elevation: 2,
                   ),
                   icon: _isSubmitting
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                          child: CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 2.5),
                         )
                       : const Icon(Icons.check_circle_outline, size: 22),
                   label: Text(
                     _isEdit ? 'Save Changes to Lot' : 'Sign & Create Batch',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 0.3),
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.3),
                   ),
                 ),
+                const SizedBox(height: 24),
+
+                // LIVE LOT MOVEMENT MAP & NEXT-PARTY CUSTODY TELEMETRY SECTION
+                _buildLiveLotMovementMapSection(lotsState),
                 const SizedBox(height: 16),
               ],
             ),
@@ -734,18 +869,110 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
     );
   }
 
+  Widget _buildLiveLotMovementMapSection(LotsState lotsState) {
+    final activeLots = lotsState.lots;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFA7F3D0), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.map_outlined, color: Color(0xFF047857), size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Live Lot Movement Trajectory (Next-Party Scan Updates)',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0B3D2E)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Real-time GPS custody hops as Aggregators, Wholesalers, Distributors, and Retailers accept custody and scan lot QR codes.',
+            style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 12),
+          if (activeLots.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.my_location, color: Color(0xFF047857), size: 20),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Create a harvest batch above to track its live GPS trajectory from Farm Origin to Retailer Shop.',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF475569)),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            ...activeLots.take(3).map((lot) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0FDF4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFBBF7D0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${lot.publicCode} • ${lot.crop} (${lot.productCategoryCode})',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.5,
+                          color: Color(0xFF065F46)),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Current Custodian: ${lot.currentCustodianName} (${lot.currentCustodianRole}) • '
+                      '${lot.isRetailerVerified ? "Retailer Verified (Consumer Unlocked)" : "Supply-Chain In Transit"}',
+                      style: const TextStyle(
+                          fontSize: 11.5, color: Color(0xFF334155)),
+                    ),
+                  ],
+                ),
+              );
+            }),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
       children: [
         Icon(icon, size: 18, color: const Color(0xFF047857)),
         const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF0B3D2E),
-            letterSpacing: 0.2,
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF0B3D2E),
+              letterSpacing: 0.2,
+            ),
           ),
         ),
       ],

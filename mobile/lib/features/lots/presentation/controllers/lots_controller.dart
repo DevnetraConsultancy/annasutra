@@ -1,16 +1,34 @@
-import 'dart:math';
+import 'dart:io' show Platform;
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/harvest_lot.dart';
 import 'package:annasutra_mobile/data/platform/platform_providers.dart';
 import 'package:annasutra_mobile/domain/platform/local_database.dart';
 
-final lotsControllerProvider = StateNotifierProvider<LotsController, LotsState>((ref) {
+/// Official 10 Product Category Codes (Mentor's Specification)
+const Map<String, String> kProductCategoryCodes = {
+  'FG': 'Food grains & cereals (FG)',
+  'PU': 'Pulses (PU)',
+  'OI': 'Oilseeds (OI)',
+  'FR': 'Fruits (FR)',
+  'VG': 'Vegetables (VG)',
+  'SP': 'Spices (SP)',
+  'CC': 'Commercial Crops (CC)',
+  'LS': 'Livestock (LS)',
+  'SC': 'Special Crops (SC)',
+  'OT': 'Others (OT)',
+};
+
+final lotsControllerProvider =
+    StateNotifierProvider<LotsController, LotsState>((ref) {
   final localDb = ref.watch(localDatabaseProvider);
   return LotsController(localDb: localDb);
 });
 
 class LotsState {
   final List<HarvestLot> lots;
+  final List<HarvestLot> incomingHandovers;
   final bool isLoading;
   final String searchQuery;
   final String selectedCustody; // 'ALL', 'IN_CUSTODY', 'IN_TRANSIT', 'CLOSED'
@@ -21,6 +39,7 @@ class LotsState {
 
   const LotsState({
     this.lots = const [],
+    this.incomingHandovers = const [],
     this.isLoading = false,
     this.searchQuery = '',
     this.selectedCustody = 'ALL',
@@ -32,6 +51,7 @@ class LotsState {
 
   LotsState copyWith({
     List<HarvestLot>? lots,
+    List<HarvestLot>? incomingHandovers,
     bool? isLoading,
     String? searchQuery,
     String? selectedCustody,
@@ -42,6 +62,7 @@ class LotsState {
   }) {
     return LotsState(
       lots: lots ?? this.lots,
+      incomingHandovers: incomingHandovers ?? this.incomingHandovers,
       isLoading: isLoading ?? this.isLoading,
       searchQuery: searchQuery ?? this.searchQuery,
       selectedCustody: selectedCustody ?? this.selectedCustody,
@@ -57,23 +78,29 @@ class LotsState {
     var result = lots.where((lot) {
       if (searchQuery.isNotEmpty) {
         final query = searchQuery.toLowerCase();
-        final text = '${lot.publicCode} ${lot.crop} ${lot.variety} ${lot.originPlotName} ${lot.qualityGrade}'.toLowerCase();
+        final text =
+            '${lot.publicCode} ${lot.productCategoryCode} ${lot.crop} ${lot.variety} ${lot.originPlotName} ${lot.qualityGrade}'
+                .toLowerCase();
         if (!text.contains(query)) {
           return false;
         }
       }
       if (selectedCustody != 'ALL') {
-        if (selectedCustody == 'IN_CUSTODY' && !(lot.state == 'IN_CUSTODY' || lot.state == 'CREATED')) {
+        if (selectedCustody == 'IN_CUSTODY' &&
+            !(lot.state == 'IN_CUSTODY' || lot.state == 'CREATED')) {
           return false;
         }
         if (selectedCustody == 'IN_TRANSIT' && lot.state != 'IN_TRANSIT') {
           return false;
         }
-        if (selectedCustody == 'CLOSED' && lot.state != 'CLOSED') {
+        if (selectedCustody == 'CLOSED' &&
+            lot.state != 'CLOSED' &&
+            !lot.isRetailerVerified) {
           return false;
         }
       }
-      if (selectedCrop != 'ALL' && lot.crop.toLowerCase() != selectedCrop.toLowerCase()) {
+      if (selectedCrop != 'ALL' &&
+          lot.crop.toLowerCase() != selectedCrop.toLowerCase()) {
         return false;
       }
       if (selectedPayment != 'ALL' && lot.paymentStatus != selectedPayment) {
@@ -90,19 +117,25 @@ class LotsState {
       } else if (sortOrder == 'qty') {
         return a.netQtyKg.compareTo(b.netQtyKg);
       }
-      // default: -created_at (latest first)
       return b.createdAt.compareTo(a.createdAt);
     });
 
     return result;
   }
 
-  // 4 Top Metrics
+  // Top KPI Metrics
   int get totalLotsCount => lots.length;
-  int get inCustodyCount => lots.where((l) => l.state == 'IN_CUSTODY' || l.state == 'CREATED').length;
+  int get inCustodyCount => lots
+      .where((l) =>
+          (l.state == 'IN_CUSTODY' || l.state == 'CREATED') &&
+          l.currentCustodianRole == 'PRODUCER')
+      .length;
   int get inTransitCount => lots.where((l) => l.state == 'IN_TRANSIT').length;
+  int get retailerVerifiedCount =>
+      lots.where((l) => l.isRetailerVerified).length;
   double get totalWeightKg => lots.fold(0.0, (sum, l) => sum + l.netQtyKg);
-  double get totalValuation => lots.fold(0.0, (sum, l) => sum + l.estimatedValue);
+  double get totalValuation =>
+      lots.fold(0.0, (sum, l) => sum + l.estimatedValue);
 
   // Analytics Metrics
   Map<String, double> get cropVolumeDistribution {
@@ -125,18 +158,20 @@ class LotsState {
     final Map<String, double> map = {
       'In Farm Custody': 0.0,
       'In Transit': 0.0,
-      'Delivered / Mandi': 0.0,
-      'Custody Closed': 0.0,
+      'Supply-Chain Custody': 0.0,
+      'Retailer Verified': 0.0,
     };
     for (var lot in lots) {
-      if (lot.state == 'IN_CUSTODY' || lot.state == 'CREATED') {
-        map['In Farm Custody'] = (map['In Farm Custody'] ?? 0) + lot.netQtyKg;
+      if (lot.isRetailerVerified) {
+        map['Retailer Verified'] =
+            (map['Retailer Verified'] ?? 0) + lot.netQtyKg;
       } else if (lot.state == 'IN_TRANSIT') {
         map['In Transit'] = (map['In Transit'] ?? 0) + lot.netQtyKg;
-      } else if (lot.state == 'DELIVERED') {
-        map['Delivered / Mandi'] = (map['Delivered / Mandi'] ?? 0) + lot.netQtyKg;
+      } else if (lot.currentCustodianRole == 'PRODUCER') {
+        map['In Farm Custody'] = (map['In Farm Custody'] ?? 0) + lot.netQtyKg;
       } else {
-        map['Custody Closed'] = (map['Custody Closed'] ?? 0) + lot.netQtyKg;
+        map['Supply-Chain Custody'] =
+            (map['Supply-Chain Custody'] ?? 0) + lot.netQtyKg;
       }
     }
     return map;
@@ -162,98 +197,70 @@ class LotsState {
 
 class LotsController extends StateNotifier<LotsState> {
   final LocalDatabase _localDb;
+  static const String _baseUrl = 'https://annasutra.vercel.app';
 
   LotsController({required LocalDatabase localDb})
       : _localDb = localDb,
-        super(const LotsState()) {
-    _initSampleLots();
-  }
+        super(const LotsState());
 
-  void _initSampleLots() {
-    // Verified Producer (X7803) live recorded lots
-    final now = DateTime.now();
-    final lots = [
-      HarvestLot(
-        publicCode: 'AS-9K2M4P7L8Q1R',
-        crop: 'Tomato',
-        variety: 'Hybrid Red (Abhinav)',
-        netQtyKg: 750.0,
-        unit: 'Kg',
-        packageType: 'Crates',
-        packagesCount: 30,
-        originPlotName: 'Plot #1 (North Yard)',
-        originPlotId: 'PLOT-01',
-        plotAreaAcres: 2.5,
-        qualityGrade: 'Grade A (Super)',
-        moisturePct: 11.5,
-        foreignMatterPct: 0.2,
-        farmingMethod: 'Organic',
-        pesticideTested: 'CLEAN',
-        fertilizerLog: 'Vermicompost + Trichoderma',
-        storageFacility: 'Farm Packhouse',
-        storageTempC: 18.0,
-        state: 'IN_CUSTODY',
-        paymentStatus: 'ADVANCE',
-        basePricePerUnit: 34.0,
-        estimatedValue: 25500.0,
-        harvestDate: now.subtract(const Duration(hours: 18)).toIso8601String(),
-        createdAt: now.subtract(const Duration(hours: 18)).toIso8601String(),
-      ),
-      HarvestLot(
-        publicCode: 'AS-4X8T2N1M9L5K',
-        crop: 'Potato',
-        variety: 'Jyoti Premium',
-        netQtyKg: 1200.0,
-        unit: 'Kg',
-        packageType: 'Gunny Bags',
-        packagesCount: 24,
-        originPlotName: 'Plot #2 (Canal Basin)',
-        originPlotId: 'PLOT-02',
-        plotAreaAcres: 3.0,
-        qualityGrade: 'Grade A (Super)',
-        moisturePct: 14.0,
-        foreignMatterPct: 0.5,
-        farmingMethod: 'Natural / ZBNF',
-        pesticideTested: 'ORGANIC',
-        fertilizerLog: 'Jeevamrit + Neem Extract',
-        storageFacility: 'Cold Storage Ambient Bay',
-        storageTempC: 12.0,
-        state: 'IN_TRANSIT',
-        paymentStatus: 'PENDING',
-        basePricePerUnit: 22.0,
-        estimatedValue: 26400.0,
-        harvestDate: now.subtract(const Duration(days: 2)).toIso8601String(),
-        createdAt: now.subtract(const Duration(days: 2)).toIso8601String(),
-      ),
-      HarvestLot(
-        publicCode: 'AS-7H3V6B9Q2R4C',
-        crop: 'Cauliflower',
-        variety: 'Snowball White',
-        netQtyKg: 480.0,
-        unit: 'Kg',
-        packageType: 'Crates',
-        packagesCount: 20,
-        originPlotName: 'Plot #1 (North Yard)',
-        originPlotId: 'PLOT-01',
-        plotAreaAcres: 2.5,
-        qualityGrade: 'Grade B',
-        moisturePct: 10.0,
-        foreignMatterPct: 0.8,
-        farmingMethod: 'Organic',
-        pesticideTested: 'CLEAN',
-        fertilizerLog: 'Cow dung compost + Bio-N',
-        storageFacility: 'Farm Packhouse',
-        storageTempC: 16.0,
-        state: 'IN_CUSTODY',
-        paymentStatus: 'SETTLED',
-        basePricePerUnit: 28.0,
-        estimatedValue: 13440.0,
-        harvestDate: now.subtract(const Duration(days: 4)).toIso8601String(),
-        createdAt: now.subtract(const Duration(days: 4)).toIso8601String(),
-      ),
-    ];
+  bool get _isFlutterTest =>
+      !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
 
-    state = state.copyWith(lots: lots);
+  /// Fetch real harvest lots and incoming handovers from backend API
+  Future<void> fetchRemoteLots({String? accessToken, String? phone}) async {
+    if (_isFlutterTest || accessToken == null || accessToken.isEmpty) return;
+
+    state = state.copyWith(isLoading: true);
+    try {
+      final dio = Dio(BaseOptions(
+        baseUrl: _baseUrl,
+        connectTimeout: const Duration(seconds: 8),
+        receiveTimeout: const Duration(seconds: 8),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          if (phone != null && phone.isNotEmpty) 'X-Entity-Phone': phone,
+        },
+      ));
+
+      final res = await dio.get<dynamic>('/api/v1/lots/');
+      List<HarvestLot> loadedLots = [];
+      if (res.statusCode == 200 && res.data is Map) {
+        final rawList = (res.data as Map)['results'] ??
+            (res.data as Map)['lots'] ??
+            <dynamic>[];
+        if (rawList is List) {
+          loadedLots = rawList
+              .whereType<Map<dynamic, dynamic>>()
+              .map((m) => HarvestLot.fromJson(Map<String, dynamic>.from(m)))
+              .toList();
+        }
+      }
+
+      List<HarvestLot> incomingList = [];
+      try {
+        final incRes =
+            await dio.get<dynamic>('/api/v1/lots/handovers/incoming');
+        if (incRes.statusCode == 200 && incRes.data is Map) {
+          final rawInc = (incRes.data as Map)['pending_requests'] ??
+              (incRes.data as Map)['incoming_requests'] ??
+              <dynamic>[];
+          if (rawInc is List) {
+            incomingList = rawInc
+                .whereType<Map<dynamic, dynamic>>()
+                .map((m) => HarvestLot.fromJson(Map<String, dynamic>.from(m)))
+                .toList();
+          }
+        }
+      } catch (_) {}
+
+      state = state.copyWith(
+        lots: loadedLots,
+        incomingHandovers: incomingList,
+        isLoading: false,
+      );
+    } catch (_) {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
   void addLot(HarvestLot newLot) {
@@ -282,23 +289,234 @@ class LotsController extends StateNotifier<LotsState> {
     });
   }
 
-  void dispatchLot(String publicCode, {String vehicleNo = '', String driverContact = ''}) {
+  /// Request 2-Way Custody Handover to Next Party (Aggregator, Wholesaler, Distributor, Retailer)
+  Future<void> requestCustodyHandover(
+    String publicCode, {
+    required String targetRole,
+    required String targetName,
+    required String targetPhone,
+    String vehicleNo = '',
+    double? declaredQtyKg,
+    String? accessToken,
+    String? senderPhone,
+  }) async {
+    final pin =
+        (100000 + (DateTime.now().microsecondsSinceEpoch % 900000)).toString();
+    final pendingMap = <String, dynamic>{
+      'status': 'PENDING_ACCEPTANCE',
+      'target_role': targetRole,
+      'target_name': targetName,
+      'target_phone': targetPhone,
+      'vehicle_no': vehicleNo,
+      'handover_pin': pin,
+      'requested_at': DateTime.now().toIso8601String(),
+    };
+
+    if (!_isFlutterTest && accessToken != null && accessToken.isNotEmpty) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            if (senderPhone != null) 'X-Entity-Phone': senderPhone,
+          },
+        ));
+        final res = await dio.post<dynamic>(
+          '/api/v1/lots/$publicCode/handover-request',
+          data: {
+            'target_role': targetRole,
+            'target_name': targetName,
+            'target_phone': targetPhone,
+            'vehicle_no': vehicleNo,
+            if (declaredQtyKg != null) 'declared_qty_kg': declaredQtyKg,
+          },
+        );
+        if ((res.statusCode == 200 || res.statusCode == 201) &&
+            res.data is Map) {
+          final updated =
+              HarvestLot.fromJson(Map<String, dynamic>.from(res.data as Map));
+          updateLot(updated);
+          return;
+        }
+      } catch (_) {}
+    }
+
     final list = state.lots.map((l) {
       if (l.publicCode == publicCode) {
         return l.copyWith(
           state: 'IN_TRANSIT',
           vehicleNo: vehicleNo.isNotEmpty ? vehicleNo : l.vehicleNo,
-          driverContact: driverContact.isNotEmpty ? driverContact : l.driverContact,
+          driverContact: targetPhone.isNotEmpty ? targetPhone : l.driverContact,
+          pendingHandover: pendingMap,
         );
       }
       return l;
     }).toList();
     state = state.copyWith(lots: list);
     _localDb.saveQueuedEvent({
-      'event_type': 'LOT_DISPATCHED',
+      'event_type': 'HANDOVER_REQUEST',
       'public_code': publicCode,
+      'payload': pendingMap,
       'timestamp': DateTime.now().toIso8601String(),
     });
+  }
+
+  /// Next party confirms custody acceptance via QR scan
+  Future<void> acceptCustodyHandover(
+    String publicCode, {
+    required String actorRole,
+    required String actorName,
+    required double receivedQtyKg,
+    required String condition,
+    String storageTemp = 'Ambient',
+    double? lat,
+    double? lng,
+    String? accessToken,
+    String? phone,
+  }) async {
+    if (!_isFlutterTest && accessToken != null && accessToken.isNotEmpty) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            if (phone != null) 'X-Entity-Phone': phone,
+          },
+        ));
+        final res = await dio.post<dynamic>(
+          '/api/v1/lots/$publicCode/handover-accept',
+          data: {
+            'actor_role': actorRole,
+            'actor_name': actorName,
+            'received_qty_kg': receivedQtyKg,
+            'condition': condition,
+            'storage_temp': storageTemp,
+            if (lat != null) 'lat': lat,
+            if (lng != null) 'lng': lng,
+          },
+        );
+        if (res.statusCode == 200 && res.data is Map) {
+          final updated =
+              HarvestLot.fromJson(Map<String, dynamic>.from(res.data as Map));
+          updateLot(updated);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    final list = state.lots.map((l) {
+      if (l.publicCode == publicCode) {
+        final nextCheckpoints = [
+          ...l.journeyCheckpoints,
+          {
+            'step': l.journeyCheckpoints.length + 1,
+            'event_type': 'HANDOVER_ACCEPT',
+            'role': actorRole,
+            'actor_name': actorName,
+            'weight_kg': receivedQtyKg,
+            'condition': condition,
+            'storage_temp': storageTemp,
+            'lat': lat ?? 22.5726,
+            'lng': lng ?? 88.3639,
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        ];
+        return l.copyWith(
+          state: 'IN_CUSTODY',
+          netQtyKg: receivedQtyKg,
+          currentCustodianRole: actorRole,
+          currentCustodianName: actorName,
+          isRetailerVerified: l.isRetailerVerified || actorRole == 'RETAILER',
+          pendingHandover: null,
+          journeyCheckpoints: nextCheckpoints,
+        );
+      }
+      return l;
+    }).toList();
+    state = state.copyWith(lots: list);
+  }
+
+  /// Downstream party appends QR scan telemetry (weight, condition, temp, GPS)
+  Future<void> appendCustodyScan(
+    String publicCode, {
+    required String actorRole,
+    required String actorName,
+    required double currentWeightKg,
+    required String condition,
+    String storageTemp = 'Ambient',
+    double? lat,
+    double? lng,
+    String? accessToken,
+    String? phone,
+  }) async {
+    if (!_isFlutterTest && accessToken != null && accessToken.isNotEmpty) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            if (phone != null) 'X-Entity-Phone': phone,
+          },
+        ));
+        final res = await dio.post<dynamic>(
+          '/api/v1/lots/$publicCode/append-scan',
+          data: {
+            'actor_role': actorRole,
+            'actor_name': actorName,
+            'current_weight_kg': currentWeightKg,
+            'condition': condition,
+            'storage_temp': storageTemp,
+            if (lat != null) 'lat': lat,
+            if (lng != null) 'lng': lng,
+          },
+        );
+        if ((res.statusCode == 200 || res.statusCode == 201) &&
+            res.data is Map) {
+          final updated =
+              HarvestLot.fromJson(Map<String, dynamic>.from(res.data as Map));
+          updateLot(updated);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    final list = state.lots.map((l) {
+      if (l.publicCode == publicCode) {
+        final nextCheckpoints = [
+          ...l.journeyCheckpoints,
+          {
+            'step': l.journeyCheckpoints.length + 1,
+            'event_type': 'CUSTODY_APPEND',
+            'role': actorRole,
+            'actor_name': actorName,
+            'weight_kg': currentWeightKg,
+            'condition': condition,
+            'storage_temp': storageTemp,
+            'lat': lat ?? 22.5726,
+            'lng': lng ?? 88.3639,
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        ];
+        return l.copyWith(
+          netQtyKg: currentWeightKg,
+          isRetailerVerified: l.isRetailerVerified || actorRole == 'RETAILER',
+          journeyCheckpoints: nextCheckpoints,
+        );
+      }
+      return l;
+    }).toList();
+    state = state.copyWith(lots: list);
+  }
+
+  void dispatchLot(String publicCode,
+      {String vehicleNo = '', String driverContact = ''}) {
+    requestCustodyHandover(
+      publicCode,
+      targetRole: 'AGGREGATOR',
+      targetName: 'Receiving Partner',
+      targetPhone: driverContact,
+      vehicleNo: vehicleNo,
+    );
   }
 
   void setSearchQuery(String query) {
@@ -321,17 +539,43 @@ class LotsController extends StateNotifier<LotsState> {
     state = state.copyWith(sortOrder: order);
   }
 
-  void setAnalyticsPeriod(String period) {
-    state = state.copyWith(analyticsPeriod: period);
+  /// Normalize phone number to CountryCode + Mobile digits (e.g. 919876543210)
+  static String normalizePhoneDigits(String? rawPhone) {
+    final digits = (rawPhone ?? '').replaceAll(RegExp(r'\D'), '');
+    if (digits.length == 10) {
+      return '91$digits';
+    }
+    if (digits.length >= 11) {
+      return digits;
+    }
+    return '910000000000';
   }
 
-  /// Generate a unique 12-character sovereign code matching web standard
-  static String generateSovereignCode() {
-    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-    final rand = Random.secure();
-    final p1 = List.generate(4, (_) => chars[rand.nextInt(chars.length)]).join();
-    final p2 = List.generate(4, (_) => chars[rand.nextInt(chars.length)]).join();
-    final p3 = List.generate(4, (_) => chars[rand.nextInt(chars.length)]).join();
-    return 'AS-$p1$p2$p3';
+  /// Format: YYYYDDHHMMSS+CountryCodeMobileNumber (Mentor's Specification A)
+  static String generateFarmerUid({String? phone, DateTime? timestamp}) {
+    final dt = (timestamp ?? DateTime.now()).toUtc();
+    final yyyy = dt.year.toString().padLeft(4, '0');
+    final dd = dt.day.toString().padLeft(2, '0');
+    final hh = dt.hour.toString().padLeft(2, '0');
+    final mm = dt.minute.toString().padLeft(2, '0');
+    final ss = dt.second.toString().padLeft(2, '0');
+    final phoneDigits = normalizePhoneDigits(phone);
+    return '$yyyy$dd$hh$mm$ss$phoneDigits';
+  }
+
+  /// Format: YYYYDDHHMMSS+CountryCodeMobileNumber + ProductCode + 4-Digit Sequence (Mentor's Specification B)
+  static String generateSovereignCode({
+    String? phone,
+    String categoryCode = 'VG',
+    int seq = 1,
+    DateTime? timestamp,
+  }) {
+    final cat = kProductCategoryCodes.containsKey(categoryCode.toUpperCase())
+        ? categoryCode.toUpperCase()
+        : 'OT';
+    final baseUid = generateFarmerUid(phone: phone, timestamp: timestamp);
+    final seqStr =
+        (seq % 10000 == 0 ? 1 : seq % 10000).toString().padLeft(4, '0');
+    return '$baseUid$cat$seqStr';
   }
 }

@@ -43,13 +43,15 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
       final signer = ref.read(signerProvider);
       final localDb = ref.read(localDatabaseProvider);
 
-      final eventId = 'd0000000-0000-0000-0000-${DateTime.now().millisecondsSinceEpoch.toString().padLeft(12, '0').substring(0, 12)}';
+      final eventId =
+          'd0000000-0000-0000-0000-${DateTime.now().millisecondsSinceEpoch.toString().padLeft(12, '0').substring(0, 12)}';
       final eventTime = DateTime.now().toUtc().toIso8601String();
       final qtyKg = double.parse(_qtyController.text.trim());
       final toOrgId = _toOrgController.text.trim();
 
       // Sign event payload with hardware device key
-      final payloadToSign = Uint8List.fromList(utf8.encode('DISPATCH:$eventId:${widget.lotCode}:$qtyKg:$toOrgId'));
+      final payloadToSign = Uint8List.fromList(
+          utf8.encode('DISPATCH:$eventId:${widget.lotCode}:$qtyKg:$toOrgId'));
       final signatureBase64 = await signer.sign(payloadToSign);
 
       final body = {
@@ -57,9 +59,15 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
         'event_time': eventTime,
         'to_org_id': toOrgId,
         'qty_kg': qtyKg,
-        'vehicle_no': _vehicleController.text.trim().isEmpty ? null : _vehicleController.text.trim(),
-        'destination': _destinationController.text.trim().isEmpty ? null : _destinationController.text.trim(),
-        'crates': _cratesController.text.trim().isEmpty ? null : int.tryParse(_cratesController.text.trim()),
+        'vehicle_no': _vehicleController.text.trim().isEmpty
+            ? null
+            : _vehicleController.text.trim(),
+        'destination': _destinationController.text.trim().isEmpty
+            ? null
+            : _destinationController.text.trim(),
+        'crates': _cratesController.text.trim().isEmpty
+            ? null
+            : int.tryParse(_cratesController.text.trim()),
         'device_signature': signatureBase64,
       };
 
@@ -84,7 +92,9 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to dispatch: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Failed to dispatch: $e'),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -114,7 +124,8 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'Batch Code: ${widget.lotCode}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ],
                   ),
@@ -139,7 +150,8 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _qtyController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Quantity to Dispatch (kg)',
                   hintText: 'e.g. 500.0',
@@ -193,12 +205,16 @@ class _DispatchScreenState extends ConsumerState<DispatchScreen> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
                       )
                     : const Icon(Icons.send),
                 label: Text(
-                  _isSubmitting ? 'Signing & Dispatching...' : 'Sign & Dispatch',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  _isSubmitting
+                      ? 'Signing & Dispatching...'
+                      : 'Sign & Dispatch',
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(54),

@@ -51,7 +51,8 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
     final qty = double.parse(_qtyController.text.trim());
     if (qty > widget.onHandKg) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Waste quantity exceeds current on-hand stock!')),
+        const SnackBar(
+            content: Text('Waste quantity exceeds current on-hand stock!')),
       );
       return;
     }
@@ -70,7 +71,8 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
         'event_time': eventTime,
         'qty_kg': qty,
         'reason_code': _selectedReason,
-        'evidence_ids': _photoAttached ? <String>[const Uuid().v4()] : <String>[],
+        'evidence_ids':
+            _photoAttached ? <String>[const Uuid().v4()] : <String>[],
       };
 
       final payloadBytes = Uint8List.fromList(utf8.encode(jsonEncode(payload)));
@@ -96,7 +98,9 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to record waste: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Failed to record waste: $e'),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) {
@@ -125,7 +129,10 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
                     children: [
                       Text(
                         'Lot: ${widget.lotCode}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text('On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg'),
@@ -136,7 +143,8 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _qtyController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Waste Quantity (kg)',
                   border: OutlineInputBorder(),
@@ -169,9 +177,12 @@ class _WasteScreenState extends ConsumerState<WasteScreen> {
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
-                icon: Icon(_photoAttached ? Icons.check_circle : Icons.camera_alt,
+                icon: Icon(
+                    _photoAttached ? Icons.check_circle : Icons.camera_alt,
                     color: _photoAttached ? Colors.green : null),
-                label: Text(_photoAttached ? 'Evidence Attached' : 'Upload Photo Evidence'),
+                label: Text(_photoAttached
+                    ? 'Evidence Attached'
+                    : 'Upload Photo Evidence'),
                 onPressed: () {
                   setState(() => _photoAttached = !_photoAttached);
                 },

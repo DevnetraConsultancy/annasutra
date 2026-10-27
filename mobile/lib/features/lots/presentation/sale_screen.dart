@@ -41,7 +41,8 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
     final qty = double.parse(_qtyController.text.trim());
     if (qty > widget.onHandKg) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sale quantity exceeds current on-hand stock!')),
+        const SnackBar(
+            content: Text('Sale quantity exceeds current on-hand stock!')),
       );
       return;
     }
@@ -86,7 +87,9 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to record sale: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Failed to record sale: $e'),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) {
@@ -115,7 +118,10 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
                     children: [
                       Text(
                         'Lot: ${widget.lotCode}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text('On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg'),
@@ -131,7 +137,8 @@ class _SaleScreenState extends ConsumerState<SaleScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _qtyController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Sold Quantity (kg)',
                   border: OutlineInputBorder(),

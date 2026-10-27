@@ -60,7 +60,8 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
         'defect_pct': _defectPct,
         'temperature_c': tempVal,
         'notes': _notesController.text.trim(),
-        'evidence_ids': _photoAttached ? <String>[const Uuid().v4()] : <String>[],
+        'evidence_ids':
+            _photoAttached ? <String>[const Uuid().v4()] : <String>[],
       };
 
       final payloadBytes = Uint8List.fromList(utf8.encode(jsonEncode(payload)));
@@ -78,7 +79,8 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Quality inspection recorded successfully in local outbox!'),
+          content:
+              Text('Quality inspection recorded successfully in local outbox!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -86,7 +88,9 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to record inspection: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Failed to record inspection: $e'),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) {
@@ -112,7 +116,10 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     'Lot: ${widget.lotCode}',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -151,7 +158,8 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _tempController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   labelText: 'Storage Temperature (°C)',
                   border: OutlineInputBorder(),
@@ -170,9 +178,12 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
-                icon: Icon(_photoAttached ? Icons.check_circle : Icons.camera_alt,
+                icon: Icon(
+                    _photoAttached ? Icons.check_circle : Icons.camera_alt,
                     color: _photoAttached ? Colors.green : null),
-                label: Text(_photoAttached ? 'Evidence Attached' : 'Upload Photo Evidence'),
+                label: Text(_photoAttached
+                    ? 'Evidence Attached'
+                    : 'Upload Photo Evidence'),
                 onPressed: () {
                   setState(() => _photoAttached = !_photoAttached);
                 },

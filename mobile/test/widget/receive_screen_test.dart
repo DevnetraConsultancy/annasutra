@@ -4,7 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:annasutra_mobile/features/custody/presentation/receive_screen.dart';
 
 void main() {
-  testWidgets('ReceiveScreen renders Matches button and toggles scale form', (WidgetTester tester) async {
+  testWidgets('ReceiveScreen renders Matches button and toggles scale form',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(

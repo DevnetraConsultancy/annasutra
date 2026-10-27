@@ -4,7 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:annasutra_mobile/features/auth/presentation/login_screen.dart';
 
 void main() {
-  testWidgets('LoginScreen renders phone field and Send OTP button', (WidgetTester tester) async {
+  testWidgets('LoginScreen renders Mobile OTP and Google Sign-In tabs',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -13,13 +14,15 @@ void main() {
       ),
     );
 
-    // Verify header and fields
+    // Verify header and dual auth tabs
     expect(find.text('Agri-Traceability Secure Access'), findsOneWidget);
-    expect(find.byType(TextFormField), findsOneWidget);
+    expect(find.text('Mobile OTP'), findsOneWidget);
+    expect(find.text('Google Sign-In'), findsOneWidget);
     expect(find.text('Send OTP'), findsOneWidget);
   });
 
-  testWidgets('Tapping Send OTP with phone transitions to OTP input', (WidgetTester tester) async {
+  testWidgets('Tapping Send OTP with phone transitions to OTP input',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -28,8 +31,8 @@ void main() {
       ),
     );
 
-    // Fill phone number
-    final phoneFinder = find.byType(TextFormField);
+    // Fill phone number into the first TextFormField
+    final phoneFinder = find.byType(TextFormField).first;
     await tester.enterText(phoneFinder, '+919876543210');
     await tester.tap(find.text('Send OTP'));
     await tester.pump();

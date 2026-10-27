@@ -8,8 +8,10 @@ import 'package:flutter/material.dart';
 /// - Adaptive card elevations with crisp border definition
 class AnnaSutraTheme {
   // Brand Color Tokens
-  static const Color primaryGreen = Color(0xFF0B3D2E); // Deep National Forest Green
-  static const Color secondaryGreen = Color(0xFF14532D); // Vibrant Foliage Green
+  static const Color primaryGreen =
+      Color(0xFF0B3D2E); // Deep National Forest Green
+  static const Color secondaryGreen =
+      Color(0xFF14532D); // Vibrant Foliage Green
   static const Color brandSaffron = Color(0xFFE67E22); // Warm Saffron / Gold
   static const Color accentGold = Color(0xFFD97706); // Golden Grain Harvest
   static const Color slateDark = Color(0xFF0F172A); // Ultra-deep Slate Navy
@@ -19,7 +21,8 @@ class AnnaSutraTheme {
   static const Color textMuted = Color(0xFF64748B); // Slate Muted Text
   static const Color borderLight = Color(0xFFE2E8F0); // Subtle Slate Border
   static const Color alertRed = Color(0xFFDC2626); // Statutory Alert / Recall
-  static const Color verifiedTeal = Color(0xFF0D9488); // Cryptographic Seal Teal
+  static const Color verifiedTeal =
+      Color(0xFF0D9488); // Cryptographic Seal Teal
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -83,13 +86,23 @@ class AnnaSutraTheme {
         ),
       ),
       textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: textHighContrast, letterSpacing: -0.5),
-        headlineMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: textHighContrast),
-        titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textHighContrast),
-        titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: textHighContrast),
-        bodyLarge: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: textHighContrast),
-        bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: textMuted),
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.3),
+        headlineLarge: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: textHighContrast,
+            letterSpacing: -0.5),
+        headlineMedium: TextStyle(
+            fontSize: 22, fontWeight: FontWeight.w700, color: textHighContrast),
+        titleLarge: TextStyle(
+            fontSize: 18, fontWeight: FontWeight.w700, color: textHighContrast),
+        titleMedium: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w600, color: textHighContrast),
+        bodyLarge: TextStyle(
+            fontSize: 15, fontWeight: FontWeight.w400, color: textHighContrast),
+        bodyMedium: TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w400, color: textMuted),
+        labelLarge: TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.3),
       ),
     );
   }

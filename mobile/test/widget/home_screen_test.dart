@@ -6,7 +6,9 @@ import 'package:annasutra_mobile/features/auth/presentation/controllers/auth_con
 import 'package:annasutra_mobile/features/home/presentation/home_screen.dart';
 
 void main() {
-  testWidgets('HomeScreen renders brand navigation, hero action buttons, and disclaimer notice', (WidgetTester tester) async {
+  testWidgets(
+      'HomeScreen renders brand navigation, hero action buttons, and disclaimer notice',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -23,7 +25,9 @@ void main() {
 
     // Verify mandatory disclaimer from docs/00_MASTER_BRIEF.md
     expect(
-      find.textContaining('Records are based on information entered by supply-chain participants', findRichText: true),
+      find.textContaining(
+          'Records are based on information entered by supply-chain participants',
+          findRichText: true),
       findsOneWidget,
     );
 
@@ -31,11 +35,14 @@ void main() {
     await tester.pump();
   });
 
-  testWidgets('HomeScreen renders authenticated dual-tab navigation and KPI cards', (WidgetTester tester) async {
+  testWidgets(
+      'HomeScreen renders authenticated dual-tab navigation and KPI cards',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authControllerProvider.overrideWith((ref) => MockVerifiedAuthController()),
+          authControllerProvider
+              .overrideWith((ref) => MockVerifiedAuthController()),
         ],
         child: const MaterialApp(
           home: HomeScreen(),
@@ -48,21 +55,27 @@ void main() {
     expect(find.text('Harvest Lots & Custody Ledger'), findsOneWidget);
     expect(find.text('Analytics & Farm Insights'), findsOneWidget);
 
-    // Verify action button
-    expect(find.textContaining('Register New Harvest Lot'), findsOneWidget);
+    // Verify action button and clean empty ledger (zero prebuilt template lots)
+    expect(find.textContaining('Register New Harvest Lot'), findsWidgets);
+    expect(
+      find.text('No harvest lots in custody matching your filters.'),
+      findsOneWidget,
+    );
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
 }
 
-class MockVerifiedAuthController extends StateNotifier<AuthState> implements AuthController {
+class MockVerifiedAuthController extends StateNotifier<AuthState>
+    implements AuthController {
   MockVerifiedAuthController()
       : super(const AuthState(
           status: AuthStatus.authenticated,
           accessToken: 'mock_token',
           orgVerification: 'VERIFIED',
-          orgName: "Dr. Niladri's Farm (WB-PROD-2026-X7803)",
+          orgName: 'Verified Producer Entity',
+          farmerUid: '202628120000919876543210',
         ));
 
   @override

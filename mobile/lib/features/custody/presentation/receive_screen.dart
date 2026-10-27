@@ -56,7 +56,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
   }
 
   double get _currentDifference {
-    final rec = double.tryParse(_receivedController.text) ?? widget.declaredQtyKg;
+    final rec =
+        double.tryParse(_receivedController.text) ?? widget.declaredQtyKg;
     final rej = double.tryParse(_rejectedController.text) ?? 0.0;
     return (widget.declaredQtyKg - (rec + rej)).abs();
   }
@@ -74,18 +75,21 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
       final signer = ref.read(signerProvider);
       final localDb = ref.read(localDatabaseProvider);
 
-      final eventId = 'r0000000-0000-0000-0000-${DateTime.now().millisecondsSinceEpoch.toString().padLeft(12, '0').substring(0, 12)}';
+      final eventId =
+          'r0000000-0000-0000-0000-${DateTime.now().millisecondsSinceEpoch.toString().padLeft(12, '0').substring(0, 12)}';
       final eventTime = DateTime.now().toUtc().toIso8601String();
 
       double receivedQty = widget.declaredQtyKg;
       double rejectedQty = 0.0;
 
       if (!isMatches) {
-        receivedQty = double.tryParse(_receivedController.text.trim()) ?? widget.declaredQtyKg;
+        receivedQty = double.tryParse(_receivedController.text.trim()) ??
+            widget.declaredQtyKg;
         rejectedQty = double.tryParse(_rejectedController.text.trim()) ?? 0.0;
       }
 
-      final payloadToSign = Uint8List.fromList(utf8.encode('RECEIVE:$eventId:${widget.handoverId}:$receivedQty:$rejectedQty'));
+      final payloadToSign = Uint8List.fromList(utf8.encode(
+          'RECEIVE:$eventId:${widget.handoverId}:$receivedQty:$rejectedQty'));
       final signatureBase64 = await signer.sign(payloadToSign);
 
       final body = {
@@ -94,8 +98,12 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
         'matches': isMatches,
         'received_qty_kg': receivedQty,
         'rejected_qty_kg': rejectedQty,
-        'condition': _conditionController.text.trim().isEmpty ? null : _conditionController.text.trim(),
-        'crates_counted': _cratesController.text.trim().isEmpty ? null : int.tryParse(_cratesController.text.trim()),
+        'condition': _conditionController.text.trim().isEmpty
+            ? null
+            : _conditionController.text.trim(),
+        'crates_counted': _cratesController.text.trim().isEmpty
+            ? null
+            : int.tryParse(_cratesController.text.trim()),
         'device_signature': signatureBase64,
       };
 
@@ -117,14 +125,17 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                     ? 'Receipt with discrepancy queued for counterparty review.'
                     : 'Receipt accepted and queued in local outbox.'),
           ),
-          backgroundColor: _isExceedingTolerance ? Colors.orange.shade800 : Colors.green,
+          backgroundColor:
+              _isExceedingTolerance ? Colors.orange.shade800 : Colors.green,
         ),
       );
       context.pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to receive handover: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Failed to receive handover: $e'),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -151,7 +162,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                   children: [
                     Text(
                       'Batch: ${widget.lotCode}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -174,7 +186,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
             const SizedBox(height: 20),
             // Large 1-Tap "Matches" Button
             ElevatedButton.icon(
-              onPressed: _isSubmitting ? null : () => _submitReceipt(isMatches: true),
+              onPressed:
+                  _isSubmitting ? null : () => _submitReceipt(isMatches: true),
               icon: const Icon(Icons.check_circle, size: 28),
               label: const Text(
                 'Matches Declared Weight',
@@ -184,7 +197,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                 minimumSize: const Size.fromHeight(60),
                 backgroundColor: Colors.green.shade700,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
             const SizedBox(height: 16),
@@ -193,7 +207,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                 setState(() => _showScaleForm = !_showScaleForm);
               },
               icon: Icon(_showScaleForm ? Icons.expand_less : Icons.scale),
-              label: Text(_showScaleForm ? 'Hide Scale Entry' : 'Weigh on Scale'),
+              label:
+                  Text(_showScaleForm ? 'Hide Scale Entry' : 'Weigh on Scale'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
               ),
@@ -209,12 +224,14 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                     children: [
                       const Text(
                         'Actual Scale Weights',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _receivedController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Received Net Weight (kg)',
                           border: OutlineInputBorder(),
@@ -224,7 +241,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _rejectedController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           labelText: 'Rejected Weight (kg)',
                           border: OutlineInputBorder(),
@@ -276,14 +294,18 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                         ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: _isSubmitting ? null : () => _submitReceipt(isMatches: false),
+                        onPressed: _isSubmitting
+                            ? null
+                            : () => _submitReceipt(isMatches: false),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
                           backgroundColor: Colors.blue.shade800,
                           foregroundColor: Colors.white,
                         ),
                         child: Text(
-                          _isSubmitting ? 'Signing & Saving...' : 'Sign & Accept with Scale Weights',
+                          _isSubmitting
+                              ? 'Signing & Saving...'
+                              : 'Sign & Accept with Scale Weights',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),

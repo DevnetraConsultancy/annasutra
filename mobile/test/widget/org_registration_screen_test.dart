@@ -4,7 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:annasutra_mobile/features/auth/presentation/org_registration_screen.dart';
 
 void main() {
-  testWidgets('OrgRegistrationScreen renders inputs and requires DPDP consent', (WidgetTester tester) async {
+  testWidgets('OrgRegistrationScreen renders inputs and requires DPDP consent',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(

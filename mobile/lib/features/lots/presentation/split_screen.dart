@@ -81,7 +81,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
     if (_totalChildQty > widget.onHandKg) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Total child quantities exceed on-hand stock!')),
+        const SnackBar(
+            content: Text('Total child quantities exceed on-hand stock!')),
       );
       return;
     }
@@ -131,7 +132,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to split lot: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Failed to split lot: $e'),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) {
@@ -163,10 +166,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                     children: [
                       Text(
                         'Lot: ${widget.lotCode}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
-                      Text('Initial On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg'),
+                      Text(
+                          'Initial On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg'),
                       const SizedBox(height: 4),
                       Text(
                         'Remaining: ${remaining.toStringAsFixed(1)} kg',
@@ -194,11 +201,13 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                           children: [
                             Text(
                               'Child Lot #${idx + 1}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             if (_children.length > 1)
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () => _removeChild(idx),
                               ),
                           ],
@@ -219,7 +228,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: child.qtyController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           decoration: const InputDecoration(
                             labelText: 'Child Quantity (kg)',
                             border: OutlineInputBorder(),
