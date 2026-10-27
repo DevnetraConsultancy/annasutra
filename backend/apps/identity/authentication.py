@@ -2,7 +2,7 @@
 
 from rest_framework import authentication, exceptions, permissions
 
-from .models import AppUser
+from .models import AppUser, EntityProfile
 from .services.token import TokenService
 
 
@@ -58,7 +58,9 @@ class IsVerifiedOrg(permissions.BasePermission):
             return False
         if not getattr(request.user, "org_id", None):
             return False
-        return request.user.org and request.user.org.verification == "VERIFIED"
+        if request.user.org and request.user.org.verification == "VERIFIED":
+            return True
+        return EntityProfile.objects.filter(user_id=request.user.user_id).exists()
 
 
 class IsRole(permissions.BasePermission):

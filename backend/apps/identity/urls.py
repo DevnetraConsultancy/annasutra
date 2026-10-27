@@ -9,6 +9,7 @@ from .views import (
     PasskeyLoginVerifyView,
     DeviceListCreateView,
     DeviceDetailView,
+    GoogleAuthView,
 )
 
 urlpatterns = [
@@ -16,6 +17,8 @@ urlpatterns = [
     path("otp/request/", OtpRequestView.as_view(), name="auth_otp_request_slash"),
     path("otp/verify", OtpVerifyView.as_view(), name="auth_otp_verify"),
     path("otp/verify/", OtpVerifyView.as_view(), name="auth_otp_verify_slash"),
+    path("google", GoogleAuthView.as_view(), name="auth_google"),
+    path("google/", GoogleAuthView.as_view(), name="auth_google_slash"),
 
     path("refresh", RefreshTokenView.as_view(), name="auth_refresh"),
     path("passkeys/register/options", PasskeyRegisterOptionsView.as_view(), name="auth_passkeys_register_options"),

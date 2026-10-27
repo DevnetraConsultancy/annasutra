@@ -108,7 +108,8 @@ def test_harvest_lot_create_list_and_edit_lifecycle(api_client, test_setup):
     assert resp.status_code == status.HTTP_201_CREATED, resp.data
     lot_code = resp.data["public_code"]
     assert lot_code is not None
-    assert len(lot_code) == 12
+    assert len(lot_code) >= 28
+    assert "VG" in lot_code
     assert resp.data["is_editable"] is True
 
     # 2. List lots with filter by crop

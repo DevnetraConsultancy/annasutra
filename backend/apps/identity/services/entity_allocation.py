@@ -166,6 +166,48 @@ def generate_entity_code(role: str, state: str) -> str:
     return f"{prefix}{next_seq:06d}"
 
 
+def generate_farmer_uid(phone_e164: str, dt=None) -> str:
+    """Generate deterministic Farmer ID per mentor specification:
+    YYYYDDHHMMSS + CountryCodeMobileNumber (e.g., 202627223015919876543210).
+    """
+    ts_dt = dt or timezone.now()
+    ts_part = ts_dt.strftime("%Y%d%H%M%S")
+    digits = re.sub(r"\D", "", str(phone_e164 or "910000000000"))
+    if len(digits) == 10:
+        digits = "91" + digits
+    elif not digits:
+        digits = "910000000000"
+    return f"{ts_part}{digits}"
+
+
+def get_or_mint_farmer_uid(profile_or_user, dt=None) -> str:
+    """Return existing or newly minted YYYYDDHHMMSS+CountryCodeMobileNumber Farmer ID."""
+    from apps.identity.models import EntityRoleDetails
+
+    phone = getattr(profile_or_user, "phone_e164", "") or "910000000000"
+    created_at = getattr(profile_or_user, "created_at", None) or dt or timezone.now()
+
+    if isinstance(profile_or_user, EntityProfile):
+        role_det = EntityRoleDetails.objects.filter(entity=profile_or_user).first()
+        if role_det and isinstance(role_det.details, dict):
+            existing = role_det.details.get("farmer_uid")
+            if existing and re.match(r"^\d{20,30}$", str(existing)):
+                return str(existing)
+        uid = generate_farmer_uid(phone, created_at)
+        try:
+            role_det, _ = EntityRoleDetails.objects.get_or_create(entity=profile_or_user, defaults={"details": {}})
+            details = dict(role_det.details or {})
+            details["farmer_uid"] = uid
+            role_det.details = details
+            role_det.save(update_fields=["details"])
+        except Exception:
+            pass
+        return uid
+
+    return generate_farmer_uid(phone, created_at)
+
+
+
 def issue_qr_block_for_entity(
     entity: EntityProfile,
     count: Optional[int] = None,

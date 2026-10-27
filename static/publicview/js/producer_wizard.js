@@ -855,24 +855,28 @@
     }
   });
 
+  window.openProducerOperationalDashboard = function (initialTab) {
+    wizardState.forceConsoleView = true;
+    const contentArea = document.getElementById('workspaceDynamicContent');
+    if (contentArea) {
+      renderVerifiedOperationalConsole(contentArea);
+      if (initialTab) {
+        setTimeout(() => window.switchProducerConsoleTab(initialTab), 60);
+      }
+    }
+  };
+
+  window.openProducerRegistrationWizard = function () {
+    wizardState.forceConsoleView = false;
+    const contentArea = document.getElementById('workspaceDynamicContent');
+    if (contentArea) {
+      renderWizardInterface(contentArea);
+    }
+  };
+
   window.renderCurrentWorkspace = async function () {
     const container = document.getElementById('confinedWorkspace');
     if (!container) return;
-
-    if (typeof currentRole !== 'undefined' && currentRole !== 'PRODUCER' && currentRole !== 'ADMIN') {
-      const dynamicArea = document.getElementById('workspaceDynamicContent');
-      if (dynamicArea) dynamicArea.style.display = 'none';
-
-      const toolsGrid = document.getElementById('workspaceTools');
-      const batchesList = document.getElementById('workspaceBatchesList');
-      if (toolsGrid) toolsGrid.style.display = 'grid';
-      if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'block';
-
-      if (typeof window.renderDefaultWorkspace === 'function') {
-        window.renderDefaultWorkspace();
-      }
-      return;
-    }
 
     const toolsGrid = document.getElementById('workspaceTools');
     const batchesList = document.getElementById('workspaceBatchesList');
@@ -887,6 +891,11 @@
       container.appendChild(contentArea);
     }
     contentArea.style.display = 'block';
+
+    if (typeof currentRole !== 'undefined' && currentRole !== 'PRODUCER' && currentRole !== 'ADMIN') {
+      await renderDownstreamCustodyConsole(contentArea, currentRole);
+      return;
+    }
 
     const t = getI18n();
 
@@ -913,7 +922,7 @@
 
       updateRegisteredHeaderBanner(wizardState.profile);
 
-      if (cachedProfile.status === 'VERIFIED') {
+      if (cachedProfile.status === 'VERIFIED' || wizardState.forceConsoleView) {
         renderVerifiedOperationalConsole(contentArea);
         updateLotMetrics();
         applyLotFilters();
@@ -960,6 +969,9 @@
 
       const data = await profileRes.json();
       wizardState.profile = data.profile || data;
+      if (wizardState.profile.farmer_uid) {
+        localStorage.setItem('annasutra_farmer_uid', wizardState.profile.farmer_uid);
+      }
       try {
         localStorage.setItem('annasutra_cached_profile', JSON.stringify(wizardState.profile));
       } catch (e) {}
@@ -987,9 +999,7 @@
       updateRegisteredHeaderBanner(wizardState.profile);
 
       const pStatus = wizardState.profile.status;
-      if (pStatus === 'SUBMITTED') {
-        renderUnderReviewCard(contentArea);
-      } else if (pStatus === 'VERIFIED') {
+      if (pStatus === 'VERIFIED' || wizardState.forceConsoleView || (window._producerLots && window._producerLots.length > 0)) {
         if (!hasRenderedCached) {
           renderVerifiedOperationalConsole(contentArea);
         }
@@ -998,6 +1008,8 @@
         if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
           renderProducerAnalytics();
         }
+      } else if (pStatus === 'SUBMITTED') {
+        renderUnderReviewCard(contentArea);
       } else {
         renderWizardInterface(contentArea);
       }
@@ -1341,13 +1353,22 @@ function renderAdminConsoleUI(container) {
     const t = getI18n();
     const p = wizardState.profile || {};
     const sens = wizardState.sensitive || {};
+    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || p.entity_code || 'PENDING';
 
     container.innerHTML = `
       <div class="status-review-card">
-        <div class="status-badge-submitted">
-          <span>${getIcon('clock', 16, '#f59e0b')}</span> <span>${escapeHtml(t.underReviewTitle)}</span>
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+          <div class="status-badge-submitted" style="margin-bottom: 0;">
+            <span>${getIcon('clock', 16, '#f59e0b')}</span> <span>${escapeHtml(t.underReviewTitle)}</span>
+          </div>
+          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 8px 18px; font-size: 13px; font-weight: 800;" onclick="window.openProducerOperationalDashboard('ledger')">
+            <span>Open Farmer Dashboard, Create Batch &amp; Live Map &rarr;</span>
+          </button>
         </div>
         <h3 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">${escapeHtml(p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' '))}</h3>
+        <div style="margin-bottom: 10px; font-family: monospace; font-size: 14px; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid #86efac; display: inline-block; padding: 5px 14px; border-radius: 20px;">
+          Unique Farmer ID: ${escapeHtml(farmerUid)}
+        </div>
         <p style="color: #64748b; font-size: 14px; max-width: 620px; margin: 0 auto; line-height: 1.5;">${escapeHtml(t.underReviewSub)}</p>
 
         <div class="submitted-details-grid">
@@ -1386,24 +1407,42 @@ function renderAdminConsoleUI(container) {
   }
 
   /* --------------------------------------------------------------------------
-     VERIFIED OPERATIONAL CONSOLE
+     PRODUCT CATEGORY CATALOG (MENTOR'S 10 OFFICIAL 2-LETTER CODES)
      -------------------------------------------------------------------------- */
-/* --------------------------------------------------------------------------
-     VERIFIED PRODUCER CONSOLE: ONE-PAGE HARVEST LOT MANAGEMENT & CUSTODY LEDGER
-     -------------------------------------------------------------------------- */
-  window._producerLots = [];
-  window._producerPlots = [];
-  window._lotFilterState = {
-    search: '',
-    crop: 'ALL',
-    plot: 'ALL',
-    custody: 'ALL',
-    payment: 'ALL',
-    sort: '-created_at'
+  const PRODUCT_CATEGORY_OPTIONS = [
+    { code: 'FG', name: 'Food grains & cereals (FG)', defaultCrop: 'paddy_rice' },
+    { code: 'PU', name: 'Pulses (PU)', defaultCrop: 'pulses' },
+    { code: 'OI', name: 'Oilseeds (OI)', defaultCrop: 'mustard' },
+    { code: 'FR', name: 'Fruits (FR)', defaultCrop: 'mango' },
+    { code: 'VG', name: 'Vegetables (VG)', defaultCrop: 'potato' },
+    { code: 'SP', name: 'Spices (SP)', defaultCrop: 'turmeric' },
+    { code: 'CC', name: 'Commercial Crops (CC)', defaultCrop: 'jute' },
+    { code: 'LS', name: 'Livestock (LS)', defaultCrop: 'livestock' },
+    { code: 'SC', name: 'Special Crops (SC)', defaultCrop: 'tea' },
+    { code: 'OT', name: 'Others (OT)', defaultCrop: 'other' }
+  ];
+
+  window.computeLiveMentorBatchIdPreview = function (catCode) {
+    const p = wizardState.profile || {};
+    const phoneDigits = String(p.phone_e164 || localStorage.getItem('annasutra_phone') || '919876543210').replace(/\D/g, '') || '919876543210';
+    const d = new Date();
+    const pad2 = n => String(n).padStart(2, '0');
+    const ts = `${d.getFullYear()}${pad2(d.getDate())}${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+    const cCode = (catCode || 'VG').toUpperCase();
+    const seq = String(((window._producerLots || []).length || 0) + 1).padStart(4, '0');
+    return `${ts}${phoneDigits}${cCode}${seq}`;
   };
 
-/* --------------------------------------------------------------------------
-     VERIFIED PRODUCER CONSOLE: ONE-PAGE HARVEST LOT MANAGEMENT & CUSTODY LEDGER
+  window.updateInlineBatchIdPreview = function () {
+    const catEl = document.getElementById('inline_lot_cat_code');
+    const previewEl = document.getElementById('liveBatchIdPreviewCode');
+    if (previewEl) {
+      previewEl.textContent = window.computeLiveMentorBatchIdPreview(catEl ? catEl.value : 'VG');
+    }
+  };
+
+  /* --------------------------------------------------------------------------
+     VERIFIED PRODUCER CONSOLE: 4-TAB COMMAND CENTER & LIVE MOVEMENT MAP
      -------------------------------------------------------------------------- */
   window._producerLots = [];
   window._producerPlots = [];
@@ -1420,6 +1459,7 @@ function renderAdminConsoleUI(container) {
     const t = getI18n();
     const p = wizardState.profile || {};
     const eCode = p.entity_code || '';
+    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || window.computeLiveMentorBatchIdPreview('').slice(0, 22);
     const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node';
 
     // Permanently hide the 6 legacy tool cards and dummy batches list
@@ -1427,6 +1467,10 @@ function renderAdminConsoleUI(container) {
     const batchesList = document.getElementById('workspaceBatchesList');
     if (toolsGrid) toolsGrid.style.display = 'none';
     if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'none';
+
+    const plots = wizardState.plots || [];
+    const registeredCrops = wizardState.selectedCrops || [];
+    const nowIso = new Date().toISOString().slice(0, 16);
 
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #10b981; padding: 24px; margin: 12px 0; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);">
@@ -1437,26 +1481,38 @@ function renderAdminConsoleUI(container) {
               <span>${getIcon('check', 14, '#15803d', 2.8)}</span> <span>${escapeHtml(t.verifiedNodeBadge || 'VERIFIED PRODUCER NODE')}</span>
             </div>
             <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a;">${escapeHtml(orgDisplayName)}</h3>
-            <span style="font-size: 13px; color: #64748b;">${escapeHtml([p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', '))}</span>
+            <span style="font-size: 13px; color: #64748b;">${escapeHtml([p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ') || 'Registered Agricultural Producer')}</span>
           </div>
-          <div style="text-align: right; display: flex; align-items: center; gap: 14px;">
-            <div>
-              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">${escapeHtml(t.lblSovereignCode || 'Sovereign Code')}</div>
-              <div style="font-family: monospace; font-size: 19px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
+          <div style="text-align: right; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 8px 14px; border-radius: 10px; text-align: left;">
+              <div style="font-size: 10.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">Unique Farmer ID (YYYYDDHHMMSS+CCMobile)</div>
+              <div style="font-family: monospace; font-size: 15.5px; font-weight: 900; color: #0b3d2e; letter-spacing: 0.5px;" id="farmerHeaderUniqueId">${escapeHtml(farmerUid)}</div>
             </div>
+            ${eCode ? `
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">${escapeHtml(t.lblSovereignCode || 'Sovereign Code')}</div>
+                <div style="font-family: monospace; font-size: 17px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
+              </div>
+            ` : ''}
             <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5;" onclick="window.logoutEntitySession()">
               ${escapeHtml(t.btnLogOut || 'Log Out')}
             </button>
           </div>
         </div>
 
-        <!-- Dual-Tab Navigation Bar -->
-        <div style="display: flex; gap: 6px; border-bottom: 2px solid #e2e8f0; margin-bottom: 22px;">
-          <button type="button" id="tabBtnLedger" onclick="window.switchProducerConsoleTab('ledger')" style="padding: 11px 22px; font-size: 13.5px; font-weight: 800; border: none; border-bottom: 3px solid #047857; background: #ecfdf5; color: #065f46; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
-            <span>${getIcon('sprout', 16, '#047857')}</span> <span>${escapeHtml(t.tabHarvestLedger || 'Harvest Lots & Custody Ledger')}</span>
+        <!-- 4-Tab Navigation Bar -->
+        <div style="display: flex; gap: 6px; border-bottom: 2px solid #e2e8f0; margin-bottom: 22px; flex-wrap: wrap;">
+          <button type="button" id="tabBtnLedger" onclick="window.switchProducerConsoleTab('ledger')" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid #047857; background: #ecfdf5; color: #065f46; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
+            <span>${getIcon('sprout', 16, '#047857')}</span> <span>1. Batch &amp; Custody Ledger</span>
           </button>
-          <button type="button" id="tabBtnAnalytics" onclick="window.switchProducerConsoleTab('analytics')" style="padding: 11px 22px; font-size: 13.5px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
-            <span>${getIcon('activity', 16, '#64748b')}</span> <span>${escapeHtml(t.tabAnalytics || 'Analytics & Farm Insights')}</span>
+          <button type="button" id="tabBtnCreateMap" onclick="window.switchProducerConsoleTab('create_map')" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
+            <span>${getIcon('map-pin', 16, '#047857')}</span> <span>2. Create Batch &amp; Live Movement Map</span>
+          </button>
+          <button type="button" id="tabBtnAnalytics" onclick="window.switchProducerConsoleTab('analytics')" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
+            <span>${getIcon('activity', 16, '#64748b')}</span> <span>3. Farm Stats, Lands, Crops &amp; All Data</span>
+          </button>
+          <button type="button" id="tabBtnProfile" onclick="window.openProducerRegistrationWizard()" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
+            <span>${getIcon('edit', 16, '#64748b')}</span> <span>4. Update Farm &amp; KYC Data</span>
           </button>
         </div>
 
@@ -1475,7 +1531,7 @@ function renderAdminConsoleUI(container) {
               <div style="font-size: 11.5px; color: #059669;">${escapeHtml(t.statEditable || 'Editable (Pre-Handover)')}</div>
             </div>
             <div style="background: #fffbeb; border: 1.5px solid #fde68a; padding: 14px 16px; border-radius: 12px;">
-              <div style="font-size: 12px; color: #92400e; font-weight: 700;">${escapeHtml(t.statusInTransit || 'In Transit (Locked)')}</div>
+              <div style="font-size: 12px; color: #92400e; font-weight: 700;">${escapeHtml(t.statusInTransit || 'Handed Over / In Transit (Locked)')}</div>
               <div style="font-size: 24px; font-weight: 900; color: #b45309;" id="metricInTransit">0</div>
               <div style="font-size: 11.5px; color: #d97706;">${escapeHtml(t.statImmutable || 'Immutable Custody Transfer')}</div>
             </div>
@@ -1493,9 +1549,14 @@ function renderAdminConsoleUI(container) {
                 <span>${getIcon('sprout', 20, '#047857')}</span> <span>${escapeHtml(t.consoleHeading || 'Harvest Lot & Custody Ledger Console')}</span>
               </h4>
             </div>
-            <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 20px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);" onclick="openHarvestLotModal(null)">
-              <span style="font-size: 17px; line-height: 1; margin-right: 4px;">+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
-            </button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 10px 16px; font-size: 13px; font-weight: 800;" onclick="window.switchProducerConsoleTab('create_map')">
+                <span>${getIcon('map-pin', 14, '#047857')}</span> <span>Open Dedicated Batch &amp; Live Map Tab</span>
+              </button>
+              <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 20px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);" onclick="openHarvestLotModal(null)">
+                <span style="font-size: 17px; line-height: 1; margin-right: 4px;">+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
+              </button>
+            </div>
           </div>
 
           <!-- Search & Filter Controls Toolbar -->
@@ -1543,15 +1604,139 @@ function renderAdminConsoleUI(container) {
           </div>
         </div>
 
-        <!-- TAB 2: Analytics & Farm Insights -->
+        <!-- TAB 2: Dedicated Create Batch & Live Lot Movement Map Tab -->
+        <div id="consoleTabContentCreateMap" style="display: none;">
+          <!-- TOP SECTION: Dedicated Create New Batch Form -->
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 20px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+              <div>
+                <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0b3d2e; display: flex; align-items: center; gap: 8px;">
+                  <span>${getIcon('sprout', 20, '#047857')}</span>
+                  <span>Create New Harvest Batch / Lot (Unlimited Unique QR &amp; Barcode)</span>
+                </h4>
+                <p style="margin: 2px 0 0; font-size: 12.5px; color: #64748b;">Fill batch details below to mint a deterministic conflict-free Batch ID and track live movement underneath.</p>
+              </div>
+              <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 10px; padding: 8px 14px;">
+                <div style="font-size: 10px; font-weight: 800; color: #065f46; text-transform: uppercase;">Next Batch/Lot ID Preview (YYYYDDHHMMSS+CCMobile+Code+Seq)</div>
+                <div style="font-family: monospace; font-size: 14px; font-weight: 900; color: #047857;" id="liveBatchIdPreviewCode">${escapeHtml(window.computeLiveMentorBatchIdPreview('FR'))}</div>
+              </div>
+            </div>
+
+            <form id="form_inline_create_batch" onsubmit="window.submitInlineBatchForm(event)">
+              <div class="form-grid-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                <div class="form-group">
+                  <label class="form-label">Product Category Code <span class="req">*</span></label>
+                  <select class="form-select" id="inline_lot_cat_code" onchange="window.updateInlineBatchIdPreview()" required style="background: #fff; font-weight: 700;">
+                    ${PRODUCT_CATEGORY_OPTIONS.map(opt => `<option value="${opt.code}" ${opt.code === 'FR' ? 'selected' : ''}>${escapeHtml(opt.name)}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Crop / Commodity Name <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="inline_lot_crop" value="${escapeHtml(registeredCrops[0] || 'Mango')}" placeholder="e.g. Mango, Potato, Paddy, Turmeric" required style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Variety / Cultivar</label>
+                  <input type="text" class="form-input" id="inline_lot_variety" value="Alphonso / Premium" placeholder="e.g. Alphonso, Jyoti" style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Origin Plot / Land Parcel</label>
+                  <select class="form-select" id="inline_lot_plot" style="background: #fff;">
+                    <option value="">Registered Farm Origin</option>
+                    ${plots.map(pl => `<option value="${escapeHtml(pl.plot_id)}">${escapeHtml(pl.plot_name || 'Plot')} (${pl.area_acres || 0} Ac)</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                <div class="form-group">
+                  <label class="form-label">Net Harvest Weight (Kg) <span class="req">*</span></label>
+                  <input type="number" step="0.1" min="0.1" class="form-input" id="inline_lot_qty" value="500" required style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Crates / Bags Count</label>
+                  <input type="number" min="1" class="form-input" id="inline_lot_packages" value="25" style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Harvest Date &amp; Time <span class="req">*</span></label>
+                  <input type="datetime-local" class="form-input" id="inline_lot_harvest_date" value="${nowIso}" required style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Last Input/Spray Date (PHI)</label>
+                  <input type="date" class="form-input" id="inline_lot_spray_date" style="background: #fff;" />
+                </div>
+              </div>
+
+              <div class="form-grid-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 14px;">
+                <div class="form-group">
+                  <label class="form-label">Quality Grade</label>
+                  <select class="form-select" id="inline_lot_grade" style="background: #fff;">
+                    <option value="Grade A">Grade A (Premium)</option>
+                    <option value="Grade B">Grade B (Standard)</option>
+                    <option value="Grade C">Grade C (Economy)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Farming Practice</label>
+                  <select class="form-select" id="inline_lot_method" style="background: #fff;">
+                    <option value="Organic NPOP">Organic (Certified NPOP)</option>
+                    <option value="PGS-India">PGS-India Natural</option>
+                    <option value="Good Agri Practices">GAP Certified</option>
+                    <option value="Conventional">Conventional</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Expected Base Price (₹/Kg)</label>
+                  <input type="number" step="0.5" class="form-input" id="inline_lot_price" value="40" style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Shelf-Life (Days)</label>
+                  <input type="number" min="1" max="365" class="form-input" id="inline_lot_shelf_life" value="14" style="background: #fff;" />
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                <span style="font-size: 12px; color: #047857; font-weight: 700;">✓ Zero-Collision Batch ID • ✓ Unlimited 2D QR &amp; 1D Barcode Stickers</span>
+                <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 24px; font-weight: 800;">
+                  <span>+ Mint Unique Batch &amp; Pin to Live Map</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- BOTTOM SECTION: Live Lot Movement Map & Next-Party Telemetry Updates -->
+          <div style="background: #ffffff; border: 1.5px solid #10b981; border-radius: 14px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+              <div>
+                <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0b3d2e; display: flex; align-items: center; gap: 8px;">
+                  <span>${getIcon('map-pin', 20, '#047857')}</span>
+                  <span>Live Lot Movement Map (Farm &rarr; Aggregator &rarr; Wholesaler &rarr; Distributor &rarr; Retailer)</span>
+                </h4>
+                <p style="margin: 2px 0 0; font-size: 12.5px; color: #64748b;">Real-time GPS route and custody checkpoint updates as next parties accept custody and scan your batch QR code.</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="font-size: 12px; font-weight: 800; color: #334155;">Inspect Batch:</label>
+                <select id="liveMovementBatchSelector" class="form-select" style="background: #fff; font-size: 12.5px; font-weight: 700; min-width: 240px;" onchange="window.renderFarmerLiveMovementMap()">
+                  <option value="ALL">All Active Batches</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; align-items: start;">
+              <div id="farmerLiveMovementLeafletMap" style="height: 370px; width: 100%; border-radius: 12px; border: 1.5px solid #cbd5e1; background: #f1f5f9;"></div>
+              <div id="farmerLiveMovementCheckpointsFeed" style="max-height: 370px; overflow-y: auto; padding-right: 4px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Analytics, Lands, Crops & All Provided Data -->
         <div id="consoleTabContentAnalytics" style="display: none;">
           <!-- Analytics Toolbar -->
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;">
             <div>
               <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                <span>${getIcon('activity', 20, '#047857')}</span> <span>${escapeHtml(t.tabAnalytics || 'Analytics & Farm Insights')}</span>
+                <span>${getIcon('activity', 20, '#047857')}</span> <span>${escapeHtml(t.tabAnalytics || 'Farm Stats, Lands, Crops & All Provided Data')}</span>
               </h4>
-              <p style="margin: 3px 0 0; font-size: 12.5px; color: #64748b;">Real-time yield analytics, crop valuation, custody velocity, and settlement audit.</p>
+              <p style="margin: 3px 0 0; font-size: 12.5px; color: #64748b;">Complete summary of your registered lands, crops, production amounts, and real-time custody analytics.</p>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <select id="analytics_period_filter" class="form-select" style="background: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px;" onchange="renderProducerAnalytics()">
@@ -1594,6 +1779,10 @@ function renderAdminConsoleUI(container) {
     }
     updateLotMetrics();
     applyLotFilters();
+    window.updateInlineBatchIdPreview();
+    if (document.getElementById('consoleTabContentCreateMap')?.style.display !== 'none') {
+      window.renderFarmerLiveMovementMap();
+    }
     if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
       renderProducerAnalytics();
     }
@@ -1607,13 +1796,20 @@ function renderAdminConsoleUI(container) {
     const weightEl = document.getElementById('metricTotalWeight');
 
     if (totalEl) totalEl.innerText = lots.length;
-    const custodyCount = lots.filter(l => l.state === 'CREATED' || l.state === 'IN_CUSTODY').length;
-    const transitCount = lots.filter(l => l.state === 'IN_TRANSIT').length;
+    const custodyCount = lots.filter(l => l.is_editable !== false && (l.state === 'CREATED' || l.state === 'IN_CUSTODY')).length;
+    const transitCount = lots.filter(l => l.is_editable === false || l.state === 'IN_TRANSIT' || l.state === 'CLOSED').length;
     const totalWeight = lots.reduce((acc, l) => acc + (parseFloat(l.net_qty_kg || l.on_hand_kg || 0) || 0), 0);
 
     if (inCustodyEl) inCustodyEl.innerText = custodyCount;
     if (inTransitEl) inTransitEl.innerText = transitCount;
     if (weightEl) weightEl.innerText = totalWeight.toLocaleString('en-IN', { maximumFractionDigits: 1 }) + ' Kg';
+
+    const sel = document.getElementById('liveMovementBatchSelector');
+    if (sel) {
+      const curVal = sel.value || 'ALL';
+      sel.innerHTML = `<option value="ALL">All Active Batches (${lots.length})</option>` +
+        lots.map(l => `<option value="${escapeHtml(l.public_code)}" ${curVal === l.public_code ? 'selected' : ''}>${escapeHtml(l.public_code)} — ${escapeHtml(getCropLabel(l.crop))} (${escapeHtml(l.current_custodian_role || 'PRODUCER')})</option>`).join('');
+    }
   }
 
   window.applyLotFilters = function () {
@@ -1628,13 +1824,13 @@ function renderAdminConsoleUI(container) {
 
     let filtered = lots.filter(lot => {
       if (searchVal) {
-        const text = [lot.public_code, lot.crop, lot.variety, lot.origin_plot_name, lot.remarks].filter(Boolean).join(' ').toLowerCase();
+        const text = [lot.public_code, lot.crop, lot.variety, lot.origin_plot_name, lot.remarks, lot.product_category_code, lot.product_category_name].filter(Boolean).join(' ').toLowerCase();
         if (!text.includes(searchVal)) return false;
       }
       if (cropVal !== 'ALL' && String(lot.crop).toLowerCase() !== cropVal.toLowerCase()) return false;
       if (plotVal !== 'ALL' && String(lot.origin_plot_id) !== plotVal) return false;
       if (custodyVal !== 'ALL') {
-        if (custodyVal === 'IN_CUSTODY' && !(lot.state === 'CREATED' || lot.state === 'IN_CUSTODY')) return false;
+        if (custodyVal === 'IN_CUSTODY' && !(lot.is_editable !== false && (lot.state === 'CREATED' || lot.state === 'IN_CUSTODY'))) return false;
         if (custodyVal === 'IN_TRANSIT' && lot.state !== 'IN_TRANSIT') return false;
         if (custodyVal === 'CLOSED' && lot.state !== 'CLOSED') return false;
       }
@@ -1669,7 +1865,7 @@ function renderAdminConsoleUI(container) {
             ${getIcon('sprout', 24, '#047857')}
           </div>
           <h4 style="margin: 0 0 6px; font-size: 16px; color: #0f172a; font-weight: 800;">${escapeHtml(t.emptyLotsTitle || 'No harvest lots recorded in custody yet')}</h4>
-          <p style="margin: 0 0 16px; font-size: 13px; color: #64748b; max-width: 460px; margin-left: auto; margin-right: auto;">${escapeHtml(t.emptyLotsSub || 'Click the button above to register your first harvest lot and generate unique QR labels.')}</p>
+          <p style="margin: 0 0 16px; font-size: 13px; color: #64748b; max-width: 460px; margin-left: auto; margin-right: auto;">${escapeHtml(t.emptyLotsSub || 'Click the button above to register your first harvest lot and generate unique QR & 1D Barcode labels.')}</p>
           <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 18px; font-size: 13px;" onclick="openHarvestLotModal(null)">
             <span>+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
           </button>
@@ -1690,14 +1886,22 @@ function renderAdminConsoleUI(container) {
 
       const weightDisplay = (parseFloat(lot.net_qty_kg || lot.on_hand_kg || 0)).toLocaleString('en-IN') + ' ' + (lot.unit || 'Kg');
       const harvestDateDisplay = lot.harvest_date ? new Date(lot.harvest_date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Recent';
+      const catCode = lot.product_category_code || 'VG';
+      const catName = lot.product_category_name || 'Vegetables';
+      const custodianRole = lot.current_custodian_role || 'PRODUCER';
+      const custodianName = lot.current_custodian_name || '';
+      const pendingHo = lot.pending_handover && lot.pending_handover.status === 'PENDING_ACCEPTANCE' ? lot.pending_handover : null;
 
       return `
         <div class="harvest-lot-row-card" style="background: #ffffff; border: 1.5px solid ${isEditable ? '#e2e8f0' : '#fed7aa'}; border-radius: 12px; padding: 18px; margin-bottom: 12px; transition: all 0.15s ease-in-out; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-          <!-- Top Row: Public Code, Crop & Variety, Custody Status -->
+          <!-- Top Row: Public Code, Category Code, Crop & Variety, Custody Status -->
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <span style="font-family: monospace; font-size: 14px; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.5px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-family: monospace; font-size: 13px; font-weight: 900; color: #047857; background: #ecfdf5; border: 1.5px solid #86efac; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.4px;" title="Unique Batch/Lot ID">
                 ${escapeHtml(lot.public_code)}
+              </span>
+              <span style="font-size: 11px; font-weight: 900; color: #ffffff; background: #0b3d2e; padding: 3px 8px; border-radius: 6px;">
+                ${escapeHtml(catCode)} • ${escapeHtml(catName)}
               </span>
               <strong style="font-size: 16px; color: #0f172a;">${escapeHtml(getCropLabel(lot.crop))}</strong>
               ${lot.variety ? `<span style="font-size: 13.5px; color: #475569; font-weight: 600;">• ${escapeHtml(lot.variety)}</span>` : ''}
@@ -1705,35 +1909,47 @@ function renderAdminConsoleUI(container) {
               <span style="font-size: 11px; font-weight: 700; color: ${ps.text}; background: ${ps.bg}; border: 1px solid ${ps.border}; padding: 2px 8px; border-radius: 12px;">
                 ${escapeHtml(ps.label)}
               </span>
+              ${lot.is_retailer_verified ? `
+                <span style="font-size: 11px; font-weight: 800; color: #065f46; background: #d1fae5; border: 1px solid #34d399; padding: 2px 8px; border-radius: 12px;">
+                  ✓ Retailer Verified (Consumer Passport Active)
+                </span>
+              ` : ''}
             </div>
 
             <!-- Right-hand custody status & Lock/Edit action -->
             <div style="display: flex; align-items: center; gap: 10px;">
               ${isEditable ? `
                 <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; color: #065f46; background: #ecfdf5; border: 1px solid #86efac; padding: 4px 10px; border-radius: 20px;">
-                  <span>${getIcon('check', 13, '#10b981')}</span> <span>${escapeHtml(t.statusInCustody || 'In Farm Custody')}</span>
+                  <span>${getIcon('check', 13, '#10b981')}</span> <span>In Farm Custody (PRODUCER)</span>
                 </span>
                 <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;" onclick="openHarvestLotModal('${lot.public_code}')" title="Edit Harvest Lot">
                   <span>${getIcon('edit', 14, '#047857')}</span> <span>${escapeHtml(t.btnEditLot || 'Edit')}</span>
                 </button>
               ` : `
-                <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #9a3412; background: #fff7ed; border: 1.5px solid #fdba74; padding: 4px 12px; border-radius: 20px;" title="${escapeHtml(t.lblLockedNotice || 'Locked: Custody handover active. Immutability enforced.')}">
-                  <span>${getIcon('lock', 14, '#c2410c')}</span> <span>${escapeHtml(lot.state === 'IN_TRANSIT' ? (t.statusInTransit || 'In Transit (Locked)') : (t.statusHandoverDone || 'Handover Approved (Locked)'))}</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #9a3412; background: #fff7ed; border: 1.5px solid #fdba74; padding: 4px 12px; border-radius: 20px;" title="Locked: Custody accepted by ${escapeHtml(custodianRole)}.">
+                  <span>${getIcon('lock', 14, '#c2410c')}</span> <span>Custody: ${escapeHtml(custodianRole)} ${custodianName ? `(${escapeHtml(custodianName)})` : ''} — Locked</span>
                 </span>
               `}
             </div>
           </div>
 
+          ${pendingHo ? `
+            <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 12.5px; color: #92400e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <span><strong>⏳ Custody Handover Requested:</strong> Sent to <strong>${escapeHtml(pendingHo.to_role)} (${escapeHtml(pendingHo.to_name || pendingHo.to_phone || 'Next Party')})</strong> for ${escapeHtml(String(pendingHo.declared_qty_kg || weightDisplay))} Kg — Awaiting Next-Party Confirmation.</span>
+              <span style="font-family: monospace; font-size: 11px; font-weight: 800;">Status: PENDING_ACCEPTANCE</span>
+            </div>
+          ` : ''}
+
           <!-- Body Grid: Harvest Info, Land/Origin, Commercials -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; font-size: 13px; color: #334155; margin-bottom: 14px;">
             <div>
-              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Harvest Quantity</div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Current Quantity</div>
               <div style="font-size: 15px; font-weight: 800; color: #0b3d2e;">${escapeHtml(weightDisplay)}</div>
               <div style="font-size: 12px; color: #64748b;">${lot.packages_count ? `${lot.packages_count} ${lot.package_type || 'Crates'}` : 'Bulk Harvest'}</div>
             </div>
 
             <div>
-              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Origin Plot & Land</div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Origin Plot &amp; Land</div>
               <div style="font-size: 13.5px; font-weight: 700; color: #0f172a;">${escapeHtml(lot.origin_plot_name || 'Registered Farm Parcel')}</div>
               <div style="font-size: 12px; color: #64748b;">${lot.plot_area_acres ? `${lot.plot_area_acres} Acres • ` : ''}${escapeHtml(lot.farming_method || 'Conventional')}</div>
             </div>
@@ -1745,29 +1961,31 @@ function renderAdminConsoleUI(container) {
             </div>
 
             <div>
-              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Valuation & Buyer</div>
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Custody Checkpoints</div>
               <div style="font-size: 13.5px; font-weight: 700; color: #0f172a;">
-                ${lot.base_price_per_unit ? `₹${parseFloat(lot.base_price_per_unit).toFixed(2)} / ${lot.unit || 'Kg'}` : 'Market Price'}
-                ${lot.estimated_value ? `<span style="color: #047857;"> (₹${parseFloat(lot.estimated_value).toLocaleString('en-IN')})</span>` : ''}
+                ${(lot.journey_checkpoints || []).length} Verified Hops
               </div>
-              <div style="font-size: 12px; color: #64748b;">Target: ${escapeHtml(lot.intended_buyer || 'APMC Mandi')}</div>
+              <div style="font-size: 12px; color: #047857; font-weight: 700;">Current Stage: ${escapeHtml(custodianRole)}</div>
             </div>
           </div>
 
-          <!-- Bottom Action Buttons: Print QR Labels & Public Trace -->
+          <!-- Bottom Action Buttons: Print QR/Barcode Labels, Live Map, Public Trace & Handover Request -->
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 10px; flex-wrap: wrap; gap: 8px;">
-            <div style="display: flex; gap: 8px;">
-              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 14px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="openUnlimitedQrPrintModal('${lot.public_code}', '${escapeHtml(lot.crop)}', '${escapeHtml(lot.variety || '')}', '${escapeHtml(weightDisplay)}')">
-                <span>${getIcon('printer', 14, '#047857')}</span> <span>${escapeHtml(t.btnPrintQr || 'Print QR Labels (Unlimited)')}</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 14px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="openUnlimitedQrPrintModal('${lot.public_code}', '${escapeHtml(lot.crop)}', '${escapeHtml(lot.variety || '')}', '${escapeHtml(weightDisplay)}', '${escapeHtml(catCode)}')">
+                <span>${getIcon('printer', 14, '#047857')}</span> <span>Print QR + 1D Barcode Stickers (Unlimited)</span>
+              </button>
+              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="window.focusLotOnMovementMap('${lot.public_code}')">
+                <span>${getIcon('map-pin', 13, '#047857')}</span> <span>Track on Live Map</span>
               </button>
               <a href="/l/${encodeURIComponent(lot.public_code)}" target="_blank" style="padding: 6px 12px; font-size: 12px; font-weight: 700; color: #047857; text-decoration: none; border: 1px solid #cbd5e1; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; background: #fff;">
-                <span>${getIcon('globe', 13, '#047857')}</span> <span>Public Trace Page</span>
+                <span>${getIcon('globe', 13, '#047857')}</span> <span>Consumer Trace Page</span>
               </a>
             </div>
 
             ${isEditable ? `
-              <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 6px 16px; font-size: 12px; font-weight: 700;" onclick="openQuickDispatchModal('${lot.public_code}', '${escapeHtml(lot.crop)}', ${parseFloat(lot.net_qty_kg || lot.on_hand_kg || 0)})">
-                <span>Dispatch to Mandi / Buyer &rarr;</span>
+              <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 7px 16px; font-size: 12px; font-weight: 800;" onclick="openCustodyHandoverRequestModal('${lot.public_code}', '${escapeHtml(lot.crop)}', ${parseFloat(lot.net_qty_kg || lot.on_hand_kg || 0)})">
+                <span>Request Custody Handover to Next Party &rarr;</span>
               </button>
             ` : ''}
           </div>
@@ -1829,15 +2047,9 @@ function renderAdminConsoleUI(container) {
               </div>
 
               <div class="form-group">
-                <label class="form-label">Produce Category</label>
+                <label class="form-label">Product Category Code (10 Official Codes) <span class="req">*</span></label>
                 <select class="form-select" id="lot_inp_category">
-                  <option value="Vegetable" ${existing?.category === 'Vegetable' ? 'selected' : ''}>Vegetable</option>
-                  <option value="Fruit" ${existing?.category === 'Fruit' ? 'selected' : ''}>Fruit</option>
-                  <option value="Grain/Cereal" ${existing?.category === 'Grain/Cereal' ? 'selected' : ''}>Grain / Cereal</option>
-                  <option value="Pulse" ${existing?.category === 'Pulse' ? 'selected' : ''}>Pulse</option>
-                  <option value="Spice" ${existing?.category === 'Spice' ? 'selected' : ''}>Spice</option>
-                  <option value="Oilseed" ${existing?.category === 'Oilseed' ? 'selected' : ''}>Oilseed</option>
-                  <option value="Horticulture" ${existing?.category === 'Horticulture' ? 'selected' : ''}>Horticulture</option>
+                  ${PRODUCT_CATEGORY_OPTIONS.map(opt => `<option value="${opt.code}" ${(existing?.product_category_code || existing?.category) === opt.code ? 'selected' : ''}>${escapeHtml(opt.name)}</option>`).join('')}
                 </select>
               </div>
             </div>
@@ -1848,8 +2060,8 @@ function renderAdminConsoleUI(container) {
                 <input type="datetime-local" class="form-input" id="lot_inp_harvest_date" value="${existing?.harvest_date ? existing.harvest_date.slice(0, 16) : nowIso}" required />
               </div>
               <div class="form-group">
-                <label class="form-label">Sowing Date</label>
-                <input type="date" class="form-input" id="lot_inp_sowing_date" value="${existing?.sowing_date || ''}" />
+                <label class="form-label">Last Input / Spray Date (PHI)</label>
+                <input type="date" class="form-input" id="lot_inp_sowing_date" value="${existing?.last_spray_date || existing?.sowing_date || ''}" />
               </div>
               <div class="form-group">
                 <label class="form-label">Estimated Shelf-Life (Days)</label>
@@ -2039,11 +2251,13 @@ function renderAdminConsoleUI(container) {
 
     const payload = {
       crop,
+      product_category_code: category,
       product: { name: crop, variety, category },
       variety,
       category,
       harvest_date: harvestDate,
       sowing_date: sowingDate,
+      last_spray_date: sowingDate,
       shelf_life_days: shelfLife,
       origin_plot_id: plotId,
       plot_id: plotId,
@@ -2087,10 +2301,92 @@ function renderAdminConsoleUI(container) {
     }
   };
 
+  window.submitInlineBatchForm = async function (e) {
+    e.preventDefault();
+    const catCode = document.getElementById('inline_lot_cat_code')?.value || 'FR';
+    const crop = document.getElementById('inline_lot_crop')?.value || 'Mango';
+    const variety = document.getElementById('inline_lot_variety')?.value || '';
+    const plotId = document.getElementById('inline_lot_plot')?.value || null;
+    const qty = parseFloat(document.getElementById('inline_lot_qty')?.value || 500);
+    const packages = parseInt(document.getElementById('inline_lot_packages')?.value || 25);
+    const harvestDate = document.getElementById('inline_lot_harvest_date')?.value || new Date().toISOString().slice(0, 16);
+    const sprayDate = document.getElementById('inline_lot_spray_date')?.value || '';
+    const grade = document.getElementById('inline_lot_grade')?.value || 'Grade A';
+    const method = document.getElementById('inline_lot_method')?.value || 'Organic NPOP';
+    const price = parseFloat(document.getElementById('inline_lot_price')?.value || 40);
+    const shelfLife = parseInt(document.getElementById('inline_lot_shelf_life')?.value || 14);
+
+    const payload = {
+      crop,
+      product_category_code: catCode,
+      product: { name: crop, variety, category: catCode },
+      variety,
+      category: catCode,
+      harvest_date: harvestDate,
+      last_spray_date: sprayDate,
+      shelf_life_days: shelfLife,
+      origin_plot_id: plotId,
+      plot_id: plotId,
+      net_qty_kg: qty,
+      unit: 'Kg',
+      packages_count: packages,
+      package_type: 'Plastic Crates',
+      grade,
+      farming_method: method,
+      base_price_per_unit: price,
+      estimated_value: Math.round(qty * price),
+      payment_status: 'PENDING'
+    };
+
+    try {
+      const res = await fetch('/api/v1/lots/', {
+        method: 'POST',
+        headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        showToast(err.detail || 'Could not create batch.', 'error');
+        return;
+      }
+      const created = await res.json();
+      showToast(`Batch #${created.public_code} minted! Pinned to Live Movement Map.`, 'success');
+      await loadProducerLots();
+      const sel = document.getElementById('liveMovementBatchSelector');
+      if (sel && created.public_code) {
+        sel.value = created.public_code;
+      }
+      window.renderFarmerLiveMovementMap();
+    } catch (err) {
+      showToast('Network error minting batch.', 'error');
+    }
+  };
+
   /* --------------------------------------------------------------------------
-     UNLIMITED QR CODE LABEL PRINTING & DOWNLOAD MODAL
+     1D LINEAR BARCODE SVG (CODE-128 STYLE) + UNLIMITED QR STICKER GENERATOR
      -------------------------------------------------------------------------- */
-  window.openUnlimitedQrPrintModal = function (lotCode, cropName, variety, weightDisplay) {
+  window.generateBarcode128Svg = function (codeText, heightPx) {
+    const str = String(codeText || 'ANNASUTRA');
+    const h = heightPx || 32;
+    let bars = '<rect x="0" y="0" width="2" height="' + h + '" fill="#0f172a"/><rect x="3" y="0" width="1" height="' + h + '" fill="#0f172a"/><rect x="6" y="0" width="2" height="' + h + '" fill="#0f172a"/>';
+    let x = 10;
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      const w1 = (code % 3) + 1;
+      const g1 = ((code >> 2) % 2) + 1;
+      const w2 = ((code >> 3) % 2) + 1;
+      const g2 = ((code >> 4) % 2) + 1;
+      bars += `<rect x="${x}" y="0" width="${w1}" height="${h}" fill="#0f172a"/>`;
+      x += w1 + g1;
+      bars += `<rect x="${x}" y="0" width="${w2}" height="${h}" fill="#0f172a"/>`;
+      x += w2 + g2;
+    }
+    bars += `<rect x="${x}" y="0" width="2" height="${h}" fill="#0f172a"/><rect x="${x + 3}" y="0" width="1.5" height="${h}" fill="#0f172a"/>`;
+    const totalW = x + 6;
+    return `<svg viewBox="0 0 ${totalW} ${h}" width="100%" height="${h}" preserveAspectRatio="none" style="display:block;">${bars}</svg>`;
+  };
+
+  window.openUnlimitedQrPrintModal = function (lotCode, cropName, variety, weightDisplay, catCode) {
     let modal = document.getElementById('unlimitedQrModal');
     if (!modal) {
       modal = document.createElement('div');
@@ -2100,22 +2396,21 @@ function renderAdminConsoleUI(container) {
       document.body.appendChild(modal);
     }
 
-    const orgName = wizardState.profile?.organisation_name || 'AnnaSutra Verified Producer';
-    const qrUrl = `${window.location.origin}/l/${encodeURIComponent(lotCode)}`;
+    const cCode = catCode || 'VG';
 
     modal.innerHTML = `
-      <div style="background: #ffffff; border-radius: 16px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 26px;">
+      <div style="background: #ffffff; border-radius: 16px; max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 26px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px;">
           <div>
-            <h3 style="margin: 0; font-size: 19px; font-weight: 800; color: #0b3d2e;">Generate & Print Crate QR Labels</h3>
-            <span style="font-size: 12.5px; color: #64748b;">Unlimited QR issuance for Lot #${escapeHtml(lotCode)}. Print on standard sticker sheets.</span>
+            <h3 style="margin: 0; font-size: 19px; font-weight: 800; color: #0b3d2e;">Generate &amp; Print Unlimited 2D QR + 1D Barcode Crate Stickers</h3>
+            <span style="font-size: 12.5px; color: #64748b;">Dual-format (QR Code + Linear Code-128 Barcode) stickers for Batch #${escapeHtml(lotCode)}.</span>
           </div>
           <button type="button" onclick="document.getElementById('unlimitedQrModal').style.display='none'" style="background: #f1f5f9; border: none; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">&times;</button>
         </div>
 
-        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; background: #f8fafc; padding: 12px 16px; border-radius: 10px;">
-          <label style="font-size: 13px; font-weight: 700; color: #334155;">Quantity of Labels to Print:</label>
-          <select id="qr_print_count" class="form-select" style="width: 140px; background: #fff;" onchange="renderQrStickersPreview('${lotCode}', '${escapeHtml(cropName)}', '${escapeHtml(variety)}', '${escapeHtml(weightDisplay)}')">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; background: #f8fafc; padding: 12px 16px; border-radius: 10px; flex-wrap: wrap;">
+          <label style="font-size: 13px; font-weight: 700; color: #334155;">Quantity of Stickers to Print:</label>
+          <select id="qr_print_count" class="form-select" style="width: 160px; background: #fff;" onchange="renderQrStickersPreview('${lotCode}', '${escapeHtml(cropName)}', '${escapeHtml(variety)}', '${escapeHtml(weightDisplay)}', '${escapeHtml(cCode)}')">
             <option value="1">1 Sticker</option>
             <option value="6" selected>6 Stickers (1 Sheet)</option>
             <option value="12">12 Stickers</option>
@@ -2123,45 +2418,56 @@ function renderAdminConsoleUI(container) {
             <option value="48">48 Stickers</option>
             <option value="100">100 Stickers</option>
           </select>
-          <span style="font-size: 12px; color: #047857; font-weight: 700;">Zero QR Limits • Instant Generator</span>
+          <span style="font-size: 12px; color: #047857; font-weight: 800;">✓ Unlimited 2D QR + 1D Barcode Generator</span>
         </div>
 
         <!-- Preview Sheet Area -->
-        <div id="qrStickersPreviewContainer" style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; max-height: 380px; overflow-y: auto; background: #f1f5f9; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        <div id="qrStickersPreviewContainer" style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; max-height: 410px; overflow-y: auto; background: #f1f5f9; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; border-top: 1.5px solid #e2e8f0; padding-top: 14px;">
           <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="document.getElementById('unlimitedQrModal').style.display='none'">Close</button>
           <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 22px; font-weight: 800;" onclick="window.print()">
-            <span>${getIcon('printer', 15, '#ffffff')}</span> <span>Print Labels</span>
+            <span>${getIcon('printer', 15, '#ffffff')}</span> <span>Print QR + Barcode Sheet</span>
           </button>
         </div>
       </div>
     `;
 
     modal.style.display = 'flex';
-    renderQrStickersPreview(lotCode, cropName, variety, weightDisplay);
+    renderQrStickersPreview(lotCode, cropName, variety, weightDisplay, cCode);
   };
 
-  function renderQrStickersPreview(lotCode, cropName, variety, weightDisplay) {
+  function renderQrStickersPreview(lotCode, cropName, variety, weightDisplay, catCode) {
     const container = document.getElementById('qrStickersPreviewContainer');
     if (!container) return;
     const count = parseInt(document.getElementById('qr_print_count')?.value || 6);
     const orgName = wizardState.profile?.organisation_name || 'AnnaSutra Producer';
+    const farmerUid = wizardState.profile?.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || '';
     const qrTargetUrl = `${window.location.origin}/l/${encodeURIComponent(lotCode)}`;
+    const barcodeSvg = window.generateBarcode128Svg(lotCode, 26);
 
     let html = '';
     for (let i = 1; i <= count; i++) {
       html += `
-        <div style="background: #ffffff; border: 1.5px solid #0b3d2e; border-radius: 8px; padding: 10px; display: flex; gap: 10px; align-items: center;">
-          <div style="width: 72px; height: 72px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrTargetUrl)}" alt="QR" style="width: 64px; height: 64px;" />
+        <div style="background: #ffffff; border: 1.5px solid #0b3d2e; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="width: 72px; height: 72px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrTargetUrl)}" alt="QR" style="width: 64px; height: 64px;" />
+            </div>
+            <div style="flex: 1; overflow: hidden;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 9px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">AnnaSutra C-DAC</span>
+                <span style="font-size: 9.5px; font-weight: 900; background: #0b3d2e; color: #fff; padding: 1px 6px; border-radius: 4px;">${escapeHtml(catCode || 'VG')} • #${String(i).padStart(4, '0')}</span>
+              </div>
+              <div style="font-size: 13px; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">${escapeHtml(cropName)} ${variety ? `• ${escapeHtml(variety)}` : ''} (${escapeHtml(weightDisplay)})</div>
+              <div style="font-family: monospace; font-size: 10.5px; font-weight: 900; color: #0b3d2e; word-break: break-all;">Batch: ${escapeHtml(lotCode)}</div>
+              ${farmerUid ? `<div style="font-family: monospace; font-size: 9.5px; color: #475569;">Farmer ID: ${escapeHtml(farmerUid)}</div>` : `<div style="font-size: 10px; color: #64748b;">${escapeHtml(orgName)}</div>`}
+            </div>
           </div>
-          <div style="flex: 1; overflow: hidden;">
-            <div style="font-size: 9.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">National Traceability C-DAC</div>
-            <div style="font-size: 13px; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(cropName)} ${variety ? `• ${escapeHtml(variety)}` : ''}</div>
-            <div style="font-family: monospace; font-size: 11.5px; font-weight: 900; color: #0b3d2e;">${escapeHtml(lotCode)}</div>
-            <div style="font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(orgName)} • #${i}</div>
+          <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; text-align: center;">
+            ${barcodeSvg}
+            <div style="font-family: monospace; font-size: 9px; font-weight: 800; color: #334155; letter-spacing: 0.8px; margin-top: 2px;">${escapeHtml(lotCode)}</div>
           </div>
         </div>
       `;
@@ -2299,30 +2605,519 @@ function renderAdminConsoleUI(container) {
     }
   };
 
-  window.openQuickDispatchModal = function (lotCode, cropName, maxQty) {
-    const qty = prompt(`Dispatch Lot #${lotCode} (${cropName}): Enter dispatch quantity in Kg (Max: ${maxQty} Kg):`, maxQty);
-    if (!qty) return;
-    const qtyNum = parseFloat(qty);
-    if (isNaN(qtyNum) || qtyNum <= 0 || qtyNum > maxQty) {
-      alert('Invalid dispatch quantity.');
+  /* --------------------------------------------------------------------------
+     2-WAY CUSTODY HANDOVER REQUEST MODAL (FARMER / CURRENT CUSTODIAN -> NEXT PARTY)
+     -------------------------------------------------------------------------- */
+  window.openCustodyHandoverRequestModal = function (lotCode, cropName, maxQty) {
+    let modal = document.getElementById('custodyHandoverRequestModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'custodyHandoverRequestModal';
+      modal.className = 'wizard-modal-backdrop';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; max-width: 560px; width: 100%; padding: 26px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+          <div>
+            <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0b3d2e;">Request Custody Handover Acknowledgement</h3>
+            <span style="font-size: 12px; color: #64748b;">Batch #${escapeHtml(lotCode)} (${escapeHtml(cropName || 'Produce')})</span>
+          </div>
+          <button type="button" onclick="document.getElementById('custodyHandoverRequestModal').style.display='none'" style="background: #f1f5f9; border: none; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">&times;</button>
+        </div>
+
+        <div style="background: #ecfdf5; border: 1px solid #86efac; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #065f46; margin-bottom: 14px;">
+          <strong>2-Way Cryptographic Handover:</strong> The next party will receive this handover request in their dashboard. Once they confirm &amp; scan the QR code, your custody record locks permanently (🔒) and they gain append-only rights.
+        </div>
+
+        <form onsubmit="window.submitCustodyHandoverRequest(event, '${lotCode}')">
+          <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group">
+              <label class="form-label">Next Party Role <span class="req">*</span></label>
+              <select id="ho_req_to_role" class="form-select" required>
+                <option value="AGGREGATOR">Aggregator (APMC / FPO Hub)</option>
+                <option value="WHOLESALER">Wholesaler</option>
+                <option value="DISTRIBUTOR">Distributor / Logistics</option>
+                <option value="RETAILER">Retailer Shop (Final Consumer Point)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Declared Handover Weight (Kg) <span class="req">*</span></label>
+              <input type="number" step="0.1" min="0.1" id="ho_req_qty" class="form-input" value="${maxQty || 500}" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group">
+              <label class="form-label">Next Party Name / Enterprise <span class="req">*</span></label>
+              <input type="text" id="ho_req_to_name" class="form-input" value="Hooghly APMC Aggregator Hub" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Next Party Mobile (+91...)</label>
+              <input type="text" id="ho_req_to_phone" class="form-input" placeholder="+919876543211" />
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <div class="form-group">
+              <label class="form-label">Transport Vehicle No.</label>
+              <input type="text" id="ho_req_vehicle" class="form-input" placeholder="WB-15-C-8921" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Handover Notes</label>
+              <input type="text" id="ho_req_notes" class="form-input" placeholder="Sealed crates, sound condition" />
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+            <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="document.getElementById('custodyHandoverRequestModal').style.display='none'">Cancel</button>
+            <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 20px; font-weight: 800;">
+              <span>Send Handover Request to Next Party &rarr;</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+    modal.style.display = 'flex';
+  };
+  window.openQuickDispatchModal = window.openCustodyHandoverRequestModal;
+
+  window.submitCustodyHandoverRequest = async function (e, lotCode) {
+    e.preventDefault();
+    const toRole = document.getElementById('ho_req_to_role')?.value || 'AGGREGATOR';
+    const qty = parseFloat(document.getElementById('ho_req_qty')?.value || 500);
+    const toName = document.getElementById('ho_req_to_name')?.value || 'Next Party';
+    const toPhone = document.getElementById('ho_req_to_phone')?.value || '';
+    const vehicle = document.getElementById('ho_req_vehicle')?.value || '';
+    const notes = document.getElementById('ho_req_notes')?.value || '';
+
+    try {
+      const res = await fetch(`/api/v1/lots/${encodeURIComponent(lotCode)}/handover-request`, {
+        method: 'POST',
+        headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+          to_role: toRole,
+          to_name: toName,
+          to_phone: toPhone,
+          declared_qty_kg: qty,
+          vehicle_no: vehicle,
+          notes: notes
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('custodyHandoverRequestModal').style.display = 'none';
+        showToast(`Custody handover request sent to ${toRole} (${toName}). Awaiting their confirmation!`, 'success');
+        if (typeof currentRole !== 'undefined' && currentRole === 'PRODUCER') {
+          await loadProducerLots();
+        } else {
+          const contentArea = document.getElementById('workspaceDynamicContent');
+          if (contentArea) await renderDownstreamCustodyConsole(contentArea, currentRole);
+        }
+      } else {
+        showToast(data.detail || 'Could not send handover request.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error sending handover request.', 'error');
+    }
+  };
+
+  /* --------------------------------------------------------------------------
+     LIVE LOT MOVEMENT MAP (LEAFLET) & NEXT-PARTY CHECKPOINTS FEED
+     -------------------------------------------------------------------------- */
+  window._liveMovementMapInstance = null;
+
+  window.focusLotOnMovementMap = function (lotCode) {
+    window.switchProducerConsoleTab('create_map');
+    setTimeout(() => {
+      const sel = document.getElementById('liveMovementBatchSelector');
+      if (sel) sel.value = lotCode;
+      window.renderFarmerLiveMovementMap();
+    }, 80);
+  };
+
+  window.renderFarmerLiveMovementMap = function () {
+    const mapDiv = document.getElementById('farmerLiveMovementLeafletMap');
+    const feedDiv = document.getElementById('farmerLiveMovementCheckpointsFeed');
+    if (!mapDiv || !feedDiv) return;
+
+    const lots = window._producerLots || [];
+    const selectedCode = document.getElementById('liveMovementBatchSelector')?.value || 'ALL';
+    const targetLots = selectedCode === 'ALL' ? lots : lots.filter(l => l.public_code === selectedCode);
+
+    // Collect all checkpoints across target lots
+    const allCheckpoints = [];
+    targetLots.forEach(lot => {
+      const cps = lot.journey_checkpoints && lot.journey_checkpoints.length > 0
+        ? lot.journey_checkpoints
+        : [{
+            hop_index: 1,
+            actor_role: 'PRODUCER',
+            actor_name: lot.current_custodian_name || 'Farm Origin',
+            action: 'BATCH_CREATED',
+            weight_kg: parseFloat(lot.net_qty_kg || 500),
+            condition: lot.grade || 'Grade A',
+            storage_temp: 'Ambient',
+            lat: 22.9868,
+            lng: 87.8550,
+            location_label: lot.origin_plot_name || 'Farm Origin',
+            timestamp: lot.harvest_date || lot.created_at
+          }];
+      cps.forEach(cp => {
+        allCheckpoints.push(Object.assign({}, cp, { lot_code: lot.public_code, crop: lot.crop }));
+      });
+    });
+
+    if (allCheckpoints.length === 0) {
+      feedDiv.innerHTML = `<div style="padding: 28px; text-align: center; color: #64748b; background: #f8fafc; border-radius: 10px; border: 1px dashed #cbd5e1;">Create a batch above to visualize its live GPS movement from Farm to Retailer.</div>`;
+    } else {
+      feedDiv.innerHTML = allCheckpoints.map((cp, idx) => `
+        <div style="background: #f8fafc; border-left: 4px solid ${cp.actor_role === 'RETAILER' ? '#10b981' : cp.actor_role === 'PRODUCER' ? '#047857' : '#f59e0b'}; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11px; font-weight: 900; color: #0b3d2e; background: #d1fae5; padding: 2px 7px; border-radius: 10px;">Hop #${cp.hop_index || (idx + 1)} • ${escapeHtml(cp.actor_role)}</span>
+            <span style="font-family: monospace; font-size: 10.5px; color: #64748b;">${escapeHtml(cp.lot_code.slice(-10))}</span>
+          </div>
+          <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 4px;">${escapeHtml(cp.actor_name || cp.actor_role)} — ${escapeHtml(cp.location_label || '')}</div>
+          <div style="font-size: 11.5px; color: #334155; margin-top: 2px;">
+            Weight: <strong>${escapeHtml(String(cp.weight_kg || ''))} Kg</strong> • Condition: <strong>${escapeHtml(cp.condition || 'Sound')}</strong> • Temp: <strong>${escapeHtml(cp.storage_temp || 'Ambient')}</strong>
+          </div>
+          ${cp.photo_url ? `<div style="margin-top: 6px;"><img src="${escapeHtml(cp.photo_url)}" alt="Lot" style="max-height: 54px; border-radius: 6px; border: 1px solid #cbd5e1;" /></div>` : ''}
+          <div style="font-size: 10.5px; color: #64748b; margin-top: 4px;">GPS: ${Number(cp.lat || 22.9868).toFixed(4)}, ${Number(cp.lng || 87.8550).toFixed(4)}</div>
+        </div>
+      `).join('');
+    }
+
+    if (typeof L === 'undefined') {
+      mapDiv.innerHTML = `<div style="padding: 40px; text-align: center; color: #475569;">Interactive Map Ready (${allCheckpoints.length} GPS checkpoints plotted)</div>`;
       return;
     }
-    const receiver = prompt('Enter Destination APMC Mandi / Buyer Name:', 'Hooghly APMC Aggregator Yard');
-    if (!receiver) return;
 
-    fetch(`/api/v1/lots/${encodeURIComponent(lotCode)}/dispatch`, {
-      method: 'POST',
-      headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ declared_qty_kg: qtyNum, destination_name: receiver })
-    }).then(async res => {
-      if (res.ok) {
-        showToast(`Lot #${lotCode} successfully dispatched to ${receiver}. Custody locked.`, 'success');
-        await loadProducerLots();
-      } else {
-        const err = await res.json();
-        alert(err.detail || 'Failed to dispatch lot.');
+    try {
+      if (window._liveMovementMapInstance) {
+        try { window._liveMovementMapInstance.remove(); } catch (e) {}
+        window._liveMovementMapInstance = null;
       }
-    }).catch(() => alert('Network error during dispatch.'));
+      if (mapDiv._leaflet_id) delete mapDiv._leaflet_id;
+
+      const map = L.map('farmerLiveMovementLeafletMap').setView([22.9868, 87.8550], 9);
+      window._liveMovementMapInstance = map;
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
+
+      const latLngs = [];
+      allCheckpoints.forEach((cp, idx) => {
+        const lat = parseFloat(cp.lat) || (22.9868 + idx * 0.03);
+        const lng = parseFloat(cp.lng) || (87.8550 + idx * 0.03);
+        latLngs.push([lat, lng]);
+        L.circleMarker([lat, lng], {
+          radius: 8,
+          color: '#0b3d2e',
+          fillColor: cp.actor_role === 'RETAILER' ? '#10b981' : cp.actor_role === 'PRODUCER' ? '#047857' : '#f59e0b',
+          fillOpacity: 0.9,
+          weight: 2
+        }).bindPopup(`<b>${escapeHtml(cp.actor_role)}: ${escapeHtml(cp.actor_name || '')}</b><br/>Batch: ${escapeHtml(cp.lot_code)}<br/>Weight: ${cp.weight_kg} Kg | Condition: ${escapeHtml(cp.condition || 'Good')}`).addTo(map);
+      });
+
+      if (latLngs.length > 1) {
+        L.polyline(latLngs, { color: '#047857', weight: 3.5, dashArray: '6, 6' }).addTo(map);
+        map.fitBounds(latLngs, { padding: [30, 30] });
+      } else if (latLngs.length === 1) {
+        map.setView(latLngs[0], 12);
+      }
+    } catch (e) {}
+  };
+
+  /* --------------------------------------------------------------------------
+     DOWNSTREAM CUSTODY & APPEND-ONLY QR SCAN CONSOLE
+     (AGGREGATOR, WHOLESALER, DISTRIBUTOR, RETAILER)
+     -------------------------------------------------------------------------- */
+  window.renderDownstreamCustodyConsole = async function (container, role) {
+    const activeRole = String(role || currentRole || 'AGGREGATOR').toUpperCase();
+    let incomingRequests = [];
+    let myCustodyLots = [];
+
+    try {
+      const res = await fetch('/api/v1/lots/handovers/incoming', { headers: getAuthHeader() });
+      if (res.ok) {
+        const data = await res.json();
+        incomingRequests = data.incoming_requests || [];
+        myCustodyLots = data.my_custody_lots || [];
+      }
+    } catch (e) {}
+
+    const farmerUid = localStorage.getItem('annasutra_farmer_uid') || '';
+
+    container.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #047857; padding: 24px; margin: 12px 0; box-shadow: 0 4px 16px rgba(4, 120, 87, 0.08);">
+        <!-- Header Banner -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px;">
+          <div>
+            <span style="display: inline-block; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 11.5px; font-weight: 900; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px;">
+              VERIFIED ${escapeHtml(activeRole)} CUSTODY &amp; QR APPEND NODE
+            </span>
+            <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">${escapeHtml(activeRole)} Supply-Chain Handover &amp; QR Telemetry Console</h3>
+            <p style="margin: 3px 0 0; font-size: 12.5px; color: #64748b;">
+              Confirm incoming custody handovers and append live weight, product condition, storage temperature, and photos via QR scan.
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            ${farmerUid ? `<div style="font-family: monospace; font-size: 12px; font-weight: 800; color: #0b3d2e; background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 8px;">Node ID: ${escapeHtml(farmerUid)}</div>` : ''}
+            <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5;" onclick="window.logoutEntitySession()">Log Out</button>
+          </div>
+        </div>
+
+        <!-- Quick QR / Batch ID Scan Bar -->
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="flex: 1; min-width: 240px;">
+            <strong style="font-size: 13.5px; color: #065f46; display: block;">Scan or Enter Batch QR / Barcode ID</strong>
+            <span style="font-size: 12px; color: #047857;">Scan the sticker on the crate/lot to immediately Accept Custody or Append Condition/Weight/Photo.</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <input type="text" id="downstream_scan_lot_code" class="form-input" style="background: #fff; font-family: monospace; min-width: 260px;" placeholder="Paste or scan Batch ID (e.g. 2026...FR0001)" />
+            <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 16px; font-size: 12.5px; font-weight: 800;" onclick="window.handleQuickDownstreamScan('ACCEPT')">
+              ✓ Confirm &amp; Accept Custody
+            </button>
+            <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 9px 16px; font-size: 12.5px; font-weight: 800; background: #fff;" onclick="window.handleQuickDownstreamScan('APPEND')">
+              + Append Weight / Condition / Photo
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 1: Incoming Custody Handover Requests -->
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: 800; color: #0f172a;">
+            1. Incoming Custody Handover Requests Awaiting Your Confirmation (${incomingRequests.length})
+          </h4>
+          ${incomingRequests.length === 0 ? `
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 20px; text-align: center; color: #64748b; font-size: 13px;">
+              No pending handover requests waiting in queue. You can also scan any Batch QR ID above to accept custody directly.
+            </div>
+          ` : incomingRequests.map(lot => {
+            const pho = lot.pending_handover || {};
+            return `
+              <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-family: monospace; font-size: 13px; font-weight: 900; color: #0b3d2e; background: #fff; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 6px;">${escapeHtml(lot.public_code)}</span>
+                    <span style="font-size: 11px; font-weight: 900; background: #0b3d2e; color: #fff; padding: 2px 7px; border-radius: 4px;">${escapeHtml(lot.product_category_code || 'VG')}</span>
+                    <strong style="font-size: 15px; color: #0f172a;">${escapeHtml(lot.crop)} ${lot.variety ? `• ${escapeHtml(lot.variety)}` : ''}</strong>
+                  </div>
+                  <div style="font-size: 12.5px; color: #92400e; margin-top: 4px;">
+                    From: <strong>${escapeHtml(pho.from_name || pho.from_role || 'Farmer')}</strong> • Declared Weight: <strong>${escapeHtml(String(pho.declared_qty_kg || lot.net_qty_kg))} Kg</strong>
+                  </div>
+                </div>
+                <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 18px; font-size: 12.5px; font-weight: 800;" onclick="window.openAcceptCustodyModal('${lot.public_code}', ${parseFloat(pho.declared_qty_kg || lot.net_qty_kg || 500)})">
+                  ✓ Confirm &amp; Accept Custody
+                </button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Section 2: Batches Currently in Your Custody (Append-Only Updates) -->
+        <div>
+          <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: 800; color: #0f172a;">
+            2. Batches in Your Custody — Append Scan Data &amp; Next Handover (${myCustodyLots.length})
+          </h4>
+          ${myCustodyLots.length === 0 ? `
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 20px; text-align: center; color: #64748b; font-size: 13px;">
+              Once you accept custody of a batch, it appears here so you can append weight, condition, photos, or hand over to the next party.
+            </div>
+          ` : myCustodyLots.map(lot => `
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-family: monospace; font-size: 13px; font-weight: 900; color: #047857; background: #ecfdf5; border: 1px solid #86efac; padding: 3px 8px; border-radius: 6px;">${escapeHtml(lot.public_code)}</span>
+                  <strong style="font-size: 15px; color: #0f172a;">${escapeHtml(lot.crop)}</strong>
+                  <span style="font-size: 12px; color: #334155; font-weight: 700;">Current Weight: ${escapeHtml(String(lot.net_qty_kg || lot.on_hand_kg))} Kg</span>
+                  ${lot.is_retailer_verified ? `<span style="font-size: 11px; font-weight: 800; background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 12px;">✓ Retail Shelf Active (Consumer QR Unlocked)</span>` : ''}
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                  Origin Farmer ID: <span style="font-family: monospace;">${escapeHtml(lot.farmer_uid || 'Locked')}</span> (🔒 Immutable Origin) • Checkpoints: ${(lot.journey_checkpoints || []).length}
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 8px 14px; font-size: 12px; font-weight: 800;" onclick="window.openAppendScanModal('${lot.public_code}', ${parseFloat(lot.net_qty_kg || lot.on_hand_kg || 500)})">
+                  + Scan QR &amp; Append Weight / Condition / Photo
+                </button>
+                ${activeRole !== 'RETAILER' ? `
+                  <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 8px 14px; font-size: 12px; font-weight: 800;" onclick="window.openCustodyHandoverRequestModal('${lot.public_code}', '${escapeHtml(lot.crop)}', ${parseFloat(lot.net_qty_kg || lot.on_hand_kg || 500)})">
+                    Handover to Next Party &rarr;
+                  </button>
+                ` : `
+                  <a href="/l/${encodeURIComponent(lot.public_code)}" target="_blank" class="btn-wizard-action btn-wizard-submit" style="padding: 8px 14px; font-size: 12px; font-weight: 800; text-decoration: none;">
+                    View Consumer Retail Passport &rarr;
+                  </a>
+                `}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  };
+
+  window.handleQuickDownstreamScan = function (mode) {
+    const code = (document.getElementById('downstream_scan_lot_code')?.value || '').trim();
+    if (!code) {
+      showToast('Please enter or scan a Batch QR ID first.', 'warning');
+      return;
+    }
+    if (mode === 'ACCEPT') {
+      window.openAcceptCustodyModal(code, 500);
+    } else {
+      window.openAppendScanModal(code, 500);
+    }
+  };
+
+  window.openAcceptCustodyModal = function (lotCode, defaultQty) {
+    window._openDownstreamTelemetryModal('ACCEPT', lotCode, defaultQty);
+  };
+
+  window.openAppendScanModal = function (lotCode, defaultQty) {
+    window._openDownstreamTelemetryModal('APPEND', lotCode, defaultQty);
+  };
+
+  window._openDownstreamTelemetryModal = function (mode, lotCode, defaultQty) {
+    const isAccept = mode === 'ACCEPT';
+    let modal = document.getElementById('downstreamTelemetryModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'downstreamTelemetryModal';
+      modal.className = 'wizard-modal-backdrop';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; max-width: 560px; width: 100%; padding: 26px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+          <div>
+            <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0b3d2e;">
+              ${isAccept ? 'Confirm & Accept Custody Handover' : 'Append-Only QR Scan Update'}
+            </h3>
+            <span style="font-family: monospace; font-size: 12px; color: #047857; font-weight: 800;">Batch #${escapeHtml(lotCode)}</span>
+          </div>
+          <button type="button" onclick="document.getElementById('downstreamTelemetryModal').style.display='none'" style="background: #f1f5f9; border: none; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">&times;</button>
+        </div>
+
+        <form onsubmit="window.submitDownstreamTelemetry(event, '${mode}', '${lotCode}')">
+          <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group">
+              <label class="form-label">Current / Received Weight (Kg) <span class="req">*</span></label>
+              <input type="number" step="0.1" min="0.1" id="ds_inp_weight" class="form-input" value="${defaultQty || 500}" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Product Condition <span class="req">*</span></label>
+              <select id="ds_inp_condition" class="form-select" required>
+                <option value="FRESH_GRADE_A">Fresh / Sound Grade A</option>
+                <option value="COLD_CHAIN_INTACT">Cold-Chain Intact (Optimal)</option>
+                <option value="GOOD_MARKET_READY">Good / Retail Shelf Ready</option>
+                <option value="MINOR_TRANSIT_LOSS">Minor Transit Moisture Loss</option>
+                <option value="DAMAGED">Damaged / Partial Reject</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group">
+              <label class="form-label">Storage / Transit Temp</label>
+              <input type="text" id="ds_inp_temp" class="form-input" value="4.0°C Cold Chain" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Checkpoint Facility / Shop Name</label>
+              <input type="text" id="ds_inp_location" class="form-input" value="${escapeHtml((typeof currentRole !== 'undefined' ? currentRole : 'Custodian') + ' Checkpoint Hub')}" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Capture / Upload Lot Condition Photo (Optional)</label>
+            <input type="file" accept="image/*" id="ds_inp_photo_file" class="form-input" onchange="window.previewDownstreamPhoto(this)" />
+            <input type="hidden" id="ds_inp_photo_data_url" value="" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label">Inspection Notes</label>
+            <input type="text" id="ds_inp_notes" class="form-input" placeholder="QR verified on crate, weight and quality checked." />
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+            <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="document.getElementById('downstreamTelemetryModal').style.display='none'">Cancel</button>
+            <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 20px; font-weight: 800;">
+              <span>${isAccept ? '✓ Confirm Custody & Lock Previous Party' : '+ Append Scan Record to Ledger'}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+    modal.style.display = 'flex';
+  };
+
+  window.previewDownstreamPhoto = function (input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const hidden = document.getElementById('ds_inp_photo_data_url');
+      if (hidden) hidden.value = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.submitDownstreamTelemetry = async function (e, mode, lotCode) {
+    e.preventDefault();
+    const isAccept = mode === 'ACCEPT';
+    const weightKg = parseFloat(document.getElementById('ds_inp_weight')?.value || 500);
+    const condition = document.getElementById('ds_inp_condition')?.value || 'FRESH_GRADE_A';
+    const storageTemp = document.getElementById('ds_inp_temp')?.value || 'Ambient';
+    const locationLabel = document.getElementById('ds_inp_location')?.value || '';
+    const photoUrl = document.getElementById('ds_inp_photo_data_url')?.value || '';
+    const notes = document.getElementById('ds_inp_notes')?.value || '';
+    const actorRole = (typeof currentRole !== 'undefined' && currentRole) ? currentRole : 'AGGREGATOR';
+
+    const endpoint = isAccept
+      ? `/api/v1/lots/${encodeURIComponent(lotCode)}/handover-accept`
+      : `/api/v1/lots/${encodeURIComponent(lotCode)}/append-scan`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: Object.assign({}, getAuthHeader(), { 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+          actor_role: actorRole,
+          actor_name: `${actorRole} Node`,
+          received_qty_kg: weightKg,
+          weight_kg: weightKg,
+          condition: condition,
+          storage_temp: storageTemp,
+          location_label: locationLabel,
+          photo_url: photoUrl,
+          notes: notes,
+          lat: 22.82 + Math.random() * 0.15,
+          lng: 88.15 + Math.random() * 0.15
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('downstreamTelemetryModal').style.display = 'none';
+        showToast(
+          isAccept
+            ? `Custody accepted for Batch #${lotCode}! Previous custodian locked (🔒).`
+            : `Telemetry appended to Batch #${lotCode}! Farmer Live Map updated.`,
+          'success'
+        );
+        const contentArea = document.getElementById('workspaceDynamicContent');
+        if (contentArea) await renderDownstreamCustodyConsole(contentArea, actorRole);
+      } else {
+        showToast(data.detail || 'Action failed.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error submitting custody telemetry.', 'error');
+    }
   };
 
   window.downloadMyQrPdfSheet = async function () {
@@ -2352,9 +3147,26 @@ function renderAdminConsoleUI(container) {
     const p = wizardState.profile || {};
     const sens = wizardState.sensitive || {};
     const step = wizardState.currentStep;
+    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || window.computeLiveMentorBatchIdPreview('').slice(0, 22);
 
     container.innerHTML = `
       <div class="wizard-card">
+        <!-- Quick Switch Bar to Operational Dashboard & Batch Creation -->
+        <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #065f46; text-transform: uppercase;">Unique Farmer ID (YYYYDDHHMMSS+CountryCodeMobile)</div>
+            <div style="font-family: monospace; font-size: 15px; font-weight: 900; color: #0b3d2e;">${escapeHtml(farmerUid)}</div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 8px 16px; font-size: 12.5px; font-weight: 800;" onclick="window.openProducerOperationalDashboard('create_map')">
+              <span>+ Create Batch &amp; Live Lot Movement Map &rarr;</span>
+            </button>
+            <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 8px 14px; font-size: 12.5px; font-weight: 800; background: #fff;" onclick="window.openProducerOperationalDashboard('ledger')">
+              <span>Open Farmer Dashboard (${(window._producerLots || []).length} Lots)</span>
+            </button>
+          </div>
+        </div>
+
         <!-- 1. Stepper Bar -->
         <div class="wizard-stepper">
           <div class="step-node ${step === 1 ? 'active' : step > 1 ? 'completed' : ''}" onclick="goToStep(1)">
@@ -3569,35 +4381,47 @@ function renderAdminConsoleUI(container) {
 
   window.switchProducerConsoleTab = function (tabName) {
     const tabLedgerBtn = document.getElementById('tabBtnLedger');
+    const tabCreateMapBtn = document.getElementById('tabBtnCreateMap');
     const tabAnalyticsBtn = document.getElementById('tabBtnAnalytics');
     const contentLedger = document.getElementById('consoleTabContentLedger');
+    const contentCreateMap = document.getElementById('consoleTabContentCreateMap');
     const contentAnalytics = document.getElementById('consoleTabContentAnalytics');
 
     if (!tabLedgerBtn || !tabAnalyticsBtn || !contentLedger || !contentAnalytics) return;
 
-    if (tabName === 'ledger') {
-      tabLedgerBtn.style.color = '#065f46';
-      tabLedgerBtn.style.borderBottom = '3px solid #047857';
-      tabLedgerBtn.style.background = '#ecfdf5';
+    const resetBtn = btn => {
+      if (!btn) return;
+      btn.style.color = '#64748b';
+      btn.style.borderBottom = '3px solid transparent';
+      btn.style.background = 'transparent';
+    };
+    const activateBtn = btn => {
+      if (!btn) return;
+      btn.style.color = '#065f46';
+      btn.style.borderBottom = '3px solid #047857';
+      btn.style.background = '#ecfdf5';
+    };
 
-      tabAnalyticsBtn.style.color = '#64748b';
-      tabAnalyticsBtn.style.borderBottom = '3px solid transparent';
-      tabAnalyticsBtn.style.background = 'transparent';
+    resetBtn(tabLedgerBtn);
+    resetBtn(tabCreateMapBtn);
+    resetBtn(tabAnalyticsBtn);
 
-      contentLedger.style.display = 'block';
-      contentAnalytics.style.display = 'none';
-    } else {
-      tabAnalyticsBtn.style.color = '#065f46';
-      tabAnalyticsBtn.style.borderBottom = '3px solid #047857';
-      tabAnalyticsBtn.style.background = '#ecfdf5';
+    contentLedger.style.display = 'none';
+    if (contentCreateMap) contentCreateMap.style.display = 'none';
+    contentAnalytics.style.display = 'none';
 
-      tabLedgerBtn.style.color = '#64748b';
-      tabLedgerBtn.style.borderBottom = '3px solid transparent';
-      tabLedgerBtn.style.background = 'transparent';
-
-      contentLedger.style.display = 'none';
+    if (tabName === 'create_map') {
+      activateBtn(tabCreateMapBtn);
+      if (contentCreateMap) contentCreateMap.style.display = 'block';
+      window.updateInlineBatchIdPreview();
+      setTimeout(() => window.renderFarmerLiveMovementMap(), 60);
+    } else if (tabName === 'analytics') {
+      activateBtn(tabAnalyticsBtn);
       contentAnalytics.style.display = 'block';
       renderProducerAnalytics();
+    } else {
+      activateBtn(tabLedgerBtn);
+      contentLedger.style.display = 'block';
     }
   };
 
@@ -3610,10 +4434,42 @@ function renderAdminConsoleUI(container) {
     const root = document.getElementById('producerAnalyticsRoot');
     if (!root) return;
     const t = getI18n();
+    const p = wizardState.profile || {};
+    const plots = wizardState.plots || [];
+    const totalAcres = plots.reduce((acc, pl) => acc + (parseFloat(pl.area_acres) || 0), 0) || parseFloat(p.total_land_acres || 0);
+    const cropsListDisplay = (wizardState.selectedCrops || []).map(getCropLabel).join(', ') || 'All Seasonal Crops';
+    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || '';
+
+    const providedDataSummaryHtml = `
+      <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <h5 style="margin: 0; font-size: 15px; font-weight: 800; color: #0b3d2e;">All Provided Farmer, Land, Crop &amp; Enterprise Data</h5>
+          <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 5px 12px; font-size: 11.5px; background: #fff;" onclick="window.openProducerRegistrationWizard()">Edit Registration &amp; Land Data &rarr;</button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 12.5px;">
+          <div style="background: #ffffff; border: 1px solid #d1fae5; border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #64748b; font-weight: 700;">UNIQUE FARMER ID</div>
+            <div style="font-family: monospace; font-size: 13px; font-weight: 900; color: #047857; margin-top: 2px;">${escapeHtml(farmerUid || 'Registered')}</div>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #d1fae5; border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #64748b; font-weight: 700;">LANDS &amp; MAPPED PLOTS</div>
+            <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 2px;">${totalAcres.toFixed(2)} Acres (${plots.length} Plots)</div>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #d1fae5; border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #64748b; font-weight: 700;">CROPS PRODUCED</div>
+            <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 2px;">${escapeHtml(cropsListDisplay)}</div>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #d1fae5; border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #64748b; font-weight: 700;">FARM LOCATION &amp; IRRIGATION</div>
+            <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 2px;">${escapeHtml([p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ') || 'Registered Node')} • ${escapeHtml((p.role_details && p.role_details.irrigation) || 'Standard')}</div>
+          </div>
+        </div>
+      </div>
+    `;
 
     const lots = window._producerLots || [];
     if (!lots || lots.length === 0) {
-      root.innerHTML = `
+      root.innerHTML = providedDataSummaryHtml + `
         <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 16px; padding: 48px 24px; text-align: center;">
           <div style="width: 56px; height: 56px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
             ${getIcon('sprout', 28, '#047857')}
@@ -3622,7 +4478,7 @@ function renderAdminConsoleUI(container) {
           <p style="margin: 0 auto 20px; font-size: 13.5px; color: #64748b; max-width: 440px;">
             Register your harvest batches to automatically generate yield distribution charts, monthly harvest cadence trends, and commercial cashflow graphs.
           </p>
-          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 22px; font-weight: 800;" onclick="switchProducerConsoleTab('ledger'); openHarvestLotModal(null);">
+          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 22px; font-weight: 800;" onclick="switchProducerConsoleTab('create_map');">
             + ${escapeHtml(t.btnRegisterLot || 'Register New Harvest Lot')}
           </button>
         </div>
@@ -3730,7 +4586,7 @@ function renderAdminConsoleUI(container) {
       { name: 'Transferred / Custody Closed', count: closedCount, color: '#64748b', weight: 0, pct: lots.length > 0 ? ((closedCount / lots.length) * 100).toFixed(1) : 0 }
     ];
 
-    root.innerHTML = `
+    root.innerHTML = providedDataSummaryHtml + `
       <!-- 6 High-Impact Stat Tiles -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px;">
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px;">

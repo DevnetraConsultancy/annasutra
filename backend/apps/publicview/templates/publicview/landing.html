@@ -3075,9 +3075,56 @@
         <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
           Send Verification OTP
         </button>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin: 14px 0;">
+          <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+          <span style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">OR</span>
+          <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+        </div>
+
+        <button type="button" id="btnGoogleAuthToggle" onclick="openGoogleAuthStep()" style="width: 100%; background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; padding: 11px 14px; border-radius: 8px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.15s;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
+          </svg>
+          <span id="btnGoogleSignInText">Continue with Google Sign-In</span>
+        </button>
+
         <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;" id="otpGatewayHint">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> An OTP will be dispatched via official SMS Gateway to your device.
         </p>
+      </div>
+
+      <div id="googleAuthStep" style="display: none; margin-top: 8px; text-align: left;">
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink: 0;">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
+          </svg>
+          <div style="font-size: 11.5px; color: #334155; line-height: 1.35;">
+            <strong>Google Sign-In + Unique Farmer ID Minting</strong><br/>
+            Link your Google account &amp; mobile number to generate your deterministic ID (<code>YYYYDDHHMMSS+CCMobile</code>).
+          </div>
+        </div>
+        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 4px;">Google Email Address *</label>
+        <input type="email" class="modal-input" id="googleEmailInput" placeholder="farmer.name@gmail.com" style="margin-bottom: 10px;" />
+
+        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 4px;">Full Name / Farm Name</label>
+        <input type="text" class="modal-input" id="googleNameInput" placeholder="e.g. Ramesh Kumar" style="margin-bottom: 10px;" />
+
+        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 4px;">Mobile Number (for Unique Farmer ID) *</label>
+        <input type="tel" class="modal-input" id="googlePhoneInput" placeholder="+91 9876543210" maxlength="15" style="margin-bottom: 12px;" />
+
+        <button type="button" class="btn-otp-submit" id="btnGoogleSubmit" onclick="submitGoogleLogin()">
+          Sign In with Google &amp; Enter Console
+        </button>
+        <div style="text-align: center; margin-top: 10px;">
+          <a href="javascript:void(0)" onclick="resetOtpLogin()" style="font-size: 12px; color: var(--text-muted); text-decoration: underline; font-weight: 600;">&larr; Back to Mobile OTP Sign-In</a>
+        </div>
       </div>
 
       <div id="otpVerifyStep" style="display: none; margin-top: 10px;">
@@ -5939,8 +5986,10 @@
     function resetOtpLogin() {
       const pStep = document.getElementById('otpPhoneStep');
       const vStep = document.getElementById('otpVerifyStep');
+      const gStep = document.getElementById('googleAuthStep');
       if (pStep) pStep.style.display = 'block';
       if (vStep) vStep.style.display = 'none';
+      if (gStep) gStep.style.display = 'none';
       if (otpCooldownTimer) clearInterval(otpCooldownTimer);
       const countEl = document.getElementById('otpCountdown');
       if (countEl) countEl.innerText = '';
@@ -6083,6 +6132,85 @@
         } catch (uiErr) {
           console.error('Error during post-login UI transition:', uiErr);
         }
+      }
+    }
+
+    function openGoogleAuthStep() {
+      const phoneStep = document.getElementById('otpPhoneStep');
+      const verifyStep = document.getElementById('otpVerifyStep');
+      const googleStep = document.getElementById('googleAuthStep');
+      if (phoneStep) phoneStep.style.display = 'none';
+      if (verifyStep) verifyStep.style.display = 'none';
+      if (googleStep) googleStep.style.display = 'block';
+      const phoneVal = document.getElementById('phoneInput')?.value || '';
+      const gPhone = document.getElementById('googlePhoneInput');
+      if (gPhone && phoneVal && !gPhone.value) {
+        gPhone.value = phoneVal;
+      }
+      document.getElementById('googleEmailInput')?.focus();
+    }
+
+    async function submitGoogleLogin() {
+      const email = (document.getElementById('googleEmailInput')?.value || '').trim();
+      const name = (document.getElementById('googleNameInput')?.value || '').trim();
+      const rawPhone = (document.getElementById('googlePhoneInput')?.value || '').trim();
+      const btn = document.getElementById('btnGoogleSubmit');
+
+      if (!email || !email.includes('@')) {
+        showToast('Please enter a valid Google email address.', 'warning');
+        return;
+      }
+      const digits = rawPhone.replace(/\D/g, '');
+      if (digits.length < 10) {
+        showToast('Please enter a 10-digit mobile number to generate your Unique Farmer ID.', 'warning');
+        return;
+      }
+      const codePrefix = document.getElementById('countryCodeSelect')?.value || '+91';
+      const phone = digits.length === 10 ? (codePrefix + digits) : ('+' + digits);
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Authenticating with Google...';
+      }
+
+      try {
+        const res = await fetch('/api/v1/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            name: name,
+            phone: phone,
+            role: currentRole || 'PRODUCER'
+          })
+        });
+        const data = await res.json();
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Sign In with Google & Enter Console';
+        }
+        if (res.ok) {
+          const token = data.access_token || data.access;
+          if (token) localStorage.setItem('annasutra_access_token', token);
+          const resolvedPhone = (data.user && data.user.phone) || phone;
+          localStorage.setItem('annasutra_phone', resolvedPhone);
+          if (data.user && data.user.farmer_uid) {
+            localStorage.setItem('annasutra_farmer_uid', data.user.farmer_uid);
+          }
+          if (currentRole) {
+            localStorage.setItem('annasutra_role', currentRole);
+          }
+          showToast('Google Sign-In verified! Farmer ID: ' + ((data.user && data.user.farmer_uid) || 'Active'), 'success');
+          completeOtpLogin(resolvedPhone);
+        } else {
+          showToast(data.detail || 'Google Sign-In failed. Please check your details.', 'error');
+        }
+      } catch (err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Sign In with Google & Enter Console';
+        }
+        showToast('Network error during Google Sign-In.', 'error');
       }
     }
 

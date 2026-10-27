@@ -1226,15 +1226,56 @@
   <!-- 3. MAIN SUMMARY RECORD CARD (PAGE-SPECIFIC MIDDLE SECTION) -->
   <main class="main-wrapper">
     <div class="summary-card">
-      <div class="batch-verified-header">
-        <div class="lot-badge">BATCH: {{ lot.code }}</div>
+      <div class="batch-verified-header" style="flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div class="lot-badge">BATCH: {{ lot.code }}</div>
+          {% if lot.product_category_code %}
+          <span style="font-size: 11.5px; font-weight: 900; background: #0b3d2e; color: #ffffff; padding: 4px 10px; border-radius: 6px;">
+            {{ lot.product_category_code }} • {{ lot.product_category_name|default:"Produce" }}
+          </span>
+          {% endif %}
+        </div>
         <div class="status-verified" id="statusVerified">
           <span id="statusVerifiedText">Verified on Ledger</span>
         </div>
       </div>
 
+      {% if lot.is_retailer_verified %}
+      <!-- RETAILER-VERIFIED CONSUMER TRUST PASSPORT BANNER -->
+      <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <div style="font-size: 12px; font-weight: 900; color: #065f46; text-transform: uppercase; letter-spacing: 0.4px;">
+            ✓ Retailer Shop Checked-In — Full Consumer Trust Passport Unlocked
+          </div>
+          <div style="font-size: 12.5px; color: #047857; margin-top: 2px;">
+            This produce batch has completed supply-chain custody verification at an authorized retail shop.
+          </div>
+        </div>
+        <span style="font-size: 11px; font-weight: 800; background: #047857; color: #ffffff; padding: 4px 10px; border-radius: 20px;">
+          RETAIL SHELF READY
+        </span>
+      </div>
+      {% else %}
+      <!-- IN-TRANSIT RETAILER GATEKEEPER BANNER -->
+      <div style="background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <div style="font-size: 12px; font-weight: 900; color: #92400e; text-transform: uppercase; letter-spacing: 0.4px;">
+              ⏳ Supply-Chain In-Transit Gatekeeper (Current Custodian: {{ lot.current_stage_role|default:"PRODUCER" }})
+            </div>
+            <div style="font-size: 12.5px; color: #b45309; margin-top: 3px;">
+              Full consumer retail passport unlocks only when scanned after check-in at an authorized Retailer shop.
+            </div>
+          </div>
+          <button type="button" onclick="openEntityPortalModal()" style="background: #d97706; color: #ffffff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 800; cursor: pointer;">
+            Supply-Chain Partner? Accept / Append Custody &rarr;
+          </button>
+        </div>
+      </div>
+      {% endif %}
+
       <div class="field">
-        <div class="field-label" id="lblProduct">Crop & Variety</div>
+        <div class="field-label" id="lblProduct">Crop &amp; Variety</div>
         <div class="field-value">{{ lot.product }}</div>
       </div>
 
@@ -1248,6 +1289,21 @@
         <div class="field-value">{{ lot.region }}</div>
       </div>
 
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 14px 0;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Origin Farmer ID</div>
+          <div style="font-family: monospace; font-size: 12.5px; font-weight: 800; color: #0b3d2e; margin-top: 2px;">{{ lot.farmer_uid_masked|default:"Verified Producer" }}</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Farming Method &amp; Grade</div>
+          <div style="font-size: 13px; font-weight: 800; color: #047857; margin-top: 2px;">{{ lot.farming_method|default:"Standard" }} • {{ lot.grade|default:"Grade A" }}</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Food Safety &amp; Shelf-Life</div>
+          <div style="font-size: 12.5px; font-weight: 800; color: #065f46; margin-top: 2px;">✓ PHI Safe • ~{{ lot.shelf_life_days|default:14 }} Days</div>
+        </div>
+      </div>
+
       <div class="stats-grid">
         <div class="stat-box">
           <div class="stat-number">{{ lot.stages_confirmed }}</div>
@@ -1258,6 +1314,33 @@
           <div class="stat-label" id="lblQuality">Quality Inspections</div>
         </div>
       </div>
+
+      {% if lot.is_retailer_verified and lot.journey_hops %}
+      <!-- FULL CONSUMER FARM-TO-RETAILER CUSTODY LEDGER (UNLOCKED AT RETAILER) -->
+      <div style="margin-top: 20px; border-top: 1.5px solid #e2e8f0; padding-top: 16px;">
+        <h4 style="margin: 0 0 12px; font-size: 14.5px; font-weight: 800; color: #0b3d2e;">
+          Verified Farm-to-Retailer Custody &amp; Condition Ledger ({{ lot.journey_hops|length }} Hops)
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          {% for hop in lot.journey_hops %}
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #047857; border-radius: 8px; padding: 10px 14px; font-size: 12.5px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <strong style="color: #0b3d2e;">Hop #{{ hop.hop_index }} • {{ hop.actor_role }}</strong>
+              <span style="font-size: 11px; font-weight: 700; color: #047857; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">{{ hop.action }}</span>
+            </div>
+            <div style="color: #334155; margin-top: 4px;">
+              Verified Weight: <strong>{{ hop.weight_kg }} Kg</strong> • Condition: <strong>{{ hop.condition }}</strong> • Storage: <strong>{{ hop.storage_temp }}</strong>
+            </div>
+            {% if hop.photo_url %}
+            <div style="margin-top: 6px;">
+              <img src="{{ hop.photo_url }}" alt="Lot Condition" style="max-height: 64px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
 
       <div class="field" style="margin-top: 18px;">
         <div class="field-label" id="lblScans">Public Lookups</div>

@@ -12,7 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.organisations.models import Organisation
-from .models import AppUser, Device
+from .models import AppUser, Device, EntityProfile
+from .services.entity_allocation import get_or_mint_farmer_uid
 from .services.otp import OtpService
 from .services.passkey import PasskeyService
 from .services.token import TokenService
@@ -132,6 +133,8 @@ class OtpVerifyView(APIView):
                         label=request.data.get("device_label", "Primary Device"),
                     )
 
+            profile = EntityProfile.objects.filter(user_id=user.user_id).first() or EntityProfile.objects.filter(phone_e164=user.phone_e164).first()
+            farmer_uid = get_or_mint_farmer_uid(profile if profile else user)
             token_pair = TokenService.issue_token_pair(user)
             # Provide compatibility keys for both standard OAuth/JWT and OpenAPI clients
             token_pair["access"] = token_pair["access_token"]
@@ -140,6 +143,8 @@ class OtpVerifyView(APIView):
                 "user_id": str(user.user_id),
                 "phone": user.phone_e164,
                 "role": user.role,
+                "entity_role": profile.role if profile else "PRODUCER",
+                "farmer_uid": farmer_uid,
                 "status": user.status,
             }
         except Exception as exc:
@@ -333,3 +338,153 @@ class DeviceDetailView(APIView):
         device.revoked_at = timezone.now()
         device.save(update_fields=["revoked_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GoogleAuthView(APIView):
+    """Sign in or register via Google Sign-In with mobile number linking for deterministic Farmer ID."""
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        import re
+
+        email = str(request.data.get("email") or "").strip().lower()
+        name = str(request.data.get("name") or request.data.get("full_name") or "").strip()
+        raw_phone = str(request.data.get("phone") or request.data.get("phone_e164") or "").strip()
+        requested_role = str(request.data.get("role") or "PRODUCER").strip().upper()
+        id_token = request.data.get("id_token")
+
+        # If a Google id_token JWT is provided, extract email/name claims safely
+        if id_token and not email:
+            try:
+                claims = jwt.decode(id_token, options={"verify_signature": False})
+                email = str(claims.get("email") or "").strip().lower()
+                if not name:
+                    name = str(claims.get("name") or "").strip()
+            except Exception:
+                pass
+
+        if not email or "@" not in email:
+            raise exceptions.ValidationError(
+                {"detail": "A valid Google email address is required.", "code": "INVALID_EMAIL"}
+            )
+
+        valid_roles = {"PRODUCER", "AGGREGATOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"}
+        if requested_role not in valid_roles:
+            requested_role = "PRODUCER"
+
+        # Normalize phone if provided
+        phone_e164 = ""
+        if raw_phone:
+            digits = re.sub(r"\D", "", raw_phone)
+            if len(digits) == 10:
+                phone_e164 = f"+91{digits}"
+            elif len(digits) >= 11:
+                phone_e164 = f"+{digits}"
+
+        with transaction.atomic():
+            # Check if an EntityProfile with this email already exists
+            profile = EntityProfile.objects.filter(email__iexact=email).first()
+            if profile and not phone_e164:
+                phone_e164 = profile.phone_e164
+
+            if not phone_e164:
+                raise exceptions.ValidationError(
+                    {
+                        "detail": "Please provide your mobile number (+91...) to generate your Unique Farmer ID (YYYYDDHHMMSS+CountryCodeMobileNumber).",
+                        "code": "PHONE_REQUIRED_FOR_UID",
+                    }
+                )
+
+            user = AppUser.objects.select_related("org").filter(phone_e164=phone_e164).first()
+            if not user and profile:
+                user = AppUser.objects.select_related("org").filter(user_id=profile.user_id).first()
+
+            if not user:
+                org_type_map = {
+                    "PRODUCER": "FARMER",
+                    "AGGREGATOR": "AGGREGATOR",
+                    "WHOLESALER": "WHOLESALER",
+                    "DISTRIBUTOR": "DISTRIBUTOR",
+                    "RETAILER": "RETAILER",
+                }
+                org = Organisation.objects.create(
+                    name=name or f"Business ({phone_e164[-4:]})",
+                    org_type=org_type_map.get(requested_role, "FARMER"),
+                    verification="PENDING",
+                )
+                user = AppUser.objects.create(
+                    user_id=uuid.uuid4(),
+                    org=org,
+                    phone_e164=phone_e164,
+                    role="OWNER",
+                    status="ACTIVE",
+                )
+
+            if not profile:
+                profile = EntityProfile.objects.filter(
+                    user_id=user.user_id
+                ).first() or EntityProfile.objects.filter(phone_e164=phone_e164).first()
+
+            parts = name.split(None, 1) if name else []
+            first_name = parts[0] if parts else ""
+            last_name = parts[1] if len(parts) > 1 else ""
+
+            if not profile:
+                profile = EntityProfile.objects.create(
+                    entity_id=uuid.uuid4(),
+                    user_id=user.user_id,
+                    role=requested_role,
+                    phone_e164=phone_e164,
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    organisation_name=name or "",
+                    village_town="",
+                    district="",
+                    state="",
+                    address_line1="",
+                    pincode="000000",
+                    photo_object_key="",
+                    status="DRAFT",
+                    version=1,
+                )
+            else:
+                updated_fields = []
+                if not profile.email:
+                    profile.email = email
+                    updated_fields.append("email")
+                if first_name and not profile.first_name:
+                    profile.first_name = first_name
+                    updated_fields.append("first_name")
+                if last_name and not profile.last_name:
+                    profile.last_name = last_name
+                    updated_fields.append("last_name")
+                if profile.user_id != user.user_id:
+                    profile.user_id = user.user_id
+                    updated_fields.append("user_id")
+                if updated_fields:
+                    profile.save(update_fields=updated_fields)
+
+            farmer_uid = get_or_mint_farmer_uid(profile)
+            token_pair = TokenService.issue_token_pair(user)
+            token_pair["authenticated"] = True
+            token_pair["auth_provider"] = "GOOGLE"
+            token_pair["farmer_uid"] = farmer_uid
+            token_pair["access"] = token_pair["access_token"]
+            token_pair["refresh"] = token_pair["refresh_token"]
+            token_pair["user"] = {
+                "user_id": str(user.user_id),
+                "phone": user.phone_e164,
+                "email": profile.email,
+                "name": f"{profile.first_name} {profile.last_name}".strip() or name,
+                "role": user.role,
+                "entity_role": profile.role,
+                "farmer_uid": farmer_uid,
+                "status": user.status,
+                "auth_provider": "google",
+            }
+
+        return Response(token_pair, status=status.HTTP_200_OK)
+

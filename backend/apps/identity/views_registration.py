@@ -30,6 +30,7 @@ from .models import (
     SensitiveAccessLog,
 )
 from .services.crypto import CryptoService
+from .services.entity_allocation import get_or_mint_farmer_uid
 
 PAN_REGEX = re.compile(r"^[A-Z]{5}[0-9]{4}[A-Z]{1}$")
 PIN_REGEX = re.compile(r"^[0-9]{6}$")
@@ -93,11 +94,15 @@ def _serialize_profile(profile):
             "has_upi": bool(sensitive.upi_enc),
         }
 
+    farmer_uid = get_or_mint_farmer_uid(profile)
+    role_details = EntityRoleDetails.objects.filter(entity=profile).first()
+
     return {
         "entity_id": str(profile.entity_id),
         "user_id": str(profile.user_id),
         "role": profile.role,
         "entity_code": profile.entity_code,
+        "farmer_uid": farmer_uid,
         "first_name": profile.first_name,
         "last_name": profile.last_name,
         "organisation_name": profile.organisation_name,
@@ -148,6 +153,7 @@ class MyProfileView(APIView):
                     "status": "NEW",
                     "role": getattr(request.user, "role", "PRODUCER"),
                     "phone_e164": request.user.phone_e164,
+                    "farmer_uid": get_or_mint_farmer_uid(request.user),
                     "profile": None,
                 },
                 status=status.HTTP_200_OK,
@@ -245,7 +251,10 @@ class MyProfileView(APIView):
             # Update role details if provided
             if "role_details" in request.data and isinstance(request.data["role_details"], dict):
                 role_det, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
-                role_det.details = request.data["role_details"]
+                existing_uid = (role_det.details or {}).get("farmer_uid") or get_or_mint_farmer_uid(profile)
+                merged_details = dict(request.data["role_details"])
+                merged_details["farmer_uid"] = existing_uid
+                role_det.details = merged_details
                 role_det.save()
 
             # Record append-only profile change log
@@ -987,6 +996,7 @@ class MyRoleStatsView(APIView):
             "role": profile.role,
             "status": profile.status,
             "entity_code": profile.entity_code,
+            "farmer_uid": get_or_mint_farmer_uid(profile),
             "stats": {
                 "batches_created": lots_count,
                 "total_kg_declared": total_kg,
