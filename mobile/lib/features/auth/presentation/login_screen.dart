@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../domain/auth_state.dart';
 import 'controllers/auth_controller.dart';
 import 'dpdp_consent_dialog.dart';
@@ -46,75 +43,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _openGoogleOAuthConsentModal(BuildContext context) async {
-    final oauthUrl =
-        'https://annasutra.vercel.app/api/v1/auth/google/oauth/start?role=${Uri.encodeComponent(_selectedRole)}';
-    if (kIsWeb) {
-      return;
+  Future<void> _continueWithGoogle() async {
+    final success = await ref
+        .read(authControllerProvider.notifier)
+        .signInWithNativeGoogle(role: _selectedRole);
+    if (!mounted) return;
+    if (success) {
+      final auth = ref.read(authControllerProvider);
+      if (auth.orgVerification == 'PENDING') {
+        context.go('/register-org');
+      } else {
+        context.go('/');
+      }
     }
-
-    final controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setUserAgent(
-        'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36',
-      );
-
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (dialogCtx) {
-        controller.setNavigationDelegate(
-          NavigationDelegate(
-            onPageFinished: (String url) async {
-              try {
-                final rawEvent = await controller.runJavaScriptReturningResult(
-                  "localStorage.getItem('annasutra_google_oauth_event')",
-                );
-                final cleanStr = rawEvent.toString();
-                if (cleanStr.isNotEmpty &&
-                    cleanStr != 'null' &&
-                    cleanStr.contains('access_token')) {
-                  String jsonPayload = cleanStr;
-                  if (jsonPayload.startsWith('"') &&
-                      jsonPayload.endsWith('"')) {
-                    jsonPayload = jsonDecode(jsonPayload) as String;
-                  }
-                  final decoded =
-                      jsonDecode(jsonPayload) as Map<String, dynamic>;
-                  final dataMap =
-                      Map<String, dynamic>.from(decoded['data'] as Map);
-                  if (dialogCtx.mounted) {
-                    Navigator.of(dialogCtx).pop();
-                  }
-                  await ref
-                      .read(authControllerProvider.notifier)
-                      .completeGoogleOAuthSession(dataMap, _selectedRole);
-                }
-              } catch (_) {}
-            },
-          ),
-        );
-        controller.loadRequest(Uri.parse(oauthUrl));
-
-        return Dialog.fullscreen(
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: const Color(0xFF0B3D2E),
-              foregroundColor: Colors.white,
-              title: const Text(
-                'Sign in with Google',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              leading: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(dialogCtx).pop(),
-              ),
-            ),
-            body: WebViewWidget(controller: controller),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -436,7 +377,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: ElevatedButton.icon(
                           onPressed: isLoading
                               ? null
-                              : () => _openGoogleOAuthConsentModal(context),
+                              : () => _continueWithGoogle(),
                           icon: const Icon(Icons.account_circle_outlined),
                           label: const Text(
                             'Continue with Google',

@@ -1170,7 +1170,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                     // Google Sign-In Button
                     OutlinedButton.icon(
-                      onPressed: () => context.push('/login?role=$_selectedRole'),
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              final messenger = ScaffoldMessenger.of(context);
+                              final success = await ref
+                                  .read(authControllerProvider.notifier)
+                                  .signInWithNativeGoogle(role: _selectedRole);
+                              if (!mounted) return;
+                              if (!success) {
+                                final err =
+                                    ref.read(authControllerProvider).errorMessage;
+                                if (err != null && err.isNotEmpty) {
+                                  messenger.showSnackBar(
+                                    SnackBar(content: Text(err)),
+                                  );
+                                }
+                              }
+                            },
                       icon: const Icon(Icons.g_mobiledata, size: 22, color: Color(0xFFEA4335)),
                       label: Text(_t('btnGoogle'), style: const TextStyle(color: Color(0xFF0F172A))),
                       style: OutlinedButton.styleFrom(

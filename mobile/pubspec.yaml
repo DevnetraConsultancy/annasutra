@@ -28,6 +28,7 @@ dependencies:
   mobile_scanner: ^5.2.3
   connectivity_plus: ^6.0.5
   webview_flutter: ^4.10.0
+  google_sign_in: ^6.2.2
 
 dev_dependencies:
   flutter_test:

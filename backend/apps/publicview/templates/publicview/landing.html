@@ -6552,10 +6552,7 @@
       ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'block';
-      }
-    window.logoutEntity = logoutEntity;
-    window.logoutEntitySession = logoutEntity;
-);
+      });
 
       // Restore public marketing footer
       const publicFooter = document.querySelector('footer.ataraxis-footer-wrap') || document.querySelector('footer.home-footer') || document.querySelector('footer:not(#entityConsoleFooter)');
@@ -6567,6 +6564,9 @@
       if (bgVid && !bgVid.dataset.userPaused) {
         bgVid.play().catch(() => {});
       }
+
+    window.logoutEntity = logoutEntity;
+    window.logoutEntitySession = logoutEntity;
 
       showToast((currentLang === 'hi' ? 'सत्र समाप्त हुआ। सार्वजनिक दृश्य पर वापस।' : currentLang === 'bn' ? 'সেশন শেষ হয়েছে। সর্বজনীন দৃশ্যে ফেরত।' : 'Logged out. Returned to public view.'), 'info');
       window.scrollTo({ top: 0, behavior: 'smooth' });
