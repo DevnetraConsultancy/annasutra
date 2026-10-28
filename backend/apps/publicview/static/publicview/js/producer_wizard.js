@@ -1485,7 +1485,7 @@ function renderAdminConsoleUI(container) {
           </div>
           <div style="text-align: right; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
             <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 8px 14px; border-radius: 10px; text-align: left;">
-              <div style="font-size: 10.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">Unique Farmer ID (YYYYDDHHMMSS+CCMobile)</div>
+              <div style="font-size: 10.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">Unique Farmer ID</div>
               <div style="font-family: monospace; font-size: 15.5px; font-weight: 900; color: #0b3d2e; letter-spacing: 0.5px;" id="farmerHeaderUniqueId">${escapeHtml(farmerUid)}</div>
             </div>
             ${eCode ? `
@@ -1554,7 +1554,7 @@ function renderAdminConsoleUI(container) {
                 <span>${getIcon('map-pin', 14, '#047857')}</span> <span>Open Dedicated Batch &amp; Live Map Tab</span>
               </button>
               <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 20px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);" onclick="openHarvestLotModal(null)">
-                <span style="font-size: 17px; line-height: 1; margin-right: 4px;">+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
+                <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
               </button>
             </div>
           </div>
@@ -1614,10 +1614,10 @@ function renderAdminConsoleUI(container) {
                   <span>${getIcon('sprout', 20, '#047857')}</span>
                   <span>Create New Harvest Batch / Lot (Unlimited Unique QR &amp; Barcode)</span>
                 </h4>
-                <p style="margin: 2px 0 0; font-size: 12.5px; color: #64748b;">Fill batch details below to mint a deterministic conflict-free Batch ID and track live movement underneath.</p>
+                <p style="margin: 2px 0 0; font-size: 12.5px; color: #64748b;">Fill batch details below to register a new batch and track live movement underneath.</p>
               </div>
               <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 10px; padding: 8px 14px;">
-                <div style="font-size: 10px; font-weight: 800; color: #065f46; text-transform: uppercase;">Next Batch/Lot ID Preview (YYYYDDHHMMSS+CCMobile+Code+Seq)</div>
+                <div style="font-size: 10px; font-weight: 800; color: #065f46; text-transform: uppercase;">Batch / Lot ID</div>
                 <div style="font-family: monospace; font-size: 14px; font-weight: 900; color: #047857;" id="liveBatchIdPreviewCode">${escapeHtml(window.computeLiveMentorBatchIdPreview('FR'))}</div>
               </div>
             </div>
@@ -1865,10 +1865,7 @@ function renderAdminConsoleUI(container) {
             ${getIcon('sprout', 24, '#047857')}
           </div>
           <h4 style="margin: 0 0 6px; font-size: 16px; color: #0f172a; font-weight: 800;">${escapeHtml(t.emptyLotsTitle || 'No harvest lots recorded in custody yet')}</h4>
-          <p style="margin: 0 0 16px; font-size: 13px; color: #64748b; max-width: 460px; margin-left: auto; margin-right: auto;">${escapeHtml(t.emptyLotsSub || 'Click the button above to register your first harvest lot and generate unique QR & 1D Barcode labels.')}</p>
-          <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 18px; font-size: 13px;" onclick="openHarvestLotModal(null)">
-            <span>+</span> <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
-          </button>
+          <p style="margin: 0; font-size: 13px; color: #64748b; max-width: 460px; margin-left: auto; margin-right: auto;">${escapeHtml(t.emptyLotsSub || 'Click the button above to register your first harvest lot and generate unique QR & 1D Barcode labels.')}</p>
         </div>
       `;
       return;
@@ -3154,7 +3151,7 @@ function renderAdminConsoleUI(container) {
         <!-- Quick Switch Bar to Operational Dashboard & Batch Creation -->
         <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #065f46; text-transform: uppercase;">Unique Farmer ID (YYYYDDHHMMSS+CountryCodeMobile)</div>
+            <div style="font-size: 11px; font-weight: 800; color: #065f46; text-transform: uppercase;">Unique Farmer ID</div>
             <div style="font-family: monospace; font-size: 15px; font-weight: 900; color: #0b3d2e;">${escapeHtml(farmerUid)}</div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -4479,7 +4476,7 @@ function renderAdminConsoleUI(container) {
             Register your harvest batches to automatically generate yield distribution charts, monthly harvest cadence trends, and commercial cashflow graphs.
           </p>
           <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 22px; font-weight: 800;" onclick="switchProducerConsoleTab('create_map');">
-            + ${escapeHtml(t.btnRegisterLot || 'Register New Harvest Lot')}
+            ${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}
           </button>
         </div>
       `;
