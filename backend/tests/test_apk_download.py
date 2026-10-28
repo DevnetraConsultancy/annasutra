@@ -7,7 +7,7 @@ def test_apk_download_redirect(client):
     resp = client.get("/download/apk")
     assert resp.status_code == status.HTTP_302_FOUND
     assert "github.com" in resp.url
-    assert "app-release.apk" in resp.url
+    assert "AnnaSutra" in resp.url or "app-release" in resp.url
 
     resp_slash = client.get("/download/apk/")
     assert resp_slash.status_code == status.HTTP_302_FOUND

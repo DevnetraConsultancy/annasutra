@@ -2616,7 +2616,7 @@ function renderAdminConsoleUI(container) {
         </div>
 
         <div style="background: #ecfdf5; border: 1px solid #86efac; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #065f46; margin-bottom: 14px;">
-          <strong>2-Way Cryptographic Handover:</strong> The next party will receive this handover request in their dashboard. Once they confirm &amp; scan the QR code, your custody record locks permanently (🔒) and they gain append-only rights.
+          <strong>2-Way Cryptographic Handover:</strong> The next party will receive this handover request in their dashboard. Once they confirm &amp; scan the QR code, your custody record locks permanently [LOCKED] and they gain append-only rights.
         </div>
 
         <form onsubmit="window.submitCustodyHandoverRequest(event, '${lotCode}')">
@@ -2924,7 +2924,7 @@ function renderAdminConsoleUI(container) {
                   ${lot.is_retailer_verified ? `<span style="font-size: 11px; font-weight: 800; background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 12px;">✓ Retail Shelf Active (Consumer QR Unlocked)</span>` : ''}
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  Origin Farmer ID: <span style="font-family: monospace;">${escapeHtml(lot.farmer_uid || 'Locked')}</span> (🔒 Immutable Origin) • Checkpoints: ${(lot.journey_checkpoints || []).length}
+                  Origin Farmer ID: <span style="font-family: monospace;">${escapeHtml(lot.farmer_uid || 'Locked')}</span> (Immutable Origin) • Checkpoints: ${(lot.journey_checkpoints || []).length}
                 </div>
               </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -3093,7 +3093,7 @@ function renderAdminConsoleUI(container) {
         document.getElementById('downstreamTelemetryModal').style.display = 'none';
         showToast(
           isAccept
-            ? `Custody accepted for Batch #${lotCode}! Previous custodian locked (🔒).`
+            ? `Custody accepted for Batch #${lotCode}! Previous custodian locked.`
             : `Telemetry appended to Batch #${lotCode}! Farmer Live Map updated.`,
           'success'
         );

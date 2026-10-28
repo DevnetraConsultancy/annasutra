@@ -80,5 +80,8 @@ mobile/linux/flutter/ephemeral/
 Thumbs.db
 .vercel
 build_artifacts/
+*.apk
+static/apk/
+backend/static/apk/
 .env*
 !.env.example

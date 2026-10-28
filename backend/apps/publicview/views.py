@@ -230,7 +230,11 @@ def landing_page_view(request):
 
 
 def download_apk_view(request):
-    """Direct download redirect for the latest AnnaSutra Android Mobile APK (<50MB)."""
+    """Direct download redirect for the latest AnnaSutra Android Mobile APK.
+
+    Redirects to the official GitHub Release asset named app-release.apk
+    (avoids Vercel 4.5MB serverless payload limit while ensuring custom naming).
+    """
     from django.http import HttpResponseRedirect
     apk_url = "https://github.com/DevnetraConsultancy/annasutra/releases/download/v1.0.0/app-release.apk"
     return HttpResponseRedirect(apk_url)

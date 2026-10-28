@@ -147,9 +147,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          BUILD_DATETIME=$(date +'%Y%m%d_%H%M')
+          APK_TIMESTAMP_NAME="AnnaSutra_${BUILD_DATETIME}.apk"
+          ARM64_TIMESTAMP_NAME="AnnaSutra_arm64_${BUILD_DATETIME}.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/${APK_TIMESTAMP_NAME}"
+          cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/AnnaSutra_latest.apk"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "build/app/outputs/flutter-apk/${ARM64_TIMESTAMP_NAME}"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "build/app/outputs/flutter-apk/AnnaSutra_arm64_latest.apk"
           gh release upload v1.0.0 \
             build/app/outputs/flutter-apk/app-release.apk \
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
+            "build/app/outputs/flutter-apk/${APK_TIMESTAMP_NAME}" \
+            "build/app/outputs/flutter-apk/AnnaSutra_latest.apk" \
+            "build/app/outputs/flutter-apk/${ARM64_TIMESTAMP_NAME}" \
+            "build/app/outputs/flutter-apk/AnnaSutra_arm64_latest.apk" \
             --clobber
 
       - name: Upload Android Release APKs
