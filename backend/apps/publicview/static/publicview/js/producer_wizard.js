@@ -1490,19 +1490,13 @@ function renderAdminConsoleUI(container) {
           </div>
         </div>
 
-        <!-- 4-Tab Navigation Bar -->
+        <!-- Streamlined Entity Console Tabs -->
         <div style="display: flex; gap: 6px; border-bottom: 2px solid #e2e8f0; margin-bottom: 22px; flex-wrap: wrap;">
           <button type="button" id="tabBtnLedger" onclick="window.switchProducerConsoleTab('ledger')" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid #047857; background: #ecfdf5; color: #065f46; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
-            <span>${getIcon('sprout', 16, '#047857')}</span> <span>1. Batch &amp; Custody Ledger</span>
-          </button>
-          <button type="button" id="tabBtnCreateMap" onclick="window.switchProducerConsoleTab('create_map')" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
-            <span>${getIcon('map-pin', 16, '#047857')}</span> <span>2. Create Batch &amp; Live Movement Map</span>
-          </button>
-          <button type="button" id="tabBtnAnalytics" onclick="window.switchProducerConsoleTab('analytics')" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
-            <span>${getIcon('activity', 16, '#64748b')}</span> <span>3. Farm Stats, Lands, Crops &amp; All Data</span>
+            <span>${getIcon('sprout', 16, '#047857')}</span> <span>Harvest Lots &amp; Custody</span>
           </button>
           <button type="button" id="tabBtnProfile" onclick="window.openProducerRegistrationWizard()" style="padding: 11px 18px; font-size: 13px; font-weight: 800; border: none; border-bottom: 3px solid transparent; background: transparent; color: #64748b; border-radius: 8px 8px 0 0; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s;">
-            <span>${getIcon('edit', 16, '#64748b')}</span> <span>4. Update Farm &amp; KYC Data</span>
+            <span>${getIcon('edit', 16, '#64748b')}</span> <span>Farm Profile &amp; Lands</span>
           </button>
         </div>
 
@@ -1536,52 +1530,31 @@ function renderAdminConsoleUI(container) {
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
             <div>
               <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                <span>${getIcon('sprout', 20, '#047857')}</span> <span>${escapeHtml(t.consoleHeading || 'Harvest Lot & Custody Ledger Console')}</span>
+                <span>${getIcon('sprout', 20, '#047857')}</span> <span>${escapeHtml(t.consoleHeading || 'Harvest Lots in Farm Custody')}</span>
               </h4>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 10px 16px; font-size: 13px; font-weight: 800;" onclick="window.switchProducerConsoleTab('create_map')">
-                <span>${getIcon('map-pin', 14, '#047857')}</span> <span>Open Dedicated Batch &amp; Live Map Tab</span>
-              </button>
-              <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 20px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);" onclick="openHarvestLotModal(null)">
+              <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 10px 22px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);" onclick="openHarvestLotModal(null)">
                 <span>${escapeHtml(t.btnRegisterLot || '+ Register New Harvest Lot')}</span>
               </button>
             </div>
           </div>
 
           <!-- Search & Filter Controls Toolbar -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 18px; display: grid; grid-template-columns: 2fr repeat(4, 1fr) 1.2fr; gap: 10px; align-items: center;">
-            <input type="text" id="filter_search" class="form-input" style="background: #fff; font-size: 12.5px;" placeholder="${escapeHtml(t.searchLotPh || 'Search lot code, crop, variety, or plot...')}" oninput="applyLotFilters()" />
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; align-items: center;">
+            <input type="text" id="filter_search" class="form-input" style="background: #fff; font-size: 13px;" placeholder="${escapeHtml(t.searchLotPh || 'Search lot code, crop, variety, or plot...')}" oninput="applyLotFilters()" />
             
-            <select id="filter_crop" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
-              <option value="ALL">${escapeHtml(t.filterAllCrops || 'All Crops')}</option>
-              ${(wizardState.selectedCrops || []).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(getCropLabel(c))}</option>`).join('')}
-            </select>
-
-            <select id="filter_plot" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
-              <option value="ALL">${escapeHtml(t.filterAllPlots || 'All Plots / Land')}</option>
-              ${(wizardState.plots || []).map(pl => `<option value="${escapeHtml(pl.plot_id)}">${escapeHtml(pl.plot_name || 'Plot')} (${pl.area_acres || 0} Ac)</option>`).join('')}
-            </select>
-
-            <select id="filter_custody" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
+            <select id="filter_custody" class="form-select" style="background: #fff; font-size: 12.5px;" onchange="applyLotFilters()">
               <option value="ALL">${escapeHtml(t.filterAllCustody || 'All Custody States')}</option>
-              <option value="IN_CUSTODY">${escapeHtml(t.statusInCustody || 'In Farm Custody (Editable)')}</option>
-              <option value="IN_TRANSIT">${escapeHtml(t.statusInTransit || 'In Transit (Locked)')}</option>
-              <option value="CLOSED">${escapeHtml(t.statusHandoverDone || 'Handover Approved')}</option>
+              <option value="IN_CUSTODY">${escapeHtml(t.statusInCustody || 'In Farm Custody')}</option>
+              <option value="IN_TRANSIT">${escapeHtml(t.statusInTransit || 'In Transit / Handed Over')}</option>
             </select>
 
-            <select id="filter_payment" class="form-select" style="background: #fff; font-size: 12px;" onchange="applyLotFilters()">
-              <option value="ALL">${escapeHtml(t.filterAllPayment || 'All Payment Statuses')}</option>
-              <option value="PENDING">${escapeHtml(t.paymentPending || 'Pending Settlement')}</option>
-              <option value="ADVANCE">${escapeHtml(t.paymentAdvance || 'Advance Received')}</option>
-              <option value="SETTLED">${escapeHtml(t.paymentSettled || 'Fully Settled')}</option>
-            </select>
-
-            <select id="filter_sort" class="form-select" style="background: #fff; font-size: 12px; font-weight: 700;" onchange="applyLotFilters()">
-              <option value="-created_at">${escapeHtml(t.sortLatest || 'Latest to Oldest')}</option>
-              <option value="created_at">${escapeHtml(t.sortOldest || 'Oldest to Latest')}</option>
-              <option value="-qty">${escapeHtml(t.sortQtyHigh || 'Quantity: High to Low')}</option>
-              <option value="qty">${escapeHtml(t.sortQtyLow || 'Quantity: Low to High')}</option>
+            <select id="filter_sort" class="form-select" style="background: #fff; font-size: 12.5px; font-weight: 700;" onchange="applyLotFilters()">
+              <option value="-created_at">${escapeHtml(t.sortLatest || 'Latest First')}</option>
+              <option value="created_at">${escapeHtml(t.sortOldest || 'Oldest First')}</option>
+              <option value="-qty">${escapeHtml(t.sortQtyHigh || 'Weight: High to Low')}</option>
+              <option value="qty">${escapeHtml(t.sortQtyLow || 'Weight: Low to High')}</option>
             </select>
           </div>
 
@@ -2844,11 +2817,11 @@ function renderAdminConsoleUI(container) {
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px;">
           <div>
             <span style="display: inline-block; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 11.5px; font-weight: 900; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px;">
-              VERIFIED ${escapeHtml(activeRole)} CUSTODY &amp; QR APPEND NODE
+              ${escapeHtml(activeRole)} OPERATIONAL NODE
             </span>
-            <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">${escapeHtml(activeRole)} Supply-Chain Handover &amp; QR Telemetry Console</h3>
+            <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">${escapeHtml(activeRole)} Custody Console</h3>
             <p style="margin: 3px 0 0; font-size: 12.5px; color: #64748b;">
-              Confirm incoming custody handovers and append live weight, product condition, storage temperature, and photos via QR scan.
+              Confirm incoming custody handovers and record custody transfers.
             </p>
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
@@ -2857,19 +2830,19 @@ function renderAdminConsoleUI(container) {
           </div>
         </div>
 
-        <!-- Quick QR / Batch ID Scan Bar -->
+        <!-- Quick Batch Intake Bar -->
         <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div style="flex: 1; min-width: 240px;">
-            <strong style="font-size: 13.5px; color: #065f46; display: block;">Scan or Enter Batch QR / Barcode ID</strong>
-            <span style="font-size: 12px; color: #047857;">Scan the sticker on the crate/lot to immediately Accept Custody or Append Condition/Weight/Photo.</span>
+            <strong style="font-size: 13.5px; color: #065f46; display: block;">Intake Lot by Batch Code</strong>
+            <span style="font-size: 12px; color: #047857;">Enter or scan the Crockford Base32 Batch ID to verify and take custody.</span>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-            <input type="text" id="downstream_scan_lot_code" class="form-input" style="background: #fff; font-family: monospace; min-width: 260px;" placeholder="Paste or scan Batch ID (e.g. 2026...FR0001)" />
-            <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 16px; font-size: 12.5px; font-weight: 800;" onclick="window.handleQuickDownstreamScan('ACCEPT')">
-              ✓ Confirm &amp; Accept Custody
+            <input type="text" id="downstream_scan_lot_code" class="form-input" style="background: #fff; font-family: monospace; min-width: 240px;" placeholder="Scan or enter Batch ID" />
+            <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 18px; font-size: 12.5px; font-weight: 800;" onclick="window.handleQuickDownstreamScan('ACCEPT')">
+              Accept Custody
             </button>
             <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 9px 16px; font-size: 12.5px; font-weight: 800; background: #fff;" onclick="window.handleQuickDownstreamScan('APPEND')">
-              + Append Weight / Condition / Photo
+              Update Details
             </button>
           </div>
         </div>
@@ -2877,7 +2850,7 @@ function renderAdminConsoleUI(container) {
         <!-- Section 1: Incoming Custody Handover Requests -->
         <div style="margin-bottom: 24px;">
           <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: 800; color: #0f172a;">
-            1. Incoming Custody Handover Requests Awaiting Your Confirmation (${incomingRequests.length})
+            Incoming Custody Requests (${incomingRequests.length})
           </h4>
           ${incomingRequests.length === 0 ? `
             <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 20px; text-align: center; color: #64748b; font-size: 13px;">
@@ -2905,10 +2878,10 @@ function renderAdminConsoleUI(container) {
           }).join('')}
         </div>
 
-        <!-- Section 2: Batches Currently in Your Custody (Append-Only Updates) -->
+        <!-- Section 2: Batches in Custody -->
         <div>
           <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: 800; color: #0f172a;">
-            2. Batches in Your Custody — Append Scan Data &amp; Next Handover (${myCustodyLots.length})
+            Batches in Custody (${myCustodyLots.length})
           </h4>
           ${myCustodyLots.length === 0 ? `
             <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 20px; text-align: center; color: #64748b; font-size: 13px;">
@@ -4368,48 +4341,23 @@ function renderAdminConsoleUI(container) {
 
   window.switchProducerConsoleTab = function (tabName) {
     const tabLedgerBtn = document.getElementById('tabBtnLedger');
-    const tabCreateMapBtn = document.getElementById('tabBtnCreateMap');
-    const tabAnalyticsBtn = document.getElementById('tabBtnAnalytics');
     const contentLedger = document.getElementById('consoleTabContentLedger');
+    if (!tabLedgerBtn || !contentLedger) return;
+
+    if (tabName === 'profile') {
+      window.openProducerRegistrationWizard();
+      return;
+    }
+
+    tabLedgerBtn.style.color = '#065f46';
+    tabLedgerBtn.style.borderBottom = '3px solid #047857';
+    tabLedgerBtn.style.background = '#ecfdf5';
+    contentLedger.style.display = 'block';
+
     const contentCreateMap = document.getElementById('consoleTabContentCreateMap');
     const contentAnalytics = document.getElementById('consoleTabContentAnalytics');
-
-    if (!tabLedgerBtn || !tabAnalyticsBtn || !contentLedger || !contentAnalytics) return;
-
-    const resetBtn = btn => {
-      if (!btn) return;
-      btn.style.color = '#64748b';
-      btn.style.borderBottom = '3px solid transparent';
-      btn.style.background = 'transparent';
-    };
-    const activateBtn = btn => {
-      if (!btn) return;
-      btn.style.color = '#065f46';
-      btn.style.borderBottom = '3px solid #047857';
-      btn.style.background = '#ecfdf5';
-    };
-
-    resetBtn(tabLedgerBtn);
-    resetBtn(tabCreateMapBtn);
-    resetBtn(tabAnalyticsBtn);
-
-    contentLedger.style.display = 'none';
     if (contentCreateMap) contentCreateMap.style.display = 'none';
-    contentAnalytics.style.display = 'none';
-
-    if (tabName === 'create_map') {
-      activateBtn(tabCreateMapBtn);
-      if (contentCreateMap) contentCreateMap.style.display = 'block';
-      window.updateInlineBatchIdPreview();
-      setTimeout(() => window.renderFarmerLiveMovementMap(), 60);
-    } else if (tabName === 'analytics') {
-      activateBtn(tabAnalyticsBtn);
-      contentAnalytics.style.display = 'block';
-      renderProducerAnalytics();
-    } else {
-      activateBtn(tabLedgerBtn);
-      contentLedger.style.display = 'block';
-    }
+    if (contentAnalytics) contentAnalytics.style.display = 'none';
   };
 
   window.setAnalyticsDonutMode = function (mode) {
