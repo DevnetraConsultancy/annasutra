@@ -308,19 +308,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _t('appTitle'),
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -0.2),
-              ),
-              Text(
-                _t('appSubtitle'),
-                style: const TextStyle(fontSize: 9.5, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w500),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _t('appTitle'),
+                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -0.2),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  _t('appSubtitle'),
+                  style: const TextStyle(fontSize: 9.5, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -823,7 +827,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(e.key, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+                            Expanded(
+                              child: Text(
+                                e.key,
+                                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             Text('${e.value.toStringAsFixed(1)} Kg (${(percent * 100).toStringAsFixed(0)}%)',
                                 style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
                           ],
@@ -861,7 +872,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 4),
               Icon(icon, size: 16, color: color),
             ],
           ),
