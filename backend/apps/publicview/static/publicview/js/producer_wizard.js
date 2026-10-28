@@ -863,12 +863,38 @@
     }
   };
 
-  window.openProducerRegistrationWizard = function () {
+  window.openProducerRegistrationWizard = async function () {
     wizardState.forceConsoleView = false;
     const contentArea = document.getElementById('workspaceDynamicContent');
-    if (contentArea) {
-      renderWizardInterface(contentArea);
+    if (!contentArea) return;
+
+    if (!wizardState.profile || !wizardState.profile.first_name || !wizardState.plots || !wizardState.sensitive) {
+      try {
+        const [profileRes, plotsRes, sensRes] = await Promise.all([
+          fetch('/api/v1/me/profile', { headers: getAuthHeader() }),
+          fetch('/api/v1/me/plots', { headers: getAuthHeader() }),
+          fetch('/api/v1/me/sensitive', { headers: getAuthHeader() })
+        ]);
+        if (profileRes.ok) {
+          const pData = await profileRes.json();
+          wizardState.profile = pData.profile || pData;
+          if (wizardState.profile.role_details && wizardState.profile.role_details.commodities) {
+            wizardState.selectedCrops = wizardState.profile.role_details.commodities;
+          }
+        }
+        if (plotsRes && plotsRes.ok) {
+          const plData = await plotsRes.json();
+          wizardState.plots = plData.plots || [];
+        }
+        if (sensRes && sensRes.ok) {
+          const sData = await sensRes.json();
+          wizardState.sensitive = sData.sensitive || sData;
+        }
+      } catch (e) {
+        console.warn('Could not refresh profile/plots on wizard open:', e);
+      }
     }
+    renderWizardInterface(contentArea);
   };
 
   window.renderCurrentWorkspace = async function () {
@@ -948,10 +974,11 @@
 
     // SWR STEP 2: Parallel Background Revalidation (No waterfall, no blocking)
     try {
-      const [profileRes, lotsRes, plotsRes] = await Promise.all([
+      const [profileRes, lotsRes, plotsRes, sensRes] = await Promise.all([
         fetch('/api/v1/me/profile', { headers: getAuthHeader() }),
         fetch('/api/v1/lots/', { headers: getAuthHeader() }),
-        fetch('/api/v1/me/plots', { headers: getAuthHeader() })
+        fetch('/api/v1/me/plots', { headers: getAuthHeader() }),
+        fetch('/api/v1/me/sensitive', { headers: getAuthHeader() })
       ]);
 
       if (profileRes.status === 401 || profileRes.status === 403) {
@@ -983,6 +1010,11 @@
         try {
           localStorage.setItem('annasutra_cached_plots', JSON.stringify(wizardState.plots));
         } catch (e) {}
+      }
+
+      if (sensRes && sensRes.ok) {
+        const sData = await sensRes.json();
+        wizardState.sensitive = sData.sensitive || sData;
       }
 
       if (lotsRes && lotsRes.ok) {
@@ -1081,7 +1113,7 @@ function renderAdminConsoleUI(container) {
     ];
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #cbd5e1; padding: 24px; margin: 12px 0;">
+      <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px;">
           <div>
             <h3 style="margin: 0 0 4px; font-size: 20px; color: #0b3d2e; display: flex; align-items: center; gap: 8px;">
@@ -1469,7 +1501,7 @@ function renderAdminConsoleUI(container) {
     const nowIso = new Date().toISOString().slice(0, 16);
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #10b981; padding: 24px; margin: 12px 0; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);">
+      <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         <!-- Top Entity Header Bar -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
           <div>
@@ -1667,7 +1699,7 @@ function renderAdminConsoleUI(container) {
           </div>
 
           <!-- BOTTOM SECTION: Live Lot Movement Map & Next-Party Telemetry Updates -->
-          <div style="background: #ffffff; border: 1.5px solid #10b981; border-radius: 14px; padding: 20px;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
               <div>
                 <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0b3d2e; display: flex; align-items: center; gap: 8px;">
@@ -2795,6 +2827,20 @@ function renderAdminConsoleUI(container) {
      DOWNSTREAM CUSTODY & APPEND-ONLY QR SCAN CONSOLE
      (AGGREGATOR, WHOLESALER, DISTRIBUTOR, RETAILER)
      -------------------------------------------------------------------------- */
+  window.logoutEntitySession = function () {
+    if (typeof window.logoutEntity === 'function') {
+      window.logoutEntity();
+    } else {
+      localStorage.removeItem('annasutra_access_token');
+      localStorage.removeItem('annasutra_role');
+      localStorage.removeItem('annasutra_phone');
+      localStorage.removeItem('annasutra_cached_profile');
+      localStorage.removeItem('annasutra_cached_lots');
+      localStorage.removeItem('annasutra_cached_plots');
+      window.location.href = '/';
+    }
+  };
+
   window.renderDownstreamCustodyConsole = async function (container, role) {
     const activeRole = String(role || currentRole || 'AGGREGATOR').toUpperCase();
     let incomingRequests = [];
@@ -2812,7 +2858,7 @@ function renderAdminConsoleUI(container) {
     const farmerUid = localStorage.getItem('annasutra_farmer_uid') || '';
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid #047857; padding: 24px; margin: 12px 0; box-shadow: 0 4px 16px rgba(4, 120, 87, 0.08);">
+      <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         <!-- Header Banner -->
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px;">
           <div>
@@ -3760,6 +3806,11 @@ function renderAdminConsoleUI(container) {
 
     const existingSens = wizardState.sensitive || {};
 
+    if (!pan && !a4 && (!bank || bank === existingSens.bank_name) && !ifsc && !acc && !upi && (existingSens.pan_masked || existingSens.bank_account_masked)) {
+      // Retain existing saved sensitive KYC details without re-posting
+      return true;
+    }
+
     if (!pan && !a4 && !existingSens.pan_masked && !existingSens.aadhaar_last4) {
       showToast('Please provide either a 10-character PAN or voluntary Aadhaar last-4 digits.', 'warning');
       return false;
@@ -4208,10 +4259,12 @@ function renderAdminConsoleUI(container) {
   function renderExistingPlotPolygons() {
     if (!wizardState.leafletMap || !window.L || !wizardState.plots) return;
     const t = getI18n();
+    const allLatLngs = [];
     wizardState.plots.forEach(p => {
       try {
         if (p.geojson && p.geojson.coordinates && p.geojson.coordinates[0]) {
           const latLngs = p.geojson.coordinates[0].map(pt => [pt[1], pt[0]]);
+          latLngs.forEach(ll => allLatLngs.push(ll));
           L.polygon(latLngs, {
             color: '#059669',
             fillColor: '#10b981',
@@ -4221,6 +4274,11 @@ function renderAdminConsoleUI(container) {
         }
       } catch (e) {}
     });
+    if (allLatLngs.length > 0) {
+      try {
+        wizardState.leafletMap.fitBounds(allLatLngs, { padding: [25, 25], maxZoom: 16 });
+      } catch (err) {}
+    }
   }
 
   /* --------------------------------------------------------------------------

@@ -16,8 +16,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
-  <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261028v2" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261028v2" defer></script>
+  <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261028v5" />
+  <script src="/static/publicview/js/producer_wizard.js?v=20261028v5" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -268,16 +268,17 @@
     .nav-verify-form {
       display: inline-flex;
       align-items: center;
-      background: #f8fafc;
+      background: #ffffff;
       border: 1.5px solid #cbd5e1;
-      border-radius: 9px;
-      padding: 3px 4px 3px 10px;
+      border-radius: 28px;
+      padding: 3px 4px 3px 14px;
       gap: 6px;
-      transition: all 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nav-verify-form:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.12);
+      border-color: #059669;
+      box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.16);
       background: #ffffff;
     }
     .nav-search-input {
@@ -285,23 +286,23 @@
       background: transparent;
       outline: none;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       color: #0f172a;
-      width: 175px;
-      letter-spacing: 0.3px;
+      width: 180px;
+      letter-spacing: 0.2px;
     }
     .nav-search-input::placeholder {
       color: #94a3b8;
-      font-weight: 600;
+      font-weight: 500;
     }
     .btn-nav-qr {
-      background: #ecfdf5;
+      background: #f0fdf4;
       color: #047857;
       border: 1px solid #a7f3d0;
-      padding: 6px 11px;
-      border-radius: 7px;
+      padding: 6px 12px;
+      border-radius: 20px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -309,6 +310,7 @@
       justify-content: center;
       transition: all 0.2s;
       line-height: 1;
+      box-shadow: 0 1px 2px rgba(4, 120, 87, 0.08);
     }
     .btn-nav-qr svg {
       width: 14px;
@@ -316,32 +318,35 @@
       flex-shrink: 0;
     }
     .btn-nav-qr:hover {
-      background: #d1fae5;
-      border-color: #059669;
+      background: #dcfce7;
+      border-color: #86efac;
       transform: translateY(-1px);
     }
     .btn-nav-submit {
-      background: var(--primary);
+      background: linear-gradient(135deg, #0b3d2e 0%, #064e3b 100%);
       color: #ffffff;
       border: none;
-      padding: 6px 14px;
-      border-radius: 7px;
-      font-size: 13px;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12.5px;
       font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(11, 61, 46, 0.25);
     }
     .btn-nav-submit:hover {
-      background: var(--primary-dark);
+      background: linear-gradient(135deg, #047857 0%, #0b3d2e 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(11, 61, 46, 0.35);
     }
     .btn-nav-login {
       background-color: var(--saffron);
       color: white;
       padding: 8px 20px;
-      border-radius: 8px;
+      border-radius: 20px;
       border: none;
       font-size: 13.5px;
       font-weight: 800;
@@ -360,14 +365,55 @@
     }
     .user-pill {
       display: none;
-      background: #14532d;
-      color: #86efac;
-      padding: 7px 14px;
-      border-radius: 8px;
+      background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+      color: #ecfdf5;
+      padding: 7px 16px;
+      border-radius: 24px;
       font-size: 12.5px;
-      font-weight: 800;
-      border: 1px solid #22c55e;
+      font-weight: 700;
+      border: 1px solid rgba(52, 211, 153, 0.45);
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(6, 78, 59, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      align-items: center;
+      gap: 8px;
+    }
+    .user-pill:hover {
+      background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+      border-color: #34d399;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(6, 78, 59, 0.35);
+    }
+    .user-pill-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      display: inline-block;
+      animation: pulseUserDot 2s infinite;
+    }
+    @keyframes pulseUserDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(1.15); }
+    }
+    @media (max-width: 992px) {
+      .navbar {
+        padding: 10px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .nav-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .nav-verify-form {
+        flex: 1;
+        min-width: 200px;
+      }
+      .nav-search-input {
+        width: 100%;
+      }
     }
 
     /* 3. HERO VIEWPORT SHOWCASE (NPCI PROMO STYLE - CRYSTAL CLEAR VIDEO) */
@@ -1105,35 +1151,31 @@
 
 
 
-    /* CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY WHEN LOGGED IN) */
+    /* FULL-SCREEN OPERATIONAL WORKSPACE (SHOWN ONLY WHEN LOGGED IN) */
+    .confined-workspace-container {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #f8fafc;
+    }
     .confined-workspace {
       display: none;
-      background: #ffffff;
-      border-radius: 16px;
-      border: 2px solid #15803d;
-      padding: 24px;
-      margin-bottom: 28px;
-      box-shadow: 0 6px 24px rgba(21, 128, 61, 0.12);
+      background: #f8fafc;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 20px 32px !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      min-height: 85vh;
+      width: 100%;
+      box-sizing: border-box;
     }
     .confined-banner {
-      background: #f0fdf4;
-      border: 1px solid #86efac;
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+      display: none !important;
     }
-    .confined-badge {
-      font-size: 12px;
-      font-weight: 800;
-      color: #166534;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .workspace-header {
+      display: none !important;
     }
     .btn-logout {
       background: #dc2626;
@@ -1144,9 +1186,6 @@
       font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
-    }
-    .workspace-header {
-      margin-bottom: 18px;
     }
     .workspace-header h4 {
       margin: 0 0 4px;
@@ -2180,7 +2219,7 @@
       <button class="btn-nav-login" id="navLoginBtn" onclick="openEntityPortalModal()">
         <span id="navLoginText">Log In</span>
       </button>
-      <div class="user-pill" id="userPill" onclick="scrollToWorkspace()">
+      <div class="user-pill" id="userPill" onclick="scrollToWorkspace()"><span class="user-pill-dot"></span>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="activeUserName">Producer (Active)</span>
       </div>
     </div>
@@ -2743,35 +2782,18 @@
     </div>
   </div>
 
-  <!-- CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
-  <div class="confined-workspace-container" style="max-width: 1280px; margin: 0 auto; padding: 0 24px;">
+  <!-- FULL-SCREEN OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
+  <div class="confined-workspace-container" id="confinedWorkspaceContainer">
     <div class="confined-workspace" id="confinedWorkspace" style="display: none;">
-      <div class="confined-banner">
-        <div class="confined-badge">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span id="confinedBadgeText">Registered Entity</span>
-        </div>
-        <button class="btn-logout" onclick="logoutEntity()" id="btnLogout">Log Out</button>
-      </div>
-
-      <div class="workspace-header">
-        <h4 id="workspaceTitle">Operational Custody Console</h4>
-        <p id="workspaceSubtitle">Logged in as verified entity</p>
-      </div>
-
-      <div class="workspace-tools-grid" id="workspaceTools">
-        <!-- Dynamic tools injected strictly based on role -->
-      </div>
-
-      <div style="margin-top: 18px;">
-        <h5 style="margin: 0 0 10px; font-size: 14px; font-weight: 800; color: var(--slate-dark);" id="workspaceBatchHeading">
-          Active Batches in Custody:
-        </h5>
-        <div id="workspaceBatchesList">
-          <!-- Dynamic batch list -->
-        </div>
-      </div>
+      <div id="workspaceTools" style="display: none;"></div>
+      <div id="workspaceBatchesList" style="display: none;"></div>
     </div>
   </div>
+
+  <!-- SINGLE-LINE GREEN FOOTER FOR ALL ENTITY CONSOLES -->
+    <footer id="entityConsoleFooter" style="display: none; background: #041c14; border-top: 1px solid #064e3b; padding: 18px 24px; text-align: center; color: #10b981; font-size: 13px; font-weight: 700; width: 100%; box-sizing: border-box;">
+    &copy; 2026 AnnaSutra &bull; Developed &amp; Maintained by C-DAC, Ministry of Electronics &amp; IT (MeitY), Government of India.
+  </footer>
 
   <!-- 8. NATIONAL TRUST & VERIFICATION STANDARDS - GOD-LEVEL FULL-WIDTH SHOWCASE -->
   <section class="trust-standards-section" id="trustSection">
@@ -2792,7 +2814,7 @@
           </div>
           <h4 id="trust1Title">Cryptographic Append-Only Ledger</h4>
           <p id="trust1Desc">
-            Every harvest genesis, mandi weighing, and transit dispatch is chained with SHA-256 cryptographic hashes and immutable PostgreSQL database triggers.
+            Every harvest genesis, mandi weighing, and transit dispatch is chained with SHA-256 cryptographic hashes and immutable database triggers.
           </p>
           <div class="pillar-pills">
             <span class="pillar-pill" id="trust1Pill1">SHA-256 Hashes</span>
@@ -3121,22 +3143,18 @@
     <div class="portal-modal-box" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeEntityPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       
-      <div class="portal-modal-header">
-        <div class="portal-modal-badge">
-          <span class="hero-badge-dot"></span>
-          <span id="portalBadgeText">PRODUCE TRACEABILITY PILOT</span>
-        </div>
-        <h3 class="portal-modal-title" id="portalModalTitle">Who Are You?</h3>
-        <p class="portal-modal-subtitle" id="portalModalSubtitle">
-          Select your authorized role in the agricultural value chain to access your confined operational node.
+      <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 24px 32px;">
+        <h3 class="portal-modal-title" id="portalModalTitle" style="font-size: 24px;">Who Are You?</h3>
+        <p class="portal-modal-subtitle" id="portalModalSubtitle" style="font-size: 13.5px; color: #cbd5e1; margin-top: 4px;">
+          Select your authorized role to access your operational node.
         </p>
       </div>
 
-      <div class="portal-modal-body">
-        <div class="portal-entity-grid">
+      <div class="portal-modal-body" style="padding: 24px 28px;">
+        <div class="portal-entity-grid" style="gap: 14px;">
           <!-- 1. Producer -->
-          <div class="portal-card-item tier-producer" onclick="selectRoleFromPortal('PRODUCER')">
-            <div class="portal-card-top">
+          <div class="portal-card-item tier-producer" onclick="selectRoleFromPortal('PRODUCER')" style="padding: 18px;">
+            <div class="portal-card-top" style="margin-bottom: 10px;">
               <div class="portal-card-avatar avatar-producer">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9A9 9 0 0 1 3 11a9 9 0 0 1 9-9z"></path>
@@ -3144,93 +3162,73 @@
                   <path d="M8 10l4-4 4 4"></path>
                 </svg>
               </div>
-              <span class="portal-tier-badge badge-producer" id="portalTierBadge1">Tier 1 • Genesis</span>
+              <span style="font-size: 11px; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 12px;">Farmer / FPO</span>
             </div>
-            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleProducer">Producer</strong>
-            <div style="font-size: 12px; font-weight: 700; color: #059669; margin-bottom: 8px;" id="portalRoleSubProducer">Farmer / FPO Cultivator</div>
-            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescProducer">
-              Register crop harvest genesis, geofence farm plots, and generate tamper-evident crate QR tags.
+            <strong style="font-size: 16px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleProducer">Producer</strong>
+            <p style="font-size: 12.5px; color: #475569; margin: 0 0 14px; line-height: 1.4; flex: 1;" id="portalRoleDescProducer">
+              Register farm plots, log crop harvests, and print lot QR labels.
             </p>
-            <div class="pillar-pills" style="margin-bottom: 14px;">
-              <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill1A">Farm Genesis</span>
-              <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill1B">Crate QR Labels</span>
-            </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #059669;" id="btnPortalProducer">Sign In as Producer</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; font-weight: 800; background: #059669; border-radius: 8px;" id="btnPortalProducer">Sign In as Producer &rarr;</button>
           </div>
 
           <!-- 2. Aggregator -->
-          <div class="portal-card-item tier-aggregator" onclick="selectRoleFromPortal('AGGREGATOR')">
-            <div class="portal-card-top">
+          <div class="portal-card-item tier-aggregator" onclick="selectRoleFromPortal('AGGREGATOR')" style="padding: 18px;">
+            <div class="portal-card-top" style="margin-bottom: 10px;">
               <div class="portal-card-avatar avatar-aggregator">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M3 6h18M12 6v14M5 10l7-4 7 4M6 14l-4 4h8l-4-4zM18 14l-4 4h8l-4-4z"></path>
                 </svg>
               </div>
-              <span class="portal-tier-badge badge-aggregator" id="portalTierBadge2">Tier 2 • Mandi</span>
+              <span style="font-size: 11px; font-weight: 800; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 2px 8px; border-radius: 12px;">Mandi / APMC</span>
             </div>
-            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAggregator">Aggregator</strong>
-            <div style="font-size: 12px; font-weight: 700; color: #d97706; margin-bottom: 8px;" id="portalRoleSubAggregator">Mandi Arhatiya / APMC Yard</div>
-            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAggregator">
-              Verify gross weights on digital weighbridges, assign certified quality grades, and settle auctions.
+            <strong style="font-size: 16px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAggregator">Aggregator</strong>
+            <p style="font-size: 12.5px; color: #475569; margin: 0 0 14px; line-height: 1.4; flex: 1;" id="portalRoleDescAggregator">
+              Weighbridge intake, certified quality grading, and auction transfers.
             </p>
-            <div class="pillar-pills" style="margin-bottom: 14px;">
-              <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2A">Weighbridge Attest</span>
-              <span style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill2B">Certified Grade</span>
-            </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #d97706;" id="btnPortalAggregator">Sign In as Aggregator</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; font-weight: 800; background: #d97706; border-radius: 8px;" id="btnPortalAggregator">Sign In as Aggregator &rarr;</button>
           </div>
 
           <!-- 3. Wholesaler -->
-          <div class="portal-card-item tier-wholesaler" onclick="selectRoleFromPortal('WHOLESALER')">
-            <div class="portal-card-top">
+          <div class="portal-card-item tier-wholesaler" onclick="selectRoleFromPortal('WHOLESALER')" style="padding: 18px;">
+            <div class="portal-card-top" style="margin-bottom: 10px;">
               <div class="portal-card-avatar avatar-wholesaler">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                   <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                 </svg>
               </div>
-              <span class="portal-tier-badge badge-wholesaler" id="portalTierBadge3">Tier 3 • Terminal</span>
+              <span style="font-size: 11px; font-weight: 800; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 12px;">Terminal Market</span>
             </div>
-            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleWholesaler">Wholesaler</strong>
-            <div style="font-size: 12px; font-weight: 700; color: #2563eb; margin-bottom: 8px;" id="portalRoleSubWholesaler">Terminal Market / Bulk Trader</div>
-            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescWholesaler">
-              Terminal intake, lot splitting with mass-balance preservation, and cold bay temperature allocation.
+            <strong style="font-size: 16px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleWholesaler">Wholesaler</strong>
+            <p style="font-size: 12.5px; color: #475569; margin: 0 0 14px; line-height: 1.4; flex: 1;" id="portalRoleDescWholesaler">
+              Terminal lot intake, cold storage allocation, and bulk dispatches.
             </p>
-            <div class="pillar-pills" style="margin-bottom: 14px;">
-              <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill3A">Mass-Balance Split</span>
-              <span style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill3B">Cold Bay Control</span>
-            </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #2563eb;" id="btnPortalWholesaler">Sign In as Wholesaler</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; font-weight: 800; background: #2563eb; border-radius: 8px;" id="btnPortalWholesaler">Sign In as Wholesaler &rarr;</button>
           </div>
 
           <!-- 4. Distributor -->
-          <div class="portal-card-item tier-distributor" onclick="selectRoleFromPortal('DISTRIBUTOR')">
-            <div class="portal-card-top">
+          <div class="portal-card-item tier-distributor" onclick="selectRoleFromPortal('DISTRIBUTOR')" style="padding: 18px;">
+            <div class="portal-card-top" style="margin-bottom: 10px;">
               <div class="portal-card-avatar avatar-distributor">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="1" y="3" width="15" height="13"></rect>
-                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
                   <circle cx="5.5" cy="18.5" r="2.5"></circle>
                   <circle cx="18.5" cy="18.5" r="2.5"></circle>
                 </svg>
               </div>
-              <span class="portal-tier-badge badge-distributor" id="portalTierBadge4">Tier 4 • Logistics</span>
+              <span style="font-size: 11px; font-weight: 800; color: #3730a3; background: #eef2ff; border: 1px solid #c7d2fe; padding: 2px 8px; border-radius: 12px;">Logistics Fleet</span>
             </div>
-            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleDistributor">Distributor</strong>
-            <div style="font-size: 12px; font-weight: 700; color: #4f46e5; margin-bottom: 8px;" id="portalRoleSubDistributor">Cold-Chain Fleet & Depot</div>
-            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescDistributor">
-              Accept transit custody, log vehicle GPS highway checkpoints, and audit continuous reefer temperatures.
+            <strong style="font-size: 16px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleDistributor">Distributor</strong>
+            <p style="font-size: 12.5px; color: #475569; margin: 0 0 14px; line-height: 1.4; flex: 1;" id="portalRoleDescDistributor">
+              Fleet cold-chain custody, transit checkpoints, and delivery logs.
             </p>
-            <div class="pillar-pills" style="margin-bottom: 14px;">
-              <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill4A">GPS Geofence</span>
-              <span style="background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill4B">Reefer Telemetry</span>
-            </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #4f46e5;" id="btnPortalDistributor">Sign In as Distributor</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; font-weight: 800; background: #4f46e5; border-radius: 8px;" id="btnPortalDistributor">Sign In as Distributor &rarr;</button>
           </div>
 
           <!-- 5. Retailer -->
-          <div class="portal-card-item tier-retailer" onclick="selectRoleFromPortal('RETAILER')">
-            <div class="portal-card-top">
+          <div class="portal-card-item tier-retailer" onclick="selectRoleFromPortal('RETAILER')" style="padding: 18px;">
+            <div class="portal-card-top" style="margin-bottom: 10px;">
               <div class="portal-card-avatar avatar-retailer">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="9" cy="21" r="1"></circle>
@@ -3238,44 +3236,34 @@
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
               </div>
-              <span class="portal-tier-badge badge-retailer" id="portalTierBadge5">Tier 5 • Last-Mile</span>
+              <span style="font-size: 11px; font-weight: 800; color: #c2410c; background: #fff7ed; border: 1px solid #fed7aa; padding: 2px 8px; border-radius: 12px;">POS &amp; Store</span>
             </div>
-            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleRetailer">Retailer</strong>
-            <div style="font-size: 12px; font-weight: 700; color: #ea580c; margin-bottom: 8px;" id="portalRoleSubRetailer">Supermarket & Kirana POS</div>
-            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescRetailer">
-              Accept store deliveries, print consumer shelf QR standees, and log retail checkout decrement.
+            <strong style="font-size: 16px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleRetailer">Retailer</strong>
+            <p style="font-size: 12.5px; color: #475569; margin: 0 0 14px; line-height: 1.4; flex: 1;" id="portalRoleDescRetailer">
+              Store delivery intake, customer shelf QR standee, and checkout logs.
             </p>
-            <div class="pillar-pills" style="margin-bottom: 14px;">
-              <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill5A">Shelf QR Standee</span>
-              <span style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPill5B">POS Deduct</span>
-            </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #ea580c;" id="btnPortalRetailer">Sign In as Retailer</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; font-weight: 800; background: #ea580c; border-radius: 8px;" id="btnPortalRetailer">Sign In as Retailer &rarr;</button>
           </div>
 
           <!-- 6. Admin / Verifier -->
-          <div class="portal-card-item tier-admin" onclick="selectRoleFromPortal('ADMIN')" style="border-color: #cbd5e1; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
-            <div class="portal-card-top">
+          <div class="portal-card-item tier-admin" onclick="selectRoleFromPortal('ADMIN')" style="padding: 18px; border-color: #cbd5e1; background: #ffffff;">
+            <div class="portal-card-top" style="margin-bottom: 10px;">
               <div class="portal-card-avatar" style="background: #0f172a; color: #fde047;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                   <path d="m9 12 2 2 4-4"></path>
                 </svg>
               </div>
-              <span class="portal-tier-badge" style="background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;" id="portalTierBadgeAdmin">Governance • KYC</span>
+              <span style="font-size: 11px; font-weight: 800; color: #0f172a; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 8px; border-radius: 12px;">Governance</span>
             </div>
-            <strong style="font-size: 17px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAdmin">Admin / Verifier</strong>
-            <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="portalRoleSubAdmin">Entity Verification &amp; Audit Authority</div>
-            <p style="font-size: 13px; color: #475569; margin: 0 0 14px; line-height: 1.5; flex: 1;" id="portalRoleDescAdmin">
-              Inspect pending producer &amp; entity registrations, audit DPDP encrypted credentials, and approve or reject nodes with QR allocation.
+            <strong style="font-size: 16px; color: #0f172a; margin-bottom: 2px;" id="portalRoleTitleAdmin">Admin / Verifier</strong>
+            <p style="font-size: 12.5px; color: #475569; margin: 0 0 14px; line-height: 1.4; flex: 1;" id="portalRoleDescAdmin">
+              Inspect participant registrations, verify credentials, and approve nodes.
             </p>
-            <div class="pillar-pills" style="margin-bottom: 14px;">
-              <span style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPillAdminA">KYC Verification</span>
-              <span style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;" id="portalPillAdminB">QR Allocation</span>
-            </div>
-            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; background: #0f172a; color: #ffffff;" id="btnPortalAdmin">Sign In as Admin</button>
+            <button type="button" class="btn-workspace-tool" style="width: 100%; padding: 9px; font-size: 12.5px; font-weight: 800; background: #0f172a; color: #ffffff; border-radius: 8px;" id="btnPortalAdmin">Sign In as Admin &rarr;</button>
           </div>
         </div>
-
+      </div>
         <div style="margin-top: 24px; padding: 14px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
           <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -6523,6 +6511,12 @@
         if (el) el.style.display = 'none';
       });
 
+      // Switch to single-line green footer for all entity consoles
+      const publicFooter = document.querySelector('footer.ataraxis-footer-wrap') || document.querySelector('footer.home-footer') || document.querySelector('footer:not(#entityConsoleFooter)');
+      if (publicFooter) publicFooter.style.display = 'none';
+      const entityFooter = document.getElementById('entityConsoleFooter');
+      if (entityFooter) entityFooter.style.display = 'block';
+
       const ws = document.getElementById('confinedWorkspace');
       if (ws) ws.style.display = 'block';
 
@@ -6558,7 +6552,16 @@
       ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'block';
-      });
+      }
+    window.logoutEntity = logoutEntity;
+    window.logoutEntitySession = logoutEntity;
+);
+
+      // Restore public marketing footer
+      const publicFooter = document.querySelector('footer.ataraxis-footer-wrap') || document.querySelector('footer.home-footer') || document.querySelector('footer:not(#entityConsoleFooter)');
+      if (publicFooter) publicFooter.style.display = 'block';
+      const entityFooter = document.getElementById('entityConsoleFooter');
+      if (entityFooter) entityFooter.style.display = 'none';
 
       const bgVid = document.getElementById('heroBgVideo');
       if (bgVid && !bgVid.dataset.userPaused) {
