@@ -33,12 +33,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final TextEditingController _otpController = TextEditingController();
   String _selectedRole = 'PRODUCER';
 
-  static const List<Map<String, String>> _roleOptions = [
-    {'code': 'PRODUCER', 'label': 'Farmer / FPO', 'icon': '🌾'},
-    {'code': 'AGGREGATOR', 'label': 'Mandi / APMC', 'icon': '🏢'},
-    {'code': 'WHOLESALER', 'label': 'Wholesaler', 'icon': '📦'},
-    {'code': 'DISTRIBUTOR', 'label': 'Distributor', 'icon': '🚚'},
-    {'code': 'RETAILER', 'label': 'Retailer Shop', 'icon': '🛒'},
+  static const List<Map<String, dynamic>> _roleOptions = [
+    {'code': 'PRODUCER', 'label': 'Farmer / FPO', 'icon': Icons.agriculture},
+    {'code': 'AGGREGATOR', 'label': 'Mandi / APMC', 'icon': Icons.storefront_outlined},
+    {'code': 'WHOLESALER', 'label': 'Wholesaler', 'icon': Icons.inventory_2_outlined},
+    {'code': 'DISTRIBUTOR', 'label': 'Distributor', 'icon': Icons.local_shipping_outlined},
+    {'code': 'RETAILER', 'label': 'Retailer Shop', 'icon': Icons.shopping_bag_outlined},
   ];
 
   static const Map<String, Map<String, String>> _strings = {
@@ -1044,10 +1044,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(right: 6),
                       child: ChoiceChip(
-                        avatar: Text(r['icon'] ?? '', style: const TextStyle(fontSize: 12)),
-                        label: Text(r['label'] ?? ''),
+                        avatar: Icon(
+                          r['icon'] as IconData,
+                          size: 14,
+                          color: isSel ? Colors.white : const Color(0xFF047857),
+                        ),
+                        label: Text(r['label'] as String),
                         selected: isSel,
-                        onSelected: (_) => setState(() => _selectedRole = r['code']!),
+                        onSelected: (_) => setState(() => _selectedRole = r['code'] as String),
                         selectedColor: const Color(0xFF0B3D2E),
                         backgroundColor: Colors.white,
                         side: BorderSide(color: isSel ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
