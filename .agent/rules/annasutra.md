@@ -19,7 +19,7 @@ Read `docs/00_MASTER_BRIEF.md` before any task. Then read the docs it points to 
 ## Stack
 - Targets: Android (primary for field staff) and Web (installable PWA for office users) from ONE Flutter codebase. iOS later, optional. Read docs/16_platform_web_android.md. Never weaken signing or storage rules to make a platform work; stop and report instead.
 - App: Flutter (Dart), Riverpod, go_router, Drift + SQLCipher, Dio, mobile_scanner, flutter_secure_storage, local_auth, a passkey plugin, workmanager. Check pub.dev for current maintained versions before choosing.
-- Backend: Python, Django, Django REST Framework, PostgreSQL, a Postgres-backed job queue.
+- Backend: Python, Django, Django REST Framework, MySQL 8.0+ (Aiven Cloud MySQL via PyMySQL).
 - Public page: Django template, no JavaScript framework.
 
 ## Never
