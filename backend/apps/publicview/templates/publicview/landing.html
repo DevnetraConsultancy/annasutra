@@ -3417,6 +3417,9 @@
 
   <!-- TRANSLATION & CLIENT WORKSPACE ENGINE -->
   <script>
+    let currentLang = '{{ user_lang|default:"en" }}';
+    let currentRole = 'PRODUCER';
+    let currentPreviewRole = 'PRODUCER';
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
       return match ? decodeURIComponent(match[2]) : null;
@@ -5046,65 +5049,85 @@
           title: 'Producer Operations Console',
           org: 'Bardhaman Organic Farmers Producer Co-op',
           station: 'Cluster Farm Yard #4, Bardhaman',
-          launchBtn: 'Sign In as Producer',
+          launchBtn: 'Sign In as Producer \u2192',
           metrics: [
             { title: 'Total Harvested', val: '18,450 Kg', tag: '+14% vs last month' },
             { title: 'Active QR Batches', val: '12 Batches', tag: 'All tamper-evident sealed' },
             { title: 'Dispatched to Mandi', val: '14,200 Kg', tag: 'Dual-signed transfer' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) \u2022 500.0 Kg \u2022 Grade A Organic', status: 'In Farm Custody' },
+            { code: 'AS-TOM-2026-X1', desc: 'Potato (Jyoti) \u2022 1,200.0 Kg \u2022 24 Crates Sealed', status: 'Ready for Mandi' },
+            { code: 'WB-FPO-RABI-04', desc: 'Cauliflower (Snowball) \u2022 320.0 Kg \u2022 Verified Lot', status: 'Quality Certified' }
+          ]
         },
         AGGREGATOR: {
           icon: 'scale',
           title: 'Aggregator Mandi Console',
           org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
           station: 'Gate #2 Weighbridge & Grading Yard',
-          launchBtn: 'Sign In as Aggregator',
+          launchBtn: 'Sign In as Aggregator \u2192',
           metrics: [
             { title: 'Mandi Inward Intake', val: '42,800 Kg', tag: 'Digital weighbridge certified' },
             { title: 'Certified Grade A', val: '99.4%', tag: 'Official quality tested' },
-            { title: 'Auction Cleared', val: '₹ 14.8 Lakh', tag: 'e-NAM settlements' }
+            { title: 'Auction Cleared', val: '\u20B9 14.8 Lakh', tag: 'e-NAM settlements' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Grade A) \u2022 500.0 Kg \u2022 Mandi Weighbridge Slip #8812', status: 'In Mandi Custody' },
+            { code: 'HGH-LOT-9921-A', desc: 'Potato (Jyoti Grade A) \u2022 700.0 Kg \u2022 Auction Cleared', status: 'Auction Settled' },
+            { code: 'HGH-LOT-9921-B', desc: 'Potato (Jyoti Grade B) \u2022 500.0 Kg \u2022 Transit Pass Issued', status: 'Ready for Wholesaler' }
+          ]
         },
         WHOLESALER: {
           icon: 'warehouse',
           title: 'Wholesaler Terminal Console',
           org: 'Kolkata Central Wholesalers Ltd (Posta Market)',
           station: 'Posta Terminal Complex, Kolkata',
-          launchBtn: 'Sign In as Wholesaler',
+          launchBtn: 'Sign In as Wholesaler \u2192',
           metrics: [
-            { title: 'Cold Bay Inventory', val: '65,200 Kg', tag: 'Controlled 4°C - 8°C chambers' },
+            { title: 'Cold Bay Inventory', val: '65,200 Kg', tag: 'Controlled 4\u00B0C - 8\u00B0C chambers' },
             { title: 'Consignments Split', val: '38 Lots', tag: 'Mass-balance preserved' },
             { title: 'Fleet Dispatches', val: '24 Shipments', tag: 'Locked reefer trucks' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid) \u2022 500.0 Kg \u2022 Cold Bay #3 Active', status: 'In Cold Storage' },
+            { code: 'CCW-PLT-4401', desc: 'Onion (Nasik Red) \u2022 1,800.0 Kg \u2022 Pallet G-02', status: 'Terminal Stock' },
+            { code: 'CCW-PLT-4402', desc: 'Green Chilli \u2022 250.0 Kg \u2022 AC Chamber #1', status: 'Ready for Fleet' }
+          ]
         },
         DISTRIBUTOR: {
           icon: 'truck',
           title: 'Distributor Logistics Console',
           org: 'Bengal Cold-Chain Express Logistics (WB-LOG-004)',
           station: 'Central Transit Depot, New Town, Kolkata',
-          launchBtn: 'Sign In as Distributor',
+          launchBtn: 'Sign In as Distributor \u2192',
           metrics: [
             { title: 'Active Reefer Trucks', val: '18 Trucks', tag: 'Live GPS geofenced' },
-            { title: 'Mean Cargo Temp', val: '7.4 °C', tag: 'Zero thermal excursions' },
+            { title: 'Mean Cargo Temp', val: '7.4 \u00B0C', tag: 'Zero thermal excursions' },
             { title: 'On-Time Retail Drops', val: '99.8%', tag: '42 Store destinations' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) \u2022 500.0 Kg \u2022 Reefer WB-19-AX-4402', status: 'In Transit (Kolkata)' },
+            { code: '6R3T8PLM2K9V', desc: 'Apple (Kinnaur) \u2022 300.0 Kg \u2022 Highway Toll Checkpoint', status: 'In Transit' },
+            { code: 'DIST-VEG-4401', desc: 'Green Peas (Fresh) \u2022 450.0 Kg \u2022 Cold-chain verified', status: 'Arrived at Depot' }
+          ]
         },
         RETAILER: {
-          icon: 'cart',
+          icon: 'shopping-cart',
           title: 'Retailer Point-of-Sale Console',
           org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
           station: 'Produce Aisle, Lake Gardens, Kolkata',
-          launchBtn: 'Sign In as Retailer',
+          launchBtn: 'Sign In as Retailer \u2192',
           metrics: [
             { title: 'Shelf Stock Volume', val: '1,420 Kg', tag: 'Active on display counters' },
             { title: 'Consumer QR Scans', val: '1,890 Scans', tag: '4.9/5.0 Customer trust score' },
             { title: 'Freshness Retention', val: '99.2%', tag: '< 0.8% organic waste rate' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'Tomato (Hybrid Red) \u2022 120.0 Kg on shelf \u2022 Grade A Organic', status: 'Active on Shelf' },
+            { code: '4T9Q2XMD7K1B', desc: 'Carrot (Orange) \u2022 80.0 Kg \u2022 24 Consumer Scans Today', status: 'Active on Shelf' },
+            { code: 'RET-APP-9901', desc: 'Apple (Kinnaur) \u2022 45.0 Kg \u2022 Shelf Standee QR Scanned', status: 'Active on Shelf' }
+          ]
         }
       },
       hi: {
@@ -5113,65 +5136,85 @@
           title: 'उत्पादक संचालन कंसोल',
           org: 'बर्धमान ऑर्गेनिक फार्मर्स प्रोड्यूसर को-ऑप',
           station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
-          launchBtn: 'उत्पादक के रूप में लॉगिन करें',
+          launchBtn: 'उत्पादक के रूप में लॉगिन करें \u2192',
           metrics: [
             { title: 'कुल कटाई उपज', val: '18,450 किग्रा', tag: '+14% पिछले माह से अधिक' },
             { title: 'सक्रिय क्यूआर बैच', val: '12 लॉट्स', tag: 'सभी क्रेट सुरक्षित रूप से सीलबंद' },
             { title: 'मंडी को प्रेषित', val: '14,200 किग्रा', tag: 'द्विपक्षीय हस्ताक्षरित प्रेषण' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) \u2022 500.0 किग्रा \u2022 ग्रेड ए जैविक', status: 'खेत में कस्टडी' },
+            { code: 'AS-TOM-2026-X1', desc: 'आलू (ज्योति) \u2022 1,200.0 किग्रा \u2022 24 क्रेट सीलबंद', status: 'मंडी हेतु तैयार' },
+            { code: 'WB-FPO-RABI-04', desc: 'फूलगोभी (स्नोबॉल) \u2022 320.0 किग्रा \u2022 सत्यापित लॉट', status: 'गुणवत्ता प्रमाणित' }
+          ]
         },
         AGGREGATOR: {
           icon: 'scale',
           title: 'संग्रहकर्ता मंडी कंसोल',
           org: 'हुगली एपीएमसी संग्रह यार्ड (MANDI-WB-012)',
-          station: 'गेट #2 वेज-ब्रिज एवं ग्रेडिंग परिसर',
-          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें',
+          station: 'गेट #2 वेज-ब्रिज एवं ग्रेडिंग यार्ड',
+          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें \u2192',
           metrics: [
             { title: 'मंडी आवक वजन', val: '42,800 किग्रा', tag: 'डिजिटल वेज-ब्रिज द्वारा प्रमाणित' },
             { title: 'प्रमाणित ग्रेड ए', val: '99.4%', tag: 'आधिकारिक गुणवत्ता जांच' },
-            { title: 'नीलामी निकासी', val: '₹ 14.8 लाख', tag: 'ई-नाम द्वारा निपटान' }
+            { title: 'नीलामी निकासी', val: '\u20B9 14.8 लाख', tag: 'ई-नाम द्वारा निपटान' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (ग्रेड ए) \u2022 500.0 किग्रा \u2022 वेज-ब्रिज पर्ची #8812', status: 'मंडी कस्टडी में' },
+            { code: 'HGH-LOT-9921-A', desc: 'आलू (ज्योति ग्रेड ए) \u2022 700.0 किग्रा \u2022 नीलामी पूर्ण', status: 'नीलामी स्वीकृत' },
+            { code: 'HGH-LOT-9921-B', desc: 'आलू (ज्योति ग्रेड बी) \u2022 500.0 किग्रा \u2022 पारगमन पास जारी', status: 'थोक व्यापारी हेतु तैयार' }
+          ]
         },
         WHOLESALER: {
           icon: 'warehouse',
           title: 'थोक व्यापारी टर्मिनल कंसोल',
           org: 'कोलकाता सेंट्रल होलसेलर्स लि. (पोस्ता बाजार)',
-          station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
-          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें',
+          station: 'पोस्ता टर्मिनल कॉम्प्लेक्स, कोलकाता',
+          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें \u2192',
           metrics: [
-            { title: 'शीत गृह भंडार', val: '65,200 किग्रा', tag: 'नियंत्रित 4°C - 8°C तापमान' },
+            { title: 'शीत गृह भंडार', val: '65,200 किग्रा', tag: 'नियंत्रित 4\u00B0C - 8\u00B0C तापमान' },
             { title: 'लॉट विभाजन', val: '38 लॉट्स', tag: 'द्रव्यमान-संतुलन सुरक्षित' },
             { title: 'फ्लीट प्रेषण', val: '24 खेपें', tag: 'सीलबंद रीफर वाहन' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड) \u2022 500.0 किग्रा \u2022 कोल्ड बे #3 में', status: 'शीत गृह में' },
+            { code: 'CCW-PLT-4401', desc: 'प्याज (नासिक लाल) \u2022 1,800.0 किग्रा \u2022 पैलेट G-02', status: 'टर्मिनल स्टॉक' },
+            { code: 'CCW-PLT-4402', desc: 'हरी मिर्च \u2022 250.0 किग्रा \u2022 वातानुकूलित कक्ष #1', status: 'वाहन हेतु तैयार' }
+          ]
         },
         DISTRIBUTOR: {
           icon: 'truck',
           title: 'वितरक लॉजिस्टिक्स कंसोल',
           org: 'बंगाल कोल्ड-चेन एक्सप्रेस लॉजिस्टिक्स (WB-LOG-004)',
           station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
-          launchBtn: 'वितरक के रूप में लॉगिन करें',
+          launchBtn: 'वितरक के रूप में लॉगिन करें \u2192',
           metrics: [
             { title: 'सक्रिय रीफर ट्रक', val: '18 ट्रक', tag: 'लाइव जीपीएस जियोफेंस्ड' },
-            { title: 'औसत तापमान', val: '7.4 °C', tag: 'शून्य तापीय विचलन' },
+            { title: 'औसत तापमान', val: '7.4 \u00B0C', tag: 'शून्य तापीय विचलन' },
             { title: 'समय पर डिलीवरी', val: '99.8%', tag: '42 खुदरा गंतव्य' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड) \u2022 500.0 किग्रा \u2022 रीफर WB-19-AX-4402', status: 'मार्ग में (कोलकाता)' },
+            { code: '6R3T8PLM2K9V', desc: 'सेब (किन्नौर) \u2022 300.0 किग्रा \u2022 टोल चेकपॉइंट पर', status: 'मार्ग में' },
+            { code: 'DIST-VEG-4401', desc: 'हरी मटर (ताजा) \u2022 450.0 किग्रा \u2022 कोल्ड-चेन सत्यापित', status: 'डिपो पहुंचा' }
+          ]
         },
         RETAILER: {
-          icon: 'cart',
+          icon: 'shopping-cart',
           title: 'खुदरा विक्रेता पीओएस कंसोल',
           org: 'मां दुर्गा रिटेल फ्रेश मार्ट (कोलकाता आउटलेट #4)',
-          station: 'सब्जी विभाग, लेक गार्डन्स, कोलकाता',
-          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें',
+          station: 'सब्जी काउंटर, लेक गार्डन्स, कोलकाता',
+          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें \u2192',
           metrics: [
             { title: 'काउंटर स्टॉक', val: '1,420 किग्रा', tag: 'दुकान के डिस्प्ले रैक पर सक्रिय' },
             { title: 'उपभोक्ता क्यूआर स्कैन', val: '1,890 स्कैन', tag: '4.9/5.0 ग्राहक विश्वास स्कोर' },
             { title: 'ताजगी प्रतिधारण', val: '99.2%', tag: '< 0.8% जैविक नुकसान' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'टमाटर (हाइब्रिड लाल) \u2022 120.0 किग्रा शेल्फ पर \u2022 ग्रेड ए जैविक', status: 'काउंटर पर सक्रिय' },
+            { code: '4T9Q2XMD7K1B', desc: 'गाजर (नारंगी) \u2022 80.0 किग्रा \u2022 24 उपभोक्ता स्कैन पूर्ण', status: 'काउंटर पर सक्रिय' },
+            { code: 'RET-APP-9901', desc: 'सेब (किन्नौर) \u2022 45.0 किग्रा \u2022 स्टैंडी क्यूआर सत्यापित', status: 'काउंटर पर सक्रिय' }
+          ]
         }
       },
       bn: {
@@ -5180,112 +5223,88 @@
           title: 'উৎপাদক পরিচালনা কনসোল',
           org: 'বর্ধমান অর্গানিক ফার্মার্স প্রডিউসার কো-অপ',
           station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
-          launchBtn: 'উৎপাদক হিসেবে লগইন করুন',
+          launchBtn: 'উৎপাদক হিসেবে সাইন ইন করুন \u2192',
           metrics: [
             { title: 'মোট ফসল ফলন', val: '১৮,৪৫০ কেজি', tag: '+১৪% গত মাসের চেয়ে বেশি' },
             { title: 'সক্রিয় কিউআর ব্যাচ', val: '১২টি ব্যাচ', tag: 'সব ক্রেট সুরক্ষিত সিলযুক্ত' },
             { title: 'মণ্ডিতে প্রেরিত', val: '১৪,২০০ কেজি', tag: 'দ্বিপাক্ষিক স্বাক্ষরে প্রেরিত' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) \u2022 ৫০০.০ কেজি \u2022 গ্রেড এ অর্গানিক', status: 'খামারে হেফাজতে' },
+            { code: 'AS-TOM-2026-X1', desc: 'আলু (জ্যোতি) \u2022 ১,২০০.০ কেজি \u2022 ২৪টি ক্রেট সিলযুক্ত', status: 'মণ্ডির জন্য প্রস্তুত' },
+            { code: 'WB-FPO-RABI-04', desc: 'ফুলকপি (স্নোবল) \u2022 ৩২০.০ কেজি \u2022 প্রত্যয়িত লট', status: 'গুণমান প্রত্যয়িত' }
+          ]
         },
         AGGREGATOR: {
           icon: 'scale',
           title: 'সংগ্রহকারী মণ্ডি কনসোল',
           org: 'হুগলি এপিএমসি সংগ্রহ ইয়ার্ড (MANDI-WB-012)',
-          station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
-          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন',
+          station: 'গেট #২ ওয়েজ-ব্রিজ ও গ্রেডিং ইয়ার্ড',
+          launchBtn: 'সংগ্রহকারী হিসেবে সাইন ইন করুন \u2192',
           metrics: [
             { title: 'মণ্ডি চালান ওজন', val: '৪২,৮০০ কেজি', tag: 'ডিজিটাল ওয়েজ-ব্রিজ দ্বারা প্রত্যয়িত' },
             { title: 'প্রত্যয়িত গ্রেড এ', val: '৯৯.৪%', tag: 'অফিসিয়াল গুণমান পরীক্ষিত' },
-            { title: 'নিলাম নিষ্পত্তি', val: '₹ ১৪.৮ লাখ', tag: 'ই-নাম দ্বারা নিষ্পত্তি' }
+            { title: 'নিলাম নিষ্পত্তি', val: '\u20B9 ১৪.৮ লাখ', tag: 'ই-নাম দ্বারা নিষ্পত্তি' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (গ্রেড এ) \u2022 ৫০০.০ কেজি \u2022 ওয়েজ-ব্রিজ স্লিপ #৮৮১২', status: 'মণ্ডি হেফাজতে' },
+            { code: 'HGH-LOT-9921-A', desc: 'আলু (জ্যোতি গ্রেড এ) \u2022 ৭০০.০ কেজি \u2022 নিলাম সম্পন্ন', status: 'নিলাম নিষ্পত্তি' },
+            { code: 'HGH-LOT-9921-B', desc: 'আলু (জ্যোতি গ্রেড বি) \u2022 ৫০০.০ কেজি \u2022 ট্রানজিট পাস ইস্যু', status: 'পাইকারির জন্য প্রস্তুত' }
+          ]
         },
         WHOLESALER: {
           icon: 'warehouse',
           title: 'পাইকারি টার্মিনাল কনসোল',
           org: 'কলকাতা সেন্ট্রাল হোলসেলার্স প্রাঃ লিঃ (পোস্তা বাজার)',
           station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
-          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন',
+          launchBtn: 'পাইকারি হিসেবে সাইন ইন করুন \u2192',
           metrics: [
-            { title: 'হিমাগার মজুদ', val: '৬৫,২০০ কেজি', tag: 'নিয়ন্ত্রিত ৪°সে - ৮°সে তাপমাত্রা' },
+            { title: 'হিমাগার মজুদ', val: '৬৫,২০০ কেজি', tag: 'নিয়ন্ত্রিত ৪\u00B0সে - ৮\u00B0সে তাপমাত্রা' },
             { title: 'চালান বিভাজন', val: '৩৮টি লট', tag: 'ভর-ভারসাম্য অক্ষত' },
             { title: 'ফ্লিট প্রেরণ', val: '২৪টি চালান', tag: 'সিলযুক্ত রিফার ভ্যান' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড) \u2022 ৫০০.০ কেজি \u2022 কোল্ড বে #৩ সক্রিয়', status: 'হিমাগারে সংরক্ষিত' },
+            { code: 'CCW-PLT-4401', desc: 'পেঁয়াজ (নাসিক লাল) \u2022 ১,৮০০.০ কেজি \u2022 প্যালেট G-02', status: 'টার্মিনাল স্টক' },
+            { code: 'CCW-PLT-4402', desc: 'কাঁচা লঙ্কা \u2022 ২৫০.০ কেজি \u2022 এসি চেম্বার #১', status: 'গাড়ির জন্য প্রস্তুত' }
+          ]
         },
         DISTRIBUTOR: {
           icon: 'truck',
           title: 'পরিবেশক লজিস্টিকস কনসোল',
           org: 'বেঙ্গল কোল্ড-চেন এক্সপ্রেস লজিস্টিকস (WB-LOG-004)',
           station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
-          launchBtn: 'পরিবেশক হিসেবে লগইন করুন',
+          launchBtn: 'পরিবেশক হিসেবে সাইন ইন করুন \u2192',
           metrics: [
             { title: 'সক্রিয় রিফার ট্রাক', val: '১৮টি ট্রাক', tag: 'লাইভ জিপিএস জিওফেন্সড' },
-            { title: 'গড় তাপমাত্রা', val: '৭.৪ °সে', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
+            { title: 'গড় তাপমাত্রা', val: '৭.৪ \u00B0C', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
             { title: 'অন-টাইম ডেলিভারি', val: '৯৯.৮%', tag: '৪২টি খুচরা আউটলেট' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড) \u2022 ৫০০.০ কেজি \u2022 রিফার WB-19-AX-4402', status: 'ট্রানজিটে (কলকাতা)' },
+            { code: '6R3T8PLM2K9V', desc: 'আপেল (কিন্নর) \u2022 ৩০০.০ কেজি \u2022 টোল চেকপয়েন্ট', status: 'ট্রানজিটে' },
+            { code: 'DIST-VEG-4401', desc: 'মটরশুঁটি (তাজা) \u2022 ৪৫০.০ কেজি \u2022 কোল্ড-চেন যাচাইকৃত', status: 'ডিপোতে পৌঁছেছে' }
+          ]
         },
         RETAILER: {
-          icon: 'cart',
+          icon: 'shopping-cart',
           title: 'খুচরা বিক্রেতা পিওএস কনসোল',
           org: 'মা দুর্গা রিটেইল ফ্রেশ মার্ট (কলকাতা আউটলেট #৪)',
-          station: 'সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
-          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন',
+          station: 'কাউন্টার ডিসপ্লে, লেক গার্ডেনস, কলকাতা',
+          launchBtn: 'খুচরা বিক্রেতা হিসেবে সাইন ইন করুন \u2192',
           metrics: [
             { title: 'কাউন্টার মজুদ', val: '১,৪২০ কেজি', tag: 'দোকানের ডিসপ্লে র্যাকে সক্রিয়' },
             { title: 'ভোক্তা কিউআর স্ক্যান', val: '১,৮৯০টি স্ক্যান', tag: '৪.৯/৫.০ গ্রাহক আস্থা স্কোর' },
             { title: 'তাজাত্ব ধারণ', val: '৯৯.২%', tag: '< ০.৮% জৈব অপচয়' }
           ],
-          batches: []
+          batches: [
+            { code: '7K3Q9XMD4T2B', desc: 'টমেটো (হাইব্রিড লাল) \u2022 ১২০.০ কেজি সেলফে \u2022 গ্রেড এ অর্গানিক', status: 'সেলফে সক্রিয়' },
+            { code: '4T9Q2XMD7K1B', desc: 'গাজর (কমলা) \u2022 ৮০.০ কেজি \u2022 ২৪টি গ্রাহক স্ক্যান সম্পন্ন', status: 'সেলফে সক্রিয়' },
+            { code: 'RET-APP-9901', desc: 'আপেল (কিন্নর) \u2022 ৪৫.০ কেজি \u2022 স্ট্যান্ডি কিউআর যাচাইকৃত', status: 'সেলফে সক্রিয়' }
+          ]
         }
       }
     };
-
-    let currentLang = 'en';
-    let currentRole = 'PRODUCER';
-    let currentPreviewRole = 'PRODUCER';
-    let activeTool = null;
-
-    const tickerEvents = {
-      en: [
-        "Digital weighbridge gross weight attested • Cryptographic hash chained • e-NAM settlement confirmed",
-        "Farmer producer harvest registered • GPS geofence verified • Immutable genesis ledger hash chained",
-        "Bengal Cold-Chain Reefer WB-19-AX-4402 recorded in-transit temp 7.8°C • Zero thermal excursions • Route on track",
-        "Maa Durga Fresh Mart (Kolkata) dispensed 2.5 Kg via consumer QR checkout • Append-only inventory adjusted",
-        "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Certified Grade A quality inspected • e-NAM settlement"
-      ],
-      hi: [
-        "डिजिटल वेज-ब्रिज सकल भार सत्यापित • क्रिप्टोग्राफिक हैश शृंखलाबद्ध • ई-नाम निपटान प्रमाणित",
-        "किसान उत्पादक फसल पंजीकृत • जीपीएस जियोफेंस सत्यापित • अपरिवर्तनीय जेनेसिस लेज़र हैश",
-        "बंगाल कोल्ड-चेन रीफर WB-19-AX-4402 ने परिवहन तापमान 7.8°C दर्ज किया • शून्य तापीय विचलन • समय पर मार्ग",
-        "मां दुर्गा फ्रेश मार्ट (कोलकाता) ने उपभोक्ता क्यूआर द्वारा 2.5 किग्रा बिक्री दर्ज की • अपरिवर्तनीय लेज़र समायोजित",
-        "हुगली एपीएमसी वेज-ब्रिज ने 4,250 किग्रा भार सत्यापित किया • एगमार्कनेट ग्रेड ए प्रमाणित • ई-नाम निपटान"
-      ],
-      bn: [
-        "ডিজিটাল ওয়েজ-ব্রিজ ওজন যাচাই সম্পন্ন • ক্রিপ্টোগ্রাফিক হ্যাশ শৃঙ্খলিত • ই-নাম নিষ্পত্তি প্রত্যয়িত",
-        "কৃষক উৎপাদক ফসল নিবন্ধিত • জিপিএস জিওফেন্স যাচাইকৃত • অপরিবর্তনীয় জেনেসিস লেজার হ্যাশ",
-        "বেঙ্গল কোল্ড-চেন রিফার WB-19-AX-4402 চলন্ত তাপমাত্রা ৭.৮°সে রেকর্ড করেছে • শূন্য বিচ্যুতি • সঠিক ট্রানজিট",
-        "মা দুর্গা ফ্রেশ মার্ট (কলকাতা) ভোক্তা কিউআর স্ক্যানে ২.৫ কেজি বিক্রয় সম্পন্ন করেছে • লেজার হালনাগাদ",
-        "হুগলি এপিএমসি ওয়েজ-ব্রিজ ৪,২৫০ কেজি ওজন যাচাই করেছে • অ্যাগমার্কনেট গ্রেড এ প্রত্যয়িত • ই-নাম নিষ্পত্তি"
-      ]
-    };
-    let tickerIdx = 0;
-
-    function startTickerCycle() {
-      const streamEl = document.getElementById('tickerStream');
-      if (!streamEl) return;
-      setInterval(() => {
-        const list = tickerEvents[currentLang] || tickerEvents.en;
-        tickerIdx = (tickerIdx + 1) % list.length;
-        const msg = list[tickerIdx];
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-        streamEl.textContent = `[${timeStr} IST] ` + (msg || '');
-      }, 4000);
-    }
-    startTickerCycle();
 
     function switchPreviewEntity(role) {
       currentPreviewRole = role;
@@ -6738,6 +6757,8 @@
     let flowTimeline = null;
     let currentFlowStage = 1;
 
+        let flowAnimInterval = null;
+
     function setFlowActiveStageUI(stageNum) {
       currentFlowStage = stageNum;
       for (let i = 1; i <= 5; i++) {
@@ -6754,315 +6775,24 @@
     }
 
     function jumpToFlowStage(stageNum) {
-      if (!flowTimeline) {
-        setFlowActiveStageUI(stageNum);
-        return;
-      }
       setFlowActiveStageUI(stageNum);
-      const label = 'stage' + stageNum;
-      flowTimeline.seek(label);
-      flowTimeline.play();
     }
 
     function initSupplyChainFlowAnimation() {
+      setFlowActiveStageUI(1);
+      let isPaused = false;
       const section = document.getElementById('flowShowcaseSection');
-      if (!section) return;
-
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReducedMotion || typeof window.gsap === 'undefined') {
-        setFlowActiveStageUI(1);
-        try {
-          const s1Sprout = document.getElementById('s1Sprout');
-          if (s1Sprout) s1Sprout.style.opacity = '1';
-          const s1Leaves = document.getElementById('s1Leaves');
-          if (s1Leaves) s1Leaves.style.opacity = '1';
-          const s1Harvest = document.getElementById('s1HarvestProduce');
-          if (s1Harvest) s1Harvest.style.opacity = '1';
-          const s1Tape = document.getElementById('s1Tape');
-          if (s1Tape) s1Tape.style.opacity = '0.9';
-          const s1Qr = document.getElementById('s1QrTag');
-          if (s1Qr) s1Qr.style.opacity = '1';
-          const s1Badge = document.getElementById('s1SealBadge');
-          if (s1Badge) s1Badge.style.opacity = '1';
-
-          const s2Commit = document.getElementById('s2RecCommit');
-          if (s2Commit) s2Commit.style.opacity = '1';
-          const s2Stamp = document.getElementById('s2GradeStamp');
-          if (s2Stamp) s2Stamp.setAttribute('transform', 'translate(68, 88) scale(1)');
-
-          const s3SubA = document.getElementById('s3SubLotA');
-          if (s3SubA) s3SubA.style.opacity = '1';
-          const s3SubB = document.getElementById('s3SubLotB');
-          if (s3SubB) s3SubB.style.opacity = '1';
-          const s3Disp = document.getElementById('s3DispatchIndicator');
-          if (s3Disp) s3Disp.style.opacity = '1';
-
-          const s4Badge = document.getElementById('s4TransitBadge');
-          if (s4Badge) s4Badge.style.opacity = '1';
-
-          const s5Card = document.getElementById('s5VerifyCard');
-          if (s5Card) s5Card.style.opacity = '1';
-          const s5Stamp = document.getElementById('s5SaleStamp');
-          if (s5Stamp) s5Stamp.setAttribute('transform', 'translate(33, 86) scale(1)');
-        } catch (e) {}
-        return;
+      if (section) {
+        section.addEventListener('mouseenter', () => { isPaused = true; });
+        section.addEventListener('mouseleave', () => { isPaused = false; });
       }
-
-      flowTimeline = gsap.timeline({
-        repeat: -1,
-        repeatDelay: 1.5,
-        defaults: { ease: 'power2.out' }
-      });
-
-      function resetStageVisuals() {
-        // Stage 1
-        gsap.set('#s1Seed', { scale: 1, opacity: 1, transformOrigin: 'center center' });
-        gsap.set('#s1Sprout', { scaleY: 0, opacity: 0, transformOrigin: 'center bottom' });
-        gsap.set('#s1Stem', { scaleY: 0, opacity: 0, transformOrigin: 'center bottom' });
-        gsap.set('#s1Branch1, #s1Branch2', { scale: 0, opacity: 0, transformOrigin: 'left bottom' });
-        gsap.set('#s1Leaves', { scale: 0, opacity: 0, transformOrigin: 'center bottom' });
-        gsap.set('#s1Tomato1, #s1Tomato2, #s1Tomato3', { scale: 0, opacity: 0, transformOrigin: 'center center' });
-        gsap.set('#s1HarvestProduce', { opacity: 0, scale: 0.8, transformOrigin: 'center center' });
-        gsap.set('#s1FlapL', { rotation: -35, transformOrigin: 'left top' });
-        gsap.set('#s1FlapR', { rotation: 35, transformOrigin: 'right top' });
-        gsap.set('#s1Tape', { opacity: 0, scaleY: 0, transformOrigin: 'center top' });
-        gsap.set('#s1QrTag', { opacity: 0, scale: 0.7, y: -15, transformOrigin: 'center center' });
-        gsap.set('#s1Laser', { opacity: 0, attr: { y1: 2, y2: 2 } });
-        gsap.set('#s1SealBadge', { opacity: 0, scale: 0.8, transformOrigin: 'center center' });
-
-        // Stage 2
-        gsap.set('#s2Crate', { x: -25, opacity: 0 });
-        gsap.set('#s2Scanner', { opacity: 0, y: 15 });
-        gsap.set('#s2ScanCone, #s2LaserLine', { opacity: 0 });
-        gsap.set('#s2RecLot, #s2RecWeight, #s2RecGrade', { opacity: 0, x: -8 });
-        gsap.set('#s2RecCommit', { opacity: 0 });
-        gsap.set('#s2GradeStamp', { scale: 0, opacity: 0, transformOrigin: 'center center' });
-
-        // Stage 3
-        gsap.set('#s3MasterLot', { opacity: 0, y: 15 });
-        gsap.set('#s3BranchA, #s3BranchB', { opacity: 0 });
-        gsap.set('#s3SubLotA, #s3SubLotB', { opacity: 0, y: 65 });
-        gsap.set('#s3DispatchIndicator', { opacity: 0 });
-
-        // Stage 4
-        gsap.set('#s4CrateLoad', { x: -28, opacity: 0 });
-        gsap.set('#s4Truck', { y: 44 });
-        gsap.set('#s4RadarWave1, #s4RadarWave2', { opacity: 0 });
-        gsap.set('#s4TransitBadge', { opacity: 0 });
-
-        // Stage 5
-        gsap.set('#s5ShelfProduce', { opacity: 1 });
-        gsap.set('#s5Phone', { x: 175, opacity: 0 });
-        gsap.set('#s5ScanCone', { opacity: 0 });
-        gsap.set('#s5VerifyCard', { scale: 0.7, opacity: 0, transformOrigin: 'center center' });
-        gsap.set('#s5SaleStamp', { scale: 0, opacity: 0, transformOrigin: 'center center' });
-      }
-
-      resetStageVisuals();
-
-      // ==========================================
-      // STAGE 1: PRODUCER (SEED -> PLANT -> TOMATO -> PACKED & QR SEALED)
-      // ==========================================
-      flowTimeline.addLabel('stage1');
-      flowTimeline.call(() => setFlowActiveStageUI(1));
-
-      // 1. Seed pulses in soil
-      flowTimeline.fromTo('#s1Seed', { scale: 0.85 }, { scale: 1.15, duration: 0.35, yoyo: true, repeat: 1 });
-      // 2. Sprout emerges upward
-      flowTimeline.to('#s1Sprout', { scaleY: 1, opacity: 1, duration: 0.45, ease: 'power2.out' });
-      // 3. Main stem and branches shoot up
-      flowTimeline.to('#s1Stem', { scaleY: 1, opacity: 1, duration: 0.55, ease: 'power2.out' }, '-=0.2');
-      flowTimeline.to('#s1Branch1, #s1Branch2', { scale: 1, opacity: 1, duration: 0.35 }, '-=0.2');
-      // 4. Botanical leaves unfurl
-      flowTimeline.to('#s1Leaves', { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.2');
-      // 5. Ripe red tomatoes develop and glow
-      flowTimeline.to('#s1Tomato1, #s1Tomato2, #s1Tomato3', {
-        scale: 1,
-        opacity: 1,
-        duration: 0.55,
-        stagger: 0.1,
-        ease: 'back.out(2)'
-      }, '-=0.3');
-
-      // 6. Harvest: picked tomatoes drop into crate
-      flowTimeline.to('#s1Tomato1', { x: 135, y: 74, duration: 0.48, ease: 'power2.in' }, '+=0.1');
-      flowTimeline.to('#s1Tomato2', { x: 152, y: 72, duration: 0.48, ease: 'power2.in' }, '-=0.35');
-      flowTimeline.to('#s1Tomato3', { x: 168, y: 74, duration: 0.48, ease: 'power2.in' }, '-=0.35');
-
-      // 7. Fresh produce enters box
-      flowTimeline.to('#s1HarvestProduce', { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.5)' }, '-=0.15');
-      flowTimeline.to('#s1Tomato1, #s1Tomato2, #s1Tomato3', { opacity: 0, duration: 0.18 }, '-=0.2');
-
-      // 8. Box flaps close shut and seal with tamper tape
-      flowTimeline.to('#s1FlapL, #s1FlapR', { rotation: 0, duration: 0.38, ease: 'power2.inOut' });
-      flowTimeline.to('#s1Tape', { opacity: 0.9, scaleY: 1, duration: 0.32, ease: 'power1.out' }, '-=0.1');
-
-      // 9. QR code label attaches to the sealed crate
-      flowTimeline.to('#s1QrTag', { opacity: 1, scale: 1, y: 0, duration: 0.42, ease: 'back.out(1.5)' });
-      // 10. Laser scan sweep on QR
-      flowTimeline.to('#s1Laser', { opacity: 1, duration: 0.1 });
-      flowTimeline.to('#s1Laser', { attr: { y1: 22, y2: 22 }, duration: 0.35, ease: 'power1.inOut' });
-      flowTimeline.to('#s1Laser', { attr: { y1: 2, y2: 2 }, duration: 0.35, ease: 'power1.inOut' });
-      flowTimeline.to('#s1Laser', { opacity: 0, duration: 0.1 });
-
-      // 11. Packed & Sealed confirmation badge
-      flowTimeline.to('#s1SealBadge', { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.7)' });
-
-      // ==========================================
-      // STAGE 2: AGGREGATOR (MANDI QR SCAN & RECORD COMMITTED)
-      // ==========================================
-      flowTimeline.addLabel('stage2');
-      flowTimeline.call(() => setFlowActiveStageUI(2));
-
-      // 1. Sealed crate arrives on Mandi intake platform
-      flowTimeline.fromTo('#s2Crate', { x: -25, opacity: 0 }, { x: 16, opacity: 1, duration: 0.55, ease: 'power2.out' });
-      // 2. Optical scanner aims at crate QR
-      flowTimeline.fromTo('#s2Scanner', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '-=0.2');
-
-      // 3. Green laser scan cone and beam sweeps over QR
-      flowTimeline.to('#s2ScanCone, #s2LaserLine', { opacity: 0.85, duration: 0.25 });
-      flowTimeline.to('#s2ScanCone, #s2LaserLine', { opacity: 0.3, duration: 0.28, yoyo: true, repeat: 2 });
-      flowTimeline.to('#s2ScanCone, #s2LaserLine', { opacity: 0, duration: 0.2 });
-
-      // 4. Digital terminal logs records line by line
-      flowTimeline.fromTo('#s2RecLot', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 });
-      flowTimeline.fromTo('#s2RecWeight', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 }, '-=0.12');
-      flowTimeline.fromTo('#s2RecGrade', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 }, '-=0.12');
-      flowTimeline.to('#s2RecCommit', { opacity: 1, duration: 0.35, ease: 'power1.out' });
-
-      // 5. Certified Grade-A verification stamp bounces down
-      flowTimeline.fromTo('#s2GradeStamp', 
-        { scale: 0, rotation: -30, opacity: 0 }, 
-        { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'back.out(2)' }
-      );
-
-      // ==========================================
-      // STAGE 3: WHOLESALER (COLD STORAGE & LOT SPLITTING)
-      // ==========================================
-      flowTimeline.addLabel('stage3');
-      flowTimeline.call(() => setFlowActiveStageUI(3));
-
-      // 1. Master lot arrives in cold storage on upper rack
-      flowTimeline.fromTo('#s3MasterLot', { opacity: 0, y: 15 }, { opacity: 1, y: 30, duration: 0.5, ease: 'power2.out' });
-      // 2. Telemetry sensor pulses
-      flowTimeline.fromTo('#s3Climate', { opacity: 0.7 }, { opacity: 1, duration: 0.35, yoyo: true, repeat: 1 });
-
-      // 3. Cryptographic lineage curves branch down
-      flowTimeline.to('#s3BranchA, #s3BranchB', { opacity: 1, duration: 0.35 });
-
-      // 4. Master lot splits into Child Sub-Lot A (250 KG) and Sub-Lot B (200 KG)
-      flowTimeline.to('#s3MasterLot', { opacity: 0.35, duration: 0.35 });
-      flowTimeline.fromTo('#s3SubLotA', { opacity: 0, y: 65 }, { opacity: 1, y: 80, duration: 0.55, ease: 'power2.out' }, '-=0.2');
-      flowTimeline.fromTo('#s3SubLotB', { opacity: 0, y: 65 }, { opacity: 1, y: 80, duration: 0.55, ease: 'power2.out' }, '-=0.55');
-
-      // 5. Outbound dispatch indicator badge appears
-      flowTimeline.to('#s3DispatchIndicator', { opacity: 1, duration: 0.35 });
-
-      // ==========================================
-      // STAGE 4: DISTRIBUTOR (REEFER FLEET HIGHWAY TRANSIT)
-      // ==========================================
-      flowTimeline.addLabel('stage4');
-      flowTimeline.call(() => setFlowActiveStageUI(4));
-
-      // 1. Produce crate loads into rear reefer container door
-      flowTimeline.fromTo('#s4CrateLoad', 
-        { x: -28, opacity: 0 }, 
-        { x: 10, opacity: 1, duration: 0.55, ease: 'power2.inOut' }
-      );
-      flowTimeline.to('#s4CrateLoad', { opacity: 0, duration: 0.22 });
-
-      // 2. High-speed highway transit: wheels rotate, road dashes flow, suspension bounce
-      flowTimeline.to('#s4Wheel1, #s4Wheel2, #s4Wheel3', {
-        rotation: '+=720',
-        transformOrigin: 'center center',
-        duration: 1.8,
-        ease: 'none'
-      }, '-=0.1');
-
-      flowTimeline.fromTo('#s4RoadDashes', 
-        { strokeDashoffset: 0 }, 
-        { strokeDashoffset: -54, duration: 1.8, ease: 'none' }, 
-        '<'
-      );
-
-      flowTimeline.to('#s4Truck', {
-        y: 42,
-        duration: 0.22,
-        yoyo: true,
-        repeat: 7,
-        ease: 'sine.inOut'
-      }, '<');
-
-      flowTimeline.fromTo('#s4RadarWave1', 
-        { attr: { r: 4 }, opacity: 0.9 }, 
-        { attr: { r: 16 }, opacity: 0, duration: 0.8, repeat: 2 }, 
-        '<'
-      );
-      flowTimeline.fromTo('#s4RadarWave2', 
-        { attr: { r: 8 }, opacity: 0.9 }, 
-        { attr: { r: 24 }, opacity: 0, duration: 0.8, repeat: 2 }, 
-        '<+0.2'
-      );
-      flowTimeline.to('#s4TransitBadge', { opacity: 1, duration: 0.35 }, '<+0.2');
-
-      // ==========================================
-      // STAGE 5: RETAILER (SHELF QR SCAN & PRODUCT ORIGIN VERIFICATION)
-      // ==========================================
-      flowTimeline.addLabel('stage5');
-      flowTimeline.call(() => setFlowActiveStageUI(5));
-
-      // 1. Produce displayed on retail wooden shelf
-      flowTimeline.fromTo('#s5ShelfProduce', 
-        { opacity: 0, y: 80 }, 
-        { opacity: 1, y: 74, duration: 0.45, ease: 'power2.out' }
-      );
-
-      // 2. Customer holding smartphone approaches shelf QR standee
-      flowTimeline.fromTo('#s5Phone', 
-        { x: 175, opacity: 0 }, 
-        { x: 132, opacity: 1, duration: 0.6, ease: 'power2.out' }
-      );
-
-      // 3. Camera reticle aims and scans shelf QR with laser line & cone
-      flowTimeline.to('#s5ScanCone', { opacity: 0.7, duration: 0.28 });
-      flowTimeline.fromTo('#s5PhoneScanLine', 
-        { attr: { y1: 30, y2: 30 } }, 
-        { attr: { y1: 58, y2: 58 }, duration: 0.48, repeat: 1, yoyo: true, ease: 'power1.inOut' }
-      );
-      flowTimeline.to('#s5ScanCone', { opacity: 0, duration: 0.2 });
-
-      // 4. Verified product provenance certificate card pops open on smartphone screen
-      flowTimeline.fromTo('#s5VerifyCard', 
-        { scale: 0.7, opacity: 0 }, 
-        { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(1.8)' }
-      );
-
-      // 5. Final POS sale confirmation seal stamps
-      flowTimeline.fromTo('#s5SaleStamp', 
-        { scale: 0, opacity: 0 }, 
-        { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(2)' }, 
-        '+=0.15'
-      );
-
-      flowTimeline.to({}, { duration: 1.5 });
-
-      // IntersectionObserver: pauses when section is not in viewport
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              if (flowTimeline.paused()) {
-                flowTimeline.play();
-              }
-            } else {
-              if (!flowTimeline.paused()) {
-                flowTimeline.pause();
-              }
-            }
-          });
-        }, { threshold: 0.15 });
-        observer.observe(section);
-      }
+      if (flowAnimInterval) clearInterval(flowAnimInterval);
+      flowAnimInterval = setInterval(() => {
+        if (!isPaused) {
+          const nextStage = (currentFlowStage % 5) + 1;
+          setFlowActiveStageUI(nextStage);
+        }
+      }, 4000);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -7073,6 +6803,7 @@
       setLanguage(savedLang);
 
       initSupplyChainFlowAnimation();
+      renderEntityPreview();
 
       const savedToken = localStorage.getItem('annasutra_access_token');
       const savedRole = localStorage.getItem('annasutra_role');
