@@ -133,14 +133,13 @@
       submitting: 'Submitting Application...',
       saving: 'Saving Draft...',
       underReviewTitle: 'Application Submitted — Under Verification Review',
-      underReviewSub: 'Your producer profile has been securely recorded. An official sequential code and QR label issuance will be enabled upon administrative approval. Unlimited QR labels can be generated for your harvest lots.',
+      underReviewSub: 'Your producer profile has been securely recorded. Unlimited QR labels can be generated for your harvest lots.',
       lblMappedLand: 'Verified Land Mapped',
       lblMaskedPan: 'Masked PAN Identity',
       lblSettlementBank: 'Settlement Bank',
       lblSubmissionDate: 'Submission Date',
       lblEntityRefToken: 'Entity Reference Token',
       verifiedNodeBadge: 'VERIFIED PRODUCER NODE',
-      lblSovereignCode: 'Permanent Sovereign Code',
       statActiveBatches: 'Active Harvest Batches',
       statActiveBatchesSub: 'Recorded in Custody Ledger',
       statQrAvail: 'Remaining QR Crate Serials',
@@ -150,7 +149,7 @@
       btnDownloadQrPdf: 'Download Printable A4 Sticker Sheet (PDF)',
       loadingRegistry: 'Loading verified entity registry...',
       adminQueueTitle: 'Entity Verification Review Queue',
-      adminQueueSub: 'Inspect submitted KYC, farm plot boundaries, and statutory consent to approve entities and issue sovereign codes.',
+      adminQueueSub: 'Inspect submitted KYC, farm plot boundaries, and statutory consent to approve entities.',
       filterAll: 'All Applications',
       filterSubmitted: 'Pending Review',
       filterVerified: 'Verified',
@@ -348,14 +347,13 @@
       submitting: 'आवेदन जमा हो रहा है...',
       saving: 'सहेजा जा रहा है...',
       underReviewTitle: 'आवेदन जमा हो गया — सत्यापन समीक्षाधीन है',
-      underReviewSub: 'आपका उत्पादक प्रोफ़ाइल सुरक्षित रूप से दर्ज कर लिया गया है। प्रशासनिक स्वीकृति मिलने पर आधिकारिक कोड आवंटित किए जाएंगे एवं प्रत्येक फसल लॉट के लिए असीमित क्यूआर कोड उत्पन्न किए जा सकते हैं।',
+      underReviewSub: 'आपका उत्पादक प्रोफ़ाइल सुरक्षित रूप से दर्ज कर लिया गया है। प्रत्येक फसल लॉट के लिए असीमित क्यूआर कोड उत्पन्न किए जा सकते हैं।',
       lblMappedLand: 'सत्यापित भूमि रकबा',
       lblMaskedPan: 'मास्क्ड पैन पहचान',
       lblSettlementBank: 'निपटान बैंक खाता',
       lblSubmissionDate: 'जमा करने की तिथि',
       lblEntityRefToken: 'इकाई संदर्भ टोकन',
       verifiedNodeBadge: 'सत्यापित उत्पादक नोड',
-      lblSovereignCode: 'स्थायी आधिकारिक कोड',
       statActiveBatches: 'सक्रिय फसल बैच',
       statActiveBatchesSub: 'कस्टडी लेज़र में दर्ज',
       statQrAvail: 'उपलब्ध क्यूआर क्रेट लेबल',
@@ -563,14 +561,13 @@
       submitting: 'আবেদন জমা করা হচ্ছে...',
       saving: 'সংরক্ষণ চলছে...',
       underReviewTitle: 'আবেদন জমা হয়েছে — প্রশাসনিক পর্যালোচনা চলছে',
-      underReviewSub: 'আপনার উৎপাদক প্রোফাইল নথিভুক্ত হয়েছে। অনুমোদনের পর সরকারি কোড এবং প্রাথমিক ৫০টি কিউআর লেবেল প্রদান করা হবে।',
+      underReviewSub: 'আপনার উৎপাদক প্রোফাইল নথিভুক্ত হয়েছে। প্রতিটি ফসল লটের জন্য সীমাহীন কিউআর কোড তৈরি করা যাবে।',
       lblMappedLand: 'যাচাইকৃত জমির পরিমাণ',
       lblMaskedPan: 'মাস্কড প্যান পরিচয়',
       lblSettlementBank: 'ব্যাঙ্ক অ্যাকাউন্ট',
       lblSubmissionDate: 'জমা দেওয়ার তারিখ',
       lblEntityRefToken: 'এনটিটি রেফারেন্স টোকেন',
       verifiedNodeBadge: 'যাচাইকৃত উৎপাদক নোড',
-      lblSovereignCode: 'স্থায়ী সরকারি কোড',
       statActiveBatches: 'সক্রিয় ফসল ব্যাচ',
       statActiveBatchesSub: 'হেফাজত লেজারে নথিভুক্ত',
       statQrAvail: 'উপলব্ধ কিউআর ক্রেট লেবেল',
@@ -1153,7 +1150,7 @@ function renderAdminConsoleUI(container) {
                       <span style="display: inline-block; background: ${sc.bg}; color: ${sc.text}; border: 1px solid ${sc.border}; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 800;">
                         ${escapeHtml(item.status)}
                       </span>
-                      ${item.entity_code ? `<div style="font-family: monospace; font-size: 11.5px; font-weight: 800; color: #0b3d2e; margin-top: 4px;">${escapeHtml(item.entity_code)}</div>` : ''}
+                      ${item.farmer_uid ? `<div style="font-family: monospace; font-size: 11.5px; font-weight: 800; color: #0b3d2e; margin-top: 4px;">${escapeHtml(item.farmer_uid)}</div>` : ''}
                     </td>
                     <td style="padding: 12px; text-align: right; white-space: nowrap;">
                       <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 12px; font-size: 11.5px; margin-right: 6px;" onclick="inspectAdminEntity('${item.entity_id}')">
@@ -1187,7 +1184,7 @@ function renderAdminConsoleUI(container) {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
           <div>
             <strong style="font-size: 16px; color: #0b3d2e;">${escapeHtml(t.inspectorTitle)}: ${escapeHtml(ent.organisation_name || (ent.first_name + ' ' + ent.last_name))}</strong>
-            <span style="margin-left: 10px; font-family: monospace; font-size: 12px; color: #047857; font-weight: 800;">${escapeHtml(ent.entity_code || ent.status)}</span>
+            <span style="margin-left: 10px; font-family: monospace; font-size: 12px; color: #047857; font-weight: 800;">${escapeHtml(ent.farmer_uid || ent.status)}</span>
           </div>
           <button type="button" class="btn-wizard-action btn-wizard-prev" style="padding: 5px 12px; font-size: 12px;" onclick="closeAdminInspector()">
             ${escapeHtml(t.btnCloseInspector)}
@@ -1280,7 +1277,7 @@ function renderAdminConsoleUI(container) {
         headers: getAuthHeader(),
         body: JSON.stringify({
           field: fieldName,
-          reason: 'Administrative KYC verification prior to sovereign entity code approval'
+          reason: 'Administrative KYC verification prior to entity approval'
         })
       });
       const data = await res.json();
@@ -1313,7 +1310,7 @@ function renderAdminConsoleUI(container) {
       const data = await res.json();
       if (res.ok) {
         if (decision === 'APPROVED') {
-          showToast(`${data.entity_code || 'Entity'} verified! Unlimited QR printing enabled.`, 'success');
+          showToast(`${data.farmer_uid || 'Entity'} verified! Unlimited QR printing enabled.`, 'success');
         } else {
           showToast(`Decision recorded: ${decision}`, 'info');
         }
@@ -1353,7 +1350,7 @@ function renderAdminConsoleUI(container) {
     const t = getI18n();
     const p = wizardState.profile || {};
     const sens = wizardState.sensitive || {};
-    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || p.entity_code || 'PENDING';
+    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || 'PENDING';
 
     container.innerHTML = `
       <div class="status-review-card">
@@ -1458,7 +1455,6 @@ function renderAdminConsoleUI(container) {
   async function renderVerifiedOperationalConsole(container) {
     const t = getI18n();
     const p = wizardState.profile || {};
-    const eCode = p.entity_code || '';
     const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || window.computeLiveMentorBatchIdPreview('').slice(0, 22);
     const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node';
 
@@ -1488,12 +1484,6 @@ function renderAdminConsoleUI(container) {
               <div style="font-size: 10.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">Unique Farmer ID</div>
               <div style="font-family: monospace; font-size: 15.5px; font-weight: 900; color: #0b3d2e; letter-spacing: 0.5px;" id="farmerHeaderUniqueId">${escapeHtml(farmerUid)}</div>
             </div>
-            ${eCode ? `
-              <div>
-                <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">${escapeHtml(t.lblSovereignCode || 'Sovereign Code')}</div>
-                <div style="font-family: monospace; font-size: 17px; font-weight: 900; color: #0b3d2e; letter-spacing: 1px;">${escapeHtml(eCode)}</div>
-              </div>
-            ` : ''}
             <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5;" onclick="window.logoutEntitySession()">
               ${escapeHtml(t.btnLogOut || 'Log Out')}
             </button>
@@ -2504,7 +2494,7 @@ function renderAdminConsoleUI(container) {
           ${isPurge ? `
             <strong>DANGER:</strong> This action is permanent and cannot be reversed. All KYC documents, plots, and sensitive records for <strong>${escapeHtml(entityName)}</strong> will be wiped.
           ` : `
-            This producer will be moved to the <strong>Admin Trash</strong>. Their sovereign code access will be suspended immediately. You can restore them anytime from the Trash tab.
+            This producer will be moved to the <strong>Admin Trash</strong>. Their account access will be suspended immediately. You can restore them anytime from the Trash tab.
           `}
         </p>
 

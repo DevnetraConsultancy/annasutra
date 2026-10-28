@@ -923,7 +923,7 @@ class MyQrBlockSheetPdfView(APIView):
             raise exceptions.ValidationError({"detail": "No serials found in this block.", "code": "EMPTY_BLOCK"})
 
         profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
-        entity_code = profile.entity_code if profile and profile.entity_code else user_org.name[:16]
+        entity_code = get_or_mint_farmer_uid(profile) if profile else user_org.name[:16]
         org_name = profile.organisation_name if profile and profile.organisation_name else user_org.name
 
         from apps.identity.services.pdf_sheet import render_a4_sticker_sheet

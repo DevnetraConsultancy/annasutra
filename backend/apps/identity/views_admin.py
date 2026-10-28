@@ -101,12 +101,15 @@ class AdminReviewQueueView(APIView):
                 | Q(district__icontains=search_query)
             )
 
+        from apps.identity.views_registration import get_or_mint_farmer_uid
+
         results = []
         for p in qs[:100]:
             results.append({
                 "entity_id": str(p.entity_id),
                 "role": p.role,
                 "entity_code": p.entity_code,
+                "farmer_uid": get_or_mint_farmer_uid(p),
                 "first_name": p.first_name,
                 "last_name": p.last_name,
                 "full_name": f"{p.first_name} {p.last_name}".strip(),
@@ -267,10 +270,13 @@ class AdminEntityDetailView(APIView):
         except Exception:
             pass
 
+        from apps.identity.views_registration import get_or_mint_farmer_uid
+
         return Response({
             "entity_id": str(entity.entity_id),
             "role": entity.role,
             "entity_code": entity.entity_code,
+            "farmer_uid": get_or_mint_farmer_uid(entity),
             "status": entity.status,
             "first_name": entity.first_name,
             "last_name": entity.last_name,
@@ -413,12 +419,15 @@ class AdminEntityDecisionView(APIView):
                     pass
 
         if decision == "APPROVED":
+            from apps.identity.views_registration import get_or_mint_farmer_uid
+
             res = approve_entity_registration(
                 entity=entity,
                 admin_user=admin_user,
                 qr_count=qr_count,
                 review_notes=reason,
             )
+            res["farmer_uid"] = get_or_mint_farmer_uid(entity)
             return Response(res, status=status.HTTP_200_OK)
 
         if decision == "TRASH":
