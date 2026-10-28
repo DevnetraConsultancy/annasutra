@@ -11,7 +11,7 @@ MYSQL_REGISTRATION_STATEMENTS = [
     """CREATE TABLE IF NOT EXISTS entity_profile (
       entity_id        CHAR(36) PRIMARY KEY,
       user_id          CHAR(36) NOT NULL UNIQUE,
-      role             ENUM('PRODUCER','AGGREGATOR','WHOLESALER','DISTRIBUTOR','RETAILER') NOT NULL,
+      role             ENUM('PRODUCER','AGGREGATOR','PROCESSOR','WHOLESALER','DISTRIBUTOR','RETAILER') NOT NULL,
       entity_code      VARCHAR(24) NULL UNIQUE,
       first_name       VARCHAR(80)  NOT NULL,
       last_name        VARCHAR(80)  NOT NULL,
