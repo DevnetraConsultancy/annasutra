@@ -344,7 +344,7 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str, request
     """Create or link AppUser + EntityProfile for a verified Google account and issue JWT pair."""
     import re
 
-    valid_roles = {"PRODUCER", "AGGREGATOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"}
+    valid_roles = {"PRODUCER", "AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"}
     if requested_role not in valid_roles:
         requested_role = "PRODUCER"
 

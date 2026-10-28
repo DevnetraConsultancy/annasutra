@@ -791,7 +791,7 @@ class LotHandoverRequestView(APIView):
 
         data = request.data
         target_role = str(data.get("target_role") or data.get("to_role") or "AGGREGATOR").strip().upper()
-        if target_role not in ("AGGREGATOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
+        if target_role not in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
             target_role = "AGGREGATOR"
 
         raw_phone = str(data.get("target_phone") or data.get("to_phone") or "").strip()
@@ -834,6 +834,7 @@ class LotHandoverRequestView(APIView):
         if not target_org:
             org_type_map = {
                 "AGGREGATOR": "AGGREGATOR",
+                "PROCESSOR": "PROCESSOR",
                 "WHOLESALER": "WHOLESALER",
                 "DISTRIBUTOR": "DISTRIBUTOR",
                 "RETAILER": "RETAILER",
@@ -988,7 +989,7 @@ class LotHandoverAcceptView(APIView):
         req_role = (last_req.payload or {}).get("target_role") if last_req else None
 
         actor_role = str(data.get("actor_role") or req_role or (prof.role if prof else "AGGREGATOR")).strip().upper()
-        if actor_role not in ("AGGREGATOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
+        if actor_role not in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
             actor_role = "AGGREGATOR"
 
         actor_name = str(
@@ -1029,6 +1030,7 @@ class LotHandoverAcceptView(APIView):
             if acceptor_org.org_id == lot.created_by_org_id:
                 org_type_map = {
                     "AGGREGATOR": "AGGREGATOR",
+                    "PROCESSOR": "PROCESSOR",
                     "WHOLESALER": "WHOLESALER",
                     "DISTRIBUTOR": "DISTRIBUTOR",
                     "RETAILER": "RETAILER",
@@ -1131,7 +1133,7 @@ class LotAppendScanUpdateView(APIView):
             or (prof.role if prof and prof.role != "PRODUCER" else "AGGREGATOR")
         ).strip().upper()
 
-        if actor_role not in ("AGGREGATOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
+        if actor_role not in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
             actor_role = "AGGREGATOR"
 
         actor_name = str(

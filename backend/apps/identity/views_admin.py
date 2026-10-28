@@ -20,6 +20,7 @@ from apps.identity.models import (
     EntityProfile,
     EntityRoleDetails,
     EntitySensitive,
+    ProfileChangeLog,
     SensitiveAccessLog,
     VerificationReview,
 )
@@ -628,3 +629,81 @@ class AdminEntityPurgeView(APIView):
             entity.delete()
 
         return Response({"message": "Producer data permanently purged from system."}, status=status.HTTP_200_OK)
+
+
+class AdminChangeRequestsListView(APIView):
+    """GET /api/v1/admin/change-requests
+    List pending profile modification requests submitted by registered entities.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        pending_requests = []
+        for rd in EntityRoleDetails.objects.select_related("entity").all():
+            for cr in rd.details.get("change_requests", []):
+                if cr.get("status") == "PENDING":
+                    pending_requests.append({
+                        **cr,
+                        "entity_id": str(rd.entity.entity_id),
+                        "entity_role": rd.entity.role,
+                        "farmer_name": f"{rd.entity.first_name} {rd.entity.last_name}".strip() or rd.entity.organisation_name,
+                        "phone_e164": rd.entity.phone_e164,
+                    })
+        return Response({"change_requests": pending_requests, "count": len(pending_requests)}, status=status.HTTP_200_OK)
+
+
+class AdminChangeRequestDecisionView(APIView):
+    """POST /api/v1/admin/change-requests/<str:request_id>/decision
+    Reviewer approves or rejects the requested profile modification.
+    Upon APPROVED: applies changes to entity_profile, logs to profile_change_log.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, request_id):
+        decision = str(request.data.get("decision") or "").strip().upper()
+        reason = str(request.data.get("reason") or "").strip()
+
+        if decision not in ("APPROVED", "REJECTED"):
+            raise exceptions.ValidationError({"detail": "Decision must be APPROVED or REJECTED.", "code": "INVALID_DECISION"})
+
+        found_rd = None
+        target_req = None
+        for rd in EntityRoleDetails.objects.select_related("entity").all():
+            reqs = rd.details.get("change_requests", [])
+            for cr in reqs:
+                if cr.get("request_id") == str(request_id):
+                    found_rd = rd
+                    target_req = cr
+                    break
+            if found_rd:
+                break
+
+        if not found_rd or not target_req:
+            raise exceptions.NotFound({"detail": "Change request not found.", "code": "NOT_FOUND"})
+
+        entity = found_rd.entity
+
+        with transaction.atomic():
+            target_req["status"] = decision
+            target_req["reviewed_at"] = timezone.now().isoformat()
+            target_req["reviewer_reason"] = reason
+
+            if decision == "APPROVED":
+                req_changes = target_req.get("requested_changes") or {}
+                for field, val in req_changes.items():
+                    if hasattr(entity, field) and field not in ("entity_id", "user_id", "entity_code", "created_at"):
+                        setattr(entity, field, val)
+                entity.save()
+
+                import hashlib
+                ProfileChangeLog.objects.create(
+                    entity=entity,
+                    changed_by=request.user.user_id if getattr(request, "user", None) and getattr(request.user, "user_id", None) else entity.user_id,
+                    field_group=target_req.get("field_group", "CHANGE_REQUEST"),
+                    before_hash=None,
+                    after_hash=hashlib.sha256(str(req_changes).encode("utf-8")).digest(),
+                )
+
+            found_rd.save()
+
+        return Response({"status": "decided", "decision": decision, "request_id": str(request_id)}, status=status.HTTP_200_OK)

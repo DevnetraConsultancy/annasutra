@@ -12,6 +12,9 @@ from .views_registration import (
     MyQrBlocksView,
     MyQrBlockSheetPdfView,
     MyRoleStatsView,
+    MySeasonAllocationsView,
+    MyHarvestRecordsView,
+    MyChangeRequestsView,
 )
 
 urlpatterns = [
@@ -35,4 +38,10 @@ urlpatterns = [
     path("qr-blocks/<uuid:block_id>/sheet.pdf", MyQrBlockSheetPdfView.as_view(), name="me_qr_block_sheet_pdf"),
     path("stats", MyRoleStatsView.as_view(), name="me_stats"),
     path("stats/", MyRoleStatsView.as_view(), name="me_stats_slash"),
+    path("season-allocations", MySeasonAllocationsView.as_view(), name="me_season_allocations"),
+    path("season-allocations/", MySeasonAllocationsView.as_view(), name="me_season_allocations_slash"),
+    path("harvest-records", MyHarvestRecordsView.as_view(), name="me_harvest_records"),
+    path("harvest-records/", MyHarvestRecordsView.as_view(), name="me_harvest_records_slash"),
+    path("change-requests", MyChangeRequestsView.as_view(), name="me_change_requests"),
+    path("change-requests/", MyChangeRequestsView.as_view(), name="me_change_requests_slash"),
 ]

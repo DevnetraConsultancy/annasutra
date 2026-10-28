@@ -9,6 +9,8 @@ from .views_admin import (
     AdminIssueQrBlockView,
     AdminEntityRestoreView,
     AdminEntityPurgeView,
+    AdminChangeRequestsListView,
+    AdminChangeRequestDecisionView,
 )
 
 urlpatterns = [
@@ -26,4 +28,8 @@ urlpatterns = [
     path("entities/<uuid:entity_id>/restore/", AdminEntityRestoreView.as_view(), name="admin_entity_restore_slash"),
     path("entities/<uuid:entity_id>/purge", AdminEntityPurgeView.as_view(), name="admin_entity_purge"),
     path("entities/<uuid:entity_id>/purge/", AdminEntityPurgeView.as_view(), name="admin_entity_purge_slash"),
+    path("change-requests", AdminChangeRequestsListView.as_view(), name="admin_change_requests"),
+    path("change-requests/", AdminChangeRequestsListView.as_view(), name="admin_change_requests_slash"),
+    path("change-requests/<str:request_id>/decision", AdminChangeRequestDecisionView.as_view(), name="admin_change_request_decision"),
+    path("change-requests/<str:request_id>/decision/", AdminChangeRequestDecisionView.as_view(), name="admin_change_request_decision_slash"),
 ]

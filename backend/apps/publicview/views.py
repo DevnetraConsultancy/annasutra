@@ -202,6 +202,10 @@ def public_lot_html_view(request, code: str):
 
     payload = dict(public_view.payload)
     payload["scan_count"] = ScanLog.objects.filter(serial=code).count()
+    payload.setdefault("farmer_name_masked", payload.get("farmer_name_masked") or payload.get("farmer_uid_masked") or "Verified Producer")
+    payload.setdefault("farmer_uid_masked", payload.get("farmer_uid_masked") or "Verified")
+    payload.setdefault("batch_id", payload.get("batch_id") or payload.get("code") or code)
+    payload.setdefault("code", code)
 
     context = {**base_context, "lot": payload}
     return render(request, "publicview/lot_summary.html", context)
@@ -238,3 +242,75 @@ def download_apk_view(request):
     from django.http import HttpResponseRedirect
     apk_url = "https://github.com/DevnetraConsultancy/annasutra/releases/download/v1.0.0/AnnaSutra_latest.apk"
     return HttpResponseRedirect(apk_url)
+
+
+class PublicScanPingView(APIView):
+    """POST /api/v1/public/lots/<str:code>/scan-ping
+    Log consumer scan telemetry (district/state, opt-in client GPS, distance from farm origin).
+    """
+    permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, ScopedRateThrottle]
+    throttle_scope = "public_scan"
+
+    def post(self, request, code):
+        data = request.data or {}
+        user_lat = data.get("lat") or data.get("latitude")
+        user_lng = data.get("lng") or data.get("longitude")
+        district = str(data.get("district") or "").strip()
+        state = str(data.get("state") or "").strip()
+
+        coarse_area = f"{district}, {state}".strip(", ") if (district or state) else None
+        if not coarse_area and user_lat is not None and user_lng is not None:
+            try:
+                coarse_area = f"{float(user_lat):.2f}, {float(user_lng):.2f}"
+            except Exception:
+                pass
+
+        ScanLog.objects.create(
+            serial=code,
+            result="CONSUMER_SCAN",
+            coarse_area=coarse_area,
+        )
+
+        scan_count = ScanLog.objects.filter(serial=code).count()
+
+        distance_km = None
+        if user_lat is not None and user_lng is not None:
+            try:
+                u_lat = float(user_lat)
+                u_lng = float(user_lng)
+                from apps.lots.models import Lot
+                lot = Lot.objects.select_related("origin_plot").filter(public_code=code).first()
+                farm_lat = 23.23
+                farm_lng = 87.86
+                if lot and lot.origin_plot:
+                    try:
+                        from apps.identity.services.crypto import CryptoService
+                        import json
+                        entity_id_str = str(lot.origin_plot.entity_id) if hasattr(lot.origin_plot, "entity_id") else ""
+                        if lot.origin_plot.geojson_enc:
+                            geo_str = CryptoService.decrypt(bytes(lot.origin_plot.geojson_enc), entity_id=entity_id_str)
+                            geo_data = json.loads(geo_str)
+                            coords = geo_data.get("coordinates", [])
+                            if coords and len(coords[0]) > 0:
+                                farm_lng = float(coords[0][0][0])
+                                farm_lat = float(coords[0][0][1])
+                    except Exception:
+                        pass
+
+                import math
+                R = 6371.0
+                dlat = math.radians(u_lat - farm_lat)
+                dlon = math.radians(u_lng - farm_lng)
+                a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(farm_lat)) * math.cos(math.radians(u_lat)) * math.sin(dlon / 2) ** 2
+                c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+                distance_km = round(R * c, 1)
+            except Exception:
+                distance_km = None
+
+        return Response({
+            "status": "ok",
+            "code": code,
+            "scan_count": scan_count,
+            "distance_km": distance_km,
+        }, status=status.HTTP_200_OK)

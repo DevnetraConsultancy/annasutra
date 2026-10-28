@@ -82,6 +82,7 @@ class EntityProfile(models.Model):
     ROLE_CHOICES = [
         ("PRODUCER", "Producer"),
         ("AGGREGATOR", "Aggregator"),
+        ("PROCESSOR", "Processor / Manufacturer"),
         ("WHOLESALER", "Wholesaler"),
         ("DISTRIBUTOR", "Distributor"),
         ("RETAILER", "Retailer"),

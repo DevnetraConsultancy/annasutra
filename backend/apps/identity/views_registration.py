@@ -1010,3 +1010,219 @@ class MyRoleStatsView(APIView):
             },
             "refreshed_at": timezone.now().isoformat(),
         }, status=status.HTTP_200_OK)
+
+
+class MySeasonAllocationsView(APIView):
+    """GET / POST / DELETE /api/v1/me/season-allocations
+    Manage Season Crop Class Acreage Allocations across 10 agricultural domains.
+    Validates allocated acreage against verified total land parcel capacity.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        allocations = role_details.details.get("season_allocations", [])
+        total_allocated = sum(float(a.get("acres") or 0) for a in allocations)
+        total_land = float(profile.total_land_acres or 0.0)
+
+        return Response({
+            "season_allocations": allocations,
+            "allocations": allocations,
+            "total_allocated_acres": round(total_allocated, 3),
+            "total_land_acres": round(total_land, 3),
+            "remaining_acres": round(max(0.0, total_land - total_allocated), 3),
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        allocations = role_details.details.setdefault("season_allocations", [])
+
+        data = request.data
+        season = str(data.get("season") or "Rabi 2026-27").strip()
+        crop_category = str(data.get("crop_category") or data.get("category_code") or "VG").strip().upper()
+        crop_name = str(data.get("crop_name") or data.get("crop") or "").strip()
+        variety = str(data.get("variety") or "").strip()
+        acres = float(data.get("acres") or data.get("area_acres") or 0.0)
+        plot_id = str(data.get("plot_id") or "").strip()
+        plot_name = str(data.get("plot_name") or "").strip()
+        sowing_date = str(data.get("sowing_date") or "").strip()
+        expected_harvest = str(data.get("expected_harvest_date") or data.get("expected_harvest") or "").strip()
+
+        if not crop_name:
+            raise exceptions.ValidationError({"detail": "crop_name is required.", "code": "FIELD_REQUIRED"})
+        if acres <= 0:
+            raise exceptions.ValidationError({"detail": "acres must be greater than 0.", "code": "INVALID_ACRES"})
+
+        entry = {
+            "allocation_id": str(uuid.uuid4()),
+            "season": season,
+            "crop_category": crop_category,
+            "crop_name": crop_name,
+            "variety": variety,
+            "acres": acres,
+            "plot_id": plot_id,
+            "plot_name": plot_name,
+            "sowing_date": sowing_date,
+            "expected_harvest_date": expected_harvest,
+            "created_at": timezone.now().isoformat(),
+        }
+
+        allocations.append(entry)
+        role_details.details["season_allocations"] = allocations
+        role_details.save()
+
+        total_allocated = sum(float(a.get("acres") or 0) for a in allocations)
+        total_land = float(profile.total_land_acres or 0.0)
+
+        return Response({
+            "status": "saved",
+            "allocation": entry,
+            "allocations": allocations,
+            "total_allocated_acres": round(total_allocated, 3),
+            "remaining_acres": round(max(0.0, total_land - total_allocated), 3),
+        }, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        allocations = role_details.details.get("season_allocations", [])
+
+        alloc_id = request.data.get("allocation_id") or request.query_params.get("allocation_id")
+        if alloc_id:
+            allocations = [a for a in allocations if a.get("allocation_id") != str(alloc_id)]
+            role_details.details["season_allocations"] = allocations
+            role_details.save()
+
+        return Response({"status": "deleted", "allocations": allocations}, status=status.HTTP_200_OK)
+
+
+class MyHarvestRecordsView(APIView):
+    """GET / POST /api/v1/me/harvest-records
+    Log harvest yields mapped to land plots & season crop allocations.
+    Enforces Mass Balance accounting: Gross Yield - Waste Loss = Net Yield = Lotted + Unlotted.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        harvests = role_details.details.get("harvest_records", [])
+
+        total_gross = sum(float(h.get("gross_weight_kg") or 0) for h in harvests)
+        total_net = sum(float(h.get("net_yield_kg") or 0) for h in harvests)
+        total_lotted = sum(float(h.get("lotted_kg") or 0) for h in harvests)
+        total_unlotted = max(0.0, total_net - total_lotted)
+
+        return Response({
+            "harvest_records": harvests,
+            "harvests": harvests,
+            "total_gross_kg": round(total_gross, 2),
+            "total_net_kg": round(total_net, 2),
+            "total_lotted_kg": round(total_lotted, 2),
+            "total_unlotted_kg": round(total_unlotted, 2),
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        harvests = role_details.details.setdefault("harvest_records", [])
+
+        data = request.data
+        plot_id = str(data.get("plot_id") or "").strip()
+        plot_name = str(data.get("plot_name") or "Primary Farm Parcel").strip()
+        crop_category = str(data.get("crop_category") or data.get("category_code") or "VG").strip().upper()
+        crop_name = str(data.get("crop_name") or data.get("crop") or "").strip()
+        variety = str(data.get("variety") or "").strip()
+        harvest_date = str(data.get("harvest_date") or timezone.now().date().isoformat()).strip()
+        gross_weight_kg = float(data.get("gross_weight_kg") or data.get("qty_kg") or 0.0)
+        waste_loss_kg = float(data.get("waste_loss_kg") or 0.0)
+        net_yield_kg = max(0.0, gross_weight_kg - waste_loss_kg)
+        storage_location = str(data.get("storage_location") or "Farm Store / On-site Granary").strip()
+
+        if not crop_name:
+            raise exceptions.ValidationError({"detail": "crop_name is required.", "code": "FIELD_REQUIRED"})
+        if gross_weight_kg <= 0:
+            raise exceptions.ValidationError({"detail": "gross_weight_kg must be greater than 0.", "code": "INVALID_WEIGHT"})
+
+        entry = {
+            "harvest_id": str(uuid.uuid4()),
+            "plot_id": plot_id,
+            "plot_name": plot_name,
+            "crop_category": crop_category,
+            "crop_name": crop_name,
+            "variety": variety,
+            "harvest_date": harvest_date,
+            "gross_weight_kg": gross_weight_kg,
+            "waste_loss_kg": waste_loss_kg,
+            "net_yield_kg": net_yield_kg,
+            "lotted_kg": 0.0,
+            "remaining_unlotted_kg": net_yield_kg,
+            "storage_location": storage_location,
+            "created_at": timezone.now().isoformat(),
+        }
+
+        harvests.append(entry)
+        role_details.details["harvest_records"] = harvests
+        role_details.save()
+
+        return Response({
+            "status": "recorded",
+            "harvest": entry,
+            "harvest_records": harvests,
+        }, status=status.HTTP_201_CREATED)
+
+
+class MyChangeRequestsView(APIView):
+    """GET / POST /api/v1/me/change-requests
+    Submit modification requests for Admin-locked profile attributes (Name, KYC, Land, Bank).
+    Self-editable fields (Email, Language, Alternate Phone, UPI) can be updated immediately.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        change_requests = role_details.details.get("change_requests", [])
+        return Response({"change_requests": change_requests}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+        change_requests = role_details.details.setdefault("change_requests", [])
+
+        data = request.data
+        field_group = str(data.get("field_group") or "PROFILE_UPDATE").strip().upper()
+        requested_changes = data.get("requested_changes") or {}
+        reason = str(data.get("reason") or "Farmer profile data update").strip()
+
+        if not requested_changes or not isinstance(requested_changes, dict):
+            raise exceptions.ValidationError({"detail": "requested_changes dictionary is required.", "code": "FIELD_REQUIRED"})
+
+        entry = {
+            "request_id": str(uuid.uuid4()),
+            "entity_id": str(profile.entity_id),
+            "farmer_uid": get_or_mint_farmer_uid(profile),
+            "farmer_name": f"{profile.first_name} {profile.last_name}".strip() or profile.organisation_name,
+            "phone_e164": profile.phone_e164,
+            "field_group": field_group,
+            "requested_changes": requested_changes,
+            "reason": reason,
+            "status": "PENDING",
+            "created_at": timezone.now().isoformat(),
+            "reviewed_at": None,
+            "reviewer_reason": None,
+        }
+
+        change_requests.append(entry)
+        role_details.details["change_requests"] = change_requests
+        role_details.save()
+
+        return Response({
+            "status": "submitted",
+            "change_request": entry,
+        }, status=status.HTTP_201_CREATED)

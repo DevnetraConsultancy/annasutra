@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="/static/publicview/js/annasutra_i18n.js?v=20261028v3"></script>
-  <script src="/static/publicview/js/producer_wizard.js?v=20261028v5" defer></script>
+  <script src="/static/publicview/js/producer_wizard.js?v=20261028v7" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -1291,8 +1291,9 @@
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 14px 0;">
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
-          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Origin Farmer ID</div>
-          <div style="font-family: monospace; font-size: 12.5px; font-weight: 800; color: #0b3d2e; margin-top: 2px;">{{ lot.farmer_uid_masked|default:"Verified Producer" }}</div>
+          <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Origin Producer</div>
+          <div style="font-size: 13px; font-weight: 800; color: #0b3d2e; margin-top: 2px;">{{ lot.farmer_name_masked|default:"Verified Producer" }}</div>
+          <div style="font-family: monospace; font-size: 10.5px; color: #64748b; margin-top: 2px;">ID: {{ lot.farmer_uid_masked|default:"Verified" }}</div>
         </div>
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
           <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Farming Method &amp; Grade</div>
@@ -2951,5 +2952,43 @@
 
   <!-- TOAST NOTIFICATION CONTAINER (BOTTOM RIGHT) -->
   <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <!-- NON-INTRUSIVE OPT-IN CONSUMER SCAN TELEMETRY (DPDP ACT 2023 COMPLIANT) -->
+  <script>
+    (function() {
+      const lotCode = "{{ lot.batch_id|default:'' }}";
+      if (!lotCode) return;
+
+      function sendScanTelemetry(coords) {
+        try {
+          const payload = {
+            device_type: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
+          };
+          if (coords && coords.latitude && coords.longitude) {
+            payload.latitude = coords.latitude;
+            payload.longitude = coords.longitude;
+          }
+          fetch(`/api/v1/public/lots/${encodeURIComponent(lotCode)}/scan-ping`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(function() {});
+        } catch (e) {}
+      }
+
+      // Initial coarse scan ping
+      sendScanTelemetry(null);
+
+      // Optional precise GPS if permitted by user
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            if (pos && pos.coords) sendScanTelemetry(pos.coords);
+          },
+          function() {},
+          { timeout: 7000, maximumAge: 60000 }
+        );
+      }
+    })();
+  </script>
 </body>
 </html>

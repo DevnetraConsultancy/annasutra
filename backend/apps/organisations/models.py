@@ -7,6 +7,7 @@ class Organisation(models.Model):
     ORG_TYPE_CHOICES = [
         ("FARMER", "Farmer"),
         ("AGGREGATOR", "Aggregator"),
+        ("PROCESSOR", "Processor"),
         ("WHOLESALER", "Wholesaler"),
         ("DISTRIBUTOR", "Distributor"),
         ("RETAILER", "Retailer"),

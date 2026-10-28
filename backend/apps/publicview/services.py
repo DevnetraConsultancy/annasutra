@@ -69,9 +69,20 @@ def refresh_public_view(lot) -> PublicView:
     else:
         farmer_uid_masked = "VERIFIED-PRODUCER-ID"
 
+    raw_fname = str(lot_item.get("farmer_name") or "").strip()
+    if raw_fname:
+        parts = raw_fname.split()
+        if len(parts) > 1:
+            farmer_name_masked = f"{parts[0]} {parts[-1][0]}."
+        else:
+            farmer_name_masked = parts[0]
+    else:
+        farmer_name_masked = "Verified Producer"
+
     role_stage_titles = {
         "PRODUCER": "Verified Farm Harvest Origin",
         "AGGREGATOR": "FPO / Collection Hub Grading",
+        "PROCESSOR": "Processing & Value Addition Hub",
         "WHOLESALER": "Wholesale Mandi Verification",
         "DISTRIBUTOR": "Cold-Chain Logistics Transit",
         "RETAILER": "Authorized Retail Shop Check-In",
@@ -91,8 +102,12 @@ def refresh_public_view(lot) -> PublicView:
         journey_hops.append(
             {
                 "step": cp.get("step", 1),
+                "hop_index": cp.get("step", 1),
                 "role": r_code,
+                "actor_role": r_code,
                 "stage_title": role_stage_titles.get(r_code, "Supply Chain Checkpoint"),
+                "action": role_stage_titles.get(r_code, "Supply Chain Checkpoint"),
+                "actor_name": f"{r_code.title()} Hub",
                 "place": _clean_public_str(cp.get("location_name") or region),
                 "geo_y": round(float(cp.get("lat") or 23.23), 2),
                 "geo_x": round(float(cp.get("lng") or 87.86), 2),
@@ -117,6 +132,7 @@ def refresh_public_view(lot) -> PublicView:
         "last_spray_date": str(lot_item.get("last_spray_date") or "Organic / Zero Chemical Spray"),
         "phi_safe": True,
         "farmer_uid_masked": farmer_uid_masked,
+        "farmer_name_masked": farmer_name_masked,
         "current_stage_role": lot_item.get("current_custodian_role", "PRODUCER"),
         "is_retailer_verified": bool(lot_item.get("is_retailer_verified", False)),
         "journey_hops": journey_hops,
