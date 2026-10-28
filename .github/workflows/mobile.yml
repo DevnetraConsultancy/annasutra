@@ -132,9 +132,8 @@ jobs:
       - name: Build Web application
         run: flutter build web --release
 
-      - name: Build & Verify Android Release APKs (Sub-50MB Universal & Split-per-ABI)
+      - name: Build & Verify Universal Android Release APK
         run: |
-          flutter build apk --release --split-per-abi
           flutter build apk --release
           ls -lh build/app/outputs/flutter-apk/
           APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | sort -V | tail -n 1)
@@ -142,32 +141,21 @@ jobs:
             "$APKSIGNER" verify --verbose --print-certs build/app/outputs/flutter-apk/app-release.apk
           fi
 
-      - name: Publish Release APKs to GitHub Release v1.0.0
+      - name: Publish Single Universal Release APK to GitHub Release v1.0.0
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BUILD_DATETIME=$(date +'%Y%m%d_%H%M')
-          APK_TIMESTAMP_NAME="AnnaSutra_${BUILD_DATETIME}.apk"
-          ARM64_TIMESTAMP_NAME="AnnaSutra_arm64_${BUILD_DATETIME}.apk"
-          cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/${APK_TIMESTAMP_NAME}"
           cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/AnnaSutra_latest.apk"
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "build/app/outputs/flutter-apk/${ARM64_TIMESTAMP_NAME}"
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "build/app/outputs/flutter-apk/AnnaSutra_arm64_latest.apk"
           gh release upload v1.0.0 \
-            build/app/outputs/flutter-apk/app-release.apk \
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
-            "build/app/outputs/flutter-apk/${APK_TIMESTAMP_NAME}" \
             "build/app/outputs/flutter-apk/AnnaSutra_latest.apk" \
-            "build/app/outputs/flutter-apk/${ARM64_TIMESTAMP_NAME}" \
-            "build/app/outputs/flutter-apk/AnnaSutra_arm64_latest.apk" \
             --clobber
 
-      - name: Upload Android Release APKs
+      - name: Upload Android Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: annasutra-android-release-apks
-          path: mobile/build/app/outputs/flutter-apk/*.apk
+          name: annasutra-android-release-apk
+          path: mobile/build/app/outputs/flutter-apk/AnnaSutra_latest.apk
           retention-days: 30
 
       - name: Upload Web PWA
