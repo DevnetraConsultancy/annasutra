@@ -12,12 +12,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" onerror="this.onerror=null;this.src='/static/publicview/js/gsap.min.js';"></script>
-  <script src="/static/publicview/js/annasutra_i18n.js?v=20261028v3"></script>
+  <script src="/static/publicview/js/annasutra_i18n.js?v=20261028v2"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
-  <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261028v3" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261028v3" defer></script>
+  <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261028v2" />
+  <script src="/static/publicview/js/producer_wizard.js?v=20261028v2" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -476,246 +476,288 @@
       transform: scale(1.08);
     }
 
-    /* 4. IN-HERO LOT VERIFICATION & CALL-TO-ACTION UNIT */
-    .hero-search-box {
-      max-width: 660px;
-      margin: 24px auto 0;
-      background: rgba(15, 23, 42, 0.82);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1.5px solid rgba(255, 255, 255, 0.22);
-      border-radius: 16px;
-      padding: 16px 20px;
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+    /* 4. LIVE TELEMETRY TICKER BAR - FULL-WIDTH EDGE TO EDGE */
+    .ledger-ticker-bar {
+      width: 100%;
+      margin: 0;
+      padding: 10px 0;
+      background: #041c14;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .hero-search-form {
+    .ledger-ticker-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
       display: flex;
-      gap: 10px;
       align-items: center;
-    }
-    .hero-search-input {
-      flex: 1;
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 14px;
-      color: #0f172a;
-      outline: none;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .hero-search-input:focus {
-      border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
-    }
-    .btn-hero-qr {
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      color: #ffffff;
-      padding: 11px 15px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    .btn-hero-qr:hover {
-      background: rgba(255, 255, 255, 0.25);
-      border-color: #ffffff;
-    }
-    .btn-hero-submit {
-      background: #10b981;
-      color: #064e3b;
+      gap: 16px;
+      overflow: hidden;
+      background: transparent;
       border: none;
-      padding: 12px 22px;
-      border-radius: 8px;
-      font-size: 14px;
+      box-shadow: none;
+      border-radius: 0;
+    }
+    .ledger-ticker-label {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 11px;
       font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 3px 10px;
+      border-radius: 6px;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-    }
-    .btn-hero-submit:hover {
-      background: #34d399;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.45);
-    }
-    .hero-actions-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.14);
-      flex-wrap: wrap;
-    }
-    .btn-hero-portal {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffffff;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .btn-hero-portal:hover {
-      background: rgba(255, 255, 255, 0.22);
-      border-color: #ffffff;
-    }
-    .btn-hero-apk {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid #10b981;
-      color: #6ee7b7;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .btn-hero-apk:hover {
-      background: #10b981;
-      color: #064e3b;
-    }
-    @media (max-width: 640px) {
-      .hero-search-form { flex-direction: column; }
-      .hero-search-input, .btn-hero-qr, .btn-hero-submit { width: 100%; justify-content: center; }
-    }
-
-    /* SECTION TAG BADGE */
-    .section-tag-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #065f46;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 12px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    }
+    .ledger-ticker-stream {
+      font-size: 12px;
+      color: #e2e8f0;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
     }
 
-    /* AUTHORIZED ENTITY ACCESS SECTION */
-    .entity-access-section {
+    /* 5. NATIONAL STATS STRIP - FULL-WIDTH EDGE TO EDGE */
+    .home-stats-strip {
       width: 100%;
       margin: 0;
-      padding: 68px 0 76px;
+      padding: 32px 0;
       background: #ffffff;
       border-bottom: 1px solid var(--border);
     }
-    .entity-access-container {
+    .home-stats-container {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 0 28px;
+      padding: 0 32px;
+    }
+    .home-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+    .home-stat-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 14px;
       text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
-    .entity-access-container h3 {
-      font-size: clamp(24px, 2.3vw, 32px);
+    .home-stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+      border-color: #cbd5e1;
+    }
+    .home-stat-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .home-stat-num {
+      font-size: 21px;
       font-weight: 900;
-      color: var(--slate-dark);
-      margin: 0 0 10px;
+      color: var(--primary);
       letter-spacing: -0.5px;
+      line-height: 1.15;
     }
-    .entity-access-container p.sub {
-      font-size: 14.5px;
-      color: var(--text-muted);
-      max-width: 680px;
-      margin: 0 auto 36px;
+    .home-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 3px;
+      line-height: 1.3;
+    }
+
+    /* 6. LIVE ENTITY DASHBOARD PREVIEW CONSOLE - FULL-WIDTH EDGE TO EDGE */
+    .entity-dash-preview-wrap {
+      width: 100%;
+      margin: 0;
+      padding: 64px 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+    .entity-dash-preview-card {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+    }
+    .entity-dash-preview-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 22px;
+    }
+    .entity-dash-preview-header h3 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--primary);
+      margin: 0 0 6px;
+      letter-spacing: -0.4px;
+    }
+    .entity-dash-preview-header p {
+      font-size: 13.5px;
+      color: #64748b;
+      margin: 0;
       line-height: 1.5;
     }
-    .entity-access-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      text-align: left;
-    }
-    .entity-access-card {
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 22px;
-      cursor: pointer;
-      transition: all 0.25s ease;
+    .entity-preview-tabs {
       display: flex;
-      flex-direction: column;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
     }
-    .entity-access-card:hover {
-      border-color: #10b981;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(16, 185, 129, 0.12);
+    .btn-entity-tab {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+      padding: 9px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s;
     }
-    .entity-access-top {
+    .btn-entity-tab:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .btn-entity-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
+    }
+    .preview-console-screen {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 22px;
+    }
+    .preview-org-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
     }
-    .entity-access-icon-box {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      display: inline-flex;
+    .preview-org-info {
+      display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 10px;
     }
-    .entity-access-pill {
+    .preview-org-badge {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #15803d;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .preview-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .preview-metric-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
     }
-    .pill-producer { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
-    .pill-aggregator { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
-    .pill-wholesaler { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .pill-distributor { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
-    .pill-retailer { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-    .pill-admin { background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; }
-
-    .entity-access-card h4 {
-      font-size: 16.5px;
-      font-weight: 800;
-      color: #0f172a;
-      margin: 0 0 6px;
-    }
-    .entity-access-card p {
-      font-size: 12.5px;
+    .preview-metric-title {
+      font-size: 11.5px;
+      font-weight: 700;
       color: #64748b;
-      line-height: 1.5;
-      margin: 0 0 16px;
-      flex: 1;
+      margin-bottom: 4px;
     }
-    .entity-access-cta {
-      font-size: 12px;
+    .preview-metric-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.4px;
+    }
+    .preview-metric-tag {
+      font-size: 11px;
+      color: #15803d;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .preview-batches-table {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .preview-table-head {
+      background: #f1f5f9;
+      padding: 10px 16px;
+      font-size: 11.5px;
       font-weight: 800;
-      color: #047857;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .preview-batch-row {
+      padding: 11px 16px;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .preview-batch-code {
+      font-family: monospace;
+      font-weight: 800;
+      color: var(--primary);
+      background: #f0fdf4;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid #bbf7d0;
+    }
+    .preview-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-preview-launch {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
+      transition: background 0.2s;
     }
-    .entity-access-card:hover .entity-access-cta {
-      color: #10b981;
-      text-decoration: underline;
+    .btn-preview-launch:hover {
+      background: var(--primary-dark);
     }
 
     /* CINEMA PROMO VIDEO MODAL */
@@ -930,51 +972,29 @@
       color: #166534;
     }
 
-    /* Clean Vector Tier Icon Box */
-    .flow-tier-icon-wrap {
-      width: 58px;
-      height: 58px;
-      border-radius: 14px;
-      display: inline-flex;
+    /* SVG Illustration Canvas */
+    .flow-step-visual {
+      width: 100%;
+      height: 136px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      display: flex;
       align-items: center;
       justify-content: center;
-      margin: 6px auto 14px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.02);
+      transition: border-color 0.3s;
     }
-    .flow-step-box:hover .flow-tier-icon-wrap {
-      transform: scale(1.08);
+    .flow-step-box.is-active-stage .flow-step-visual {
+      border-color: #86efac;
     }
-    .flow-step-box.is-active-stage .flow-tier-icon-wrap {
-      transform: scale(1.12);
-      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
-    }
-    .tier-color-producer { background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #047857; }
-    .tier-color-aggregator { background: #fffbeb; border: 1.5px solid #fde68a; color: #d97706; }
-    .tier-color-wholesaler { background: #eff6ff; border: 1.5px solid #bfdbfe; color: #2563eb; }
-    .tier-color-distributor { background: #eef2ff; border: 1.5px solid #c7d2fe; color: #4f46e5; }
-    .tier-color-retailer { background: #fff7ed; border: 1.5px solid #fed7aa; color: #ea580c; }
-    .tier-color-admin { background: #f8fafc; border: 1.5px solid #cbd5e1; color: #0f172a; }
-
-    .btn-tier-enter {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      color: #0f172a;
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 7px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 10px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-    .btn-tier-enter:hover {
-      background: #047857;
-      border-color: #047857;
-      color: #ffffff;
+    .stage-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     .flow-step-title {
@@ -2184,45 +2204,8 @@
       <div class="hero-billboard-content">
         <h2 id="heroHeadline">From Soil to Shelf, Every Grain Accounted For.</h2>
         <p class="tagline" id="heroTagline">
-          National agricultural produce traceability and cryptographic custody ledger.
+          India's unified cryptographic produce custody platform ensuring authentic traceability, farmer empowerment, and transparent supply chains.
         </p>
-
-        <!-- Fast In-Hero Lot Verification & Quick Action Bar -->
-        <div class="hero-search-box">
-          <form class="hero-search-form" onsubmit="handleNavLotSubmit(event)" action="/" method="GET">
-            <input 
-              type="text" 
-              name="code" 
-              class="hero-search-input" 
-              placeholder="Enter 12-Character Lot Code (e.g. AS-2026-X1)" 
-              autocomplete="off" 
-              required 
-            />
-            <button type="button" class="btn-hero-qr" onclick="openQrModal()" title="Scan QR Code with Camera">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
-                <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
-                <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
-                <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
-                <rect x="7" y="7" width="10" height="10" rx="1"></rect>
-              </svg>
-              <span>Scan QR</span>
-            </button>
-            <button type="submit" class="btn-hero-submit">
-              <span>Verify Lot</span>
-            </button>
-          </form>
-          <div class="hero-actions-row">
-            <button type="button" class="btn-hero-portal" onclick="openEntityPortalModal()">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              <span>Authorized Entity Log In</span>
-            </button>
-            <a href="/download/apk" download="AnnaSutra_latest.apk" class="btn-hero-apk">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <span>Download Android APK (&lt;50MB)</span>
-            </a>
-          </div>
-        </div>
       </div>
 
       <div class="hero-video-controls" id="heroVideoControls">
@@ -2239,245 +2222,527 @@
     </div>
   </section>
 
-  <!-- 4. UNIFIED 5-TIER SUPPLY-CHAIN CUSTODY FLOW -->
+  <!-- 4. LIVE TELEMETRY TICKER BAR -->
+  <div class="ledger-ticker-bar" id="ledgerTickerBar">
+    <div class="ledger-ticker-inner">
+      <span class="ledger-ticker-label">
+        <span class="hero-badge-dot"></span>
+        <span id="tickerTitle">LIVE CUSTODY TICKER</span>
+      </span>
+      <span class="ledger-ticker-stream" id="tickerStream">
+        [00:14:02 IST] Digital weighbridge gross weight attested • Cryptographic hash chained • e-NAM settlement confirmed
+      </span>
+    </div>
+  </div>
+
+  <!-- 5. NATIONAL TRUST & ECOSYSTEM STATS STRIP -->
+  <div class="home-stats-strip" id="homeStatsStrip">
+    <div class="home-stats-grid">
+      <div class="home-stat-card">
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></div>
+        <div class="home-stat-num" id="statProduceKg">1,42,850+</div>
+        <div class="home-stat-label" id="statProduceKgLabel">Kg Produce Tracked</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="home-stat-num" id="statFarmers">2,480+</div>
+        <div class="home-stat-label" id="statFarmersLabel">Registered Farmers</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
+        <div class="home-stat-num" id="statGradeA">99.8%</div>
+        <div class="home-stat-label" id="statGradeALabel">Certified Grade A Quality</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div class="home-stat-num" id="statScans">48,900+</div>
+        <div class="home-stat-label" id="statScansLabel">Consumer QR Scans</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div class="home-stat-num" id="statPrivacy">0.0%</div>
+        <div class="home-stat-label" id="statPrivacyLabel">Data Leakage (DPDP)</div>
+      </div>
+      <div class="home-stat-card">
+        <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+        <div class="home-stat-num" id="statAppendOnly">100%</div>
+        <div class="home-stat-label" id="statAppendOnlyLabel">Append-Only Integrity</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 5-TIER SUPPLY CHAIN ARCHITECTURE SHOWCASE (HOME PAGE ONLY - FULL WIDTH EDGE TO EDGE) -->
   <section class="flow-showcase-section" id="flowShowcaseSection">
     <div class="flow-showcase-container">
-      <div class="section-tag-badge">
-        <span class="hero-badge-dot"></span>
-        <span>SUPPLY-CHAIN ARCHITECTURE</span>
-      </div>
-      <h3 id="flowTitle">Unified 5-Tier Produce Custody Flow</h3>
-      <p class="sub" id="flowSubtitle">
-        Tamper-evident cryptographic custody handoffs connecting every agricultural participant from soil to consumer shelf.
-      </p>
+      <h3 id="flowTitle">Unified 5-Tier Supply-Chain Architecture</h3>
+      <p class="sub" id="flowSubtitle">Direct cryptographic custody transfer across all agricultural decision-makers</p>
 
       <div class="flow-steps-grid">
-        <!-- Tier 1: Producer -->
+        <!-- Stage 1: Producer -->
         <div class="flow-step-box is-active-stage" id="flowStepBox1" onclick="jumpToFlowStage(1)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
           <div class="flow-step-header">
             <div class="flow-step-num">1</div>
-            <div class="flow-stage-badge" id="flowBadge1">Tier 1 • Genesis</div>
+            <div class="flow-stage-badge" id="flowBadge1">Tier 1 • Farm Origin</div>
           </div>
-          <div class="flow-tier-icon-wrap tier-color-producer">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9A9 9 0 0 1 3 11a9 9 0 0 1 9-9z"></path>
-              <path d="M12 6v10"></path>
-              <path d="M8 10l4-4 4 4"></path>
+          <div class="flow-step-visual">
+            <svg id="svgStage1" class="stage-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="s1ScanGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#22c55e" stop-opacity="0.8"/>
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Soil bed / earth patch -->
+              <ellipse cx="110" cy="132" rx="98" ry="8" fill="#e2e8f0" opacity="0.65"/>
+              <ellipse cx="50" cy="126" rx="36" ry="7" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>
+              <!-- Seed in soil -->
+              <g id="s1Seed" transform="translate(50, 126)">
+                <ellipse cx="0" cy="0" rx="4" ry="2.6" fill="#854d0e" stroke="#451a03" stroke-width="0.8"/>
+              </g>
+              <!-- Seed sprout -->
+              <path id="s1Sprout" d="M 50 125 Q 48 115 50 106" fill="none" stroke="#22c55e" stroke-width="2.6" stroke-linecap="round"/>
+              <!-- Plant stem growing up -->
+              <path id="s1Stem" d="M 50 125 Q 46 90 52 65 Q 58 40 62 22" fill="none" stroke="#15803d" stroke-width="3.5" stroke-linecap="round"/>
+              <path id="s1Branch1" d="M 49 90 Q 36 84 28 82" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
+              <path id="s1Branch2" d="M 53 70 Q 68 64 78 62" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
+              <!-- Lush leaves unfurling -->
+              <g id="s1Leaves">
+                <path id="s1Leaf1" d="M 48 90 C 28 84 22 74 30 69 C 38 69 45 79 48 90 Z" fill="#22c55e"/>
+                <path id="s1Leaf2" d="M 53 70 C 67 64 77 68 73 78 C 63 82 55 75 53 70 Z" fill="#16a34a"/>
+                <path id="s1Leaf3" d="M 60 46 C 45 38 40 28 50 26 C 58 26 62 38 60 46 Z" fill="#22c55e"/>
+                <path id="s1Leaf4" d="M 63 32 C 75 22 85 26 81 36 C 73 40 67 36 63 32 Z" fill="#15803d"/>
+              </g>
+              <!-- Blossoms turning into ripe tomatoes -->
+              <g id="s1Tomato1" transform="translate(32, 80)">
+                <circle cx="0" cy="0" r="7.5" fill="#dc2626"/>
+                <circle cx="-2.5" cy="-2.5" r="2" fill="#f87171" opacity="0.8"/>
+                <path d="M -3 -6 Q 0 -4 3 -6 Q 0 -8 -3 -6 Z" fill="#16a34a"/>
+              </g>
+              <g id="s1Tomato2" transform="translate(76, 60)">
+                <circle cx="0" cy="0" r="8" fill="#ef4444"/>
+                <circle cx="-2.5" cy="-2.5" r="2.2" fill="#fca5a5" opacity="0.8"/>
+                <path d="M -3 -7 Q 0 -5 3 -7 Q 0 -9 -3 -7 Z" fill="#15803d"/>
+              </g>
+              <g id="s1Tomato3" transform="translate(60, 32)">
+                <circle cx="0" cy="0" r="6.5" fill="#dc2626"/>
+                <circle cx="-2" cy="-2" r="1.8" fill="#f87171" opacity="0.8"/>
+                <path d="M -2.5 -5 Q 0 -3 2.5 -5 Q 0 -7 -2.5 -5 Z" fill="#22c55e"/>
+              </g>
+              <!-- Harvest Box / Crate with closing flaps & tamper seal tape -->
+              <g id="s1Crate" transform="translate(122, 65)">
+                <rect x="0" y="16" width="82" height="44" rx="3" fill="#166534" stroke="#0d3b1e" stroke-width="1.5"/>
+                <rect x="6" y="24" width="70" height="4" rx="2" fill="#0d4025"/>
+                <rect x="6" y="34" width="70" height="4" rx="2" fill="#0d4025"/>
+                <rect x="6" y="44" width="70" height="4" rx="2" fill="#0d4025"/>
+                <rect x="29" y="20" width="24" height="6" rx="3" fill="#ffffff" opacity="0.25"/>
+                <!-- Fresh harvested produce inside -->
+                <g id="s1HarvestProduce">
+                  <circle cx="16" cy="12" r="7" fill="#ef4444"/>
+                  <circle cx="30" cy="10" r="8" fill="#dc2626"/>
+                  <circle cx="45" cy="11" r="7.5" fill="#ef4444"/>
+                  <circle cx="60" cy="12" r="7" fill="#dc2626"/>
+                  <circle cx="23" cy="6" r="6.5" fill="#ef4444"/>
+                  <circle cx="38" cy="5" r="7" fill="#f87171"/>
+                  <circle cx="52" cy="6" r="6.5" fill="#dc2626"/>
+                </g>
+                <!-- Box closing flaps -->
+                <path id="s1FlapL" d="M 0 16 L 0 4 L 41 4 L 41 16 Z" fill="#15803d" stroke="#0d3b1e" stroke-width="1"/>
+                <path id="s1FlapR" d="M 41 16 L 41 4 L 82 4 L 82 16 Z" fill="#166534" stroke="#0d3b1e" stroke-width="1"/>
+                <!-- Security Tamper Seal Tape -->
+                <rect id="s1Tape" x="33" y="2" width="16" height="58" rx="1.5" fill="#f59e0b" opacity="0"/>
+                <!-- QR Code Label Attaching -->
+                <g id="s1QrTag" transform="translate(18, 24)">
+                  <rect x="0" y="0" width="46" height="24" rx="2.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                  <rect x="3" y="3" width="6" height="6" fill="#0f172a"/><rect x="4" y="4" width="4" height="4" fill="#ffffff"/><rect x="5" y="5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="12" y="3" width="6" height="6" fill="#0f172a"/><rect x="13" y="4" width="4" height="4" fill="#ffffff"/><rect x="14" y="5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="3" y="12" width="6" height="6" fill="#0f172a"/><rect x="4" y="13" width="4" height="4" fill="#ffffff"/><rect x="5" y="14" width="2" height="2" fill="#0f172a"/>
+                  <text x="21" y="9" font-size="4.5" font-weight="900" fill="#0b3d2e" font-family="system-ui, sans-serif">ANNASUTRA</text>
+                  <text x="21" y="16" font-size="4.2" font-family="monospace" font-weight="700" fill="#15803d">#AS-2026-X1</text>
+                  <circle cx="41" cy="7" r="2" fill="#22c55e"/>
+                  <line id="s1Laser" x1="-2" y1="2" x2="48" y2="2" stroke="#22c55e" stroke-width="1.8" opacity="0"/>
+                </g>
+              </g>
+              <!-- Packed & Sealed Status Badge -->
+              <g id="s1SealBadge" opacity="0">
+                <rect x="126" y="8" width="86" height="18" rx="9" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+                <text x="169" y="20" font-size="6.8" font-weight="900" fill="#15803d" text-anchor="middle">PACKED &amp; SEALED</text>
+              </g>
             </svg>
           </div>
           <div class="flow-step-title" id="flowStep1Title">Producer</div>
-          <div class="flow-step-desc" id="flowStep1Desc">
-            Farmer &amp; FPO registers crop harvest, maps farm plots, and generates Crockford Base32 tamper-evident crate QR tags.
+          <div class="flow-step-desc" id="flowStep1Desc">Farmer / FPO logs harvest & generates QR crate labels.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill" id="flowMeta1A">TAG: <strong class="meta-code">#AS-2026-X1</strong></span>
+            <span class="meta-pill" id="flowMeta1B">STATUS: <strong class="meta-code">SEALED</strong></span>
           </div>
-          <button type="button" class="btn-tier-enter" onclick="event.stopPropagation(); openLoginModal('PRODUCER')">
-            <span>Enter Farmer Node</span> &rarr;
-          </button>
         </div>
 
-        <!-- Tier 2: Aggregator -->
+        <!-- Stage 2: Aggregator -->
         <div class="flow-step-box" id="flowStepBox2" onclick="jumpToFlowStage(2)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
           <div class="flow-step-header">
             <div class="flow-step-num">2</div>
             <div class="flow-stage-badge" id="flowBadge2">Tier 2 • APMC Mandi</div>
           </div>
-          <div class="flow-tier-icon-wrap tier-color-aggregator">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 6h18M12 6v14M5 10l7-4 7 4M6 14l-4 4h8l-4-4zM18 14l-4 4h8l-4-4z"></path>
+          <div class="flow-step-visual">
+            <svg id="svgStage2" class="stage-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="s2ScanGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0.05"/>
+                </linearGradient>
+              </defs>
+              <!-- Mandi Intake Table & Scale Base -->
+              <rect x="8" y="122" width="204" height="8" rx="2" fill="#64748b"/>
+              <rect x="22" y="130" width="16" height="4" rx="1" fill="#334155"/>
+              <rect x="182" y="130" width="16" height="4" rx="1" fill="#334155"/>
+              <!-- Sealed Crate on Mandi Intake Platform -->
+              <g id="s2Crate" transform="translate(16, 70)">
+                <rect x="0" y="0" width="76" height="42" rx="3" fill="#166534" stroke="#0d3b1e" stroke-width="1.5"/>
+                <rect x="30" y="-8" width="16" height="50" rx="1" fill="#f59e0b"/>
+                <!-- Crate QR Tag -->
+                <g id="s2CrateQr" transform="translate(16, 11)">
+                  <rect x="0" y="0" width="44" height="22" rx="2.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                  <rect x="3" y="3" width="5" height="5" fill="#0f172a"/><rect x="4" y="4" width="3" height="3" fill="#ffffff"/><rect x="4.5" y="4.5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="10" y="3" width="5" height="5" fill="#0f172a"/><rect x="11" y="4" width="3" height="3" fill="#ffffff"/><rect x="11.5" y="4.5" width="2" height="2" fill="#0f172a"/>
+                  <rect x="3" y="10" width="5" height="5" fill="#0f172a"/><rect x="4" y="11" width="3" height="3" fill="#ffffff"/><rect x="4.5" y="11.5" width="2" height="2" fill="#0f172a"/>
+                  <text x="18" y="9" font-size="4" font-weight="900" fill="#0b3d2e">ANNASUTRA</text>
+                  <text x="18" y="15" font-size="3.8" font-family="monospace" font-weight="700" fill="#15803d">#AS-2026-X1</text>
+                </g>
+              </g>
+              <!-- Aggregator Optical Scanner Gun -->
+              <g id="s2Scanner" transform="translate(86, 36)">
+                <rect x="12" y="8" width="8" height="16" rx="2" fill="#334155" transform="rotate(22, 12, 8)"/>
+                <rect x="0" y="0" width="20" height="12" rx="2" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+                <circle cx="2" cy="6" r="3" fill="#22c55e"/>
+                <polygon id="s2ScanCone" points="2,6 -44,38 -28,62 2,6" fill="url(#s2ScanGrad)" opacity="0"/>
+                <line id="s2LaserLine" x1="2" y1="6" x2="-36" y2="50" stroke="#22c55e" stroke-width="1.8" opacity="0"/>
+              </g>
+              <!-- Aggregator Digital Terminal & Ledger Screen -->
+              <g id="s2LedgerConsole" transform="translate(116, 14)">
+                <rect x="0" y="0" width="96" height="102" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+                <rect x="3" y="3" width="90" height="15" rx="3" fill="#1e293b"/>
+                <text x="48" y="13" font-size="5.2" font-weight="800" fill="#94a3b8" text-anchor="middle">APMC MANDI NODE #104</text>
+                <text id="s2RecLot" x="8" y="34" font-size="5" font-family="monospace" font-weight="700" fill="#38bdf8">SCAN: #AS-2026-X1</text>
+                <text id="s2RecWeight" x="8" y="47" font-size="5" font-family="monospace" font-weight="700" fill="#e2e8f0">WT: 450.0 KG (NET)</text>
+                <text id="s2RecGrade" x="8" y="60" font-size="5" font-family="monospace" font-weight="700" fill="#facc15">GRADE: CERTIFIED A+</text>
+                <g id="s2RecCommit" opacity="0">
+                  <rect x="6" y="72" width="84" height="20" rx="4" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+                  <text x="48" y="85" font-size="5" font-weight="900" fill="#22c55e" text-anchor="middle">RECORD COMMITTED</text>
+                </g>
+              </g>
+              <!-- Certified Grade-A Quality Stamp -->
+              <g id="s2GradeStamp" transform="translate(68, 88) scale(0)">
+                <circle cx="0" cy="0" r="18" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.2" stroke-dasharray="2 1"/>
+                <circle cx="0" cy="0" r="14" fill="#15803d"/>
+                <text x="0" y="-3" font-size="4.5" font-weight="900" fill="#fef08a" text-anchor="middle">CERTIFIED</text>
+                <text x="0" y="5" font-size="6" font-weight="900" fill="#ffffff" text-anchor="middle">GRADE A</text>
+                <path d="M -4 9 L -1 11 L 4 7" fill="none" stroke="#fef08a" stroke-width="1.5" stroke-linecap="round"/>
+              </g>
             </svg>
           </div>
           <div class="flow-step-title" id="flowStep2Title">Aggregator</div>
-          <div class="flow-step-desc" id="flowStep2Desc">
-            Mandi arhatiya attests digital weighbridge net weights, certifies quality grades, and settles auction lots.
+          <div class="flow-step-desc" id="flowStep2Desc">Mandi collection, digital weight verification, quality assaying.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill" id="flowMeta2A">RECORD: <strong class="meta-code">COMMITTED</strong></span>
+            <span class="meta-pill" id="flowMeta2B">GRADE: <strong class="meta-code">A+ PASS</strong></span>
           </div>
-          <button type="button" class="btn-tier-enter" onclick="event.stopPropagation(); openLoginModal('AGGREGATOR')">
-            <span>Enter Mandi Node</span> &rarr;
-          </button>
         </div>
 
-        <!-- Tier 3: Wholesaler -->
+        <!-- Stage 3: Wholesaler -->
         <div class="flow-step-box" id="flowStepBox3" onclick="jumpToFlowStage(3)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
           <div class="flow-step-header">
             <div class="flow-step-num">3</div>
-            <div class="flow-stage-badge" id="flowBadge3">Tier 3 • Terminal</div>
+            <div class="flow-stage-badge" id="flowBadge3">Tier 3 • Cold Hub</div>
           </div>
-          <div class="flow-tier-icon-wrap tier-color-wholesaler">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          <div class="flow-step-visual">
+            <svg id="svgStage3" class="stage-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+              <!-- Cold Warehouse Steel Uprights & Racks -->
+              <line x1="20" y1="14" x2="20" y2="132" stroke="#cbd5e1" stroke-width="3"/>
+              <line x1="200" y1="14" x2="200" y2="132" stroke="#cbd5e1" stroke-width="3"/>
+              <line x1="18" y1="65" x2="202" y2="65" stroke="#94a3b8" stroke-width="3"/>
+              <line x1="18" y1="120" x2="202" y2="120" stroke="#94a3b8" stroke-width="3.5"/>
+              <rect x="22" y="16" width="176" height="102" fill="#f0fdfa" opacity="0.6" rx="3"/>
+              <!-- Cold Hub Climate Telemetry Gauge -->
+              <g id="s3Climate" transform="translate(26, 18)">
+                <rect x="0" y="0" width="52" height="23" rx="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+                <circle cx="7" cy="8" r="2.5" fill="#38bdf8"/>
+                <text x="14" y="10" font-size="4.2" font-weight="800" fill="#7dd3fc">COLD HUB</text>
+                <text id="s3TempText" x="26" y="19" font-size="7" font-weight="900" font-family="monospace" fill="#38bdf8" text-anchor="middle">+3.8°C • 92%</text>
+              </g>
+              <!-- Master Storage Lot on Upper Rack -->
+              <g id="s3MasterLot" transform="translate(74, 30)">
+                <rect x="0" y="0" width="76" height="34" rx="3.5" fill="#166534" stroke="#0d3b1e" stroke-width="1.2"/>
+                <rect x="6" y="5" width="64" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="6" y="12" width="64" height="3" rx="1.5" fill="#0d4025"/>
+                <text x="38" y="23" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">MASTER LOT: 450 KG</text>
+              </g>
+              <!-- Splitting Lineage Curves & Child Sub-Lots -->
+              <path id="s3BranchA" d="M 85 58 Q 55 68 48 84" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="3 2" opacity="0"/>
+              <path id="s3BranchB" d="M 135 58 Q 165 68 172 84" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="3 2" opacity="0"/>
+              <g id="s3SubLotA" transform="translate(18, 80)" opacity="0">
+                <rect x="0" y="0" width="68" height="34" rx="3" fill="#15803d" stroke="#0b3d2e" stroke-width="1.2"/>
+                <rect x="5" y="5" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="5" y="12" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="8" y="18" width="12" height="12" rx="1.5" fill="#ffffff"/>
+                <rect x="10" y="20" width="8" height="8" fill="#0f172a"/>
+                <text x="24" y="24" font-size="4.5" font-weight="900" fill="#ffffff">Sub-Lot A</text>
+                <text x="24" y="29" font-size="3.8" font-family="monospace" fill="#bbf7d0">250.0 KG</text>
+              </g>
+              <g id="s3SubLotB" transform="translate(134, 80)" opacity="0">
+                <rect x="0" y="0" width="68" height="34" rx="3" fill="#15803d" stroke="#0b3d2e" stroke-width="1.2"/>
+                <rect x="5" y="5" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="5" y="12" width="58" height="3" rx="1.5" fill="#0d4025"/>
+                <rect x="8" y="18" width="12" height="12" rx="1.5" fill="#ffffff"/>
+                <rect x="10" y="20" width="8" height="8" fill="#0f172a"/>
+                <text x="24" y="24" font-size="4.5" font-weight="900" fill="#ffffff">Sub-Lot B</text>
+                <text x="24" y="29" font-size="3.8" font-family="monospace" fill="#bbf7d0">200.0 KG</text>
+              </g>
+              <g id="s3DispatchIndicator" opacity="0">
+                <rect x="68" y="124" width="84" height="16" rx="4" fill="#15803d"/>
+                <text x="110" y="135" font-size="5.2" font-weight="900" fill="#ffffff" text-anchor="middle">DISPATCH READY</text>
+              </g>
             </svg>
           </div>
           <div class="flow-step-title" id="flowStep3Title">Wholesaler</div>
-          <div class="flow-step-desc" id="flowStep3Desc">
-            Terminal intake, mass-balance preserved batch splitting, and refrigerated storage bay temperature monitoring.
+          <div class="flow-step-desc" id="flowStep3Desc">Terminal market intake, lot splitting, cold storage.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill" id="flowMeta3A">STORAGE: <strong class="meta-code">+3.8°C</strong></span>
+            <span class="meta-pill" id="flowMeta3B">DISTRIB: <strong class="meta-code">2 SUB-LOTS</strong></span>
           </div>
-          <button type="button" class="btn-tier-enter" onclick="event.stopPropagation(); openLoginModal('WHOLESALER')">
-            <span>Enter Wholesaler Node</span> &rarr;
-          </button>
         </div>
 
-        <!-- Tier 4: Distributor -->
+        <!-- Stage 4: Distributor -->
         <div class="flow-step-box" id="flowStepBox4" onclick="jumpToFlowStage(4)">
+          <div class="flow-step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
           <div class="flow-step-header">
             <div class="flow-step-num">4</div>
-            <div class="flow-stage-badge" id="flowBadge4">Tier 4 • Logistics</div>
+            <div class="flow-stage-badge" id="flowBadge4">Tier 4 • Cold Chain Fleet</div>
           </div>
-          <div class="flow-tier-icon-wrap tier-color-distributor">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          <div class="flow-step-visual">
+            <svg id="svgStage4" class="stage-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+              <!-- Roadway & Animated Centerline Dashes -->
+              <rect x="8" y="120" width="204" height="16" rx="2" fill="#334155"/>
+              <line id="s4RoadDashes" x1="12" y1="128" x2="208" y2="128" stroke="#f8fafc" stroke-width="2.2" stroke-dasharray="10 8"/>
+              <!-- Refrigerated Fleet Logistics Truck -->
+              <g id="s4Truck" transform="translate(24, 44)">
+                <rect x="0" y="14" width="94" height="56" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <rect x="0" y="38" width="94" height="6" fill="#16a34a"/>
+                <rect x="94" y="8" width="12" height="12" rx="2" fill="#64748b"/>
+                <text x="47" y="32" font-size="6" font-weight="900" fill="#0b3d2e" text-anchor="middle">ANNASUTRA LOGISTICS</text>
+                <text x="47" y="54" font-size="4.5" font-weight="700" fill="#64748b" text-anchor="middle">REEFER +4.0°C</text>
+                <path d="M 94 24 L 122 24 Q 138 38 141 54 L 141 70 L 94 70 Z" fill="#0b3d2e"/>
+                <path d="M 116 27 L 132 38 Q 135 46 135 50 L 114 50 L 114 27 Z" fill="#7dd3fc"/>
+                <circle cx="139" cy="62" r="2.8" fill="#fef08a"/>
+                <line x1="50" y1="14" x2="50" y2="2" stroke="#0b3d2e" stroke-width="2"/>
+                <circle cx="50" cy="2" r="2.5" fill="#22c55e"/>
+                <circle id="s4RadarWave1" cx="50" cy="2" r="6" fill="none" stroke="#22c55e" stroke-width="1.2" opacity="0"/>
+                <circle id="s4RadarWave2" cx="50" cy="2" r="12" fill="none" stroke="#22c55e" stroke-width="1.2" opacity="0"/>
+                <!-- Produce Crate Loading into Container -->
+                <g id="s4CrateLoad" transform="translate(-18, 28)">
+                  <rect x="0" y="0" width="28" height="18" rx="2" fill="#15803d" stroke="#0d3b1e" stroke-width="1"/>
+                  <rect x="3" y="4" width="7" height="7" fill="#ffffff"/>
+                  <text x="12" y="10" font-size="3" fill="#ffffff" font-weight="bold">LOT-A</text>
+                </g>
+                <!-- Wheels with Rotating Spokes -->
+                <g id="s4Wheel1" transform="translate(122, 72)">
+                  <circle cx="0" cy="0" r="9.5" fill="#1e293b"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#94a3b8"/>
+                  <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#ffffff" stroke-width="1.2"/>
+                  <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#ffffff" stroke-width="1.2"/>
+                </g>
+                <g id="s4Wheel2" transform="translate(26, 72)">
+                  <circle cx="0" cy="0" r="9.5" fill="#1e293b"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#94a3b8"/>
+                  <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#ffffff" stroke-width="1.2"/>
+                  <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#ffffff" stroke-width="1.2"/>
+                </g>
+                <g id="s4Wheel3" transform="translate(48, 72)">
+                  <circle cx="0" cy="0" r="9.5" fill="#1e293b"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#94a3b8"/>
+                  <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#ffffff" stroke-width="1.2"/>
+                  <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#ffffff" stroke-width="1.2"/>
+                </g>
+              </g>
+              <!-- Transit Telematics Pill -->
+              <g id="s4TransitBadge" opacity="0">
+                <rect x="65" y="10" width="90" height="18" rx="9" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+                <text x="110" y="22" font-size="6.5" font-weight="800" fill="#15803d" text-anchor="middle">TRANSIT • GPS LIVE</text>
+              </g>
             </svg>
           </div>
           <div class="flow-step-title" id="flowStep4Title">Distributor</div>
-          <div class="flow-step-desc" id="flowStep4Desc">
-            Reefer highway fleet transit, vehicle GPS route checkpoints, continuous temperature audits, and handover proofs.
+          <div class="flow-step-desc" id="flowStep4Desc">Fleet logistics, transit temp logging, regional delivery.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill" id="flowMeta4A">GPS: <strong class="meta-code">LIVE TRANSIT</strong></span>
+            <span class="meta-pill" id="flowMeta4B">TEMP: <strong class="meta-code">+4.0°C</strong></span>
           </div>
-          <button type="button" class="btn-tier-enter" onclick="event.stopPropagation(); openLoginModal('DISTRIBUTOR')">
-            <span>Enter Logistics Node</span> &rarr;
-          </button>
         </div>
 
-        <!-- Tier 5: Retailer -->
+        <!-- Stage 5: Retailer -->
         <div class="flow-step-box" id="flowStepBox5" onclick="jumpToFlowStage(5)">
           <div class="flow-step-header">
             <div class="flow-step-num">5</div>
-            <div class="flow-stage-badge" id="flowBadge5">Tier 5 • Last-Mile</div>
+            <div class="flow-stage-badge" id="flowBadge5">Tier 5 • Last Mile / POS</div>
           </div>
-          <div class="flow-tier-icon-wrap tier-color-retailer">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          <div class="flow-step-visual">
+            <svg id="svgStage5" class="stage-svg" viewBox="0 0 220 145" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="s5ScanGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#22c55e" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Wooden Grocery Counter & Shelf -->
+              <rect x="14" y="92" width="108" height="7" rx="1.5" fill="#b45309"/>
+              <polygon points="18,99 18,108 28,99" fill="#78350f"/>
+              <polygon points="116,99 116,108 106,99" fill="#78350f"/>
+              <line x1="10" y1="130" x2="210" y2="130" stroke="#cbd5e1" stroke-width="1.5"/>
+              <!-- Fresh Produce Display on Shelf -->
+              <g id="s5ShelfProduce" transform="translate(18, 74)">
+                <rect x="0" y="0" width="54" height="18" rx="2.5" fill="#15803d" stroke="#0d3b1e" stroke-width="1"/>
+                <circle cx="10" cy="-2" r="5" fill="#ef4444"/>
+                <circle cx="20" cy="-3" r="5.5" fill="#dc2626"/>
+                <circle cx="30" cy="-2" r="5" fill="#ef4444"/>
+                <circle cx="40" cy="-3" r="5.5" fill="#dc2626"/>
+              </g>
+              <!-- Acrylic Shelf QR Standee -->
+              <g id="s5Standee" transform="translate(76, 56)">
+                <path d="M 0 0 L 36 0 L 39 36 L -3 36 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+                <rect x="5" y="4" width="7" height="7" fill="#0f172a"/><rect x="6.5" y="5.5" width="4" height="4" fill="#ffffff"/><rect x="7.5" y="6.5" width="2" height="2" fill="#0f172a"/>
+                <rect x="15" y="4" width="7" height="7" fill="#0f172a"/><rect x="16.5" y="5.5" width="4" height="4" fill="#ffffff"/><rect x="17.5" y="6.5" width="2" height="2" fill="#0f172a"/>
+                <rect x="5" y="14" width="7" height="7" fill="#0f172a"/><rect x="6.5" y="15.5" width="4" height="4" fill="#ffffff"/><rect x="7.5" y="16.5" width="2" height="2" fill="#0f172a"/>
+                <text x="18" y="28" font-size="3.5" font-weight="900" fill="#0b3d2e" text-anchor="middle">SCAN ORIGIN</text>
+              </g>
+              <!-- Scan Beam from Phone to Standee -->
+              <polygon id="s5ScanCone" points="132,48 132,92 112,78 112,62" fill="url(#s5ScanGrad)" opacity="0"/>
+              <!-- Consumer Smartphone Scanning Mockup -->
+              <g id="s5Phone" transform="translate(132, 20)">
+                <rect x="0" y="0" width="66" height="104" rx="9" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+                <rect x="3" y="6" width="60" height="92" rx="6" fill="#f8fafc"/>
+                <rect x="25" y="2" width="16" height="3" rx="1.5" fill="#334155"/>
+                <!-- Camera Reticle -->
+                <g id="s5Reticle">
+                  <path d="M 14 26 L 20 26 M 14 26 L 14 32" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <path d="M 52 26 L 46 26 M 52 26 L 52 32" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <path d="M 14 62 L 20 62 M 14 62 L 14 56" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <path d="M 52 62 L 46 62 M 52 62 L 52 56" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+                  <line id="s5PhoneScanLine" x1="14" y1="44" x2="52" y2="44" stroke="#22c55e" stroke-width="1.5" opacity="0.8"/>
+                </g>
+                <!-- Verification Pop-up Card on Phone Screen -->
+                <g id="s5VerifyCard" transform="translate(5, 14)" opacity="0">
+                  <rect x="0" y="0" width="56" height="60" rx="5" fill="#ffffff" stroke="#86efac" stroke-width="1.2"/>
+                  <circle cx="28" cy="14" r="7.5" fill="#22c55e"/>
+                  <path d="M 24 14 L 27 17 L 33 11" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                  <text x="28" y="28" font-size="4.8" font-weight="900" fill="#15803d" text-anchor="middle">100% AUTHENTIC</text>
+                  <text x="28" y="36" font-size="3.8" font-weight="800" fill="#0f172a" text-anchor="middle">Fresh Farm Tomatoes</text>
+                  <text x="28" y="43" font-size="3.4" font-weight="600" fill="#475569" text-anchor="middle">Farm: Nadia Co-op</text>
+                  <text x="28" y="50" font-size="3.4" font-weight="600" fill="#475569" text-anchor="middle">Farmer: R. Soren</text>
+                  <text x="28" y="56" font-size="3.2" font-family="monospace" font-weight="700" fill="#0b3d2e" text-anchor="middle">#AS-2026-X1</text>
+                </g>
+                <!-- Final Sale POS Confirmation Badge -->
+                <g id="s5SaleStamp" transform="translate(33, 86) scale(0)">
+                  <rect x="-26" y="-8" width="52" height="16" rx="4" fill="#15803d"/>
+                  <text x="0" y="3.5" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">SOLD &amp; SEALED</text>
+                </g>
+              </g>
             </svg>
           </div>
           <div class="flow-step-title" id="flowStep5Title">Retailer</div>
-          <div class="flow-step-desc" id="flowStep5Desc">
-            Store delivery receipt, consumer shelf QR standee printing, and retail checkout balance deduction.
+          <div class="flow-step-desc" id="flowStep5Desc">Kirana / POS intake, consumer shelf QR, final sale logging.</div>
+          <div class="flow-step-meta">
+            <span class="meta-pill" id="flowMeta5A">CUSTOMER: <strong class="meta-code">VERIFIED</strong></span>
+            <span class="meta-pill" id="flowMeta5B">SALE: <strong class="meta-code">SEALED</strong></span>
           </div>
-          <button type="button" class="btn-tier-enter" onclick="event.stopPropagation(); openLoginModal('RETAILER')">
-            <span>Enter Retailer Node</span> &rarr;
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. INTERACTIVE 5-TIER ENTITY DASHBOARD PREVIEW CONSOLE (HOME PAGE ONLY) -->
+  <div class="entity-dash-preview-wrap" id="entityDashPreviewWrap">
+    <div class="entity-dash-preview-card">
+      <div class="entity-dash-preview-header">
+        <h3 id="previewConsoleHeading">Real-Time Entity Dashboard Simulator</h3>
+        <p id="previewConsoleSubheading">Explore how each participant views and controls their cryptographic node in the National Supply Chain Network.</p>
+      </div>
+
+      <!-- 5 Entity Switcher Tabs -->
+      <div class="entity-preview-tabs" id="previewRoleTabs">
+        <button type="button" class="btn-entity-tab active" data-role="PRODUCER" onclick="switchPreviewEntity('PRODUCER')">
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></span><span id="tabProducerLabel">Producer</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="AGGREGATOR" onclick="switchPreviewEntity('AGGREGATOR')">
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h18"/></svg></span><span id="tabAggregatorLabel">Aggregator</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="WHOLESALER" onclick="switchPreviewEntity('WHOLESALER')">
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect x="10" y="10" width="4" height="4"/></svg></span><span id="tabWholesalerLabel">Wholesaler</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="DISTRIBUTOR" onclick="switchPreviewEntity('DISTRIBUTOR')">
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><span id="tabDistributorLabel">Distributor</span>
+        </button>
+        <button type="button" class="btn-entity-tab" data-role="RETAILER" onclick="switchPreviewEntity('RETAILER')">
+          <span class="tab-icon-wrap" style="display:inline-flex;align-items:center;margin-right:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg></span><span id="tabRetailerLabel">Retailer</span>
+        </button>
+      </div>
+
+      <!-- Live Simulated Screen -->
+      <div class="preview-console-screen" id="previewConsoleScreen">
+        <div class="preview-org-bar">
+          <div class="preview-org-info">
+            <span id="previewRoleIcon" style="display:inline-flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></span>
+            <div>
+              <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
+              <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Tier 1 • Primary Agricultural Producer Node</div>
+            </div>
+          </div>
+          <span class="preview-org-badge" id="previewBadgeText">SIMULATED LIVE NODE</span>
+        </div>
+
+        <!-- 3 KPI Cards -->
+        <div class="preview-metrics-grid" id="previewMetricsGrid">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Batches in Custody Table -->
+        <div class="preview-batches-table">
+          <div class="preview-table-head">
+            <span id="previewThBatch">Batch / Lot Code</span>
+            <span id="previewThDesc">Description & Volume</span>
+            <span id="previewThStatus">Custody Status</span>
+          </div>
+          <div id="previewBatchRows">
+            <!-- Dynamically populated rows -->
+          </div>
+        </div>
+
+        <!-- Action Launch Bar -->
+        <div class="preview-actions-bar">
+          <span style="font-size: 12px; color: #64748b;" id="previewActionHint">
+            Want to operate this console live? Click below to access the role workspace.
+          </span>
+          <button type="button" class="btn-preview-launch" id="btnPreviewLaunch" onclick="launchFromPreview()">
+            <span id="btnPreviewLaunchText">Sign In as Producer</span>
           </button>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- 5. AUTHORIZED ENTITY PORTAL ACCESS DIRECTORY -->
-  <section class="entity-access-section" id="entityAccessSection">
-    <div class="entity-access-container" id="entityDashPreviewWrap">
-      <div class="section-tag-badge">
-        <span class="hero-badge-dot"></span>
-        <span>PARTICIPANT ACCESS</span>
+      <div style="margin-top: 12px; font-size: 12px; color: #64748b; font-weight: 600; text-align: left;" id="demoDataFootnote">
+        * DEMO DATA — Simulated Demonstration (Not real transactions)
       </div>
-      <h3 id="portalSectionHeading">Authorized Entity Nodes</h3>
-      <p class="sub" id="portalSectionSubheading">
-        Access your role-confined operational workspace to record custody transfers, audit lots, and manage inventory.
-      </p>
-
-      <div class="entity-access-grid">
-        <!-- 1. Producer -->
-        <div class="entity-access-card" data-role="PRODUCER" onclick="openLoginModal('PRODUCER')">
-          <div class="entity-access-top">
-            <div class="entity-access-icon-box tier-color-producer">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9A9 9 0 0 1 3 11a9 9 0 0 1 9-9z"></path>
-                <path d="M12 6v10"></path>
-                <path d="M8 10l4-4 4 4"></path>
-              </svg>
-            </div>
-            <span class="entity-access-pill pill-producer">Farmer / FPO</span>
-          </div>
-          <h4>Producer Portal</h4>
-          <p>Register farm plots, log harvest genesis, and print Crockford Base32 crate QR labels.</p>
-          <div class="entity-access-cta">Sign In as Producer &rarr;</div>
-        </div>
-
-        <!-- 2. Aggregator -->
-        <div class="entity-access-card" data-role="AGGREGATOR" onclick="openLoginModal('AGGREGATOR')">
-          <div class="entity-access-top">
-            <div class="entity-access-icon-box tier-color-aggregator">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M12 6v14M5 10l7-4 7 4M6 14l-4 4h8l-4-4zM18 14l-4 4h8l-4-4z"></path>
-              </svg>
-            </div>
-            <span class="entity-access-pill pill-aggregator">Mandi / APMC</span>
-          </div>
-          <h4>Mandi Aggregator Portal</h4>
-          <p>Weighbridge intake, certified quality grading, and auction lot custody transfers.</p>
-          <div class="entity-access-cta">Sign In as Aggregator &rarr;</div>
-        </div>
-
-        <!-- 3. Wholesaler -->
-        <div class="entity-access-card" data-role="WHOLESALER" onclick="openLoginModal('WHOLESALER')">
-          <div class="entity-access-top">
-            <div class="entity-access-icon-box tier-color-wholesaler">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </svg>
-            </div>
-            <span class="entity-access-pill pill-wholesaler">Terminal Market</span>
-          </div>
-          <h4>Wholesaler Portal</h4>
-          <p>Cold storage management, mass-balance preserved batch splitting, and bulk dispatches.</p>
-          <div class="entity-access-cta">Sign In as Wholesaler &rarr;</div>
-        </div>
-
-        <!-- 4. Distributor -->
-        <div class="entity-access-card" data-role="DISTRIBUTOR" onclick="openLoginModal('DISTRIBUTOR')">
-          <div class="entity-access-top">
-            <div class="entity-access-icon-box tier-color-distributor">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="1" y="3" width="15" height="13"></rect>
-                <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
-                <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                <circle cx="18.5" cy="18.5" r="2.5"></circle>
-              </svg>
-            </div>
-            <span class="entity-access-pill pill-distributor">Logistics</span>
-          </div>
-          <h4>Distributor Portal</h4>
-          <p>Fleet cold-chain custody, transit waypoint logging, and delivery acknowledgments.</p>
-          <div class="entity-access-cta">Sign In as Distributor &rarr;</div>
-        </div>
-
-        <!-- 5. Retailer -->
-        <div class="entity-access-card" data-role="RETAILER" onclick="openLoginModal('RETAILER')">
-          <div class="entity-access-top">
-            <div class="entity-access-icon-box tier-color-retailer">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-              </svg>
-            </div>
-            <span class="entity-access-pill pill-retailer">Supermarket / POS</span>
-          </div>
-          <h4>Retailer Portal</h4>
-          <p>Store delivery intake, customer shelf QR standee generation, and checkout logging.</p>
-          <div class="entity-access-cta">Sign In as Retailer &rarr;</div>
-        </div>
-
-        <!-- 6. Admin / Verifier -->
-        <div class="entity-access-card" data-role="ADMIN" onclick="openLoginModal('ADMIN')">
-          <div class="entity-access-top">
-            <div class="entity-access-icon-box tier-color-admin">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                <path d="m9 12 2 2 4-4"></path>
-              </svg>
-            </div>
-            <span class="entity-access-pill pill-admin">Governance &amp; KYC</span>
-          </div>
-          <h4>Admin Verification Portal</h4>
-          <p>Review entity registrations, audit encrypted credentials, and manage Crockford QR pools.</p>
-          <div class="entity-access-cta">Sign In as Admin &rarr;</div>
-        </div>
-      </div>
-      <div id="demoDataFootnote" style="margin-top: 18px; font-size: 11px; color: #94a3b8; text-align: center; letter-spacing: 0.3px;">* DEMO DATA — Simulated Demonstration (Not real transactions)</div>
     </div>
-  </section>
+  </div>
+
   <!-- CONFINED OPERATIONAL WORKSPACE (SHOWN ONLY ON LOGIN) -->
   <div class="confined-workspace-container" style="max-width: 1280px; margin: 0 auto; padding: 0 24px;">
     <div class="confined-workspace" id="confinedWorkspace" style="display: none;">
@@ -2508,16 +2773,12 @@
     </div>
   </div>
 
-  <!-- 8. NATIONAL TRUST & VERIFICATION STANDARDS -->
+  <!-- 8. NATIONAL TRUST & VERIFICATION STANDARDS - GOD-LEVEL FULL-WIDTH SHOWCASE -->
   <section class="trust-standards-section" id="trustSection">
     <div class="trust-standards-container">
-      <div class="section-tag-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #86efac;">
-        <span class="hero-badge-dot"></span>
-        <span>VERIFIED TRUST STANDARDS</span>
-      </div>
-      <h3 id="trustTitle">National Trust &amp; Verification Standards</h3>
+      <h3 id="trustTitle">National Trust & Verification Standards</h3>
       <p class="trust-subtitle" id="trustSubtitle">
-        Cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade integrity across Bharat.
+        Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.
       </p>
 
       <div class="trust-pillars-grid">
@@ -2531,12 +2792,12 @@
           </div>
           <h4 id="trust1Title">Cryptographic Append-Only Ledger</h4>
           <p id="trust1Desc">
-            Every harvest genesis, mandi weighing, and transit dispatch is chained with SHA-256 cryptographic hashes and immutable database audit triggers.
+            Every harvest genesis, mandi weighing, and transit dispatch is chained with SHA-256 cryptographic hashes and immutable PostgreSQL database triggers.
           </p>
           <div class="pillar-pills">
-            <span class="pillar-pill">SHA-256 Hashes</span>
-            <span class="pillar-pill">Immutable Triggers</span>
-            <span class="pillar-pill">Zero History Tampering</span>
+            <span class="pillar-pill" id="trust1Pill1">SHA-256 Hashes</span>
+            <span class="pillar-pill" id="trust1Pill2">Immutable Triggers</span>
+            <span class="pillar-pill" id="trust1Pill3">Zero History Tampering</span>
           </div>
         </div>
 
@@ -2553,9 +2814,9 @@
             Farmer personal identity, precise farm GPS coordinates, and commercial trade margins are strictly protected and redacted under the Digital Personal Data Protection (DPDP) Act 2023.
           </p>
           <div class="pillar-pills">
-            <span class="pillar-pill">DPDP Act 2023</span>
-            <span class="pillar-pill">PII Redaction</span>
-            <span class="pillar-pill">Geofence Privacy</span>
+            <span class="pillar-pill" id="trust2Pill1">DPDP Act 2023</span>
+            <span class="pillar-pill" id="trust2Pill2">PII Redaction</span>
+            <span class="pillar-pill" id="trust2Pill3">Geofence Privacy</span>
           </div>
         </div>
 
@@ -2565,7 +2826,7 @@
             <svg class="pillar-svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
             </svg>
           </div>
           <h4 id="trust3Title">Mutual Custody Confirmation</h4>
@@ -2573,14 +2834,38 @@
             Produce custody cannot be transferred unilaterally. Both dispatching and receiving operators must digitally sign off on net weights and certified quality grades.
           </p>
           <div class="pillar-pills">
-            <span class="pillar-pill">Dual-Signature Handoff</span>
-            <span class="pillar-pill">Anti-Counterfeit QR</span>
-            <span class="pillar-pill">Quality Assaying</span>
+            <span class="pillar-pill" id="trust3Pill1">Dual-Signature Handoff</span>
+            <span class="pillar-pill" id="trust3Pill2">Anti-Counterfeit QR</span>
+            <span class="pillar-pill" id="trust3Pill3">Quality Assaying Verification</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Assurance Ribbon -->
+      <div class="trust-assurance-ribbon">
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span id="trustRibbonLedger">Append-Only SHA-256 Ledger</span>
+        </div>
+        <div class="trust-assurance-divider"></div>
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span id="trustRibbonDpdp">DPDP Act 2023 Certified</span>
+        </div>
+        <div class="trust-assurance-divider"></div>
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span id="trustRibbonAgmark">Certified Quality Grading</span>
+        </div>
+        <div class="trust-assurance-divider"></div>
+        <div class="trust-assurance-item">
+          <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span id="trustRibbonCdac">C-DAC Sovereign Cloud Node</span>
         </div>
       </div>
     </div>
   </section>
+
   <!-- 10. ATARAXIS-STYLE DARK FOREST GREEN CURVED FOOTER -->
   <footer class="ataraxis-footer-wrap">
     <div class="ataraxis-footer-card">
@@ -2635,7 +2920,7 @@
                 <div style="font-size: 11.5px; color: #cbd5e1;" id="lblApkMeta">Direct Install • v1.0.0 (&lt;50MB • Android 8.0+)</div>
               </div>
             </div>
-            <a href="/download/apk" download="AnnaSutra_latest.apk" class="btn-download-apk" style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: #064e3b; font-weight: 800; font-size: 13px; padding: 10px 18px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); flex-shrink: 0; transition: transform 0.15s ease;" title="Direct Download AnnaSutra Android APK">
+            <a href="/download/apk" class="btn-download-apk" style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: #064e3b; font-weight: 800; font-size: 13px; padding: 10px 18px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); flex-shrink: 0; transition: transform 0.15s ease;" title="Direct Download AnnaSutra Android APK (v1.0.0)">
               <!-- Downward Download Arrow SVG -->
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -2662,7 +2947,7 @@
               </a>
             </li>
             <li>
-              <a href="/download/apk" download="AnnaSutra_latest.apk" title="Download Android Mobile APK" style="color: #6ee7b7; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              <a href="/download/apk" title="Download Android Mobile APK" style="color: #6ee7b7; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
@@ -2685,9 +2970,9 @@
               </button>
             </li>
             <li>
-              <button type="button" onclick="document.getElementById('entityAccessSection').scrollIntoView({behavior: 'smooth'})">
+              <button type="button" onclick="document.getElementById('entityDashPreviewWrap').scrollIntoView({behavior: 'smooth'})">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkSim">Authorized Entity Directory</span>
+                <span id="footerLinkSim">Entity Dashboard Simulator</span>
               </button>
             </li>
             <li>
@@ -2752,9 +3037,6 @@
 
       <!-- Bottom Saffron / Gold Accent Ribbon -->
       <div class="ataraxis-bottom-ribbon">
-        <div style="font-size: 11px; opacity: 0.85; margin-bottom: 4px;">
-          * DEMO DATA – Simulated Demonstration (Not real transactions)
-        </div>
         <div id="footerLegalNotice">
           © 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.
         </div>
@@ -4769,6 +5051,308 @@
       }
     };
 
+    const dashboardPreviewData = {
+      en: {
+        PRODUCER: {
+          icon: 'sprout',
+          title: 'Producer Operations Console',
+          org: 'Bardhaman Organic Farmers Producer Co-op',
+          station: 'Cluster Farm Yard #4, Bardhaman',
+          launchBtn: 'Sign In as Producer',
+          metrics: [
+            { title: 'Total Harvested', val: '18,450 Kg', tag: '+14% vs last month' },
+            { title: 'Active QR Batches', val: '12 Batches', tag: 'All tamper-evident sealed' },
+            { title: 'Dispatched to Mandi', val: '14,200 Kg', tag: 'Dual-signed transfer' }
+          ],
+          batches: []
+        },
+        AGGREGATOR: {
+          icon: 'scale',
+          title: 'Aggregator Mandi Console',
+          org: 'Hooghly APMC Aggregation Yard (MANDI-WB-012)',
+          station: 'Gate #2 Weighbridge & Grading Yard',
+          launchBtn: 'Sign In as Aggregator',
+          metrics: [
+            { title: 'Mandi Inward Intake', val: '42,800 Kg', tag: 'Digital weighbridge certified' },
+            { title: 'Certified Grade A', val: '99.4%', tag: 'Official quality tested' },
+            { title: 'Auction Cleared', val: '₹ 14.8 Lakh', tag: 'e-NAM settlements' }
+          ],
+          batches: []
+        },
+        WHOLESALER: {
+          icon: 'warehouse',
+          title: 'Wholesaler Terminal Console',
+          org: 'Kolkata Central Wholesalers Ltd (Posta Market)',
+          station: 'Posta Terminal Complex, Kolkata',
+          launchBtn: 'Sign In as Wholesaler',
+          metrics: [
+            { title: 'Cold Bay Inventory', val: '65,200 Kg', tag: 'Controlled 4°C - 8°C chambers' },
+            { title: 'Consignments Split', val: '38 Lots', tag: 'Mass-balance preserved' },
+            { title: 'Fleet Dispatches', val: '24 Shipments', tag: 'Locked reefer trucks' }
+          ],
+          batches: []
+        },
+        DISTRIBUTOR: {
+          icon: 'truck',
+          title: 'Distributor Logistics Console',
+          org: 'Bengal Cold-Chain Express Logistics (WB-LOG-004)',
+          station: 'Central Transit Depot, New Town, Kolkata',
+          launchBtn: 'Sign In as Distributor',
+          metrics: [
+            { title: 'Active Reefer Trucks', val: '18 Trucks', tag: 'Live GPS geofenced' },
+            { title: 'Mean Cargo Temp', val: '7.4 °C', tag: 'Zero thermal excursions' },
+            { title: 'On-Time Retail Drops', val: '99.8%', tag: '42 Store destinations' }
+          ],
+          batches: []
+        },
+        RETAILER: {
+          icon: 'cart',
+          title: 'Retailer Point-of-Sale Console',
+          org: 'Maa Durga Retail Fresh Mart (Kolkata Outlet #4)',
+          station: 'Produce Aisle, Lake Gardens, Kolkata',
+          launchBtn: 'Sign In as Retailer',
+          metrics: [
+            { title: 'Shelf Stock Volume', val: '1,420 Kg', tag: 'Active on display counters' },
+            { title: 'Consumer QR Scans', val: '1,890 Scans', tag: '4.9/5.0 Customer trust score' },
+            { title: 'Freshness Retention', val: '99.2%', tag: '< 0.8% organic waste rate' }
+          ],
+          batches: []
+        }
+      },
+      hi: {
+        PRODUCER: {
+          icon: 'sprout',
+          title: 'उत्पादक संचालन कंसोल',
+          org: 'बर्धमान ऑर्गेनिक फार्मर्स प्रोड्यूसर को-ऑप',
+          station: 'क्लस्टर फार्म यार्ड #4, बर्धमान',
+          launchBtn: 'उत्पादक के रूप में लॉगिन करें',
+          metrics: [
+            { title: 'कुल कटाई उपज', val: '18,450 किग्रा', tag: '+14% पिछले माह से अधिक' },
+            { title: 'सक्रिय क्यूआर बैच', val: '12 लॉट्स', tag: 'सभी क्रेट सुरक्षित रूप से सीलबंद' },
+            { title: 'मंडी को प्रेषित', val: '14,200 किग्रा', tag: 'द्विपक्षीय हस्ताक्षरित प्रेषण' }
+          ],
+          batches: []
+        },
+        AGGREGATOR: {
+          icon: 'scale',
+          title: 'संग्रहकर्ता मंडी कंसोल',
+          org: 'हुगली एपीएमसी संग्रह यार्ड (MANDI-WB-012)',
+          station: 'गेट #2 वेज-ब्रिज एवं ग्रेडिंग परिसर',
+          launchBtn: 'संग्रहकर्ता के रूप में लॉगिन करें',
+          metrics: [
+            { title: 'मंडी आवक वजन', val: '42,800 किग्रा', tag: 'डिजिटल वेज-ब्रिज द्वारा प्रमाणित' },
+            { title: 'प्रमाणित ग्रेड ए', val: '99.4%', tag: 'आधिकारिक गुणवत्ता जांच' },
+            { title: 'नीलामी निकासी', val: '₹ 14.8 लाख', tag: 'ई-नाम द्वारा निपटान' }
+          ],
+          batches: []
+        },
+        WHOLESALER: {
+          icon: 'warehouse',
+          title: 'थोक व्यापारी टर्मिनल कंसोल',
+          org: 'कोलकाता सेंट्रल होलसेलर्स लि. (पोस्ता बाजार)',
+          station: 'पोस्ता टर्मिनल परिसर, कोलकाता',
+          launchBtn: 'थोक व्यापारी के रूप में लॉगिन करें',
+          metrics: [
+            { title: 'शीत गृह भंडार', val: '65,200 किग्रा', tag: 'नियंत्रित 4°C - 8°C तापमान' },
+            { title: 'लॉट विभाजन', val: '38 लॉट्स', tag: 'द्रव्यमान-संतुलन सुरक्षित' },
+            { title: 'फ्लीट प्रेषण', val: '24 खेपें', tag: 'सीलबंद रीफर वाहन' }
+          ],
+          batches: []
+        },
+        DISTRIBUTOR: {
+          icon: 'truck',
+          title: 'वितरक लॉजिस्टिक्स कंसोल',
+          org: 'बंगाल कोल्ड-चेन एक्सप्रेस लॉजिस्टिक्स (WB-LOG-004)',
+          station: 'सेंट्रल ट्रांजिट डिपो, न्यू टाउन, कोलकाता',
+          launchBtn: 'वितरक के रूप में लॉगिन करें',
+          metrics: [
+            { title: 'सक्रिय रीफर ट्रक', val: '18 ट्रक', tag: 'लाइव जीपीएस जियोफेंस्ड' },
+            { title: 'औसत तापमान', val: '7.4 °C', tag: 'शून्य तापीय विचलन' },
+            { title: 'समय पर डिलीवरी', val: '99.8%', tag: '42 खुदरा गंतव्य' }
+          ],
+          batches: []
+        },
+        RETAILER: {
+          icon: 'cart',
+          title: 'खुदरा विक्रेता पीओएस कंसोल',
+          org: 'मां दुर्गा रिटेल फ्रेश मार्ट (कोलकाता आउटलेट #4)',
+          station: 'सब्जी विभाग, लेक गार्डन्स, कोलकाता',
+          launchBtn: 'खुदरा विक्रेता के रूप में लॉगिन करें',
+          metrics: [
+            { title: 'काउंटर स्टॉक', val: '1,420 किग्रा', tag: 'दुकान के डिस्प्ले रैक पर सक्रिय' },
+            { title: 'उपभोक्ता क्यूआर स्कैन', val: '1,890 स्कैन', tag: '4.9/5.0 ग्राहक विश्वास स्कोर' },
+            { title: 'ताजगी प्रतिधारण', val: '99.2%', tag: '< 0.8% जैविक नुकसान' }
+          ],
+          batches: []
+        }
+      },
+      bn: {
+        PRODUCER: {
+          icon: 'sprout',
+          title: 'উৎপাদক পরিচালনা কনসোল',
+          org: 'বর্ধমান অর্গানিক ফার্মার্স প্রডিউসার কো-অপ',
+          station: 'ক্লাস্টার ফার্ম ইয়ার্ড #৪, বর্ধমান',
+          launchBtn: 'উৎপাদক হিসেবে লগইন করুন',
+          metrics: [
+            { title: 'মোট ফসল ফলন', val: '১৮,৪৫০ কেজি', tag: '+১৪% গত মাসের চেয়ে বেশি' },
+            { title: 'সক্রিয় কিউআর ব্যাচ', val: '১২টি ব্যাচ', tag: 'সব ক্রেট সুরক্ষিত সিলযুক্ত' },
+            { title: 'মণ্ডিতে প্রেরিত', val: '১৪,২০০ কেজি', tag: 'দ্বিপাক্ষিক স্বাক্ষরে প্রেরিত' }
+          ],
+          batches: []
+        },
+        AGGREGATOR: {
+          icon: 'scale',
+          title: 'সংগ্রহকারী মণ্ডি কনসোল',
+          org: 'হুগলি এপিএমসি সংগ্রহ ইয়ার্ড (MANDI-WB-012)',
+          station: 'গেট #২ ওজন ও গ্রেডিং চত্বর',
+          launchBtn: 'সংগ্রহকারী হিসেবে লগইন করুন',
+          metrics: [
+            { title: 'মণ্ডি চালান ওজন', val: '৪২,৮০০ কেজি', tag: 'ডিজিটাল ওয়েজ-ব্রিজ দ্বারা প্রত্যয়িত' },
+            { title: 'প্রত্যয়িত গ্রেড এ', val: '৯৯.৪%', tag: 'অফিসিয়াল গুণমান পরীক্ষিত' },
+            { title: 'নিলাম নিষ্পত্তি', val: '₹ ১৪.৮ লাখ', tag: 'ই-নাম দ্বারা নিষ্পত্তি' }
+          ],
+          batches: []
+        },
+        WHOLESALER: {
+          icon: 'warehouse',
+          title: 'পাইকারি টার্মিনাল কনসোল',
+          org: 'কলকাতা সেন্ট্রাল হোলসেলার্স প্রাঃ লিঃ (পোস্তা বাজার)',
+          station: 'পোস্তা টার্মিনাল কমপ্লেক্স, কলকাতা',
+          launchBtn: 'পাইকারি বিক্রেতা হিসেবে লগইন করুন',
+          metrics: [
+            { title: 'হিমাগার মজুদ', val: '৬৫,২০০ কেজি', tag: 'নিয়ন্ত্রিত ৪°সে - ৮°সে তাপমাত্রা' },
+            { title: 'চালান বিভাজন', val: '৩৮টি লট', tag: 'ভর-ভারসাম্য অক্ষত' },
+            { title: 'ফ্লিট প্রেরণ', val: '২৪টি চালান', tag: 'সিলযুক্ত রিফার ভ্যান' }
+          ],
+          batches: []
+        },
+        DISTRIBUTOR: {
+          icon: 'truck',
+          title: 'পরিবেশক লজিস্টিকস কনসোল',
+          org: 'বেঙ্গল কোল্ড-চেন এক্সপ্রেস লজিস্টিকস (WB-LOG-004)',
+          station: 'সেন্ট্রাল ট্রানজিট ডিপো, নিউ টাউন, কলকাতা',
+          launchBtn: 'পরিবেশক হিসেবে লগইন করুন',
+          metrics: [
+            { title: 'সক্রিয় রিফার ট্রাক', val: '১৮টি ট্রাক', tag: 'লাইভ জিপিএস জিওফেন্সড' },
+            { title: 'গড় তাপমাত্রা', val: '৭.৪ °সে', tag: 'শূন্য তাপমাত্রিক বিচ্যুতি' },
+            { title: 'অন-টাইম ডেলিভারি', val: '৯৯.৮%', tag: '৪২টি খুচরা আউটলেট' }
+          ],
+          batches: []
+        },
+        RETAILER: {
+          icon: 'cart',
+          title: 'খুচরা বিক্রেতা পিওএস কনসোল',
+          org: 'মা দুর্গা রিটেইল ফ্রেশ মার্ট (কলকাতা আউটলেট #৪)',
+          station: 'সবজি বিভাগ, লেক গার্ডেনস, কলকাতা',
+          launchBtn: 'খুচরা বিক্রেতা হিসেবে লগইন করুন',
+          metrics: [
+            { title: 'কাউন্টার মজুদ', val: '১,৪২০ কেজি', tag: 'দোকানের ডিসপ্লে র্যাকে সক্রিয়' },
+            { title: 'ভোক্তা কিউআর স্ক্যান', val: '১,৮৯০টি স্ক্যান', tag: '৪.৯/৫.০ গ্রাহক আস্থা স্কোর' },
+            { title: 'তাজাত্ব ধারণ', val: '৯৯.২%', tag: '< ০.৮% জৈব অপচয়' }
+          ],
+          batches: []
+        }
+      }
+    };
+
+    let currentLang = 'en';
+    let currentRole = 'PRODUCER';
+    let currentPreviewRole = 'PRODUCER';
+    let activeTool = null;
+
+    const tickerEvents = {
+      en: [
+        "Digital weighbridge gross weight attested • Cryptographic hash chained • e-NAM settlement confirmed",
+        "Farmer producer harvest registered • GPS geofence verified • Immutable genesis ledger hash chained",
+        "Bengal Cold-Chain Reefer WB-19-AX-4402 recorded in-transit temp 7.8°C • Zero thermal excursions • Route on track",
+        "Maa Durga Fresh Mart (Kolkata) dispensed 2.5 Kg via consumer QR checkout • Append-only inventory adjusted",
+        "Hooghly APMC weighbridge verified gross weight 4,250 Kg • Certified Grade A quality inspected • e-NAM settlement"
+      ],
+      hi: [
+        "डिजिटल वेज-ब्रिज सकल भार सत्यापित • क्रिप्टोग्राफिक हैश शृंखलाबद्ध • ई-नाम निपटान प्रमाणित",
+        "किसान उत्पादक फसल पंजीकृत • जीपीएस जियोफेंस सत्यापित • अपरिवर्तनीय जेनेसिस लेज़र हैश",
+        "बंगाल कोल्ड-चेन रीफर WB-19-AX-4402 ने परिवहन तापमान 7.8°C दर्ज किया • शून्य तापीय विचलन • समय पर मार्ग",
+        "मां दुर्गा फ्रेश मार्ट (कोलकाता) ने उपभोक्ता क्यूआर द्वारा 2.5 किग्रा बिक्री दर्ज की • अपरिवर्तनीय लेज़र समायोजित",
+        "हुगली एपीएमसी वेज-ब्रिज ने 4,250 किग्रा भार सत्यापित किया • एगमार्कनेट ग्रेड ए प्रमाणित • ई-नाम निपटान"
+      ],
+      bn: [
+        "ডিজিটাল ওয়েজ-ব্রিজ ওজন যাচাই সম্পন্ন • ক্রিপ্টোগ্রাফিক হ্যাশ শৃঙ্খলিত • ই-নাম নিষ্পত্তি প্রত্যয়িত",
+        "কৃষক উৎপাদক ফসল নিবন্ধিত • জিপিএস জিওফেন্স যাচাইকৃত • অপরিবর্তনীয় জেনেসিস লেজার হ্যাশ",
+        "বেঙ্গল কোল্ড-চেন রিফার WB-19-AX-4402 চলন্ত তাপমাত্রা ৭.৮°সে রেকর্ড করেছে • শূন্য বিচ্যুতি • সঠিক ট্রানজিট",
+        "মা দুর্গা ফ্রেশ মার্ট (কলকাতা) ভোক্তা কিউআর স্ক্যানে ২.৫ কেজি বিক্রয় সম্পন্ন করেছে • লেজার হালনাগাদ",
+        "হুগলি এপিএমসি ওয়েজ-ব্রিজ ৪,২৫০ কেজি ওজন যাচাই করেছে • অ্যাগমার্কনেট গ্রেড এ প্রত্যয়িত • ই-নাম নিষ্পত্তি"
+      ]
+    };
+    let tickerIdx = 0;
+
+    function startTickerCycle() {
+      const streamEl = document.getElementById('tickerStream');
+      if (!streamEl) return;
+      setInterval(() => {
+        const list = tickerEvents[currentLang] || tickerEvents.en;
+        tickerIdx = (tickerIdx + 1) % list.length;
+        const msg = list[tickerIdx];
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        streamEl.textContent = `[${timeStr} IST] ` + (msg || '');
+      }, 4000);
+    }
+    startTickerCycle();
+
+    function switchPreviewEntity(role) {
+      currentPreviewRole = role;
+      document.querySelectorAll('#previewRoleTabs .btn-entity-tab').forEach(btn => {
+        if (btn.dataset.role === role) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      renderEntityPreview();
+    }
+
+    function renderEntityPreview() {
+      const langData = dashboardPreviewData[currentLang] || dashboardPreviewData['en'];
+      const data = langData[currentPreviewRole] || dashboardPreviewData['en'][currentPreviewRole];
+      if (!data) return;
+
+      const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.innerText = val;
+      };
+
+      const roleIconEl = document.getElementById('previewRoleIcon');
+      if (roleIconEl) {
+        roleIconEl.innerHTML = window.renderUniformIcon ? window.renderUniformIcon(data.icon, 20, '#047857') : '';
+      }
+      setTxt('previewOrgTitle', data.title);
+      setTxt('previewOrgSub', data.org + ' • ' + data.station);
+      setTxt('btnPreviewLaunchText', data.launchBtn);
+
+      const metricsGrid = document.getElementById('previewMetricsGrid');
+      if (metricsGrid) {
+        metricsGrid.innerHTML = data.metrics.map(m => `
+          <div class="preview-metric-card">
+            <div class="preview-metric-title">${m.title}</div>
+            <div class="preview-metric-val">${m.val}</div>
+            <div class="preview-metric-tag">${m.tag}</div>
+          </div>
+        `).join('');
+      }
+
+      const batchRows = document.getElementById('previewBatchRows');
+      if (batchRows) {
+        batchRows.innerHTML = data.batches.map(b => `
+          <div class="preview-batch-row">
+            <span class="preview-batch-code">${b.code}</span>
+            <span style="font-size: 13px; color: #334155; flex: 1;">${b.desc}</span>
+            <span style="font-size: 11.5px; font-weight: 700; color: #15803d; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 9px; border-radius: 20px;">${b.status}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function launchFromPreview() {
+      openLoginModal(currentPreviewRole);
+    }
+
     function setLanguage(lang) {
       if (window.EXTRA_I18N && window.EXTRA_I18N[lang]) {
         i18n[lang] = Object.assign({}, i18n.en || {}, i18n[lang] || {}, window.EXTRA_I18N[lang]);
@@ -5934,7 +6518,7 @@
         }
       }
 
-      ['heroSection', 'flowShowcaseSection', 'entityAccessSection', 'trustSection'].forEach(id => {
+      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
@@ -5971,7 +6555,7 @@
       const ws = document.getElementById('confinedWorkspace');
       if (ws) ws.style.display = 'none';
 
-      ['heroSection', 'flowShowcaseSection', 'entityAccessSection', 'trustSection'].forEach(id => {
+      ['heroSection', 'ledgerTickerBar', 'homeStatsStrip', 'flowShowcaseSection', 'entityDashPreviewWrap', 'trustSection'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'block';
       });
@@ -6167,23 +6751,315 @@
     }
 
     function jumpToFlowStage(stageNum) {
+      if (!flowTimeline) {
+        setFlowActiveStageUI(stageNum);
+        return;
+      }
       setFlowActiveStageUI(stageNum);
+      const label = 'stage' + stageNum;
+      flowTimeline.seek(label);
+      flowTimeline.play();
     }
 
     function initSupplyChainFlowAnimation() {
-      setFlowActiveStageUI(1);
-      let isPaused = false;
       const section = document.getElementById('flowShowcaseSection');
-      if (section) {
-        section.addEventListener('mouseenter', () => { isPaused = true; });
-        section.addEventListener('mouseleave', () => { isPaused = false; });
+      if (!section) return;
+
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion || typeof window.gsap === 'undefined') {
+        setFlowActiveStageUI(1);
+        try {
+          const s1Sprout = document.getElementById('s1Sprout');
+          if (s1Sprout) s1Sprout.style.opacity = '1';
+          const s1Leaves = document.getElementById('s1Leaves');
+          if (s1Leaves) s1Leaves.style.opacity = '1';
+          const s1Harvest = document.getElementById('s1HarvestProduce');
+          if (s1Harvest) s1Harvest.style.opacity = '1';
+          const s1Tape = document.getElementById('s1Tape');
+          if (s1Tape) s1Tape.style.opacity = '0.9';
+          const s1Qr = document.getElementById('s1QrTag');
+          if (s1Qr) s1Qr.style.opacity = '1';
+          const s1Badge = document.getElementById('s1SealBadge');
+          if (s1Badge) s1Badge.style.opacity = '1';
+
+          const s2Commit = document.getElementById('s2RecCommit');
+          if (s2Commit) s2Commit.style.opacity = '1';
+          const s2Stamp = document.getElementById('s2GradeStamp');
+          if (s2Stamp) s2Stamp.setAttribute('transform', 'translate(68, 88) scale(1)');
+
+          const s3SubA = document.getElementById('s3SubLotA');
+          if (s3SubA) s3SubA.style.opacity = '1';
+          const s3SubB = document.getElementById('s3SubLotB');
+          if (s3SubB) s3SubB.style.opacity = '1';
+          const s3Disp = document.getElementById('s3DispatchIndicator');
+          if (s3Disp) s3Disp.style.opacity = '1';
+
+          const s4Badge = document.getElementById('s4TransitBadge');
+          if (s4Badge) s4Badge.style.opacity = '1';
+
+          const s5Card = document.getElementById('s5VerifyCard');
+          if (s5Card) s5Card.style.opacity = '1';
+          const s5Stamp = document.getElementById('s5SaleStamp');
+          if (s5Stamp) s5Stamp.setAttribute('transform', 'translate(33, 86) scale(1)');
+        } catch (e) {}
+        return;
       }
-      setInterval(() => {
-        if (!isPaused) {
-          const nextStage = (currentFlowStage % 5) + 1;
-          setFlowActiveStageUI(nextStage);
-        }
-      }, 5000);
+
+      flowTimeline = gsap.timeline({
+        repeat: -1,
+        repeatDelay: 1.5,
+        defaults: { ease: 'power2.out' }
+      });
+
+      function resetStageVisuals() {
+        // Stage 1
+        gsap.set('#s1Seed', { scale: 1, opacity: 1, transformOrigin: 'center center' });
+        gsap.set('#s1Sprout', { scaleY: 0, opacity: 0, transformOrigin: 'center bottom' });
+        gsap.set('#s1Stem', { scaleY: 0, opacity: 0, transformOrigin: 'center bottom' });
+        gsap.set('#s1Branch1, #s1Branch2', { scale: 0, opacity: 0, transformOrigin: 'left bottom' });
+        gsap.set('#s1Leaves', { scale: 0, opacity: 0, transformOrigin: 'center bottom' });
+        gsap.set('#s1Tomato1, #s1Tomato2, #s1Tomato3', { scale: 0, opacity: 0, transformOrigin: 'center center' });
+        gsap.set('#s1HarvestProduce', { opacity: 0, scale: 0.8, transformOrigin: 'center center' });
+        gsap.set('#s1FlapL', { rotation: -35, transformOrigin: 'left top' });
+        gsap.set('#s1FlapR', { rotation: 35, transformOrigin: 'right top' });
+        gsap.set('#s1Tape', { opacity: 0, scaleY: 0, transformOrigin: 'center top' });
+        gsap.set('#s1QrTag', { opacity: 0, scale: 0.7, y: -15, transformOrigin: 'center center' });
+        gsap.set('#s1Laser', { opacity: 0, attr: { y1: 2, y2: 2 } });
+        gsap.set('#s1SealBadge', { opacity: 0, scale: 0.8, transformOrigin: 'center center' });
+
+        // Stage 2
+        gsap.set('#s2Crate', { x: -25, opacity: 0 });
+        gsap.set('#s2Scanner', { opacity: 0, y: 15 });
+        gsap.set('#s2ScanCone, #s2LaserLine', { opacity: 0 });
+        gsap.set('#s2RecLot, #s2RecWeight, #s2RecGrade', { opacity: 0, x: -8 });
+        gsap.set('#s2RecCommit', { opacity: 0 });
+        gsap.set('#s2GradeStamp', { scale: 0, opacity: 0, transformOrigin: 'center center' });
+
+        // Stage 3
+        gsap.set('#s3MasterLot', { opacity: 0, y: 15 });
+        gsap.set('#s3BranchA, #s3BranchB', { opacity: 0 });
+        gsap.set('#s3SubLotA, #s3SubLotB', { opacity: 0, y: 65 });
+        gsap.set('#s3DispatchIndicator', { opacity: 0 });
+
+        // Stage 4
+        gsap.set('#s4CrateLoad', { x: -28, opacity: 0 });
+        gsap.set('#s4Truck', { y: 44 });
+        gsap.set('#s4RadarWave1, #s4RadarWave2', { opacity: 0 });
+        gsap.set('#s4TransitBadge', { opacity: 0 });
+
+        // Stage 5
+        gsap.set('#s5ShelfProduce', { opacity: 1 });
+        gsap.set('#s5Phone', { x: 175, opacity: 0 });
+        gsap.set('#s5ScanCone', { opacity: 0 });
+        gsap.set('#s5VerifyCard', { scale: 0.7, opacity: 0, transformOrigin: 'center center' });
+        gsap.set('#s5SaleStamp', { scale: 0, opacity: 0, transformOrigin: 'center center' });
+      }
+
+      resetStageVisuals();
+
+      // ==========================================
+      // STAGE 1: PRODUCER (SEED -> PLANT -> TOMATO -> PACKED & QR SEALED)
+      // ==========================================
+      flowTimeline.addLabel('stage1');
+      flowTimeline.call(() => setFlowActiveStageUI(1));
+
+      // 1. Seed pulses in soil
+      flowTimeline.fromTo('#s1Seed', { scale: 0.85 }, { scale: 1.15, duration: 0.35, yoyo: true, repeat: 1 });
+      // 2. Sprout emerges upward
+      flowTimeline.to('#s1Sprout', { scaleY: 1, opacity: 1, duration: 0.45, ease: 'power2.out' });
+      // 3. Main stem and branches shoot up
+      flowTimeline.to('#s1Stem', { scaleY: 1, opacity: 1, duration: 0.55, ease: 'power2.out' }, '-=0.2');
+      flowTimeline.to('#s1Branch1, #s1Branch2', { scale: 1, opacity: 1, duration: 0.35 }, '-=0.2');
+      // 4. Botanical leaves unfurl
+      flowTimeline.to('#s1Leaves', { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.2');
+      // 5. Ripe red tomatoes develop and glow
+      flowTimeline.to('#s1Tomato1, #s1Tomato2, #s1Tomato3', {
+        scale: 1,
+        opacity: 1,
+        duration: 0.55,
+        stagger: 0.1,
+        ease: 'back.out(2)'
+      }, '-=0.3');
+
+      // 6. Harvest: picked tomatoes drop into crate
+      flowTimeline.to('#s1Tomato1', { x: 135, y: 74, duration: 0.48, ease: 'power2.in' }, '+=0.1');
+      flowTimeline.to('#s1Tomato2', { x: 152, y: 72, duration: 0.48, ease: 'power2.in' }, '-=0.35');
+      flowTimeline.to('#s1Tomato3', { x: 168, y: 74, duration: 0.48, ease: 'power2.in' }, '-=0.35');
+
+      // 7. Fresh produce enters box
+      flowTimeline.to('#s1HarvestProduce', { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.5)' }, '-=0.15');
+      flowTimeline.to('#s1Tomato1, #s1Tomato2, #s1Tomato3', { opacity: 0, duration: 0.18 }, '-=0.2');
+
+      // 8. Box flaps close shut and seal with tamper tape
+      flowTimeline.to('#s1FlapL, #s1FlapR', { rotation: 0, duration: 0.38, ease: 'power2.inOut' });
+      flowTimeline.to('#s1Tape', { opacity: 0.9, scaleY: 1, duration: 0.32, ease: 'power1.out' }, '-=0.1');
+
+      // 9. QR code label attaches to the sealed crate
+      flowTimeline.to('#s1QrTag', { opacity: 1, scale: 1, y: 0, duration: 0.42, ease: 'back.out(1.5)' });
+      // 10. Laser scan sweep on QR
+      flowTimeline.to('#s1Laser', { opacity: 1, duration: 0.1 });
+      flowTimeline.to('#s1Laser', { attr: { y1: 22, y2: 22 }, duration: 0.35, ease: 'power1.inOut' });
+      flowTimeline.to('#s1Laser', { attr: { y1: 2, y2: 2 }, duration: 0.35, ease: 'power1.inOut' });
+      flowTimeline.to('#s1Laser', { opacity: 0, duration: 0.1 });
+
+      // 11. Packed & Sealed confirmation badge
+      flowTimeline.to('#s1SealBadge', { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.7)' });
+
+      // ==========================================
+      // STAGE 2: AGGREGATOR (MANDI QR SCAN & RECORD COMMITTED)
+      // ==========================================
+      flowTimeline.addLabel('stage2');
+      flowTimeline.call(() => setFlowActiveStageUI(2));
+
+      // 1. Sealed crate arrives on Mandi intake platform
+      flowTimeline.fromTo('#s2Crate', { x: -25, opacity: 0 }, { x: 16, opacity: 1, duration: 0.55, ease: 'power2.out' });
+      // 2. Optical scanner aims at crate QR
+      flowTimeline.fromTo('#s2Scanner', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '-=0.2');
+
+      // 3. Green laser scan cone and beam sweeps over QR
+      flowTimeline.to('#s2ScanCone, #s2LaserLine', { opacity: 0.85, duration: 0.25 });
+      flowTimeline.to('#s2ScanCone, #s2LaserLine', { opacity: 0.3, duration: 0.28, yoyo: true, repeat: 2 });
+      flowTimeline.to('#s2ScanCone, #s2LaserLine', { opacity: 0, duration: 0.2 });
+
+      // 4. Digital terminal logs records line by line
+      flowTimeline.fromTo('#s2RecLot', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 });
+      flowTimeline.fromTo('#s2RecWeight', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 }, '-=0.12');
+      flowTimeline.fromTo('#s2RecGrade', { opacity: 0, x: -8 }, { opacity: 1, x: 8, duration: 0.28 }, '-=0.12');
+      flowTimeline.to('#s2RecCommit', { opacity: 1, duration: 0.35, ease: 'power1.out' });
+
+      // 5. Certified Grade-A verification stamp bounces down
+      flowTimeline.fromTo('#s2GradeStamp', 
+        { scale: 0, rotation: -30, opacity: 0 }, 
+        { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'back.out(2)' }
+      );
+
+      // ==========================================
+      // STAGE 3: WHOLESALER (COLD STORAGE & LOT SPLITTING)
+      // ==========================================
+      flowTimeline.addLabel('stage3');
+      flowTimeline.call(() => setFlowActiveStageUI(3));
+
+      // 1. Master lot arrives in cold storage on upper rack
+      flowTimeline.fromTo('#s3MasterLot', { opacity: 0, y: 15 }, { opacity: 1, y: 30, duration: 0.5, ease: 'power2.out' });
+      // 2. Telemetry sensor pulses
+      flowTimeline.fromTo('#s3Climate', { opacity: 0.7 }, { opacity: 1, duration: 0.35, yoyo: true, repeat: 1 });
+
+      // 3. Cryptographic lineage curves branch down
+      flowTimeline.to('#s3BranchA, #s3BranchB', { opacity: 1, duration: 0.35 });
+
+      // 4. Master lot splits into Child Sub-Lot A (250 KG) and Sub-Lot B (200 KG)
+      flowTimeline.to('#s3MasterLot', { opacity: 0.35, duration: 0.35 });
+      flowTimeline.fromTo('#s3SubLotA', { opacity: 0, y: 65 }, { opacity: 1, y: 80, duration: 0.55, ease: 'power2.out' }, '-=0.2');
+      flowTimeline.fromTo('#s3SubLotB', { opacity: 0, y: 65 }, { opacity: 1, y: 80, duration: 0.55, ease: 'power2.out' }, '-=0.55');
+
+      // 5. Outbound dispatch indicator badge appears
+      flowTimeline.to('#s3DispatchIndicator', { opacity: 1, duration: 0.35 });
+
+      // ==========================================
+      // STAGE 4: DISTRIBUTOR (REEFER FLEET HIGHWAY TRANSIT)
+      // ==========================================
+      flowTimeline.addLabel('stage4');
+      flowTimeline.call(() => setFlowActiveStageUI(4));
+
+      // 1. Produce crate loads into rear reefer container door
+      flowTimeline.fromTo('#s4CrateLoad', 
+        { x: -28, opacity: 0 }, 
+        { x: 10, opacity: 1, duration: 0.55, ease: 'power2.inOut' }
+      );
+      flowTimeline.to('#s4CrateLoad', { opacity: 0, duration: 0.22 });
+
+      // 2. High-speed highway transit: wheels rotate, road dashes flow, suspension bounce
+      flowTimeline.to('#s4Wheel1, #s4Wheel2, #s4Wheel3', {
+        rotation: '+=720',
+        transformOrigin: 'center center',
+        duration: 1.8,
+        ease: 'none'
+      }, '-=0.1');
+
+      flowTimeline.fromTo('#s4RoadDashes', 
+        { strokeDashoffset: 0 }, 
+        { strokeDashoffset: -54, duration: 1.8, ease: 'none' }, 
+        '<'
+      );
+
+      flowTimeline.to('#s4Truck', {
+        y: 42,
+        duration: 0.22,
+        yoyo: true,
+        repeat: 7,
+        ease: 'sine.inOut'
+      }, '<');
+
+      flowTimeline.fromTo('#s4RadarWave1', 
+        { attr: { r: 4 }, opacity: 0.9 }, 
+        { attr: { r: 16 }, opacity: 0, duration: 0.8, repeat: 2 }, 
+        '<'
+      );
+      flowTimeline.fromTo('#s4RadarWave2', 
+        { attr: { r: 8 }, opacity: 0.9 }, 
+        { attr: { r: 24 }, opacity: 0, duration: 0.8, repeat: 2 }, 
+        '<+0.2'
+      );
+      flowTimeline.to('#s4TransitBadge', { opacity: 1, duration: 0.35 }, '<+0.2');
+
+      // ==========================================
+      // STAGE 5: RETAILER (SHELF QR SCAN & PRODUCT ORIGIN VERIFICATION)
+      // ==========================================
+      flowTimeline.addLabel('stage5');
+      flowTimeline.call(() => setFlowActiveStageUI(5));
+
+      // 1. Produce displayed on retail wooden shelf
+      flowTimeline.fromTo('#s5ShelfProduce', 
+        { opacity: 0, y: 80 }, 
+        { opacity: 1, y: 74, duration: 0.45, ease: 'power2.out' }
+      );
+
+      // 2. Customer holding smartphone approaches shelf QR standee
+      flowTimeline.fromTo('#s5Phone', 
+        { x: 175, opacity: 0 }, 
+        { x: 132, opacity: 1, duration: 0.6, ease: 'power2.out' }
+      );
+
+      // 3. Camera reticle aims and scans shelf QR with laser line & cone
+      flowTimeline.to('#s5ScanCone', { opacity: 0.7, duration: 0.28 });
+      flowTimeline.fromTo('#s5PhoneScanLine', 
+        { attr: { y1: 30, y2: 30 } }, 
+        { attr: { y1: 58, y2: 58 }, duration: 0.48, repeat: 1, yoyo: true, ease: 'power1.inOut' }
+      );
+      flowTimeline.to('#s5ScanCone', { opacity: 0, duration: 0.2 });
+
+      // 4. Verified product provenance certificate card pops open on smartphone screen
+      flowTimeline.fromTo('#s5VerifyCard', 
+        { scale: 0.7, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(1.8)' }
+      );
+
+      // 5. Final POS sale confirmation seal stamps
+      flowTimeline.fromTo('#s5SaleStamp', 
+        { scale: 0, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(2)' }, 
+        '+=0.15'
+      );
+
+      flowTimeline.to({}, { duration: 1.5 });
+
+      // IntersectionObserver: pauses when section is not in viewport
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              if (flowTimeline.paused()) {
+                flowTimeline.play();
+              }
+            } else {
+              if (!flowTimeline.paused()) {
+                flowTimeline.pause();
+              }
+            }
+          });
+        }, { threshold: 0.15 });
+        observer.observe(section);
+      }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
