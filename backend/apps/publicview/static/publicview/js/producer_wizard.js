@@ -1202,6 +1202,11 @@
             <span>${getIcon('sprout', 15, activeTab === 'consumer_telemetry' ? '#047857' : '#64748b')}</span>
             <span>4. Consumer Scan GPS Analytics</span>
           </button>
+
+          <button type="button" onclick="window.switchAdminTab('deletion_requests')" style="padding: 10px 18px; font-size: 13px; font-weight: 800; border: none; background: none; cursor: pointer; border-bottom: 3px solid ${activeTab === 'deletion_requests' ? '#dc2626' : 'transparent'}; color: ${activeTab === 'deletion_requests' ? '#dc2626' : '#64748b'}; display: flex; align-items: center; gap: 8px;">
+            <span>${getIcon('trash', 15, activeTab === 'deletion_requests' ? '#dc2626' : '#64748b')}</span>
+            <span>5. Entity Deletion Requests</span>
+          </button>
         </div>
 
         <!-- Dynamic Admin Tab Content -->
@@ -1231,6 +1236,8 @@
       window.renderAdminChainExplorerTab(tabContainer);
     } else if (window._adminActiveTab === 'consumer_telemetry') {
       window.renderAdminConsumerAnalyticsTab(tabContainer);
+    } else if (window._adminActiveTab === 'deletion_requests') {
+      window.renderAdminDeletionRequestsTab(tabContainer);
     }
   };
 
@@ -2027,7 +2034,22 @@ function renderAdminEntityInspector(ent, t) {
     const wsCont = document.getElementById('confinedWorkspaceContainer');
     if (wsCont) wsCont.style.display = 'block';
 
-    const statusBannerHtml = (p.status === 'SUBMITTED') ? `
+    const statusBannerHtml = (p.status === 'DELETION_REQUESTED') ? `
+      <div style="background: #fef2f2; border: 1.5px solid #f87171; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626;">
+            ${getIcon('alert', 18, '#dc2626')}
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 800; color: #991b1b;">Account Deletion Requested (Operations Frozen)</div>
+            <div style="font-size: 12px; color: #b91c1c;">Your profile deletion request is under review by State &amp; C-DAC Admin Authorities. New dispatches and batch creation are temporarily locked.</div>
+          </div>
+        </div>
+        <button type="button" class="action-btn-pill" onclick="window.cancelEntityDeletionRequest()" style="font-size: 12px; background: #fff; color: #dc2626; border-color: #f87171; font-weight: 800;">
+          Cancel Deletion Request
+        </button>
+      </div>
+    ` : (p.status === 'SUBMITTED') ? `
       <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <div style="width: 32px; height: 32px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; color: #b45309;">
@@ -2869,6 +2891,26 @@ function renderAdminEntityInspector(ent, t) {
             </form>
           </div>
 
+          <!-- Section 3: Danger Zone: Account & Profile Deletion (DPDP Act 2023) -->
+          <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px; margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 6px;">
+                <span>${getIcon('alert', 16, '#dc2626')}</span>
+                <span>Danger Zone: Account &amp; Profile Deletion</span>
+              </h5>
+              <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">DPDP Act 2023</span>
+            </div>
+            <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
+              Request formal deletion of your registered entity profile. If you have active lots in transit or unconfirmed custody handovers, all transfers must be settled before your request can be submitted. Admin review and owner 2FA verification are mandatory.
+            </p>
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="button" onclick="window.openEntityDeletionRequestModal()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">
+                <span>${getIcon('trash', 14, '#ffffff')}</span>
+                <span>Request Account Deletion &rarr;</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     `;
@@ -3437,6 +3479,9 @@ function renderAdminEntityInspector(ent, t) {
           </div>
 
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #047857; border-color: #86efac; font-weight: 800; background: #f0fdf4;" onclick="window.openDownstreamProfileModal('${activeRole}')">
+              ${getIcon('user', 14, '#047857')} Profile &amp; Premises
+            </button>
             <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5; font-weight: 800;" onclick="window.logoutEntitySession()">
               Log Out
             </button>
@@ -5930,3 +5975,516 @@ function renderAdminEntityInspector(ent, t) {
   };
 
 })();
+
+
+  /* ==========================================================================
+     ENTITY DELETION REQUEST MODALS & CONTROLLER (PRODUCER & ALL ENTITIES)
+     Conforms to Blueprint Section 4.3.1, 6.9, and DPDP Act 2023 standards.
+     ========================================================================== */
+
+  window.openDownstreamProfileModal = async function (role) {
+    const activeRole = String(role || currentRole || 'AGGREGATOR').toUpperCase();
+    let modal = document.getElementById('downstreamProfileModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'downstreamProfileModal';
+      modal.className = 'modal-overlay';
+      modal.onclick = (e) => { if (e.target === modal) window.closeDownstreamProfileModal(); };
+      document.body.appendChild(modal);
+    }
+
+    const p = wizardState.profile || {};
+    const orgName = p.organisation_name || 'Business Entity Node';
+    const entityCode = p.entity_code || localStorage.getItem('annasutra_farmer_uid') || 'ENT-' + activeRole + '-001';
+
+    modal.innerHTML = `
+      <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+        <button class="modal-close" onclick="window.closeDownstreamProfileModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+        
+        <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 22px 28px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Sovereign Business Node Identity</div>
+            <h3 style="margin: 2px 0 0; font-size: 22px; color: #ffffff; font-weight: 800;">${activeRole} Profile &amp; Premises</h3>
+          </div>
+        </div>
+
+        <div style="padding: 24px 28px;">
+          
+          <!-- Node Header Summary -->
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase;">Verified Business Node</div>
+                <h4 style="margin: 2px 0; font-size: 19px; font-weight: 800; color: #0f172a;">${escapeHtml(orgName)}</h4>
+                <div style="font-size: 12.5px; color: #64748b;">${escapeHtml(p.address_line1 || '')}, ${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))}</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 11px; font-weight: 800; color: #475569;">Entity Code</div>
+                <div style="font-family: monospace; font-size: 15px; font-weight: 900; color: #0b3d2e;">${escapeHtml(entityCode)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Contact & Registered Details -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+              <div style="font-size: 11px; font-weight: 700; color: #64748b;">Signatory Mobile (Verified)</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a;">${escapeHtml(p.phone_e164 || '')}</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+              <div style="font-size: 11px; font-weight: 700; color: #64748b;">Entity Role</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #047857;">${activeRole}</div>
+            </div>
+          </div>
+
+          <!-- Section 3: Danger Zone: Entity Profile Deletion -->
+          <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 6px;">
+                <span>${getIcon('alert', 16, '#dc2626')}</span>
+                <span>Danger Zone: Account &amp; Profile Deletion</span>
+              </h5>
+              <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">DPDP Act 2023</span>
+            </div>
+            <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
+              Request formal deletion and deactivation of this ${activeRole} entity node. All stock in custody must be settled or marked sold out, and no lots may be in transit. Admin approval and owner 2FA OTP verification are required.
+            </p>
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="button" onclick="window.closeDownstreamProfileModal(); window.openEntityDeletionRequestModal();" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">
+                <span>${getIcon('trash', 14, '#ffffff')}</span>
+                <span>Request Account Deletion &rarr;</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  };
+
+  window.closeDownstreamProfileModal = function () {
+    const modal = document.getElementById('downstreamProfileModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.openEntityDeletionRequestModal = async function () {
+    let modal = document.getElementById('entityDeletionRequestModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'entityDeletionRequestModal';
+      modal.className = 'modal-overlay';
+      modal.onclick = (e) => { if (e.target === modal) window.closeEntityDeletionRequestModal(); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 620px;">
+        <button class="modal-close" onclick="window.closeEntityDeletionRequestModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+        
+        <div class="portal-modal-header" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); padding: 22px 28px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #fecaca; text-transform: uppercase; letter-spacing: 0.5px;">Right to Erasure &bull; DPDP Act 2023</div>
+            <h3 style="margin: 2px 0 0; font-size: 21px; color: #ffffff; font-weight: 800;">Request Profile Deletion</h3>
+          </div>
+        </div>
+
+        <div style="padding: 24px 28px;" id="deletionModalBody">
+          <div style="text-align: center; padding: 30px;">
+            <div style="width: 32px; height: 32px; border: 3px solid #cbd5e1; border-top-color: #dc2626; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+            <p style="font-size: 13px; font-weight: 700; color: #64748b;">Checking active dispatches and custody ledger...</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+
+    // Fetch preflight check
+    try {
+      const res = await fetch('/api/v1/me/profile/delete-request', { headers: getAuthHeader() });
+      if (!res.ok) {
+        throw new Error('Failed to load deletion request status');
+      }
+      const data = await res.json();
+      window.renderEntityDeletionModalContent(data);
+    } catch (e) {
+      const body = document.getElementById('deletionModalBody');
+      if (body) {
+        body.innerHTML = `
+          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 16px; color: #991b1b; font-size: 13px;">
+            Failed to connect to verification ledger. Please check network connectivity.
+          </div>
+        `;
+      }
+    }
+  };
+
+  window.closeEntityDeletionRequestModal = function () {
+    const modal = document.getElementById('entityDeletionRequestModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.renderEntityDeletionModalContent = function (data) {
+    const body = document.getElementById('deletionModalBody');
+    if (!body) return;
+
+    if (data.has_pending_request && data.pending_request) {
+      const r = data.pending_request;
+      body.innerHTML = `
+        <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #92400e; margin-bottom: 8px;">
+            <span>${getIcon('alert', 18, '#d97706')}</span>
+            <span>Deletion Request Under Administrative Review</span>
+          </div>
+          <div style="font-size: 13px; color: #78350f; margin-bottom: 12px;">
+            Submitted on <strong>${new Date(r.created_at).toLocaleString()}</strong>.
+          </div>
+          <div style="background: #fff; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; font-size: 12.5px; color: #334155; margin-bottom: 16px;">
+            <div><strong>Declared Reason:</strong> ${escapeHtml(r.reason_display || r.reason)}</div>
+            ${r.remarks ? `<div style="margin-top: 4px;"><strong>Remarks:</strong> ${escapeHtml(r.remarks)}</div>` : ''}
+          </div>
+          <p style="font-size: 12px; color: #b45309; margin: 0 0 16px;">
+            While in this state, all operations (new lots, plot allocations, and handovers) are temporarily frozen. You may cancel your request at any time before the Admin decision.
+          </p>
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
+            <button type="button" onclick="window.cancelEntityDeletionRequest()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
+              Withdraw / Cancel Deletion Request
+            </button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    if (!data.can_request_deletion) {
+      body.innerHTML = `
+        <div style="background: #fef2f2; border: 1.5px solid #f87171; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #991b1b; margin-bottom: 8px;">
+            <span>${getIcon('alert', 18, '#dc2626')}</span>
+            <span>Account Deletion Blocked by Active Custody Obligations</span>
+          </div>
+          <p style="font-size: 12.5px; color: #7f1d1d; margin: 0 0 12px;">
+            Under the AnnaSutra Diamond Rules, entities with active custody transactions cannot be deleted. Please resolve the following blocking items first:
+          </p>
+          <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 12.5px; color: #b91c1c; font-weight: 700;">
+            ${(data.blocking_reasons || []).map(r => `<li>${escapeHtml(r)}</li>`).join('')}
+          </ul>
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Understood, Close</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Pre-flight passed: render Request Form with 2FA OTP
+    body.innerHTML = `
+      <form onsubmit="window.submitEntityDeletionRequest(event)">
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 12.5px; color: #334155;">
+          <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #047857; margin-bottom: 4px;">
+            <span>${getIcon('check', 14, '#047857')}</span>
+            <span>Pre-flight Checks Clear: Zero active in-transit dispatches</span>
+          </div>
+          <div>Registered Mobile: <strong>${escapeHtml(data.registered_phone || '')}</strong></div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">1. Reason for Deletion <span class="req">*</span></label>
+          <select class="form-select" id="del_reason" required style="background: #fff; font-weight: 700;">
+            <option value="">-- Select Mandatory Reason --</option>
+            <option value="CEASING_OPERATIONS">Ceasing agricultural / business operations</option>
+            <option value="LAND_TRANSFER">Sale, transfer, or lease termination of land/premises</option>
+            <option value="DPDP_ERASURE">Right to Erasure / Privacy request under DPDP Act 2023</option>
+            <option value="DUPLICATE">Duplicate or accidental registration</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">2. Remarks / Compliance Justification</label>
+          <textarea class="form-input" id="del_remarks" rows="2" placeholder="e.g. Closing farming business. All lots sold and handed over." style="background: #fff; resize: vertical; font-size: 12px;"></textarea>
+        </div>
+
+        <!-- 2FA OTP Verification Box -->
+        <div style="background: #fff7ed; border: 1.5px solid #ffedd5; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;">
+          <div style="font-size: 12.5px; font-weight: 800; color: #9a3412; margin-bottom: 6px;">3. Owner 2FA OTP Verification</div>
+          <div style="font-size: 11.5px; color: #7c2d12; margin-bottom: 12px;">
+            To prevent unauthorized account deletion, a 6-digit confirmation code must be verified on your primary registered mobile.
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button type="button" id="btnRequestDelOtp" onclick="window.requestDeletionOtp()" class="action-btn-pill" style="background: #fff; font-size: 12px; border-color: #ea580c; color: #c2410c; font-weight: 800;">
+              Send Verification OTP &rarr;
+            </button>
+            <input type="text" class="form-input" id="del_otp_code" placeholder="Enter 6-digit OTP" maxlength="6" style="width: 140px; text-align: center; font-size: 14px; font-weight: 800; letter-spacing: 2px; background: #fff;" required />
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Cancel</button>
+          <button type="submit" id="btnSubmitDeletion" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">
+            <span>${getIcon('trash', 14, '#ffffff')}</span>
+            <span>Confirm &amp; Submit Deletion Request</span>
+          </button>
+        </div>
+      </form>
+    `;
+  };
+
+  window.requestDeletionOtp = async function () {
+    const btn = document.getElementById('btnRequestDelOtp');
+    if (btn) btn.innerText = 'Dispatching OTP...';
+    try {
+      const res = await fetch('/api/v1/me/profile/delete-request', {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({ action: 'request_otp' })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || 'OTP dispatched to registered mobile', 'success');
+        if (btn) btn.innerText = 'OTP Dispatched ✓';
+        if (data.debug_code) {
+          const otpInput = document.getElementById('del_otp_code');
+          if (otpInput) otpInput.value = data.debug_code;
+        }
+      } else {
+        showToast(data.detail || 'Failed to dispatch OTP', 'error');
+        if (btn) btn.innerText = 'Retry Send OTP';
+      }
+    } catch (e) {
+      showToast('Network error while requesting OTP', 'error');
+      if (btn) btn.innerText = 'Retry Send OTP';
+    }
+  };
+
+  window.submitEntityDeletionRequest = async function (e) {
+    if (e) e.preventDefault();
+    const reason = (document.getElementById('del_reason') || {}).value;
+    const remarks = (document.getElementById('del_remarks') || {}).value;
+    const otp = (document.getElementById('del_otp_code') || {}).value;
+
+    if (!reason) {
+      showToast('Please select a mandatory reason for deletion.', 'error');
+      return;
+    }
+    if (!otp) {
+      showToast('Please enter the 6-digit confirmation OTP.', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('btnSubmitDeletion');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = 'Submitting Request...';
+    }
+
+    try {
+      const res = await fetch('/api/v1/me/profile/delete-request', {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+          reason: reason,
+          remarks: remarks,
+          otp_code: otp
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast('Account deletion request submitted. Operations frozen.', 'success');
+        window.closeEntityDeletionRequestModal();
+        window.closeProducerProfileModal();
+        window.closeDownstreamProfileModal();
+        if (window.renderCurrentWorkspace) {
+          window.renderCurrentWorkspace();
+        }
+      } else {
+        showToast(data.detail || 'Failed to submit deletion request', 'error');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Confirm & Submit Deletion Request';
+        }
+      }
+    } catch (err) {
+      showToast('Network error while submitting request', 'error');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = 'Confirm & Submit Deletion Request';
+      }
+    }
+  };
+
+  window.cancelEntityDeletionRequest = async function () {
+    if (!confirm('Are you sure you want to cancel your account deletion request and restore full console operations?')) {
+      return;
+    }
+    try {
+      const res = await fetch('/api/v1/me/profile/delete-request/cancel', {
+        method: 'POST',
+        headers: getAuthHeader()
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast('Deletion request cancelled. Full console access restored.', 'success');
+        window.closeEntityDeletionRequestModal();
+        if (window.renderCurrentWorkspace) {
+          window.renderCurrentWorkspace();
+        }
+      } else {
+        showToast(data.detail || 'Failed to cancel deletion request', 'error');
+      }
+    } catch (err) {
+      showToast('Network error cancelling deletion request', 'error');
+    }
+  };
+
+
+  /* --------------------------------------------------------------------------
+     TAB 5: ADMIN ENTITY DELETION REQUESTS QUEUE
+     -------------------------------------------------------------------------- */
+  window.renderAdminDeletionRequestsTab = async function (container) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 16px;">
+        <div style="width: 32px; height: 32px; border: 3px solid #cbd5e1; border-top-color: #dc2626; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+        <p style="font-size: 13px; font-weight: 700; color: #64748b;">Loading entity deletion requests queue...</p>
+      </div>
+    `;
+
+    try {
+      const res = await fetch('/api/v1/admin/deletion-requests?status=ALL', {
+        headers: getAuthHeader()
+      });
+      if (!res.ok) throw new Error('Failed to load deletion requests');
+      const data = await res.json();
+      const items = data.results || [];
+
+      container.innerHTML = `
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 6px;">
+                <span>${getIcon('trash', 16, '#dc2626')}</span>
+                <span>Entity Profile Deletion Requests (${items.length})</span>
+              </h4>
+              <span style="font-size: 12px; color: #64748b;">DPDP Act 2023 Right to Erasure review queue with immutable append-only ledger audit compliance.</span>
+            </div>
+            <button type="button" class="action-btn-pill" onclick="window.renderAdminDeletionRequestsTab(document.getElementById('adminTabDynamicContent'))">
+              ${getIcon('refresh', 13, '#047857')} Refresh Queue
+            </button>
+          </div>
+
+          <div class="compact-ledger-table-wrap">
+            <table class="compact-ledger-table">
+              <thead>
+                <tr>
+                  <th>Request Time</th>
+                  <th>Entity &amp; Role</th>
+                  <th>Signatory Mobile</th>
+                  <th>Declared Reason</th>
+                  <th>Remarks / Context</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.length === 0 ? `
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px 16px; color: #64748b;">
+                      <div style="font-size: 24px; margin-bottom: 6px;">${getIcon('check', 24, '#10b981')}</div>
+                      <div style="font-weight: 800; font-size: 14px; color: #334155;">Zero Pending Deletion Requests</div>
+                      <div style="font-size: 12px; color: #64748b;">All registered entity nodes are in compliance.</div>
+                    </td>
+                  </tr>
+                ` : items.map(req => `
+                  <tr>
+                    <td style="font-size: 11.5px; font-weight: 700; color: #475569;">
+                      ${new Date(req.created_at).toLocaleString()}
+                    </td>
+                    <td>
+                      <div style="font-weight: 800; color: #0f172a; font-size: 13px;">${escapeHtml(req.organisation_name || req.owner_name)}</div>
+                      <div style="font-size: 11px; font-family: monospace; color: #047857;">${escapeHtml(req.entity_code || req.entity_id)} &bull; ${escapeHtml(req.role)}</div>
+                    </td>
+                    <td style="font-size: 12px; font-weight: 700; color: #334155;">
+                      ${escapeHtml(req.phone_e164)}
+                    </td>
+                    <td>
+                      <span style="display: inline-block; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
+                        ${escapeHtml(req.reason_display || req.reason)}
+                      </span>
+                    </td>
+                    <td style="font-size: 12px; color: #475569; max-width: 220px;">
+                      ${escapeHtml(req.remarks || '-')}
+                    </td>
+                    <td>
+                      <span style="display: inline-block; background: ${req.status === 'PENDING' ? '#fef3c7' : (req.status === 'APPROVED' ? '#fee2e2' : '#f1f5f9')}; color: ${req.status === 'PENDING' ? '#92400e' : (req.status === 'APPROVED' ? '#991b1b' : '#334155')}; border: 1px solid ${req.status === 'PENDING' ? '#fde68a' : (req.status === 'APPROVED' ? '#fecaca' : '#cbd5e1')}; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
+                        ${escapeHtml(req.status)}
+                      </span>
+                    </td>
+                    <td style="text-align: right;">
+                      ${req.status === 'PENDING' ? `
+                        <div style="display: inline-flex; gap: 6px;">
+                          <button type="button" onclick="window.adminProcessDeletionDecision('${req.request_id}', 'APPROVED')" style="background: #dc2626; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 800; cursor: pointer;">
+                            Approve Deletion
+                          </button>
+                          <button type="button" onclick="window.adminProcessDeletionDecision('${req.request_id}', 'REJECTED')" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-weight: 800; cursor: pointer;">
+                            Reject
+                          </button>
+                        </div>
+                      ` : `
+                        <span style="font-size: 11px; color: #64748b; font-weight: 700;">Decided</span>
+                      `}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } catch (e) {
+      container.innerHTML = `
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 16px; color: #991b1b; font-size: 13px;">
+          Failed to load deletion requests queue. Please try again.
+        </div>
+      `;
+    }
+  };
+
+  window.adminProcessDeletionDecision = async function (requestId, decision) {
+    let remarks = '';
+    if (decision === 'APPROVED') {
+      if (!confirm('Are you sure you want to approve this entity deletion? The account will be deactivated and personal identifying data scrubbed under DPDP Act 2023.')) {
+        return;
+      }
+      remarks = prompt('Enter administrative approval remarks (optional):', 'Compliance checks verified. Account deactivated.') || '';
+    } else {
+      remarks = prompt('Enter mandatory reason for rejecting deletion request:', 'Active traceability inquiries require account retention.');
+      if (!remarks) {
+        showToast('Rejection remarks are mandatory.', 'error');
+        return;
+      }
+    }
+
+    try {
+      const res = await fetch(`/api/v1/admin/deletion-requests/${requestId}/decision`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+          decision: decision,
+          remarks: remarks
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || 'Decision applied successfully.', 'success');
+        const container = document.getElementById('adminTabDynamicContent');
+        if (container) window.renderAdminDeletionRequestsTab(container);
+      } else {
+        showToast(data.detail || 'Failed to process decision.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error processing administrative decision.', 'error');
+    }
+  };

@@ -101,6 +101,8 @@ class EntityProfile(models.Model):
         ("REJECTED", "Rejected"),
         ("SUSPENDED", "Suspended"),
         ("TRASH", "Trash"),
+        ("DELETION_REQUESTED", "Deletion Requested"),
+        ("DEACTIVATED", "Deactivated"),
     ]
 
     entity_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -252,6 +254,8 @@ class VerificationReview(models.Model):
         ("SUSPENDED", "Suspended"),
         ("TRASH", "Moved to Trash"),
         ("RESTORED", "Restored"),
+        ("DELETION_REQUESTED", "Deletion Requested"),
+        ("DEACTIVATED", "Deactivated"),
     ]
 
     review_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -325,4 +329,35 @@ class EntityConsentRecord(models.Model):
 
     class Meta:
         db_table = "entity_consent_record"
+
+
+class EntityDeletionRequest(models.Model):
+    REASON_CHOICES = [
+        ("CEASING_OPERATIONS", "Ceasing agricultural / business operations"),
+        ("LAND_TRANSFER", "Sale, transfer, or lease termination of land/premises"),
+        ("DPDP_ERASURE", "Right to Erasure / Privacy request under DPDP Act 2023"),
+        ("DUPLICATE", "Duplicate or accidental registration"),
+        ("OTHER", "Other"),
+    ]
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+        ("CANCELLED", "Cancelled"),
+    ]
+
+    request_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    entity = models.ForeignKey(EntityProfile, on_delete=models.CASCADE, related_name="deletion_requests", db_column="entity_id")
+    requested_by_user_id = models.UUIDField()
+    reason = models.CharField(max_length=40, choices=REASON_CHOICES)
+    remarks = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
+    admin_remarks = models.TextField(null=True, blank=True)
+    reviewed_by = models.UUIDField(null=True, blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "entity_deletion_request"
 

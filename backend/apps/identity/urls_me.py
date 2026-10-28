@@ -15,6 +15,8 @@ from .views_registration import (
     MySeasonAllocationsView,
     MyHarvestRecordsView,
     MyChangeRequestsView,
+    MyProfileDeleteRequestView,
+    MyProfileDeleteRequestCancelView,
 )
 
 urlpatterns = [
@@ -23,6 +25,10 @@ urlpatterns = [
     path("profile/", MyProfileView.as_view(), name="me_profile_slash"),
     path("profile/submit", SubmitProfileView.as_view(), name="me_profile_submit"),
     path("profile/submit/", SubmitProfileView.as_view(), name="me_profile_submit_slash"),
+    path("profile/delete-request", MyProfileDeleteRequestView.as_view(), name="me_profile_delete_request"),
+    path("profile/delete-request/", MyProfileDeleteRequestView.as_view(), name="me_profile_delete_request_slash"),
+    path("profile/delete-request/cancel", MyProfileDeleteRequestCancelView.as_view(), name="me_profile_delete_request_cancel"),
+    path("profile/delete-request/cancel/", MyProfileDeleteRequestCancelView.as_view(), name="me_profile_delete_request_cancel_slash"),
     path("sensitive", MySensitiveView.as_view(), name="me_sensitive"),
     path("sensitive/", MySensitiveView.as_view(), name="me_sensitive_slash"),
     path("plots", MyPlotsView.as_view(), name="me_plots"),

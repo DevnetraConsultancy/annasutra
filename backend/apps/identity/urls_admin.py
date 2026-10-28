@@ -11,6 +11,8 @@ from .views_admin import (
     AdminEntityPurgeView,
     AdminChangeRequestsListView,
     AdminChangeRequestDecisionView,
+    AdminDeletionRequestsListView,
+    AdminDeletionRequestDecisionView,
 )
 
 urlpatterns = [
@@ -32,4 +34,8 @@ urlpatterns = [
     path("change-requests/", AdminChangeRequestsListView.as_view(), name="admin_change_requests_slash"),
     path("change-requests/<str:request_id>/decision", AdminChangeRequestDecisionView.as_view(), name="admin_change_request_decision"),
     path("change-requests/<str:request_id>/decision/", AdminChangeRequestDecisionView.as_view(), name="admin_change_request_decision_slash"),
+    path("deletion-requests", AdminDeletionRequestsListView.as_view(), name="admin_deletion_requests"),
+    path("deletion-requests/", AdminDeletionRequestsListView.as_view(), name="admin_deletion_requests_slash"),
+    path("deletion-requests/<str:request_id>/decision", AdminDeletionRequestDecisionView.as_view(), name="admin_deletion_request_decision"),
+    path("deletion-requests/<str:request_id>/decision/", AdminDeletionRequestDecisionView.as_view(), name="admin_deletion_request_decision_slash"),
 ]

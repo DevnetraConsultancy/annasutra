@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from apps.identity.authentication import JWTAuthentication
 from apps.identity.models import (
     AppUser,
+    EntityDeletionRequest,
     EntityProfile,
     EntityRoleDetails,
     EntitySensitive,
@@ -707,3 +708,124 @@ class AdminChangeRequestDecisionView(APIView):
             found_rd.save()
 
         return Response({"status": "decided", "decision": decision, "request_id": str(request_id)}, status=status.HTTP_200_OK)
+
+
+class AdminDeletionRequestsListView(APIView):
+    """Lists entity deletion requests for administrator review."""
+    permission_classes = [IsAdminOrStaff]
+
+    def get(self, request):
+        status_filter = request.query_params.get("status", "PENDING").upper()
+        qs = EntityDeletionRequest.objects.select_related("entity").all().order_by("-created_at")
+        if status_filter != "ALL":
+            qs = qs.filter(status=status_filter)
+
+        results = []
+        for req_obj in qs:
+            ent = req_obj.entity
+            results.append({
+                "request_id": str(req_obj.request_id),
+                "entity_id": str(ent.entity_id),
+                "entity_code": ent.entity_code,
+                "role": ent.role,
+                "organisation_name": ent.organisation_name,
+                "owner_name": f"{ent.first_name} {ent.last_name}".strip(),
+                "phone_e164": ent.phone_e164,
+                "reason": req_obj.reason,
+                "reason_display": req_obj.get_reason_display(),
+                "remarks": req_obj.remarks,
+                "status": req_obj.status,
+                "admin_remarks": req_obj.admin_remarks,
+                "created_at": req_obj.created_at.isoformat(),
+                "reviewed_at": req_obj.reviewed_at.isoformat() if req_obj.reviewed_at else None,
+            })
+
+        return Response({"count": len(results), "results": results})
+
+
+class AdminDeletionRequestDecisionView(APIView):
+    """Administrative approval or rejection of an entity deletion request."""
+    permission_classes = [IsAdminOrStaff]
+
+    def post(self, request, request_id):
+        del_req = EntityDeletionRequest.objects.select_related("entity").filter(request_id=request_id).first()
+        if not del_req:
+            raise exceptions.NotFound({"detail": "Deletion request not found.", "code": "REQUEST_NOT_FOUND"})
+
+        if del_req.status != "PENDING":
+            raise exceptions.ValidationError({"detail": f"Request has already been processed with status '{del_req.status}'.", "code": "ALREADY_PROCESSED"})
+
+        data = request.data or {}
+        decision = str(data.get("decision", "")).strip().upper()
+        remarks = str(data.get("remarks", "")).strip()
+
+        if decision not in ("APPROVED", "REJECTED"):
+            raise exceptions.ValidationError({"detail": "Decision must be 'APPROVED' or 'REJECTED'.", "code": "INVALID_DECISION"})
+
+        reviewer_id = request.user.user_id if hasattr(request.user, "user_id") else uuid.uuid4()
+        ent = del_req.entity
+
+        if decision == "APPROVED":
+            del_req.status = "APPROVED"
+            del_req.admin_remarks = remarks
+            del_req.reviewed_by = reviewer_id
+            del_req.reviewed_at = timezone.now()
+            del_req.save()
+
+            ent.status = "DEACTIVATED"
+            ent.save(update_fields=["status", "updated_at"])
+
+            # Disable user login
+            AppUser.objects.filter(user_id=ent.user_id).update(status="DISABLED")
+
+            # DPDP 2023 compliance: scrub sensitive banking and KYC data
+            EntitySensitive.objects.filter(entity=ent).update(
+                bank_name="",
+                account_last4="",
+                aadhaar_last4="",
+                pan_enc=None,
+                pan_hmac=None,
+                bank_holder_enc=None,
+                account_no_enc=None,
+                ifsc_enc=None,
+                upi_enc=None,
+            )
+
+            VerificationReview.objects.create(
+                entity=ent,
+                reviewer_id=reviewer_id,
+                decision="DEACTIVATED",
+                reason=remarks or "Account deletion approved by administrator.",
+            )
+
+            return Response({
+                "status": "APPROVED",
+                "entity_status": "DEACTIVATED",
+                "message": "Entity profile successfully deactivated and identifying data purged under DPDP Act 2023.",
+            })
+
+        else:  # REJECTED
+            if not remarks:
+                raise exceptions.ValidationError({"detail": "Justification remarks are required when rejecting a deletion request.", "code": "REMARKS_REQUIRED"})
+
+            del_req.status = "REJECTED"
+            del_req.admin_remarks = remarks
+            del_req.reviewed_by = reviewer_id
+            del_req.reviewed_at = timezone.now()
+            del_req.save()
+
+            ent.status = "VERIFIED"
+            ent.save(update_fields=["status", "updated_at"])
+
+            VerificationReview.objects.create(
+                entity=ent,
+                reviewer_id=reviewer_id,
+                decision="RESTORED",
+                reason=f"Account deletion rejected: {remarks}",
+            )
+
+            return Response({
+                "status": "REJECTED",
+                "entity_status": "VERIFIED",
+                "message": "Deletion request rejected. Entity account restored to VERIFIED status.",
+            })
