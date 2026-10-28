@@ -17,7 +17,7 @@ import pytest
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.identity.models import AppUser, EntityProfile, EntityPlot, EntityRoleDetails
+from apps.identity.models import AppUser, EntityProfile, EntityPlot
 from apps.identity.services.token import TokenService
 from apps.inventory.models import LotBalance
 from apps.ledger.models import TraceEvent
@@ -55,6 +55,7 @@ def create_user_and_org(phone, name, org_type="FARMER", role="PRODUCER", verific
         village_town="Pimpalgaon",
         district="Nashik",
         state="MH",
+        pincode="422209",
         status="VERIFIED" if verification == "VERIFIED" else "SUBMITTED",
     )
     tokens = TokenService.issue_token_pair(user)
