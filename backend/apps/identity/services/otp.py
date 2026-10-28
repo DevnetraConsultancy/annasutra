@@ -159,6 +159,8 @@ class AndroidSmsGatewayOtpProvider(BaseOtpProvider):
 
 
 def get_otp_provider() -> BaseOtpProvider:
+    if getattr(settings, "OTP_DEBUG", False) or getattr(settings, "TESTING", False):
+        return ConsoleOtpProvider()
     provider_name = getattr(settings, "OTP_PROVIDER", "").lower()
     user = getattr(settings, "SMS_GATEWAY_USER", "").strip()
 

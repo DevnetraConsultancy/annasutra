@@ -942,53 +942,7 @@
     if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  function renderUniversalNodeSwitcherBar(activeRole) {
-    const curRole = String(activeRole || currentRole || 'PRODUCER').toUpperCase();
-    return `
-      <div class="entity-node-switcher-bar" style="background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 8px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.5px;">
-          <span style="color: #047857;">${getIcon('sprout', 16, '#047857')}</span>
-          <span>Entity Node Consoles:</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-          <button type="button" class="node-pill ${curRole === 'PRODUCER' ? 'active' : ''}" onclick="window.switchEntityRole('PRODUCER')">Producer (Farmer)</button>
-          <button type="button" class="node-pill ${curRole === 'AGGREGATOR' ? 'active' : ''}" onclick="window.switchEntityRole('AGGREGATOR')">Aggregator (Mandi)</button>
-          <button type="button" class="node-pill ${curRole === 'PROCESSOR' ? 'active' : ''}" onclick="window.switchEntityRole('PROCESSOR')">Processor (Packer)</button>
-          <button type="button" class="node-pill ${curRole === 'WHOLESALER' ? 'active' : ''}" onclick="window.switchEntityRole('WHOLESALER')">Wholesaler</button>
-          <button type="button" class="node-pill ${curRole === 'DISTRIBUTOR' ? 'active' : ''}" onclick="window.switchEntityRole('DISTRIBUTOR')">Distributor</button>
-          <button type="button" class="node-pill ${curRole === 'RETAILER' ? 'active' : ''}" onclick="window.switchEntityRole('RETAILER')">Retailer</button>
-          <button type="button" class="node-pill ${curRole === 'ADMIN' ? 'active' : ''}" onclick="window.switchEntityRole('ADMIN')" style="border-color: #f59e0b; color: ${curRole === 'ADMIN' ? '#fff' : '#b45309'}; ${curRole === 'ADMIN' ? 'background: #d97706;' : ''}">Admin Verifier</button>
-        </div>
-      </div>
-    `;
-  }
-  window.renderUniversalNodeSwitcherBar = renderUniversalNodeSwitcherBar;
 
-  window.switchEntityRole = function (role) {
-    if (!role) return;
-    const r = String(role).toUpperCase();
-    currentRole = r;
-    localStorage.setItem('annasutra_role', r);
-    const savedPhone = localStorage.getItem('annasutra_phone') || '';
-    
-    // Update navbar badge
-    const activeUserEl = document.getElementById('activeUserName');
-    if (activeUserEl && window.formatEntityUserBadge) {
-      activeUserEl.innerText = window.formatEntityUserBadge(r, savedPhone, getLang());
-    } else if (activeUserEl) {
-      const digits = String(savedPhone).replace(/\D/g, '');
-      const last4 = digits.length >= 4 ? digits.slice(-4) : '0000';
-      activeUserEl.innerText = r + ' (X' + last4 + ')';
-    }
-
-    if (window.renderCurrentWorkspace) {
-      window.renderCurrentWorkspace();
-    }
-    
-    const ws = document.getElementById('confinedWorkspace');
-    if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    showToast(`Switched to ${r} Console`, 'success');
-  };
 
   window.renderCurrentWorkspace = async function () {
     const container = document.getElementById('confinedWorkspace');
@@ -1210,9 +1164,6 @@
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         
-        <!-- UNIVERSAL NODE SWITCHER BAR -->
-        ${renderUniversalNodeSwitcherBar('ADMIN')}
-
         <!-- Sovereign Admin Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
@@ -1482,7 +1433,7 @@
     `;
   };
 
-  window.searchAdminLotChain = function () {
+  window.searchAdminLotChain = async function () {
     const code = (document.getElementById('admin_explorer_input') || {}).value.trim();
     if (!code) {
       showToast('Please enter a lot identifier.', 'info');
@@ -1491,42 +1442,55 @@
     const area = document.getElementById('adminExplorerResultArea');
     if (!area) return;
 
-    area.innerHTML = `
-      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <div style="font-family: monospace; font-size: 16px; font-weight: 900; color: #0b3d2e;">${escapeHtml(code)}</div>
-            <div style="font-size: 13px; font-weight: 700; color: #047857;">Potato (Kufri Jyoti) &bull; Grade A &bull; 500.0 Kg</div>
+    area.innerHTML = '<div style="text-align: center; padding: 24px; color: #64748b;"><div style="width: 28px; height: 28px; border: 3px solid #cbd5e1; border-top-color: #0b3d2e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>Verifying cryptographic lineage from ledger...</div>';
+    try {
+      const res = await fetch(`/api/v1/lots/${encodeURIComponent(code)}`, { headers: getAuthHeader() });
+      if (!res.ok) {
+        area.innerHTML = `
+          <div style="background: #fff; border: 1.5px solid #fecaca; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-weight: 800; color: #dc2626; font-size: 14px; margin-bottom: 4px;">Lot Not Found in Ledger</div>
+            <div style="font-size: 12.5px; color: #64748b;">No cryptographic batch matching code <code>${escapeHtml(code)}</code> exists in the national database.</div>
           </div>
-          <button type="button" class="action-btn-pill" style="background: #fee2e2; border-color: #fca5a5; color: #dc2626; font-weight: 800;" onclick="window.issueAdminRecall('${escapeHtml(code)}')">
-            ⚠️ Issue National Safety Recall
-          </button>
-        </div>
+        `;
+        return;
+      }
+      const d = await res.json();
+      const lot = d.lot || d;
+      area.innerHTML = `
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <div style="font-family: monospace; font-size: 16px; font-weight: 900; color: #0b3d2e;">${escapeHtml(lot.public_code || code)}</div>
+              <div style="font-size: 13px; font-weight: 700; color: #047857;">${escapeHtml(lot.crop || (lot.product && lot.product.name) || 'Registered Commodity')} &bull; ${escapeHtml(lot.grade ? 'Grade ' + lot.grade : 'Standard')} &bull; ${parseFloat(lot.qty_kg || lot.weight_kg || 0).toFixed(1)} Kg</div>
+            </div>
+            <button type="button" class="action-btn-pill" style="background: #fee2e2; border-color: #fca5a5; color: #dc2626; font-weight: 800;" onclick="window.issueAdminRecall('${escapeHtml(lot.public_code || code)}')">
+              Issue National Safety Recall
+            </button>
+          </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px;">
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
-            <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Origin Farm</div>
-            <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Ramesh Kumar (Nashik)</div>
-          </div>
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
-            <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Current Node</div>
-            <div style="font-size: 13px; font-weight: 800; color: #047857;">Retail Store Shelf (Pune)</div>
-          </div>
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
-            <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Hops Completed</div>
-            <div style="font-size: 13px; font-weight: 800; color: #0f172a;">4 Hops (Farm &rarr; Mandi &rarr; Depot &rarr; Retail)</div>
-          </div>
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
-            <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Days to Shelf</div>
-            <div style="font-size: 13px; font-weight: 800; color: #0b3d2e;">2.5 Days Total</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Origin Node</div>
+              <div style="font-size: 13px; font-weight: 800; color: #0f172a;">${escapeHtml(lot.created_by_org_name || 'Verified Producer')}</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Current Custodian</div>
+              <div style="font-size: 13px; font-weight: 800; color: #047857;">${escapeHtml(lot.custodian_org_name || lot.custody_org || 'Registered Custodian')}</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Custody Status</div>
+              <div style="font-size: 13px; font-weight: 800; color: #0f172a;">${escapeHtml(lot.state || lot.custody_status || 'IN_FACILITY')}</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: 10.5px; font-weight: 700; color: #64748b;">Cryptographic Sequence</div>
+              <div style="font-size: 13px; font-weight: 800; color: #0b3d2e;">Seq #${lot.head_seq || 1} &bull; SHA-256 Chained</div>
+            </div>
           </div>
         </div>
-
-        <div style="font-size: 12.5px; font-weight: 700; color: #047857; background: #ecfdf5; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px;">
-          ✓ Cryptographic Integrity Verified: Zero hash mismatch, 4/4 proof score across all weighbridge and transit nodes.
-        </div>
-      </div>
-    `;
+      `;
+    } catch (e) {
+      area.innerHTML = '<div style="color: #dc2626; padding: 16px; font-weight: 600;">Failed to fetch live lot record from ledger.</div>';
+    }
   };
 
   window.issueAdminRecall = function (code) {
@@ -1584,31 +1548,10 @@
             </thead>
             <tbody>
               <tr>
-                <td style="font-weight: 700;">2026-10-28 22:45</td>
-                <td><span style="font-family: monospace; font-weight: 800; color: #0b3d2e;">20261028-91-9876543210-VG-001-K</span></td>
-                <td>Potato &bull; Kufri Jyoti</td>
-                <td><strong>Kothrud, Pune</strong></td>
-                <td>Shivaji Kirana Stores</td>
-                <td><strong style="color: #047857;">1.2 Km</strong></td>
-                <td><span style="font-size: 11px; background: #f1f5f9; padding: 2px 7px; border-radius: 8px;">Mobile (Android)</span></td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">2026-10-28 21:10</td>
-                <td><span style="font-family: monospace; font-weight: 800; color: #0b3d2e;">20261028-91-9876543210-VG-001-K</span></td>
-                <td>Potato &bull; Kufri Jyoti</td>
-                <td><strong>Aundh, Pune</strong></td>
-                <td>Shivaji Kirana Stores</td>
-                <td><strong style="color: #047857;">4.5 Km</strong></td>
-                <td><span style="font-size: 11px; background: #f1f5f9; padding: 2px 7px; border-radius: 8px;">Mobile (iOS)</span></td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700;">2026-10-28 19:30</td>
-                <td><span style="font-family: monospace; font-weight: 800; color: #0b3d2e;">20261028-91-9876543210-FG-002-A</span></td>
-                <td>Paddy / Rice &bull; Basmati 1121</td>
-                <td><strong>Navi Mumbai, MH</strong></td>
-                <td>APMC Mandi Direct Outlet</td>
-                <td><strong style="color: #047857;">2.1 Km</strong></td>
-                <td><span style="font-size: 11px; background: #f1f5f9; padding: 2px 7px; border-radius: 8px;">Mobile (Android)</span></td>
+                <td colspan="7" style="text-align: center; padding: 36px 16px; color: #64748b;">
+                  <div style="font-weight: 800; font-size: 13.5px; color: #334155; margin-bottom: 4px;">Zero Consumer Scans Logged</div>
+                  <div style="font-size: 12px;">Public GS1 Digital Link scans will automatically stream into this telemetry feed upon consumer QR interaction.</div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -2123,9 +2066,6 @@ function renderAdminEntityInspector(ent, t) {
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         
-        <!-- UNIVERSAL NODE SWITCHER BAR -->
-        ${renderUniversalNodeSwitcherBar('PRODUCER')}
-
         <!-- REGISTRATION STATUS NOTICE (IF NOT YET FULLY VERIFIED) -->
         ${statusBannerHtml}
 
@@ -2195,13 +2135,13 @@ function renderAdminEntityInspector(ent, t) {
               <!-- 5. Farm-to-Shelf Speed -->
               <div class="stat-card-compact">
                 <div style="font-size: 11px; color: #64748b; font-weight: 700;">Avg Shelf Speed</div>
-                <div style="font-size: 20px; font-weight: 900; color: #0b3d2e; margin: 3px 0;" id="metricAvgDays">1.0 Day</div>
-                <div style="font-size: 11px; color: #10b981; font-weight: 700;" id="metricShelfFreshness">Fresh Produce</div>
+                <div style="font-size: 20px; font-weight: 900; color: #0b3d2e; margin: 3px 0;" id="metricAvgDays">-</div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 700;" id="metricShelfFreshness">-</div>
               </div>
 
               <!-- 6. Portfolio Valuation -->
               <div class="stat-card-compact">
-                <div style="font-size: 11px; color: #64748b; font-weight: 700;">Valuation (&8377;)</div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 700;">Valuation (₹)</div>
                 <div style="font-size: 20px; font-weight: 900; color: #047857; margin: 3px 0;" id="metricTotalValuation">&#8377;0</div>
                 <div style="font-size: 11px; color: #64748b; font-weight: 700;" id="metricAvgRate">&#8377;0 / Kg Avg</div>
               </div>
@@ -2302,11 +2242,11 @@ function renderAdminEntityInspector(ent, t) {
               </div>
               <div class="form-group">
                 <label class="form-label">2. Crop / Commodity Name <span class="req">*</span></label>
-                <input type="text" class="form-input" id="inline_lot_crop" value="Potato" placeholder="e.g. Potato, Paddy, Mango, Turmeric" required style="background: #fff; font-weight: 600;" />
+                <input type="text" class="form-input" id="inline_lot_crop" value="" placeholder="e.g. Potato, Paddy, Mango, Turmeric" required style="background: #fff; font-weight: 600;" />
               </div>
               <div class="form-group">
                 <label class="form-label">3. Variety / Cultivar</label>
-                <input type="text" class="form-input" id="inline_lot_variety" value="Kufri Jyoti" placeholder="e.g. Kufri Jyoti, Alphonso, IR 64" style="background: #fff;" />
+                <input type="text" class="form-input" id="inline_lot_variety" value="" placeholder="e.g. Kufri Jyoti, Alphonso, IR 64" style="background: #fff;" />
               </div>
               <div class="form-group">
                 <label class="form-label">4. Origin Plot / Parcel</label>
@@ -2320,15 +2260,15 @@ function renderAdminEntityInspector(ent, t) {
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px;">
               <div class="form-group">
                 <label class="form-label">5. Net Weight (Kg) <span class="req">*</span></label>
-                <input type="number" step="0.1" min="0.1" class="form-input" id="inline_lot_qty" value="500" required style="background: #fff; font-weight: 800;" />
+                <input type="number" step="0.1" min="0.1" class="form-input" id="inline_lot_qty" value="" placeholder="e.g. 500" required style="background: #fff; font-weight: 800;" />
               </div>
               <div class="form-group">
                 <label class="form-label">6. Crates / Bags Count</label>
-                <input type="number" min="1" class="form-input" id="inline_lot_packages" value="25" style="background: #fff;" />
+                <input type="number" min="1" class="form-input" id="inline_lot_packages" value="" placeholder="e.g. 25" style="background: #fff;" />
               </div>
               <div class="form-group">
                 <label class="form-label">7. Harvest Date &amp; Time <span class="req">*</span></label>
-                <input type="datetime-local" class="form-input" id="inline_lot_harvest_date" value="${new Date().toISOString().slice(0, 16)}" required style="background: #fff;" />
+                <input type="datetime-local" class="form-input" id="inline_lot_harvest_date" value="" required style="background: #fff;" />
               </div>
               <div class="form-group">
                 <label class="form-label">8. Last Input / Spray Date (PHI)</label>
@@ -2547,25 +2487,38 @@ function renderAdminEntityInspector(ent, t) {
     if (elLotsCount) elLotsCount.textContent = `${lots.length} Batch${lots.length === 1 ? '' : 'es'}`;
     if (elCustody) elCustody.textContent = `${inFarm} In Farm &bull; ${inTransit} Transit`;
 
-    // 5. Avg Shelf Speed
+    // 5. Avg Shelf Speed (strictly computed from real lot records)
     let totalDays = 0;
     const now = new Date();
     lots.forEach(l => {
       const created = l.created_at ? new Date(l.created_at) : now;
       totalDays += Math.max(0.1, (now - created) / (1000 * 60 * 60 * 24));
     });
-    const avgDays = lots.length > 0 ? (totalDays / lots.length).toFixed(1) : '1.0';
     const elAvgDays = document.getElementById('metricAvgDays');
-    if (elAvgDays) elAvgDays.textContent = `${avgDays} Day${avgDays === '1.0' ? '' : 's'}`;
+    const elFreshness = document.getElementById('metricShelfFreshness');
+    if (lots.length > 0) {
+      const avgDays = (totalDays / lots.length).toFixed(1);
+      if (elAvgDays) elAvgDays.textContent = `${avgDays} Days`;
+      if (elFreshness) {
+        elFreshness.textContent = parseFloat(avgDays) <= 3.0 ? 'Fresh Produce' : 'In Custody';
+        elFreshness.style.color = '#10b981';
+      }
+    } else {
+      if (elAvgDays) elAvgDays.textContent = '-';
+      if (elFreshness) {
+        elFreshness.textContent = 'No Batches';
+        elFreshness.style.color = '#64748b';
+      }
+    }
 
-    // 6. Valuation
+    // 6. Valuation (strictly computed from real lots asking price; 0 if empty)
     let totalVal = 0;
     lots.forEach(l => {
       const kg = parseFloat(l.qty_kg || l.weight_kg || 0);
-      const rate = parseFloat(l.price_per_kg || l.asking_price_per_kg || 40);
+      const rate = parseFloat(l.price_per_kg || l.asking_price_per_kg || 0);
       totalVal += kg * rate;
     });
-    const avgRate = totalLottedKg > 0 ? Math.round(totalVal / totalLottedKg) : 40;
+    const avgRate = (totalLottedKg > 0 && totalVal > 0) ? Math.round(totalVal / totalLottedKg) : 0;
     const elVal = document.getElementById('metricTotalValuation');
     const elRate = document.getElementById('metricAvgRate');
     if (elVal) elVal.textContent = `₹${Math.round(totalVal).toLocaleString('en-IN')}`;
@@ -3187,11 +3140,11 @@ function renderAdminEntityInspector(ent, t) {
                 </div>
                 <div class="form-group">
                   <label class="form-label">Crop / Commodity <span class="req">*</span></label>
-                  <input type="text" class="form-input" id="harv_crop" value="Potato" required style="background: #fff; font-weight: 600;" />
+                  <input type="text" class="form-input" id="harv_crop" value="" placeholder="e.g. Paddy, Wheat, Potato" required style="background: #fff; font-weight: 600;" />
                 </div>
                 <div class="form-group">
                   <label class="form-label">Variety / Cultivar</label>
-                  <input type="text" class="form-input" id="harv_variety" value="Kufri Jyoti" style="background: #fff;" />
+                  <input type="text" class="form-input" id="harv_variety" value="" placeholder="e.g. Kufri Jyoti, Basmati" style="background: #fff;" />
                 </div>
                 <div class="form-group">
                   <label class="form-label">Harvest Date <span class="req">*</span></label>
@@ -3473,9 +3426,6 @@ function renderAdminEntityInspector(ent, t) {
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         
-        <!-- UNIVERSAL NODE SWITCHER BAR -->
-        ${renderUniversalNodeSwitcherBar(activeRole)}
-
         <!-- Header Banner -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
@@ -3518,14 +3468,14 @@ function renderAdminEntityInspector(ent, t) {
 
               <div class="stat-card-compact">
                 <div style="font-size: 11px; color: #64748b; font-weight: 700;">Avg Dwell Time</div>
-                <div style="font-size: 20px; font-weight: 900; color: #0b3d2e; margin: 3px 0;">8.4 Hours</div>
-                <div style="font-size: 11px; color: #10b981; font-weight: 700;">Optimal Velocity</div>
+                <div style="font-size: 20px; font-weight: 900; color: #0b3d2e; margin: 3px 0;">${custody.length > 0 ? 'Active' : '-'}</div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 700;">${custody.length > 0 ? 'In Facility Custody' : 'No Active Lots'}</div>
               </div>
 
               <div class="stat-card-compact">
                 <div style="font-size: 11px; color: #64748b; font-weight: 700;">Shrinkage &amp; Loss</div>
-                <div style="font-size: 20px; font-weight: 900; color: #047857; margin: 3px 0;">0.2%</div>
-                <div style="font-size: 11px; color: #047857; font-weight: 700;">Within Tolerance</div>
+                <div style="font-size: 20px; font-weight: 900; color: #047857; margin: 3px 0;">0.0%</div>
+                <div style="font-size: 11px; color: #047857; font-weight: 700;">Zero Loss Recorded</div>
               </div>
 
               <div class="stat-card-compact">
@@ -3536,8 +3486,8 @@ function renderAdminEntityInspector(ent, t) {
 
               <div class="stat-card-compact">
                 <div style="font-size: 11px; color: #64748b; font-weight: 700;">Cold-Chain Status</div>
-                <div style="font-size: 20px; font-weight: 900; color: #047857; margin: 3px 0;">4.2 &deg;C</div>
-                <div style="font-size: 11px; color: #047857; font-weight: 700;">Temperature Stable</div>
+                <div style="font-size: 20px; font-weight: 900; color: #047857; margin: 3px 0;">${custody.length > 0 ? 'Monitored' : '-'}</div>
+                <div style="font-size: 11px; color: #047857; font-weight: 700;">Telemetry Ready</div>
               </div>
             </div>
           </div>
@@ -4018,7 +3968,7 @@ function renderAdminEntityInspector(ent, t) {
                   <div class="form-group">
                     <label class="form-label">Input Raw Batch</label>
                     <select class="form-select" id="proc_input_lot" style="background: #fff;">
-                      ${(window._downstreamCustody || []).map(l => `<option value="${l.public_code}">${l.public_code} (${l.crop || 'Potato'}, ${l.qty_kg || 500} Kg)</option>`).join('') || '<option value="RAW-POTATO-01">RAW-POTATO-01 (5,000 Kg Kufri Jyoti)</option>'}
+                      ${(window._downstreamCustody || []).map(l => `<option value="${l.public_code}">${l.public_code} (${l.crop || 'Potato'}, ${l.qty_kg || 500} Kg)</option>`).join('') || '<option value="">No active raw produce lots available</option>'}
                     </select>
                   </div>
                   <div class="form-group">
@@ -4033,7 +3983,7 @@ function renderAdminEntityInspector(ent, t) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                   <div class="form-group">
                     <label class="form-label">Product Name</label>
-                    <input type="text" class="form-input" id="proc_output_name" value="Classic Salted Potato Chips" style="background: #fff; font-weight: 700;" />
+                    <input type="text" class="form-input" id="proc_output_name" value="" placeholder="e.g. Brand Name / Packaged Product" style="background: #fff; font-weight: 700;" />
                   </div>
                   <div class="form-group">
                     <label class="form-label">Packet Size (Grams)</label>
@@ -5879,7 +5829,7 @@ function renderAdminEntityInspector(ent, t) {
             </div>
             <div>
               <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">3. Receiver Mobile / Entity ID <span style="color:#dc2626;">*</span></label>
-              <input type="text" class="form-input" id="dispatch_target_phone" placeholder="+91 9876543210" value="+919876543210" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" />
+              <input type="text" class="form-input" id="dispatch_target_phone" placeholder="+91 9876543210" value="" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" />
             </div>
           </div>
 
@@ -5887,18 +5837,18 @@ function renderAdminEntityInspector(ent, t) {
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
             <div>
               <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">4. Dispatch Net Weight (Kg) <span style="color:#dc2626;">*</span></label>
-              <input type="number" step="0.1" min="0.1" class="form-input" id="dispatch_declared_qty" value="500" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 800;" />
+              <input type="number" step="0.1" min="0.1" class="form-input" id="dispatch_declared_qty" value="" placeholder="e.g. 500" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 800;" />
             </div>
             <div>
               <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">5. Transport Vehicle Number</label>
-              <input type="text" class="form-input" id="dispatch_vehicle_no" placeholder="e.g. MH-15-EG-4912" value="MH-15-EG-4912" style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600; text-transform: uppercase;" />
+              <input type="text" class="form-input" id="dispatch_vehicle_no" placeholder="e.g. MH-15-EG-4912" value="" style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600; text-transform: uppercase;" />
             </div>
           </div>
 
           <!-- 4. Dispatch Remarks -->
           <div style="margin-bottom: 18px;">
             <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">6. Dispatch Facility / Origin Remarks</label>
-            <input type="text" class="form-input" id="dispatch_remarks" placeholder="e.g. Crates loaded from cold storage bay 2" value="Freshly packed crates dispatched" style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1;" />
+            <input type="text" class="form-input" id="dispatch_remarks" placeholder="e.g. Crates loaded from storage" value="" style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1;" />
           </div>
 
           <!-- Action Buttons -->

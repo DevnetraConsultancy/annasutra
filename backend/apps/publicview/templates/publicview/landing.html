@@ -16,8 +16,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
-  <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261029v1" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261029v1" defer></script>
+  <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261029v2" />
+  <script src="/static/publicview/js/producer_wizard.js?v=20261029v2" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -2226,23 +2226,12 @@
           <span id="activeUserName">Producer (Active)</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </div>
-        <div class="user-dropdown-menu" id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); min-width: 250px; padding: 6px; z-index: 10000;">
-          <button type="button" class="user-dropdown-item" onclick="if (window.openProducerOperationalDashboard) window.openProducerOperationalDashboard(); scrollToWorkspace(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 9px 12px; font-size: 13px; font-weight: 700; color: #0b3d2e; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <div class="user-dropdown-menu" id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); min-width: 210px; padding: 6px; z-index: 10000;">
+          <button type="button" class="user-dropdown-item" onclick="if (window.openProducerOperationalDashboard) window.openProducerOperationalDashboard(); scrollToWorkspace(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 9px 12px; font-size: 13px; font-weight: 700; color: #0b3d2e; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            <span>Current Console</span>
+            <span>Operational Console</span>
           </button>
-          
-          <div style="font-size: 10.5px; font-weight: 800; color: #64748b; text-transform: uppercase; padding: 4px 10px; letter-spacing: 0.5px; border-top: 1px solid #f1f5f9; margin-top: 4px;">Switch Node Console</div>
-          <button type="button" onclick="window.switchEntityRole('PRODUCER'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #334155; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Producer (Farmer / FPO)</button>
-          <button type="button" onclick="window.switchEntityRole('AGGREGATOR'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #334155; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Aggregator (Mandi APMC)</button>
-          <button type="button" onclick="window.switchEntityRole('PROCESSOR'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #334155; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Processor / Manufacturer</button>
-          <button type="button" onclick="window.switchEntityRole('WHOLESALER'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #334155; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Wholesaler Distributor</button>
-          <button type="button" onclick="window.switchEntityRole('DISTRIBUTOR'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #334155; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Regional Cold-Chain Logistics</button>
-          <button type="button" onclick="window.switchEntityRole('RETAILER'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #334155; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Retailer Counter &amp; POS</button>
-          <button type="button" onclick="window.switchEntityRole('ADMIN'); closeUserDropdown();" style="width: 100%; text-align: left; padding: 6px 10px; font-size: 12px; font-weight: 700; color: #b45309; background: transparent; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">&bull; Sovereign Verifier Authority</button>
-          
-          <div style="border-top: 1px solid #f1f5f9; margin: 4px 0;"></div>
-          <button type="button" class="user-dropdown-item" onclick="logoutEntity(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 700; color: #dc2626; background: transparent; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+          <button type="button" class="user-dropdown-item" onclick="logoutEntity(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 9px 12px; font-size: 13px; font-weight: 700; color: #dc2626; background: transparent; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             <span>Sign Out</span>
           </button>
@@ -5632,14 +5621,9 @@
     function selectRoleFromPortal(role) {
       currentRole = role || 'PRODUCER';
       closeEntityPortalModal();
-      const token = localStorage.getItem('annasutra_access_token');
-      if (token && window.switchEntityRole) {
-        window.switchEntityRole(currentRole);
-      } else {
-        setTimeout(() => {
-          openLoginModal(role);
-        }, 50);
-      }
+      setTimeout(() => {
+        openLoginModal(role);
+      }, 50);
     }
 
     /* FAST QR CODE SCANNER ENGINE */
