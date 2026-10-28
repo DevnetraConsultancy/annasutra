@@ -21,393 +21,343 @@ class LotCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEditable = lot.isEditable;
 
-    // Payment styling
-    final paymentMeta = switch (lot.paymentStatus) {
-      'SETTLED' => (
-          label: 'Fully Settled',
-          bg: const Color(0xFFECFDF5),
-          text: const Color(0xFF065F46),
-          border: const Color(0xFF86EFAC)
-        ),
-      'ADVANCE' => (
-          label: 'Advance Received',
-          bg: const Color(0xFFEFF6FF),
-          text: const Color(0xFF1E40AF),
-          border: const Color(0xFFBFDBFE)
-        ),
-      _ => (
-          label: 'Pending Settlement',
-          bg: const Color(0xFFFFFBEB),
-          text: const Color(0xFF92400E),
-          border: const Color(0xFFFDE68A)
-        ),
-    };
-
     String harvestFormatted = lot.harvestDate;
     try {
       final dt = DateTime.parse(lot.harvestDate);
-      harvestFormatted = DateFormat('dd MMM yyyy, hh:mm a').format(dt);
+      harvestFormatted = DateFormat('dd MMM yyyy').format(dt);
     } catch (_) {}
+
+    // Extract 2-letter category code from publicCode or default to VG
+    String categoryCode = 'VG';
+    if (lot.publicCode.length >= 26) {
+      categoryCode = lot.publicCode.substring(22, 24);
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isEditable ? const Color(0xFFE2E8F0) : const Color(0xFFFED7AA),
-          width: 1.5,
+          width: 1.2,
         ),
         boxShadow: const [
           BoxShadow(
-              color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1)),
+            color: Color(0x08000000),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. TOP HEADER: Public Code, Crop, Grade, Payment Status & Lock/Edit Button
+          // 1. TOP HEADER: Category Badge, Crop Name, Status Pill & Edit Icon
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    // Sovereign Code Pill with Copy Action
-                    InkWell(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: lot.publicCode));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Copied lot code ${lot.publicCode} to clipboard'),
-                            duration: const Duration(seconds: 2),
-                            backgroundColor: const Color(0xFF047857),
-                          ),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3.5),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFECFDF5),
-                          border: Border.all(color: const Color(0xFFA7F3D0)),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              lot.publicCode,
-                              style: const TextStyle(
-                                fontFamily: 'monospace',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF047857),
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            const Icon(Icons.copy,
-                                size: 12, color: Color(0xFF047857)),
-                          ],
-                        ),
-                      ),
-                    ),
+              // Category Code Pill (e.g., [VG])
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xFFA7F3D0)),
+                ),
+                child: Text(
+                  categoryCode,
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF047857),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
 
-                    // Crop Name & Variety
+              // Crop Name & Variety
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
                       lot.crop,
                       style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A)),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A),
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (lot.variety.isNotEmpty)
                       Text(
-                        '• ${lot.variety}',
+                        lot.variety,
                         style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF475569)),
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF64748B),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
+                  ],
+                ),
+              ),
 
-                    // Quality Grade Chip
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEFF6FF),
-                        border: Border.all(color: const Color(0xFFBFDBFE)),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        lot.qualityGrade,
-                        style: const TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF1E40AF)),
-                      ),
+              // Custody Status Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                decoration: BoxDecoration(
+                  color: isEditable ? const Color(0xFFECFDF5) : const Color(0xFFFFF7ED),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isEditable ? const Color(0xFF86EFAC) : const Color(0xFFFDBA74),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isEditable ? Icons.check_circle_outline : Icons.local_shipping_outlined,
+                      size: 11.5,
+                      color: isEditable ? const Color(0xFF059669) : const Color(0xFFC2410C),
                     ),
-
-                    // Payment Status Chip
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: paymentMeta.bg,
-                        border: Border.all(color: paymentMeta.border),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        paymentMeta.label,
-                        style: TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w700,
-                            color: paymentMeta.text),
+                    const SizedBox(width: 4),
+                    Text(
+                      isEditable
+                          ? 'Farm Custody'
+                          : (lot.state == 'IN_TRANSIT' ? 'In Transit' : 'Accepted'),
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w700,
+                        color: isEditable ? const Color(0xFF065F46) : const Color(0xFF9A3412),
                       ),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
 
-              // Right-hand Custody Status & Pencil Edit Icon
-              if (isEditable) ...[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFECFDF5),
-                        border: Border.all(color: const Color(0xFF86EFAC)),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.check_circle_outline,
-                              size: 13, color: Color(0xFF10B981)),
-                          SizedBox(width: 4),
-                          Text(
-                            'In Farm Custody',
-                            style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF065F46)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    IconButton(
-                      icon: const Icon(Icons.edit,
-                          size: 18, color: Color(0xFF047857)),
-                      tooltip: 'Edit Harvest Lot',
-                      visualDensity: VisualDensity.compact,
-                      onPressed: onEdit,
-                    ),
-                  ],
+          const SizedBox(height: 8),
+
+          // 2. LOT ID (Monospace with 1-tap copy)
+          InkWell(
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: lot.publicCode));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Copied lot ID: ${lot.publicCode}'),
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  behavior: SnackBarBehavior.floating,
                 ),
-              ] else ...[
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF7ED),
-                    border: Border.all(color: const Color(0xFFFDBA74)),
-                    borderRadius: BorderRadius.circular(16),
+              );
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.qr_code_2, size: 14, color: Color(0xFF64748B)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      lot.publicCode,
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF334155),
+                        letterSpacing: 0.3,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  const Icon(Icons.copy, size: 12, color: Color(0xFF64748B)),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // 3. CORE METRIC STRIP (Weight, Quality, Valuation)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                // Quantity
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.lock,
-                          size: 13, color: Color(0xFFC2410C)),
-                      const SizedBox(width: 4),
+                      const Text(
+                        'HARVEST QTY',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF64748B),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 1.5),
                       Text(
-                        lot.state == 'IN_TRANSIT'
-                            ? 'In Transit (Locked)'
-                            : 'Handover Done (Locked)',
+                        '${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
                         style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF9A3412)),
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0B3D2E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Quality Grade
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'GRADE',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF64748B),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 1.5),
+                      Text(
+                        lot.qualityGrade.replaceAll('Grade ', 'Gr-').replaceAll(' (Super)', ''),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1E40AF),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Valuation
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'VALUATION',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF64748B),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 1.5),
+                      Text(
+                        '₹${lot.estimatedValue.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF047857),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
-            ],
+            ),
           ),
 
-          const Divider(height: 20, color: Color(0xFFF1F5F9)),
+          const SizedBox(height: 8),
 
-          // 2. BODY METRICS GRID
+          // 4. FOOTER: Origin Plot, Harvest Date & Quick Action Buttons
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Harvest Quantity
+              const Icon(Icons.location_on_outlined, size: 12.5, color: Color(0xFF64748B)),
+              const SizedBox(width: 3),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('QUANTITY',
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF64748B))),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF0B3D2E)),
-                    ),
-                    Text(
-                      lot.packagesCount > 0
-                          ? '${lot.packagesCount} ${lot.packageType}'
-                          : 'Bulk Produce',
-                      style: const TextStyle(
-                          fontSize: 11.5, color: Color(0xFF64748B)),
-                    ),
-                  ],
+                child: Text(
+                  '${lot.originPlotName} • $harvestFormatted',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF64748B),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
 
-              // Origin Plot & Land
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('ORIGIN PLOT',
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF64748B))),
-                    const SizedBox(height: 2),
-                    Text(
-                      lot.originPlotName,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0F172A)),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      '${lot.plotAreaAcres} Ac • ${lot.farmingMethod}',
-                      style: const TextStyle(
-                          fontSize: 11.5, color: Color(0xFF64748B)),
-                    ),
-                  ],
+              // Edit icon
+              if (isEditable && onEdit != null) ...[
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF047857)),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                  tooltip: 'Edit Batch',
+                  onPressed: onEdit,
                 ),
-              ),
+                const SizedBox(width: 6),
+              ],
 
-              // Valuation & Target
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('VALUATION',
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF64748B))),
-                    const SizedBox(height: 2),
-                    Text(
-                      '₹${lot.basePricePerUnit.toStringAsFixed(0)} / ${lot.unit}',
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0F172A)),
-                    ),
-                    Text(
-                      'Total: ₹${lot.estimatedValue.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF047857)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const Icon(Icons.event_outlined,
-                  size: 14, color: Color(0xFF64748B)),
-              const SizedBox(width: 4),
-              Text(
-                'Harvested: $harvestFormatted',
-                style:
-                    const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
-              ),
-              const Spacer(),
-              Text(
-                'Target: ${lot.intendedBuyer}',
-                style: const TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF475569)),
-              ),
-            ],
-          ),
-
-          const Divider(height: 20, color: Color(0xFFF1F5F9)),
-
-          // 3. ACTION BAR: Print QR Labels (Unlimited) + Public Trace + Dispatch
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Print QR Labels (Unlimited)
+              // QR Labels Button (Compact 32dp height)
               OutlinedButton.icon(
                 onPressed: onShowQr,
-                icon: const Icon(Icons.qr_code,
-                    size: 16, color: Color(0xFF047857)),
+                icon: const Icon(Icons.qr_code, size: 13, color: Color(0xFF047857)),
                 label: const Text(
-                  'QR Labels',
+                  'QR',
                   style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF047857)),
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF047857),
+                  ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(100, 40),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  side: const BorderSide(color: Color(0xFFA7F3D0)),
+                  minimumSize: const Size(60, 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  side: const BorderSide(color: Color(0xFFA7F3D0), width: 1.2),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
 
-              // Dispatch to Mandi / Buyer Button
-              if (isEditable)
+              // Dispatch Button
+              if (isEditable) ...[
+                const SizedBox(width: 6),
                 ElevatedButton.icon(
                   onPressed: onDispatch,
-                  icon: const Icon(Icons.local_shipping_outlined, size: 16),
+                  icon: const Icon(Icons.local_shipping_outlined, size: 13),
                   label: const Text(
-                    'Dispatch to Mandi',
-                    style:
-                        TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
+                    'Dispatch',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF047857),
+                    backgroundColor: const Color(0xFF0B3D2E),
                     foregroundColor: Colors.white,
-                    minimumSize: const Size(120, 40),
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    minimumSize: const Size(76, 32),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
+              ],
             ],
           ),
         ],

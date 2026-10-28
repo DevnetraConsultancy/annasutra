@@ -21,13 +21,13 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
         path: '/',
         name: 'home',
         builder: (context, state) =>
-            WebPortalScreen(onLocaleChanged: onLocaleChanged),
+            HomeScreen(onLocaleChanged: onLocaleChanged),
       ),
       GoRoute(
-        path: '/offline-home',
-        name: 'offline-home',
+        path: '/web-portal',
+        name: 'web-portal',
         builder: (context, state) =>
-            HomeScreen(onLocaleChanged: onLocaleChanged),
+            WebPortalScreen(onLocaleChanged: onLocaleChanged),
       ),
       GoRoute(
         path: '/login',

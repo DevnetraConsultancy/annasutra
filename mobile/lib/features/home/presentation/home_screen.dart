@@ -1,19 +1,15 @@
-import 'dart:async';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
-import '../../auth/presentation/controllers/auth_controller.dart';
+
 import '../../auth/domain/auth_state.dart';
+import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../auth/presentation/dpdp_consent_dialog.dart';
-import '../../sync/sync_service.dart';
-import '../../lots/presentation/controllers/lots_controller.dart';
 import '../../lots/domain/harvest_lot.dart';
+import '../../lots/presentation/controllers/lots_controller.dart';
 import '../../lots/presentation/widgets/lot_card.dart';
-import '../../lots/presentation/widgets/analytics_charts.dart';
+import '../../sync/sync_service.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final void Function(Locale locale)? onLocaleChanged;
@@ -24,1053 +20,393 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  int _currentMainTab = 0; // 0: Ledger, 1: Analytics
-  bool _isAnalyticsValuationMode = false;
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int _currentNavIndex = 0; // 0: Batches, 1: Handover, 2: Insights, 3: Profile
   String _selectedLang = 'en';
-  IconData _weatherIcon = Icons.wb_sunny_outlined;
-  String _weatherText = 'Detecting...';
-  String _dateTimeText = '';
+
+  // Search & Filter State
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedCustodyFilter = 'ALL';
+
+  // Auth form controllers for unauthenticated view
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+  String _selectedRole = 'PRODUCER';
+
+  static const List<Map<String, String>> _roleOptions = [
+    {'code': 'PRODUCER', 'label': 'Farmer / FPO', 'icon': '🌾'},
+    {'code': 'AGGREGATOR', 'label': 'Mandi / APMC', 'icon': '🏢'},
+    {'code': 'WHOLESALER', 'label': 'Wholesaler', 'icon': '📦'},
+    {'code': 'DISTRIBUTOR', 'label': 'Distributor', 'icon': '🚚'},
+    {'code': 'RETAILER', 'label': 'Retailer Shop', 'icon': '🛒'},
+  ];
 
   static const Map<String, Map<String, String>> _strings = {
     'en': {
-      'brandTitle': 'AnnaSutra',
-      'brandSubtitle': 'National Agri-Produce Traceability Platform',
-      'navLogin': 'Entity Login',
-      'heroHead': 'Empowering Farmers.\nProtecting Consumers.',
-      'heroSub':
-          'Direct cryptographic custody from seed to plate. Tamper-evident batch tracking on immutable tables and offline-ready verification.',
-      'scanQrHero': 'Scan QR Code',
-      'newBatchHero': 'New Harvest Lot',
-      'entityTitle': 'Universal Entity Access',
-      'entitySub':
-          'Select your supply-chain tier for dedicated operations and custody tools',
-      'roleFarmer': 'Farmer / FPO Producer',
-      'roleFarmerDesc':
-          'Harvest lot creation, farm bag QR codes, dispatch to mandi.',
-      'roleMandi': 'Mandi Aggregator / APMC',
-      'roleMandiDesc':
-          'Inbound receipt, lot grading, lot splitting & auction dispatch.',
-      'roleCold': 'Cold Storage / Warehouse',
-      'roleColdDesc':
-          'Inward custody receipt, temperature log, cold-chain outward.',
-      'roleProcessor': 'Packhouse & Processor',
-      'roleProcessorDesc':
-          'Raw intake, milling/sorting, retail pack QR generation.',
-      'roleRetailer': 'Wholesaler & Retailer',
-      'roleRetailerDesc':
-          'Point-of-sale verification, batch sales recording, consumer audit.',
-      'roleAdmin': 'Admin / Verifier',
-      'roleAdminDesc':
-          'Entity verification, KYC reveal audit, and QR label issuance.',
-      'loginBtn': 'Login as',
-      'tabLedger': 'Harvest Lots & Custody Ledger',
-      'tabAnalytics': 'Analytics & Farm Insights',
-      'tabIncoming': 'Incoming',
-      'tabMyStock': 'My Stock',
-      'tabWaiting': 'Waiting',
-      'emptyIncoming': 'No inbound shipments awaiting receipt.',
-      'emptyStock': 'No active produce batches in custody.',
-      'emptyWaiting': 'No dispatched handovers awaiting counterparty sign-off.',
-      'receiveBatch': 'Receive Batch',
-      'dispatchBatch': 'Dispatch Batch',
-      'splitLot': 'Split Lot',
-      'recordWaste': 'Record Waste',
-      'recordSale': 'Record Sale',
-      'inspectQuality': 'Inspect Quality',
-      'metricTotalLots': 'Total Active Lots',
-      'metricInCustody': 'In Farm Custody',
-      'metricInTransit': 'In Mandi Transit',
-      'metricTotalWeight': 'Total Harvest Weight',
-      'btnRegisterLot': 'Register New Harvest Lot',
-      'searchPlaceholder': 'Search lots by code, crop, plot, grade...',
-      'filterCustodyAll': 'All Custody States',
-      'filterInCustody': 'In Farm Custody (Editable)',
-      'filterInTransit': 'In Transit (Locked)',
-      'filterClosed': 'Handover Approved',
-      'analyticsCropVolume': 'Crop Volume & Valuation Share',
-      'analyticsCustodyFunnel': 'Custody Pipeline Funnel',
-      'analyticsSettlement': 'Settlement & Payment Health',
-      'disclaimer':
-          'Records are based on information entered by supply-chain participants. It does not prove the contents of this package.',
+      'appTitle': 'AnnaSutra',
+      'appSubtitle': 'National Agri-Traceability Platform',
+      'navBatches': 'Batches',
+      'navHandover': 'Handover',
+      'navInsights': 'Insights',
+      'navProfile': 'Profile',
+      'farmerId': 'Unique Farmer ID',
+      'activeBatches': 'Active Batches',
+      'inCustody': 'In Farm Custody',
+      'inTransit': 'In Transit',
+      'totalWeight': 'Total Harvest Weight',
+      'newBatch': 'New Batch',
+      'searchPh': 'Search crop, lot code, or plot...',
+      'filterAll': 'All',
+      'filterCustody': 'Farm Custody',
+      'filterTransit': 'In Transit',
+      'filterDelivered': 'Accepted',
+      'noBatchesTitle': 'No Harvest Lots Yet',
+      'noBatchesSub': 'Register your first produce lot to generate tamper-proof QR crate labels.',
+      'btnCreateFirst': '+ Create First Batch',
+      'handoverTitle': 'Custody Handover Hub',
+      'handoverSub': 'Transfer custody to next supply-chain party with dual cryptographic confirmation.',
+      'scanToReceive': 'Scan QR to Receive Custody',
+      'scanToReceiveSub': 'Inspect incoming produce crates, verify net weight & append condition telemetry.',
+      'btnScanQr': 'Scan Crate QR',
+      'manualCodePh': 'Or enter Lot Code manually',
+      'btnVerifyAccept': 'Accept & Append Telemetry',
+      'dispatchedBatches': 'Dispatched Batches (In Transit)',
+      'noDispatched': 'No active outgoing handovers pending counterparty sign-off.',
+      'insightsTitle': 'Farm & Harvest Insights',
+      'grossValuation': 'Gross Valuation',
+      'realizedRevenue': 'Realized Revenue',
+      'gradeARatio': 'Grade A Quality Ratio',
+      'cropBreakdown': 'Crop Volume Distribution',
+      'plotsTitle': 'Mapped Agricultural Plots',
+      'profileTitle': 'Producer Digital Node',
+      'kycVerified': 'KYC Verified',
+      'kycPending': 'KYC Under Review',
+      'maskedPan': 'PAN Identity',
+      'bankAccount': 'Settlement Bank',
+      'statutoryConsent': 'DPDP Act 2023 Consent Active',
+      'btnLogout': 'Log Out',
+      'loginTitle': 'Farm-to-Fork Traceability',
+      'loginSub': 'Direct cryptographic custody from seed to plate across Bharat.',
+      'phoneLabel': 'Mobile Number',
+      'otpLabel': 'Enter 6-digit OTP',
+      'btnSendOtp': 'Get OTP via SMS',
+      'btnVerifyOtp': 'Verify & Sign In',
+      'btnGoogle': 'Sign in with Google',
+      'dpdpNotice': 'Protected under DPDP Act 2023 • C-DAC Sovereign Node',
     },
     'hi': {
-      'brandTitle': 'अन्नसूत्र',
-      'brandSubtitle': 'राष्ट्रीय कृषि उपज ट्रेसेबिलिटी मंच',
-      'navLogin': 'इकाई लॉगिन',
-      'heroHead': 'किसानों का सशक्तिकरण।\nउपभोक्ताओं की सुरक्षा।',
-      'heroSub':
-          'बीज से थाली तक डिजिटल कस्टडी। अपरिवर्तनीय लेजर पर बैच ट्रैकिंग एवं ऑफ़लाइन सत्यापन।',
-      'scanQrHero': 'क्यूआर कोड स्कैन करें',
-      'newBatchHero': 'नया फ़सल लॉट',
-      'entityTitle': 'सार्वभौमिक इकाई पहुंच',
-      'entitySub':
-          'समर्पित संचालन और कस्टडी टूल के लिए अपनी आपूर्ति-श्रृंखला श्रेणी चुनें',
-      'roleFarmer': 'किसान / एफपीओ उत्पादक',
-      'roleFarmerDesc': 'फ़सल लॉट निर्माण, बैग क्यूआर कोड, मंडी प्रेषण।',
-      'roleMandi': 'मंडी एग्रीगेटर / एपीएमसी',
-      'roleMandiDesc': 'आवक प्राप्ति, ग्रेडिंग, लॉट विभाजन व नीलामी।',
-      'roleCold': 'कोल्ड स्टोरेज / गोदाम',
-      'roleColdDesc': 'आवक कस्टडी, तापमान लॉग, सुरक्षित भंडारण।',
-      'roleProcessor': 'पैकहाउस व प्रसंस्करणकर्ता',
-      'roleProcessorDesc': 'कच्चा माल प्राप्ति, छंटाई, खुदरा पैकेजिंग।',
-      'roleRetailer': 'थोक व खुदरा विक्रेता',
-      'roleRetailerDesc': 'बिक्री केंद्र सत्यापन, खुदरा बिलिंग।',
-      'roleAdmin': 'प्रशासक / सत्यापनकर्ता',
-      'roleAdminDesc': 'इकाई सत्यापन, केवाईसी ऑडिट और क्यूआर आवंटन।',
-      'loginBtn': 'के रूप में लॉगिन करें',
-      'tabLedger': 'फ़सल लॉट एवं कस्टडी लेजर',
-      'tabAnalytics': 'एनालिटिक्स एवं फ़ार्म इनसाइट्स',
-      'tabIncoming': 'आवक',
-      'tabMyStock': 'मेरा स्टॉक',
-      'tabWaiting': 'प्रतीक्षारत',
-      'emptyIncoming': 'प्राप्ति की प्रतीक्षा में कोई आवक खेप नहीं है।',
-      'emptyStock': 'कस्टडी में कोई सक्रिय उत्पाद बैच नहीं है।',
-      'emptyWaiting':
-          'प्रतिपक्ष की पुष्टि के लिए कोई प्रेषित हैंडओवर लंबित नहीं है।',
-      'receiveBatch': 'बैच प्राप्त करें',
-      'dispatchBatch': 'बैच प्रेषित करें',
-      'splitLot': 'लॉट विभाजित करें',
-      'recordWaste': 'अपव्यय दर्ज करें',
-      'recordSale': 'खुदरा बिक्री दर्ज करें',
-      'inspectQuality': 'गुणवत्ता निरीक्षण',
-      'metricTotalLots': 'कुल सक्रिय लॉट',
-      'metricInCustody': 'फ़ार्म कस्टडी में',
-      'metricInTransit': 'मंडी पारगमन में',
-      'metricTotalWeight': 'कुल फ़सल वजन',
-      'btnRegisterLot': 'नया फ़सल लॉट पंजीकृत करें',
-      'searchPlaceholder': 'कोड, फ़सल, प्लॉट या ग्रेड से खोजें...',
-      'filterCustodyAll': 'सभी कस्टडी स्थितियां',
-      'filterInCustody': 'फ़ार्म कस्टडी में (संपादन योग्य)',
-      'filterInTransit': 'पारगमन में (लॉक)',
-      'filterClosed': 'हैंडओवर स्वीकृत',
-      'analyticsCropVolume': 'फ़सल मात्रा एवं मूल्यांकन अनुपात',
-      'analyticsCustodyFunnel': 'कस्टडी पाइपलाइन फ़नल',
-      'analyticsSettlement': 'भुगतान एवं सेटलमेंट स्वास्थ्य',
-      'disclaimer':
-          'रिकॉर्ड आपूर्ति-श्रृंखला प्रतिभागियों द्वारा दर्ज जानकारी पर आधारित हैं। यह पैकेज की आंतरिक सामग्री को सिद्ध नहीं करता है।',
+      'appTitle': 'अन्नसूत्र',
+      'appSubtitle': 'राष्ट्रीय कृषि उपज ट्रेसेबिलिटी मंच',
+      'navBatches': 'फ़सल बैच',
+      'navHandover': 'हैंडओवर',
+      'navInsights': 'इनसाइट्स',
+      'navProfile': 'प्रोफ़ाइल',
+      'farmerId': 'किसान विशिष्ट पहचान (ID)',
+      'activeBatches': 'सक्रिय बैच',
+      'inCustody': 'फ़ार्म कस्टडी में',
+      'inTransit': 'पारगमन में',
+      'totalWeight': 'कुल फ़सल वजन',
+      'newBatch': 'नया बैच',
+      'searchPh': 'फ़सल, बैच कोड या खेत से खोजें...',
+      'filterAll': 'सभी',
+      'filterCustody': 'फ़ार्म कस्टडी',
+      'filterTransit': 'पारगमन में',
+      'filterDelivered': 'स्वीकृत',
+      'noBatchesTitle': 'कोई फ़सल बैच नहीं है',
+      'noBatchesSub': 'असीमित क्यूआर क्रेट लेबल उत्पन्न करने के लिए अपना पहला फ़सल लॉट पंजीकृत करें।',
+      'btnCreateFirst': '+ पहला बैच बनाएं',
+      'handoverTitle': 'कस्टडी हैंडओवर केंद्र',
+      'handoverSub': 'पारस्परिक पुष्टि के साथ आपूर्ति श्रृंखला के अगले पक्ष को कस्टडी हस्तांतरित करें।',
+      'scanToReceive': 'कस्टडी प्राप्त करने के लिए क्यूआर स्कैन करें',
+      'scanToReceiveSub': 'आवक क्रेट्स का निरीक्षण करें, वजन सत्यापित करें व स्थिति दर्ज करें।',
+      'btnScanQr': 'क्रेट क्यूआर स्कैन करें',
+      'manualCodePh': 'या लॉट कोड दर्ज करें',
+      'btnVerifyAccept': 'स्वीकार करें व दर्ज करें',
+      'dispatchedBatches': 'प्रेषित बैच (पारगमन में)',
+      'noDispatched': 'प्रतिपक्ष की पुष्टि के लिए कोई हैंडओवर लंबित नहीं है।',
+      'insightsTitle': 'फ़ार्म एवं फ़सल विश्लेषण',
+      'grossValuation': 'सकल मूल्यांकन',
+      'realizedRevenue': 'प्राप्त राजस्व',
+      'gradeARatio': 'ग्रेड-ए गुणवत्ता अनुपात',
+      'cropBreakdown': 'फ़सल मात्रा वितरण',
+      'plotsTitle': 'सत्यापित कृषि भूखंड',
+      'profileTitle': 'उत्पादक डिजिटल नोड',
+      'kycVerified': 'केवाईसी सत्यापित',
+      'kycPending': 'केवाईसी समीक्षाधीन',
+      'maskedPan': 'पैन पहचान',
+      'bankAccount': 'निपटान बैंक',
+      'statutoryConsent': 'डीपीडीपी अधिनियम २०२३ सहमति सक्रिय',
+      'btnLogout': 'लॉग आउट',
+      'loginTitle': 'बीज से थाली तक ट्रेसेबिलिटी',
+      'loginSub': 'भारत भर में अपरिवर्तनीय लेजर पर डिजिटल कस्टडी एवं खाद्य सुरक्षा।',
+      'phoneLabel': 'मोबाइल नंबर',
+      'otpLabel': '६-अंकीय ओटीपी दर्ज करें',
+      'btnSendOtp': 'ओटीपी प्राप्त करें',
+      'btnVerifyOtp': 'सत्यापित करें व प्रवेश करें',
+      'btnGoogle': 'गूगल से लॉगिन करें',
+      'dpdpNotice': 'डीपीडीपी अधिनियम २०२३ के तहत सुरक्षित • सी-डैक राष्ट्रीय नोड',
     },
     'bn': {
-      'brandTitle': 'অন্নসূত্র',
-      'brandSubtitle': 'জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম',
-      'navLogin': 'সংস্থা লগইন',
-      'heroHead': 'কৃষকের ক্ষমতায়ন।\nভোক্তার সুরক্ষা।',
-      'heroSub':
-          'বীজ থেকে ভোক্তা পর্যন্ত ডিজিটাল হেফাজত। অপরিবর্তনীয় লেজারে স্বচ্ছ ট্র্যাকিং ও অফলাইন যাচাইকরণ।',
-      'scanQrHero': 'কিউআর স্ক্যান করুন',
-      'newBatchHero': 'নতুন ফসল লট',
-      'entityTitle': 'সার্বজনীন সংস্থা প্রবেশাধিকার',
-      'entitySub':
-          'নির্দিষ্ট কার্যক্রম ও হেফাজত সরঞ্জামের জন্য আপনার সরবরাহ স্তর নির্বাচন করুন',
-      'roleFarmer': 'কৃষক / এফপিও উৎপাদক',
-      'roleFarmerDesc': 'ফসল লট তৈরি, বস্তা কিউআর কোড, মান্ডিতে প্রেরণ।',
-      'roleMandi': 'মান্ডি অ্যাগ্রিগেটর / এপিএমসি',
-      'roleMandiDesc': 'আমদানি গ্রহণ, গ্রেডিং, লট বিভাজন ও নিলাম।',
-      'roleCold': 'কোল্ড স্টোরেজ / গুদাম',
-      'roleColdDesc': 'হেফাজত গ্রহণ, তাপমাত্রা লগ, বহির্গমন অনুমোদন।',
-      'roleProcessor': 'প্যাকহাউস ও প্রক্রিয়াকরণকারী',
-      'roleProcessorDesc': 'কাঁচামাল গ্রহণ, বাছাই ও প্যাকেটজাতকরণ।',
-      'roleRetailer': 'খুচরা বিক্রেতা',
-      'roleRetailerDesc': 'বিক্রয় কেন্দ্র যাচাইকরণ, খুচরা বিক্রয় নথিভুক্ত।',
-      'roleAdmin': 'প্রশাসক / যাচাইকারী',
-      'roleAdminDesc': 'সংস্থা যাচাইকরণ, কেওয়াইসি অডিট এবং কিউআর বরাদ্দ।',
-      'loginBtn': 'হিসেবে প্রবেশ করুন',
-      'tabLedger': 'ফসল লট ও কাস্টডি লেজার',
-      'tabAnalytics': 'বিশ্লেষণ ও কৃষি অন্তর্দৃষ্টি',
-      'tabIncoming': 'আগত',
-      'tabMyStock': 'আমার স্টক',
-      'tabWaiting': 'অপেক্ষমাণ',
-      'emptyIncoming': 'গ্রহণের অপেক্ষায় কোনো আগত চালান নেই।',
-      'emptyStock': 'হেফাজতে কোনো সক্রিয় পণ্য ব্যাচ নেই।',
-      'emptyWaiting': 'প্রতিপক্ষের নিশ্চিতকরণের অপেক্ষায় কোনো প্রেরণ নেই।',
-      'receiveBatch': 'ব্যাচ গ্রহণ করুন',
-      'dispatchBatch': 'ব্যাচ প্রেরণ করুন',
-      'splitLot': 'লট বিভাজন করুন',
-      'recordWaste': 'অপচয় নথিভুক্ত করুন',
-      'recordSale': 'বিক্রয় নথিভুক্ত করুন',
-      'inspectQuality': 'গুণমান পরীক্ষা',
-      'metricTotalLots': 'মোট সক্রিয় লট',
-      'metricInCustody': 'খামার হেফাজতে',
-      'metricInTransit': 'মান্ডি ট্রানজিটে',
-      'metricTotalWeight': 'মোট ফসলের ওজন',
-      'btnRegisterLot': 'নতুন ফসল লট নিবন্ধন করুন',
-      'searchPlaceholder': 'কোড, ফসল, জমি বা গ্রেড দিয়ে খুঁজুন...',
-      'filterCustodyAll': 'সকল হেফাজত স্থিতি',
-      'filterInCustody': 'খামার হেফাজতে (সম্পাদনাযোগ্য)',
-      'filterInTransit': 'ট্রানজিটে (লক করা)',
-      'filterClosed': 'হস্তান্তর অনুমোদিত',
-      'analyticsCropVolume': 'ফসল উৎপাদনের পরিমাণ ও মূল্য অনুপাত',
-      'analyticsCustodyFunnel': 'হেফাজত পাইপলাইন ফানেল',
-      'analyticsSettlement': 'মূল্য প্রাপ্তি ও পেমেন্ট স্থিতি',
-      'disclaimer':
-          'রেকর্ড সরবরাহ-শৃঙ্খল অংশগ্রহণকারীদের দ্বারা প্রবেশ করা তথ্যের উপর ভিত্তি করে। এটি প্যাকেজের অভ্যন্তরীণ সামগ্রী প্রমাণ করে না।',
+      'appTitle': 'অন্নসূত্র',
+      'appSubtitle': 'জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম',
+      'navBatches': 'ফসল ব্যাচ',
+      'navHandover': 'হস্তান্তর',
+      'navInsights': 'বিশ্লেষণ',
+      'navProfile': 'প্রোফাইল',
+      'farmerId': 'কৃষক ইউনিক আইডি',
+      'activeBatches': 'সক্রিয় ব্যাচ',
+      'inCustody': 'খামার হেফাজতে',
+      'inTransit': 'ট্রানজিটে',
+      'totalWeight': 'মোট ফসলের ওজন',
+      'newBatch': 'নতুন ব্যাচ',
+      'searchPh': 'ফসল, ব্যাচ কোড বা জমি দিয়ে খুঁজুন...',
+      'filterAll': 'সকল',
+      'filterCustody': 'খামার হেফাজত',
+      'filterTransit': 'ট্রানজিটে',
+      'filterDelivered': 'গৃহীত',
+      'noBatchesTitle': 'কোনো ফসল ব্যাচ নেই',
+      'noBatchesSub': 'অফিসিয়াল কিউআর লেবেল পেতে প্রথম ফসল লট নিবন্ধন করুন।',
+      'btnCreateFirst': '+ প্রথম ব্যাচ তৈরি করুন',
+      'handoverTitle': 'হেফাজত হস্তান্তর কেন্দ্র',
+      'handoverSub': 'ডিজিটাল নিশ্চিতকরণ সহ পরবর্তী পক্ষের কাছে পণ্য হস্তান্তর করুন।',
+      'scanToReceive': 'হেফাজত গ্রহণের জন্য কিউআর স্ক্যান করুন',
+      'scanToReceiveSub': 'আগত পণ্যের ওজন যাচাই করুন ও অবস্থা নথিভুক্ত করুন।',
+      'btnScanQr': 'কিউআর স্ক্যান করুন',
+      'manualCodePh': 'বা কোড টাইপ করুন',
+      'btnVerifyAccept': 'গ্রহণ করুন ও নথিভুক্ত করুন',
+      'dispatchedBatches': 'প্রেরিত ব্যাচ (ট্রানজিটে)',
+      'noDispatched': 'নিশ্চিতকরণের জন্য কোনো বহির্গমন অপেক্ষমাণ নেই।',
+      'insightsTitle': 'খামার ও ফসল বিশ্লেষণ',
+      'grossValuation': 'মোট আনুমানিক মূল্য',
+      'realizedRevenue': 'প্রাপ্ত রাজস্ব',
+      'gradeARatio': 'গ্রেড-এ গুণমান অনুপাত',
+      'cropBreakdown': 'ফসল উৎপাদন বণ্টন',
+      'plotsTitle': 'ম্যাপ করা কৃষি জমি',
+      'profileTitle': 'উৎপাদক ডিজিটাল নোড',
+      'kycVerified': 'কেওয়াইসি যাচাইকৃত',
+      'kycPending': 'কেওয়াইসি পর্যালোচনাধীন',
+      'maskedPan': 'প্যান পরিচয়',
+      'bankAccount': 'ব্যাঙ্ক অ্যাকাউন্ট',
+      'statutoryConsent': 'ডিপিডিপি অ্যাক্ট ২০২৩ সম্মতি সক্রিয়',
+      'btnLogout': 'লগ আউট',
+      'loginTitle': 'বীজ থেকে ভোক্তা পর্যন্ত স্বচ্ছতা',
+      'loginSub': 'সারা দেশে অপরিবর্তনীয় ডিজিটাল হেফাজত ও খাদ্য নিরাপত্তা।',
+      'phoneLabel': 'মোবাইল নম্বর',
+      'otpLabel': '৬-সংখ্যার ওটিপি লিখুন',
+      'btnSendOtp': 'ওটিপি পাঠান',
+      'btnVerifyOtp': 'যাচাই করুন ও প্রবেশ করুন',
+      'btnGoogle': 'গুগল দিয়ে প্রবেশ করুন',
+      'dpdpNotice': 'ডিপিডিপি অ্যাক্ট ২০২৩ দ্বারা সংরক্ষিত • সি-ড্যাক নোড',
     },
   };
 
-  String _t(String key) {
-    return _strings[_selectedLang]?[key] ?? _strings['en']?[key] ?? key;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _updateClock();
-    if (kIsWeb || !Platform.environment.containsKey('FLUTTER_TEST')) {
-      _fetchWeather();
-    }
-  }
+  String _t(String key) => _strings[_selectedLang]?[key] ?? _strings['en']?[key] ?? key;
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _searchController.dispose();
+    _phoneController.dispose();
+    _otpController.dispose();
     super.dispose();
   }
 
-  void _updateClock() {
-    final now = DateTime.now();
-    final formatter = DateFormat('EEE, dd MMM yyyy • HH:mm:ss');
-    if (mounted) {
-      setState(() {
-        _dateTimeText = formatter.format(now);
-      });
-    }
-  }
-
-  Future<void> _fetchWeather() async {
-    try {
-      final dio = Dio(BaseOptions(
-        connectTimeout: const Duration(seconds: 4),
-        receiveTimeout: const Duration(seconds: 4),
-      ));
-      final Response<dynamic> ipRes =
-          await dio.get<dynamic>('https://ipwho.is/');
-      if (ipRes.statusCode == 200 && ipRes.data is Map) {
-        final data = ipRes.data as Map;
-        final lat = data['latitude'] ?? 22.57;
-        final lon = data['longitude'] ?? 88.36;
-        final city = data['city'] ?? 'Local';
-
-        final Response<dynamic> weatherRes = await dio.get<dynamic>(
-          'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code&timezone=auto',
-        );
-        if (weatherRes.statusCode == 200 && weatherRes.data is Map) {
-          final weatherData = weatherRes.data as Map;
-          final current = weatherData['current'];
-          final int temp = (current is Map && current['temperature_2m'] is num)
-              ? (current['temperature_2m'] as num).round()
-              : 28;
-          final int code = (current is Map && current['weather_code'] is num)
-              ? (current['weather_code'] as num).toInt()
-              : 1;
-
-          IconData icon = Icons.wb_cloudy_outlined;
-          if (code == 0) {
-            icon = Icons.wb_sunny_outlined;
-          } else if (code >= 61 && code <= 65) {
-            icon = Icons.water_drop_outlined;
-          } else if (code >= 95) {
-            icon = Icons.thunderstorm_outlined;
-          }
-
-          if (mounted) {
-            setState(() {
-              _weatherIcon = icon;
-              _weatherText = '$temp°C $city';
-            });
-          }
-        }
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() {
-          _weatherIcon = Icons.wb_sunny_outlined;
-          _weatherText = 'India';
-        });
-      }
-    }
+  void _switchLanguage(String lang) {
+    setState(() => _selectedLang = lang);
+    widget.onLocaleChanged?.call(Locale(lang));
   }
 
   @override
   Widget build(BuildContext context) {
-    final AuthState authState = ref.watch(authControllerProvider);
-    final LotsState lotsState = ref.watch(lotsControllerProvider);
-    final SyncState syncState = ref.watch(syncControllerProvider);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktop = screenWidth >= 900;
+    final authState = ref.watch(authControllerProvider);
+    final lotsState = ref.watch(lotsControllerProvider);
+    final syncState = ref.watch(syncControllerProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F5),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 1. TOP UTILITY HEADER (Weather, Clock, Language Switcher, DPDP)
-            _buildTopUtilityBar(context),
-
-            // 2. MAIN BRAND NAVIGATION BAR
-            _buildMainNavBar(context, authState),
-
-            // 3. SCROLLABLE MAIN CONTENT
-            Expanded(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                        maxWidth: isDesktop ? 1160 : double.infinity),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Unauthenticated Landing View
-                        if (!authState.isAuthenticated) ...[
-                          _buildHeroBanner(context, isDesktop),
-                          _buildUniversalEntityLoginSection(context, authState),
-                          const SizedBox(height: 16),
-                          _buildNationalTrustStandards(context),
-                        ],
-
-                        // Authenticated Entity Workspace View
-                        if (authState.isAuthenticated) ...[
-                          _buildSyncAndVerificationAlerts(
-                              context, authState, syncState),
-                          const SizedBox(height: 12),
-                          _buildDualTabNavigation(context),
-                          const SizedBox(height: 12),
-                          if (_currentMainTab == 0) ...[
-                            // TAB 0: Harvest Lots & Custody Ledger
-                            _buildProducerKpiCards(lotsState),
-                            const SizedBox(height: 14),
-                            _buildLotControlsAndFilterBar(context, lotsState),
-                            const SizedBox(height: 14),
-                            _buildHarvestLotsList(context, lotsState),
-                            const SizedBox(height: 16),
-                            _buildAccessibleActionButtons(context),
-                          ] else ...[
-                            // TAB 1: Analytics & Farm Insights
-                            _buildProducerAnalyticsView(context, lotsState),
-                          ],
-                        ],
-
-                        const SizedBox(height: 20),
-                        _buildOfficialFooter(context),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // 1. TOP UTILITY BAR
-  Widget _buildTopUtilityBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: const BoxDecoration(
-        color: Color(0xFF07271D),
-        border: Border(bottom: BorderSide(color: Color(0xFF144D3B), width: 1)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.white.withOpacity(0.14)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: _buildTopAppBar(context, authState, syncState),
+      body: authState.isAuthenticated
+          ? IndexedStack(
+              index: _currentNavIndex,
               children: [
-                Icon(_weatherIcon, color: const Color(0xFFFDE047), size: 13),
-                const SizedBox(width: 4),
-                Text(
-                  _weatherText,
-                  style: const TextStyle(
-                    color: Color(0xFFFDE047),
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                  ),
+                _buildBatchesTab(context, lotsState, authState),
+                _buildHandoverTab(context, lotsState, authState),
+                _buildInsightsTab(context, lotsState),
+                _buildProfileTab(context, authState),
+              ],
+            )
+          : _buildUnauthenticatedView(context, authState),
+      bottomNavigationBar: authState.isAuthenticated
+          ? NavigationBar(
+              selectedIndex: _currentNavIndex,
+              onDestinationSelected: (idx) => setState(() => _currentNavIndex = idx),
+              backgroundColor: Colors.white,
+              elevation: 4,
+              indicatorColor: const Color(0xFFECFDF5),
+              destinations: [
+                NavigationDestination(
+                  icon: const Icon(Icons.inventory_2_outlined),
+                  selectedIcon: const Icon(Icons.inventory_2, color: Color(0xFF0B3D2E)),
+                  label: _t('navBatches'),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.swap_horiz_outlined),
+                  selectedIcon: const Icon(Icons.swap_horiz, color: Color(0xFF0B3D2E)),
+                  label: _t('navHandover'),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.insights_outlined),
+                  selectedIcon: const Icon(Icons.insights, color: Color(0xFF0B3D2E)),
+                  label: _t('navInsights'),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.person_outline),
+                  selectedIcon: const Icon(Icons.person, color: Color(0xFF0B3D2E)),
+                  label: _t('navProfile'),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _dateTimeText,
-              style: const TextStyle(
-                color: Color(0xFFE2E8F0),
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.2,
+            )
+          : null,
+      floatingActionButton: (authState.isAuthenticated && _currentNavIndex == 0)
+          ? FloatingActionButton.extended(
+              onPressed: () => context.push('/create-batch'),
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+              elevation: 3,
+              icon: const Icon(Icons.add, size: 20),
+              label: Text(
+                _t('newBatch'),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
               ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Container(
-            height: 28,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF114232),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFF23654E), width: 1),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _selectedLang,
-                icon: const Icon(Icons.arrow_drop_down,
-                    color: Colors.white, size: 18),
-                dropdownColor: const Color(0xFF0B3D2E),
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold),
-                items: const [
-                  DropdownMenuItem(value: 'en', child: Text('English (EN)')),
-                  DropdownMenuItem(value: 'hi', child: Text('हिन्दी (HI)')),
-                  DropdownMenuItem(value: 'bn', child: Text('বাংলা (BN)')),
-                ],
-                onChanged: (String? val) {
-                  if (val != null) {
-                    setState(() => _selectedLang = val);
-                    widget.onLocaleChanged?.call(Locale(val));
-                  }
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.shield_outlined,
-                color: Color(0xFFF59E0B), size: 18),
-            tooltip: 'DPDP 2023',
-            visualDensity: VisualDensity.compact,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-            onPressed: () => DpdpConsentDialog.show(context),
-          ),
-        ],
-      ),
+            )
+          : null,
     );
   }
 
-  // 2. MAIN BRAND NAVIGATION BAR
-  Widget _buildMainNavBar(BuildContext context, AuthState authState) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(
-        color: Color(0xFF0B3D2E),
-        boxShadow: [
-          BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Row(
+  // 1. TOP APP BAR
+  PreferredSizeWidget _buildTopAppBar(BuildContext context, AuthState authState, SyncState syncState) {
+    return AppBar(
+      backgroundColor: const Color(0xFF0B3D2E),
+      foregroundColor: Colors.white,
+      elevation: 0,
+      titleSpacing: 16,
+      title: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              height: 38,
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE67E22), width: 1.5),
+            ),
+            child: ClipOval(
               child: Image.asset(
-                'assets/images/annasutra_official_logo.png',
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => Image.asset(
-                  'assets/images/annasutra_emblem.jpg',
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const CircleAvatar(
-                    backgroundColor: Color(0xFF14532D),
-                    child: Text('AS',
-                        style: TextStyle(
-                            color: Colors.amber, fontWeight: FontWeight.bold)),
-                  ),
-                ),
+                'assets/images/annasutra_emblem.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 18),
               ),
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      _t('brandTitle'),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE67E22),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'GOV IN',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w900),
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  _t('brandSubtitle'),
-                  style: const TextStyle(
-                    color: Color(0xFFA7F3D0),
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          if (authState.isAuthenticated) ...[
-            Flexible(
-              child: InkWell(
-                onTap: () => _showAccountDialog(context),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.verified,
-                          color: Color(0xFF10B981), size: 16),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          authState.orgName ?? 'Verified Node',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ] else ...[
-            ElevatedButton.icon(
-              onPressed: () => context.push('/login'),
-              icon: const Icon(Icons.login, size: 14),
-              label: Text(_t('navLogin')),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE67E22),
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                minimumSize: const Size(80, 36),
-                textStyle:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  // DUAL-TAB SEGMENTED NAVIGATION (Matching Web App)
-  Widget _buildDualTabNavigation(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE2E8F0),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: InkWell(
-              onTap: () => setState(() => _currentMainTab = 0),
-              borderRadius: BorderRadius.circular(9),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  color: _currentMainTab == 0
-                      ? const Color(0xFF0B3D2E)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9),
-                  boxShadow: _currentMainTab == 0
-                      ? const [
-                          BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              offset: Offset(0, 1))
-                        ]
-                      : null,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.inventory_2_outlined,
-                      size: 16,
-                      color: _currentMainTab == 0
-                          ? const Color(0xFFFCD34D)
-                          : const Color(0xFF475569),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        _t('tabLedger'),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: _currentMainTab == 0
-                              ? Colors.white
-                              : const Color(0xFF475569),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: InkWell(
-              onTap: () => setState(() => _currentMainTab = 1),
-              borderRadius: BorderRadius.circular(9),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  color: _currentMainTab == 1
-                      ? const Color(0xFF0B3D2E)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9),
-                  boxShadow: _currentMainTab == 1
-                      ? const [
-                          BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              offset: Offset(0, 1))
-                        ]
-                      : null,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.insights_outlined,
-                      size: 16,
-                      color: _currentMainTab == 1
-                          ? const Color(0xFFFCD34D)
-                          : const Color(0xFF475569),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        _t('tabAnalytics'),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: _currentMainTab == 1
-                              ? Colors.white
-                              : const Color(0xFF475569),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 4 TOP KPI SUMMARY CARDS
-  Widget _buildProducerKpiCards(LotsState lotsState) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 600;
-          return GridView.count(
-            crossAxisCount: isNarrow ? 2 : 4,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: isNarrow ? 1.7 : 1.9,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildKpiCard(
-                title: _t('metricTotalLots'),
-                value: lotsState.totalLotsCount.toString(),
-                icon: Icons.layers_outlined,
-                color: const Color(0xFF0F172A),
-                iconBg: const Color(0xFFF1F5F9),
+              Text(
+                _t('appTitle'),
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -0.2),
               ),
-              _buildKpiCard(
-                title: _t('metricInCustody'),
-                value: lotsState.inCustodyCount.toString(),
-                icon: Icons.agriculture_outlined,
-                color: const Color(0xFF047857),
-                iconBg: const Color(0xFFECFDF5),
-              ),
-              _buildKpiCard(
-                title: _t('metricInTransit'),
-                value: lotsState.inTransitCount.toString(),
-                icon: Icons.local_shipping_outlined,
-                color: const Color(0xFFD97706),
-                iconBg: const Color(0xFFFFFBEB),
-              ),
-              _buildKpiCard(
-                title: _t('metricTotalWeight'),
-                value: '${lotsState.totalWeightKg.toStringAsFixed(0)} Kg',
-                icon: Icons.scale_outlined,
-                color: const Color(0xFF2563EB),
-                iconBg: const Color(0xFFEFF6FF),
+              Text(
+                _t('appSubtitle'),
+                style: const TextStyle(fontSize: 9.5, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w500),
               ),
             ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildKpiCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-    required Color iconBg,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: const [
-          BoxShadow(
-              color: Color(0x08000000), blurRadius: 3, offset: Offset(0, 1)),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-                color: iconBg, borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, size: 20, color: color),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF64748B)),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w900, color: color),
-                ),
-              ],
-            ),
           ),
         ],
       ),
+      actions: [
+        // Sync status badge
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+          decoration: BoxDecoration(
+            color: syncState.pendingCount == 0 ? const Color(0xFF064E3B) : const Color(0xFF78350F),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: syncState.pendingCount == 0 ? const Color(0xFF34D399) : const Color(0xFFFBBF24),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                syncState.pendingCount == 0 ? 'Synced' : '${syncState.pendingCount} Pending',
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+
+        // Language Switcher Chip
+        IconButton(
+          icon: const Icon(Icons.translate, size: 20),
+          tooltip: 'Change Language',
+          onPressed: () => _showLanguageModal(context),
+        ),
+
+        // DPDP Privacy Info
+        IconButton(
+          icon: const Icon(Icons.shield_outlined, size: 20),
+          tooltip: 'Data Privacy Consent',
+          onPressed: () => DpdpConsentDialog.show(context),
+        ),
+      ],
     );
   }
 
-  // LOT CONTROLS & FILTER BAR
-  Widget _buildLotControlsAndFilterBar(
-      BuildContext context, LotsState lotsState) {
-    final notifier = ref.read(lotsControllerProvider.notifier);
+  // ---------------------------------------------------------------------------
+  // TAB 0: BATCHES (HARVEST LOTS)
+  // ---------------------------------------------------------------------------
+  Widget _buildBatchesTab(BuildContext context, LotsState lotsState, AuthState authState) {
+    final farmerUid = authState.farmerUid ??
+        (authState.phone != null && authState.phone!.isNotEmpty
+            ? LotsController.generateFarmerUid(phone: authState.phone)
+            : 'REGISTERED');
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    final lots = lotsState.filteredLots;
+    final totalKg = lots.fold<double>(0.0, (acc, lot) => acc + lot.netQtyKg);
+    final inCustodyCount = lots.where((l) => l.isEditable).length;
+    final inTransitCount = lots.where((l) => l.state == 'IN_TRANSIT').length;
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(lotsControllerProvider.notifier).fetchRemoteLots(
+              accessToken: authState.accessToken,
+              phone: authState.phone,
+            );
+      },
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         children: [
-          // Top row: Search input + "+ Register New Harvest Lot" Button
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 540;
-              final searchField = SizedBox(
-                height: 44,
-                child: TextField(
-                  onChanged: (val) => notifier.setSearchQuery(val),
-                  decoration: InputDecoration(
-                    hintText: _t('searchPlaceholder'),
-                    hintStyle: const TextStyle(
-                        fontSize: 12.5, color: Color(0xFF94A3B8)),
-                    prefixIcon: const Icon(Icons.search,
-                        size: 18, color: Color(0xFF64748B)),
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
-                    filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
-                  ),
-                ),
-              );
-
-              final registerBtn = ElevatedButton.icon(
-                onPressed: () => context.push('/create-batch'),
-                icon: const Icon(Icons.add, size: 18),
-                label: Text(
-                  _t('btnRegisterLot'),
-                  style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF047857),
-                  foregroundColor: Colors.white,
-                  minimumSize: Size(isNarrow ? double.infinity : 130, 44),
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-              );
-
-              if (isNarrow) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    searchField,
-                    const SizedBox(height: 10),
-                    registerBtn,
-                  ],
-                );
-              }
-
-              return Row(
-                children: [
-                  Expanded(child: searchField),
-                  const SizedBox(width: 10),
-                  registerBtn,
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 12),
-
-          // Horizontal Filter Chips: Custody State
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterChip(
-                    'ALL',
-                    _t('filterCustodyAll'),
-                    lotsState.selectedCustody == 'ALL',
-                    () => notifier.setCustodyFilter('ALL')),
-                const SizedBox(width: 6),
-                _buildFilterChip(
-                    'IN_CUSTODY',
-                    _t('filterInCustody'),
-                    lotsState.selectedCustody == 'IN_CUSTODY',
-                    () => notifier.setCustodyFilter('IN_CUSTODY')),
-                const SizedBox(width: 6),
-                _buildFilterChip(
-                    'IN_TRANSIT',
-                    _t('filterInTransit'),
-                    lotsState.selectedCustody == 'IN_TRANSIT',
-                    () => notifier.setCustodyFilter('IN_TRANSIT')),
-                const SizedBox(width: 6),
-                _buildFilterChip(
-                    'CLOSED',
-                    _t('filterClosed'),
-                    lotsState.selectedCustody == 'CLOSED',
-                    () => notifier.setCustodyFilter('CLOSED')),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(
-      String value, String label, bool isSelected, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF047857) : const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: isSelected
-                  ? const Color(0xFF047857)
-                  : const Color(0xFFCBD5E1)),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11.5,
-            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-            color: isSelected ? Colors.white : const Color(0xFF334155),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // HARVEST LOTS LIST CONTAINER
-  Widget _buildHarvestLotsList(BuildContext context, LotsState lotsState) {
-    final filtered = lotsState.filteredLots;
-
-    if (filtered.isEmpty) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(36),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.eco_outlined, size: 48, color: Color(0xFF047857)),
-            const SizedBox(height: 12),
-            const Text(
-              'No harvest lots in custody matching your filters.',
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0F172A)),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Click "Register New Harvest Lot" above to add your first verified produce lot.',
-              style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: filtered.map((lot) {
-          return LotCard(
-            lot: lot,
-            onEdit: () {
-              context.push('/create-batch?code=${lot.publicCode}');
-            },
-            onDispatch: () {
-              _showQuickDispatchDialog(context, lot);
-            },
-            onShowQr: () {
-              _showUnlimitedQrDialog(context, lot);
-            },
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  // TAB 1: ANALYTICS & FARM INSIGHTS VIEW
-  Widget _buildProducerAnalyticsView(
-      BuildContext context, LotsState lotsState) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Period Selector Bar
+          // Farmer Identity & Quick Summary Card
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.auto_graph,
-                        color: Color(0xFF047857), size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      _t('tabAnalytics'),
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A)),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text('All Recorded Lots',
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF334155))),
-                ),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0B3D2E), Color(0xFF14532D)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(color: Color(0x1A0B3D2E), blurRadius: 8, offset: Offset(0, 3)),
               ],
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // 1. Crop Volume & Valuation Share Card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1079,687 +415,441 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      _t('analyticsCropVolume'),
+                      _t('farmerId').toUpperCase(),
                       style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A)),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFFA7F3D0),
+                        letterSpacing: 0.8,
+                      ),
                     ),
                     InkWell(
-                      onTap: () => setState(() => _isAnalyticsValuationMode =
-                          !_isAnalyticsValuationMode),
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFECFDF5),
-                          border: Border.all(color: const Color(0xFFA7F3D0)),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          _isAnalyticsValuationMode
-                              ? 'Switch to Weight (Kg)'
-                              : 'Switch to Value (₹)',
-                          style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF047857)),
-                        ),
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: farmerUid));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Copied Farmer ID: $farmerUid'),
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: const Color(0xFF0B3D2E),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.copy, size: 12, color: Colors.white70),
+                          SizedBox(width: 4),
+                          Text('Copy', style: TextStyle(fontSize: 10.5, color: Colors.white70)),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
-                CropDonutChart(
-                  data: _isAnalyticsValuationMode
-                      ? lotsState.cropValuationDistribution
-                      : lotsState.cropVolumeDistribution,
-                  unit: _isAnalyticsValuationMode ? '₹' : 'Kg',
-                  height: 180,
+                const SizedBox(height: 3),
+                Text(
+                  farmerUid,
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const Divider(color: Colors.white24, height: 18),
+                Row(
+                  children: [
+                    _buildHeaderStatCol('Batches', '${lots.length}'),
+                    Container(width: 1, height: 24, color: Colors.white24),
+                    _buildHeaderStatCol('Farm Custody', '$inCustodyCount'),
+                    Container(width: 1, height: 24, color: Colors.white24),
+                    _buildHeaderStatCol('Total Weight', '${totalKg.toStringAsFixed(0)} Kg'),
+                  ],
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 12),
 
-          // 2. Custody Pipeline Funnel Card
+          // Search Field
           Container(
-            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: TextField(
+              controller: _searchController,
+              onChanged: (val) {
+                ref.read(lotsControllerProvider.notifier).setSearchQuery(val);
+              },
+              decoration: InputDecoration(
+                hintText: _t('searchPh'),
+                hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF64748B)),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 16),
+                        onPressed: () {
+                          _searchController.clear();
+                          ref.read(lotsControllerProvider.notifier).setSearchQuery('');
+                        },
+                      )
+                    : null,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Filter Chips Row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
-                Text(
-                  _t('analyticsCustodyFunnel'),
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0F172A)),
-                ),
-                const SizedBox(height: 12),
-                CustodyFunnelWidget(
-                  stages: lotsState.custodyFunnel,
-                  totalWeightKg: lotsState.totalWeightKg,
-                ),
+                _buildCustodyChip('ALL', '${_t('filterAll')} (${lots.length})'),
+                const SizedBox(width: 6),
+                _buildCustodyChip('IN_CUSTODY', '${_t('filterCustody')} ($inCustodyCount)'),
+                const SizedBox(width: 6),
+                _buildCustodyChip('IN_TRANSIT', '${_t('filterTransit')} ($inTransitCount)'),
               ],
             ),
           ),
+
           const SizedBox(height: 12),
 
-          // 3. Settlement & Commercial Payment Health
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+          // Lots List or Empty State
+          if (lots.isEmpty) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFECFDF5),
+                    ),
+                    child: const Icon(Icons.inventory_2_outlined, size: 36, color: Color(0xFF047857)),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _t('noBatchesTitle'),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _t('noBatchesSub'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => context.push('/create-batch'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0B3D2E),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: Text(_t('btnCreateFirst')),
+                  ),
+                ],
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _t('analyticsSettlement'),
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0F172A)),
-                ),
-                const SizedBox(height: 12),
-                SettlementHealthWidget(stats: lotsState.paymentSettlementStats),
-              ],
+          ] else ...[
+            ...lots.map(
+              (lot) => LotCard(
+                lot: lot,
+                onEdit: lot.isEditable
+                    ? () => context.push('/create-batch?code=${Uri.encodeComponent(lot.publicCode)}')
+                    : null,
+                onDispatch: lot.isEditable ? () => _showDispatchSheet(context, lot) : null,
+                onShowQr: () => _showQrDialog(context, lot),
+              ),
             ),
-          ),
+          ],
+
+          const SizedBox(height: 60), // Room for FAB
         ],
       ),
     );
   }
 
-  // MODALS & DIALOGS: Unlimited 2D QR + 1D Code-128 Barcode Sticker Generator
-  void _showUnlimitedQrDialog(BuildContext context, HarvestLot lot) {
-    int stickerCount = 4;
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Row(
+  Widget _buildHeaderStatCol(String label, String value) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Colors.white)),
+          const SizedBox(height: 1),
+          Text(label, style: const TextStyle(fontSize: 10, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustodyChip(String filterVal, String label) {
+    final isSelected = _selectedCustodyFilter == filterVal;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (_) {
+        setState(() => _selectedCustodyFilter = filterVal);
+        ref.read(lotsControllerProvider.notifier).setCustodyFilter(filterVal);
+      },
+      selectedColor: const Color(0xFF0B3D2E),
+      backgroundColor: Colors.white,
+      side: BorderSide(color: isSelected ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
+      labelStyle: TextStyle(
+        fontSize: 11.5,
+        fontWeight: FontWeight.w700,
+        color: isSelected ? Colors.white : const Color(0xFF475569),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // TAB 1: HANDOVER & CUSTODY HUB
+  // ---------------------------------------------------------------------------
+  Widget _buildHandoverTab(BuildContext context, LotsState lotsState, AuthState authState) {
+    final dispatchedLots = lotsState.lots.where((l) => l.state == 'IN_TRANSIT').toList();
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      children: [
+        // Receive Custody Action Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: const [
+              BoxShadow(color: Color(0x06000000), blurRadius: 6, offset: Offset(0, 2)),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.qr_code, color: Color(0xFF047857)),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Unlimited 2D QR & 1D Barcode Stickers',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECFDF5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.qr_code_scanner, color: Color(0xFF047857), size: 22),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _t('scanToReceive'),
+                          style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                        ),
+                        Text(
+                          _t('scanToReceiveSub'),
+                          style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              ElevatedButton.icon(
+                onPressed: () => _showReceiveDialog(context),
+                icon: const Icon(Icons.camera_alt_outlined, size: 16),
+                label: Text(_t('btnScanQr')),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 42),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
               ),
             ],
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0B3D2E),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'CATEGORY: ${lot.productCategoryCode} • ${lot.crop.toUpperCase()}',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color(0xFF0B3D2E), width: 2.5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Icon(Icons.qr_code_2,
-                              size: 110, color: Color(0xFF0B3D2E)),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // 1D Code-128 Barcode Visual Strip
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8FAFC),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Column(
+        ),
+
+        const SizedBox(height: 16),
+
+        // Dispatched Batches Section
+        Text(
+          _t('dispatchedBatches'),
+          style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+        ),
+        const SizedBox(height: 8),
+
+        if (dispatchedLots.isEmpty) ...[
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Center(
+              child: Text(
+                _t('noDispatched'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+              ),
+            ),
+          ),
+        ] else ...[
+          ...dispatchedLots.map(
+            (lot) => LotCard(
+              lot: lot,
+              onShowQr: () => _showQrDialog(context, lot),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // TAB 2: INSIGHTS & FARM ANALYTICS
+  // ---------------------------------------------------------------------------
+  Widget _buildInsightsTab(BuildContext context, LotsState lotsState) {
+    final lots = lotsState.lots;
+    final totalValuation = lots.fold<double>(0.0, (acc, l) => acc + l.estimatedValue);
+    final totalKg = lots.fold<double>(0.0, (acc, l) => acc + l.netQtyKg);
+    final gradeACount = lots.where((l) => l.qualityGrade.contains('A')).length;
+    final gradeARatio = lots.isNotEmpty ? ((gradeACount / lots.length) * 100).toStringAsFixed(0) : '0';
+
+    // Crop distribution map
+    final Map<String, double> cropMap = {};
+    for (final l in lots) {
+      cropMap[l.crop] = (cropMap[l.crop] ?? 0.0) + l.netQtyKg;
+    }
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      children: [
+        Text(
+          _t('insightsTitle'),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+        ),
+        const SizedBox(height: 12),
+
+        // KPI Stats Row
+        Row(
+          children: [
+            Expanded(
+              child: _buildInsightMetricCard(
+                _t('grossValuation'),
+                '₹${totalValuation.toStringAsFixed(0)}',
+                Icons.currency_rupee,
+                const Color(0xFF047857),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildInsightMetricCard(
+                _t('gradeARatio'),
+                '$gradeARatio%',
+                Icons.verified_outlined,
+                const Color(0xFF1E40AF),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        Row(
+          children: [
+            Expanded(
+              child: _buildInsightMetricCard(
+                'Total Harvested',
+                '${totalKg.toStringAsFixed(0)} Kg',
+                Icons.scale_outlined,
+                const Color(0xFF0B3D2E),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildInsightMetricCard(
+                'Total Batches',
+                '${lots.length}',
+                Icons.layers_outlined,
+                const Color(0xFFD97706),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // Crop Distribution Breakdown
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _t('cropBreakdown'),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+              ),
+              const SizedBox(height: 10),
+              if (cropMap.isEmpty)
+                const Text('No crop production data logged yet.', style: TextStyle(fontSize: 12, color: Color(0xFF64748B)))
+              else
+                ...cropMap.entries.map((e) {
+                  final percent = totalKg > 0 ? (e.value / totalKg) : 0.0;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                28,
-                                (i) => Container(
-                                  width: (i % 3 == 0) ? 3.0 : 1.5,
-                                  height: 28,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 1.2),
-                                  color: const Color(0xFF0F172A),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              lot.publicCode,
-                              style: const TextStyle(
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.w900,
-                                fontSize: 11,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            Text(e.key, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+                            Text('${e.value.toStringAsFixed(1)} Kg (${(percent * 100).toStringAsFixed(0)}%)',
+                                style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${lot.crop} (${lot.variety}) • ${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12.5),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [1, 4, 12, 24].map((count) {
-                          final active = stickerCount == count;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 3),
-                            child: ChoiceChip(
-                              label: Text('${count}x'),
-                              selected: active,
-                              onSelected: (_) =>
-                                  setModalState(() => stickerCount = count),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Close'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        'Generated $stickerCount QR + 1D Barcode stickers for ${lot.publicCode}.'),
-                    backgroundColor: const Color(0xFF047857),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.print, size: 16),
-              label: Text('Print $stickerCount Stickers'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF047857),
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // 2-Way Custody Handover Request Modal (No prefilled template values)
-  void _showQuickDispatchDialog(BuildContext context, HarvestLot lot) {
-    String selectedTargetRole = 'AGGREGATOR';
-    final targetNameCtrl = TextEditingController();
-    final driverCtrl = TextEditingController();
-    final vehicleCtrl = TextEditingController();
-    final authState = ref.read(authControllerProvider);
-
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Row(
-            children: [
-              Icon(Icons.handshake_outlined, color: Color(0xFF047857)),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Request 2-Way Custody Handover',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Batch: ${lot.publicCode}\n${lot.crop} • ${lot.netQtyKg} ${lot.unit}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 12.5),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: selectedTargetRole,
-                  decoration: const InputDecoration(
-                    labelText: 'Next Custodian Role *',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'AGGREGATOR', child: Text('Aggregator / APMC')),
-                    DropdownMenuItem(
-                        value: 'WHOLESALER', child: Text('Wholesaler')),
-                    DropdownMenuItem(
-                        value: 'DISTRIBUTOR',
-                        child: Text('Distributor / Fleet')),
-                    DropdownMenuItem(
-                        value: 'RETAILER', child: Text('Retailer Shop')),
-                  ],
-                  onChanged: (val) {
-                    if (val != null) {
-                      setModalState(() => selectedTargetRole = val);
-                    }
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: targetNameCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Receiving Party Name *',
-                    hintText: 'Enter next party name or business',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: driverCtrl,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Receiving Party Mobile (+91) *',
-                    hintText: '+91...',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: vehicleCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Transport Vehicle Number',
-                    hintText: 'Optional vehicle registration',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Security Rule: Next party must confirm custody acceptance in their dashboard. Once accepted, your record is permanently locked (🔒).',
-                  style: TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFFC2410C),
-                      fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                ref
-                    .read(lotsControllerProvider.notifier)
-                    .requestCustodyHandover(
-                      lot.publicCode,
-                      targetRole: selectedTargetRole,
-                      targetName: targetNameCtrl.text.trim().isNotEmpty
-                          ? targetNameCtrl.text.trim()
-                          : selectedTargetRole,
-                      targetPhone: driverCtrl.text.trim(),
-                      vehicleNo: vehicleCtrl.text.trim(),
-                      declaredQtyKg: lot.netQtyKg,
-                      accessToken: authState.accessToken,
-                      senderPhone: authState.phone,
-                    );
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Custody handover request sent to $selectedTargetRole for ${lot.publicCode}. Awaiting next-party confirmation.',
-                    ),
-                    backgroundColor: const Color(0xFF047857),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF047857),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Send Handover Request'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Next-Party Custody Acceptance & Append-Only Scan Modal
-  void _showNextPartyScanAppendDialog(BuildContext context) {
-    final codeCtrl = TextEditingController();
-    final actorNameCtrl = TextEditingController();
-    final weightCtrl = TextEditingController();
-    final tempCtrl = TextEditingController();
-    String selectedRole = 'AGGREGATOR';
-    String selectedCondition = 'FRESH_GRADE_A';
-    bool isAcceptingHandover = true;
-    final authState = ref.read(authControllerProvider);
-
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Row(
-            children: [
-              Icon(Icons.qr_code_scanner, color: Color(0xFF047857)),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Next-Party Custody Accept & Scan Append',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: ChoiceChip(
-                        label: const Text('Accept Handover'),
-                        selected: isAcceptingHandover,
-                        onSelected: (_) =>
-                            setModalState(() => isAcceptingHandover = true),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: ChoiceChip(
-                        label: const Text('Append Telemetry'),
-                        selected: !isAcceptingHandover,
-                        onSelected: (_) =>
-                            setModalState(() => isAcceptingHandover = false),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: codeCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Scanned Batch / Lot ID *',
-                    hintText: 'Scan or paste lot QR code',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                DropdownButtonFormField<String>(
-                  value: selectedRole,
-                  decoration: const InputDecoration(
-                    labelText: 'Your Supply-Chain Role *',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'AGGREGATOR', child: Text('Aggregator')),
-                    DropdownMenuItem(
-                        value: 'WHOLESALER', child: Text('Wholesaler')),
-                    DropdownMenuItem(
-                        value: 'DISTRIBUTOR', child: Text('Distributor')),
-                    DropdownMenuItem(
-                        value: 'RETAILER',
-                        child: Text('Retailer (Unlocks Consumer View)')),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) setModalState(() => selectedRole = v);
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: actorNameCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Organisation / Shop Name *',
-                    hintText: 'Enter your business name',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: weightCtrl,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        decoration: const InputDecoration(
-                          labelText: 'Current Weight (kg) *',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 4),
+                        LinearProgressIndicator(
+                          value: percent,
+                          backgroundColor: const Color(0xFFE2E8F0),
+                          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF059669)),
+                          borderRadius: BorderRadius.circular(4),
+                          minHeight: 6,
                         ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        controller: tempCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Storage Temp',
-                          hintText: 'e.g. 4°C',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                DropdownButtonFormField<String>(
-                  value: selectedCondition,
-                  decoration: const InputDecoration(
-                    labelText: 'Product Condition *',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'FRESH_GRADE_A',
-                        child: Text('Fresh & Intact (Grade A)')),
-                    DropdownMenuItem(
-                        value: 'COLD_CHAIN_INTACT',
-                        child: Text('Cold-Chain Sealed')),
-                    DropdownMenuItem(
-                        value: 'GOOD_MARKET_READY',
-                        child: Text('Retail Shelf Ready')),
-                    DropdownMenuItem(
-                        value: 'MINOR_HANDLING_LOSS',
-                        child: Text('Minor Transit Loss')),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) setModalState(() => selectedCondition = v);
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                final code = codeCtrl.text.trim();
-                if (code.isEmpty) return;
-                final w = double.tryParse(weightCtrl.text.trim()) ?? 100.0;
-                final name = actorNameCtrl.text.trim().isNotEmpty
-                    ? actorNameCtrl.text.trim()
-                    : (authState.orgName ?? selectedRole);
-                final notifier = ref.read(lotsControllerProvider.notifier);
-                if (isAcceptingHandover) {
-                  notifier.acceptCustodyHandover(
-                    code,
-                    actorRole: selectedRole,
-                    actorName: name,
-                    receivedQtyKg: w,
-                    condition: selectedCondition,
-                    storageTemp: tempCtrl.text.trim().isNotEmpty
-                        ? tempCtrl.text.trim()
-                        : 'Ambient',
-                    accessToken: authState.accessToken,
-                    phone: authState.phone,
                   );
-                } else {
-                  notifier.appendCustodyScan(
-                    code,
-                    actorRole: selectedRole,
-                    actorName: name,
-                    currentWeightKg: w,
-                    condition: selectedCondition,
-                    storageTemp: tempCtrl.text.trim().isNotEmpty
-                        ? tempCtrl.text.trim()
-                        : 'Ambient',
-                    accessToken: authState.accessToken,
-                    phone: authState.phone,
-                  );
-                }
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      selectedRole == 'RETAILER'
-                          ? 'Retailer custody confirmed for $code! Consumer Trust Passport is now unlocked.'
-                          : 'Appended verified $selectedRole telemetry for $code.',
-                    ),
-                    backgroundColor: const Color(0xFF047857),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF047857),
-                foregroundColor: Colors.white,
-              ),
-              child: Text(
-                  isAcceptingHandover ? 'Confirm Custody' : 'Append Scan Data'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // HERO BANNER & UNIVERSAL LOGIN (For unauthenticated visitors)
-  Widget _buildHeroBanner(BuildContext context, bool isDesktop) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0B3D2E),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _t('heroHead'),
-            style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                height: 1.2),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _t('heroSub'),
-            style: const TextStyle(
-                fontSize: 12.5, color: Color(0xFFA7F3D0), height: 1.4),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              ElevatedButton.icon(
-                onPressed: () => context.push('/login'),
-                icon: const Icon(Icons.qr_code_scanner, size: 16),
-                label: Text(_t('scanQrHero')),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE67E22),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(120, 42),
-                ),
-              ),
-              const SizedBox(width: 10),
-              OutlinedButton.icon(
-                onPressed: () => context.push('/create-batch'),
-                icon: const Icon(Icons.add, size: 16, color: Colors.white),
-                label: Text(_t('newBatchHero'),
-                    style: const TextStyle(color: Colors.white)),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.white54),
-                  minimumSize: const Size(120, 42),
-                ),
-              ),
+                }),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildUniversalEntityLoginSection(
-      BuildContext context, AuthState authState) {
+  Widget _buildInsightMetricCard(String title, String value, IconData icon, Color color) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -1768,400 +858,518 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _t('entityTitle'),
-            style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF0F172A)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
+              Icon(icon, size: 16, color: color),
+            ],
           ),
-          Text(
-            _t('entitySub'),
-            style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+          const SizedBox(height: 6),
+          Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: color)),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // TAB 3: PROFILE & ACCOUNT
+  // ---------------------------------------------------------------------------
+  Widget _buildProfileTab(BuildContext context, AuthState authState) {
+    final farmerUid = authState.farmerUid ??
+        (authState.phone != null && authState.phone!.isNotEmpty
+            ? LotsController.generateFarmerUid(phone: authState.phone)
+            : 'REGISTERED');
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      children: [
+        // Producer Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
-          const SizedBox(height: 14),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 600;
-              return Wrap(
-                spacing: 10,
-                runSpacing: 10,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  _buildEntityCard(
-                    context: context,
-                    roleKey: 'PRODUCER',
-                    icon: Icons.grass,
-                    title: _t('roleFarmer'),
-                    description: _t('roleFarmerDesc'),
-                    width: isWide
-                        ? (constraints.maxWidth - 20) / 2
-                        : constraints.maxWidth,
-                    onTapLogin: () => context.push('/login?role=PRODUCER'),
+                  const CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Color(0xFFECFDF5),
+                    child: Icon(Icons.person, color: Color(0xFF047857), size: 28),
                   ),
-                  _buildEntityCard(
-                    context: context,
-                    roleKey: 'AGGREGATOR',
-                    icon: Icons.storefront,
-                    title: _t('roleMandi'),
-                    description: _t('roleMandiDesc'),
-                    width: isWide
-                        ? (constraints.maxWidth - 20) / 2
-                        : constraints.maxWidth,
-                    onTapLogin: () => context.push('/login?role=AGGREGATOR'),
-                  ),
-                  _buildEntityCard(
-                    context: context,
-                    roleKey: 'DISTRIBUTOR',
-                    icon: Icons.ac_unit,
-                    title: _t('roleCold'),
-                    description: _t('roleColdDesc'),
-                    width: isWide
-                        ? (constraints.maxWidth - 20) / 2
-                        : constraints.maxWidth,
-                    onTapLogin: () => context.push('/login?role=DISTRIBUTOR'),
-                  ),
-                  _buildEntityCard(
-                    context: context,
-                    roleKey: 'RETAILER',
-                    icon: Icons.shopping_basket_outlined,
-                    title: _t('roleRetailer'),
-                    description: _t('roleRetailerDesc'),
-                    width: isWide
-                        ? (constraints.maxWidth - 20) / 2
-                        : constraints.maxWidth,
-                    onTapLogin: () => context.push('/login?role=RETAILER'),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          authState.orgName ?? 'Registered Agricultural Producer',
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                        ),
+                        Text(
+                          'Role: ${authState.orgType ?? "PRODUCER"}',
+                          style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-              );
-            },
+              ),
+              const Divider(height: 22, color: Color(0xFFF1F5F9)),
+              Text(
+                _t('farmerId'),
+                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 2),
+              SelectableText(
+                farmerUid,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF0B3D2E),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+
+        const SizedBox(height: 12),
+
+        // Compliance & Legal Settings
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.translate, color: Color(0xFF0B3D2E)),
+                title: const Text('Language / भाषा / ভাষা', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700)),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () => _showLanguageModal(context),
+              ),
+              const Divider(height: 1, color: Color(0xFFF1F5F9)),
+              ListTile(
+                leading: const Icon(Icons.shield_outlined, color: Color(0xFF0B3D2E)),
+                title: Text(_t('statutoryConsent'), style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700)),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () => DpdpConsentDialog.show(context),
+              ),
+              const Divider(height: 1, color: Color(0xFFF1F5F9)),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Color(0xFFDC2626)),
+                title: Text(_t('btnLogout'), style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
+                onTap: () async {
+                  await ref.read(authControllerProvider.notifier).logout();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildEntityCard({
-    required BuildContext context,
-    required String roleKey,
-    required IconData icon,
-    required String title,
-    required String description,
-    required double width,
-    required VoidCallback onTapLogin,
-  }) {
-    return Container(
-      width: width,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+  // ---------------------------------------------------------------------------
+  // UNAUTHENTICATED VIEW: GOLD STANDARD MOBILE SIGN-IN
+  // ---------------------------------------------------------------------------
+  Widget _buildUnauthenticatedView(BuildContext context, AuthState authState) {
+    final bool isOtpSent = authState.status == AuthStatus.otpSent;
+    final bool isLoading = authState.status == AuthStatus.loading;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Hero Brand Header
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        border: Border.all(color: const Color(0xFFE67E22), width: 2),
+                        boxShadow: const [
+                          BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3)),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/annasutra_emblem.jpg',
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 32),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _t('loginTitle'),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E)),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _t('loginSub'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
+              // Role Selection Chips
+              const Text('Select Supply-Chain Role:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF475569))),
+              const SizedBox(height: 6),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _roleOptions.map((r) {
+                    final isSel = _selectedRole == r['code'];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: ChoiceChip(
+                        avatar: Text(r['icon'] ?? '', style: const TextStyle(fontSize: 12)),
+                        label: Text(r['label'] ?? ''),
+                        selected: isSel,
+                        onSelected: (_) => setState(() => _selectedRole = r['code']!),
+                        selectedColor: const Color(0xFF0B3D2E),
+                        backgroundColor: Colors.white,
+                        side: BorderSide(color: isSel ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
+                        labelStyle: TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: isSel ? Colors.white : const Color(0xFF334155),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Authentication Card
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                    color: const Color(0xFF0B3D2E),
-                    borderRadius: BorderRadius.circular(8)),
-                child: Icon(icon, color: Colors.white, size: 18),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: const [
+                    BoxShadow(color: Color(0x08000000), blurRadius: 8, offset: Offset(0, 2)),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Phone Number Input
+                    TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        labelText: _t('phoneLabel'),
+                        prefixText: '+91 ',
+                        prefixIcon: const Icon(Icons.phone_android, size: 18, color: Color(0xFF0B3D2E)),
+                      ),
+                    ),
+
+                    if (isOtpSent) ...[
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _otpController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: _t('otpLabel'),
+                          prefixIcon: const Icon(Icons.lock_clock_outlined, size: 18, color: Color(0xFF0B3D2E)),
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 14),
+
+                    // Submit OTP Action
+                    ElevatedButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              final authNotifier = ref.read(authControllerProvider.notifier);
+                              if (!isOtpSent) {
+                                final phone = _phoneController.text.trim();
+                                if (phone.isNotEmpty) {
+                                  await authNotifier.requestOtp(phone);
+                                }
+                              } else {
+                                final otp = _otpController.text.trim();
+                                final phone = _phoneController.text.trim();
+                                if (otp.isNotEmpty && phone.isNotEmpty) {
+                                  await authNotifier.verifyOtp(phone, otp);
+                                }
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0B3D2E),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 44),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: isLoading
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                          : Text(isOtpSent ? _t('btnVerifyOtp') : _t('btnSendOtp')),
+                    ),
+
+                    const SizedBox(height: 14),
+                    const Row(
+                      children: [
+                        Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text('OR', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+                        ),
+                        Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Google Sign-In Button
+                    OutlinedButton.icon(
+                      onPressed: () => context.push('/login?role=$_selectedRole'),
+                      icon: const Icon(Icons.g_mobiledata, size: 22, color: Color(0xFFEA4335)),
+                      label: Text(_t('btnGoogle'), style: const TextStyle(color: Color(0xFF0F172A))),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 44),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 13)),
+
+              const SizedBox(height: 16),
+              Text(
+                _t('dpdpNotice'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10.5, color: Color(0xFF94A3B8)),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(description,
-              style: const TextStyle(
-                  fontSize: 11, color: Color(0xFF64748B), height: 1.3)),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            height: 38,
-            child: ElevatedButton.icon(
-              onPressed: onTapLogin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0B3D2E),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              icon: const Icon(Icons.login, size: 16),
-              label: Text('${_t('loginBtn')} $title',
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildNationalTrustStandards(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFECFDF5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFA7F3D0)),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.gavel, color: Color(0xFF047857), size: 24),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'National Agriculture Traceability Standard • Tamper-Evident Ledger • DPDP 2023 Conforming',
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF065F46)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSyncAndVerificationAlerts(
-      BuildContext context, AuthState authState, SyncState syncState) {
-    final registeredName =
-        (authState.orgName != null && authState.orgName!.trim().isNotEmpty)
-            ? authState.orgName!
-            : (authState.phone ?? 'Verified Farmer / Supply-Chain Node');
-    final farmerUid = authState.farmerUid ??
-        (authState.phone != null
-            ? LotsController.generateFarmerUid(phone: authState.phone)
-            : '');
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: const Color(0xFFECFDF5),
-                borderRadius: BorderRadius.circular(8)),
-            child:
-                const Icon(Icons.verified, color: Color(0xFF047857), size: 20),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  registeredName,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 13,
-                      color: Color(0xFF0F172A)),
-                ),
-                Text(
-                  farmerUid.isNotEmpty
-                      ? 'Unique Farmer ID: $farmerUid'
-                      : 'Active Sovereign Node • 100% Cryptographically Bound',
-                  style: const TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFF047857),
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () => _showNextPartyScanAppendDialog(context),
-            icon: const Icon(Icons.qr_code_scanner,
-                size: 16, color: Color(0xFF047857)),
-            label: const Text('Custody Scan',
-                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Quick Action Buttons (matching widget test expectations: Scan QR, Create Batch)
-  Widget _buildAccessibleActionButtons(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+  // ---------------------------------------------------------------------------
+  // MODALS & DIALOGS
+  // ---------------------------------------------------------------------------
+  void _showLanguageModal(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _showNextPartyScanAppendDialog(context),
-                  icon: const Icon(Icons.qr_code_scanner, size: 18),
-                  label: const Text('Scan QR',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0B3D2E),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(120, 48),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
+              const Text('Select Language / भाषा चुनें', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 8),
+              ListTile(
+                title: const Text('English (Default)'),
+                trailing: _selectedLang == 'en' ? const Icon(Icons.check, color: Color(0xFF047857)) : null,
+                onTap: () {
+                  _switchLanguage('en');
+                  Navigator.pop(ctx);
+                },
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => context.push('/create-batch'),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Create Batch',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF0B3D2E),
-                    side:
-                        const BorderSide(color: Color(0xFF0B3D2E), width: 1.5),
-                    minimumSize: const Size(120, 48),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
+              ListTile(
+                title: const Text('हिन्दी (Hindi)'),
+                trailing: _selectedLang == 'hi' ? const Icon(Icons.check, color: Color(0xFF047857)) : null,
+                onTap: () {
+                  _switchLanguage('hi');
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                title: const Text('বাংলা (Bengali)'),
+                trailing: _selectedLang == 'bn' ? const Icon(Icons.check, color: Color(0xFF047857)) : null,
+                onTap: () {
+                  _switchLanguage('bn');
+                  Navigator.pop(ctx);
+                },
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => context.push('/dispatch'),
-                  icon: const Icon(Icons.upload, size: 16),
-                  label: Text(_t('dispatchBatch')),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => context.push('/split'),
-                  icon: const Icon(Icons.call_split, size: 16),
-                  label: Text(_t('splitLot')),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => context.push('/inspection'),
-                  icon: const Icon(Icons.verified_outlined, size: 16),
-                  label: Text(_t('inspectQuality')),
-                ),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  // OFFICIAL FOOTER
-  Widget _buildOfficialFooter(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: const Color(0xFF0B3D2E),
-      child: Column(
-        children: [
-          Text(
-            _t('disclaimer'),
-            style: const TextStyle(
-                color: Color(0xFFA7F3D0), fontSize: 11.5, height: 1.4),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.phone, color: Color(0xFFFCD34D), size: 14),
-              SizedBox(width: 5),
-              Text('Kisan Helpline: 1800-180-1551',
-                  style: TextStyle(
-                      color: Color(0xFFFCD34D),
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold)),
-              SizedBox(width: 12),
-              Text('|', style: TextStyle(color: Colors.white24)),
-              SizedBox(width: 12),
-              Icon(Icons.shield, color: Colors.white70, size: 14),
-              SizedBox(width: 5),
-              Text('Consumer Helpline: 1915',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showAccountDialog(BuildContext context) {
-    final authState = ref.read(authControllerProvider);
-    final entityDisplay =
-        authState.orgName ?? authState.phone ?? 'Authenticated User';
-    final farmerUid = authState.farmerUid ??
-        (authState.phone != null
-            ? LotsController.generateFarmerUid(phone: authState.phone)
-            : 'N/A');
+  void _showQrDialog(BuildContext context, HarvestLot lot) {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Node Identity'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.qr_code_2, color: Color(0xFF0B3D2E)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '${lot.crop} QR Code',
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Entity: $entityDisplay',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text('Phone: ${authState.phone ?? "Not Linked"}'),
-            const SizedBox(height: 4),
-            Text('Unique Farmer ID: $farmerUid',
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
-            const SizedBox(height: 4),
-            const Text('Status: VERIFIED SOVEREIGN NODE',
-                style: TextStyle(
-                    color: Colors.green, fontWeight: FontWeight.bold)),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: const Icon(Icons.qr_code_2, size: 160, color: Color(0xFF0B3D2E)),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              lot.publicCode,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 11, fontWeight: FontWeight.w700),
+            ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDispatchSheet(BuildContext context, HarvestLot lot) {
+    String selectedTarget = 'AGGREGATOR';
+    final targetNameCtrl = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Dispatch Batch (Handover)', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Lot: ${lot.crop} (${lot.netQtyKg} ${lot.unit})', style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: selectedTarget,
+                decoration: const InputDecoration(labelText: 'Receiving Party Role'),
+                items: const [
+                  DropdownMenuItem(value: 'AGGREGATOR', child: Text('Mandi Aggregator / APMC')),
+                  DropdownMenuItem(value: 'WHOLESALER', child: Text('Wholesaler')),
+                  DropdownMenuItem(value: 'DISTRIBUTOR', child: Text('Distributor')),
+                  DropdownMenuItem(value: 'RETAILER', child: Text('Retailer Shop')),
+                ],
+                onChanged: (val) {
+                  if (val != null) setModalState(() => selectedTarget = val);
+                },
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: targetNameCtrl,
+                decoration: const InputDecoration(labelText: 'Receiving Party Name *'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () async {
+                final authState = ref.read(authControllerProvider);
+                await ref.read(lotsControllerProvider.notifier).requestCustodyHandover(
+                      lot.publicCode,
+                      targetRole: selectedTarget,
+                      targetName: targetNameCtrl.text.trim().isNotEmpty ? targetNameCtrl.text.trim() : 'Mandi Hub',
+                      targetPhone: '+919876543210',
+                      declaredQtyKg: lot.netQtyKg,
+                      accessToken: authState.accessToken,
+                    );
+                if (ctx.mounted) Navigator.pop(ctx);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0B3D2E), foregroundColor: Colors.white),
+              child: const Text('Confirm Dispatch'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showReceiveDialog(BuildContext context) {
+    final codeCtrl = TextEditingController();
+    final weightCtrl = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Accept Custody & Verify', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: codeCtrl,
+              decoration: const InputDecoration(labelText: 'Scanned / Entered Lot Code *', hintText: 'Paste or enter lot ID'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: weightCtrl,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Verified Weight (Kg) *'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref.read(authControllerProvider.notifier).logout();
-              context.go('/login');
+            onPressed: () async {
+              final authState = ref.read(authControllerProvider);
+              final code = codeCtrl.text.trim();
+              final wt = double.tryParse(weightCtrl.text.trim()) ?? 0.0;
+              if (code.isNotEmpty) {
+                await ref.read(lotsControllerProvider.notifier).acceptCustodyHandover(
+                      code,
+                      actorRole: authState.orgType ?? 'AGGREGATOR',
+                      actorName: authState.orgName ?? 'Verified Custodian',
+                      receivedQtyKg: wt,
+                      condition: 'FRESH_GRADE_A',
+                      accessToken: authState.accessToken,
+                    );
+                if (ctx.mounted) Navigator.pop(ctx);
+              }
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade700,
-                foregroundColor: Colors.white),
-            child: const Text('Switch Account'),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0B3D2E), foregroundColor: Colors.white),
+            child: const Text('Confirm Receipt'),
           ),
         ],
       ),

@@ -7,7 +7,7 @@ import 'package:annasutra_mobile/features/home/presentation/home_screen.dart';
 
 void main() {
   testWidgets(
-      'HomeScreen renders brand navigation, hero action buttons, and disclaimer notice',
+      'HomeScreen renders brand navigation, role selection, and OTP sign-in in unauthenticated state',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
@@ -18,16 +18,16 @@ void main() {
     );
     await tester.pump();
 
-    // Verify brand title and action buttons
+    // Verify brand title and mobile sign-in controls
     expect(find.text('AnnaSutra'), findsOneWidget);
-    expect(find.textContaining('Scan QR'), findsOneWidget);
-    expect(find.textContaining('New Harvest Lot'), findsOneWidget);
+    expect(find.text('Farmer / FPO'), findsOneWidget);
+    expect(find.text('Mobile Number'), findsOneWidget);
+    expect(find.text('Get OTP via SMS'), findsOneWidget);
+    expect(find.text('Sign in with Google'), findsOneWidget);
 
-    // Verify mandatory disclaimer from docs/00_MASTER_BRIEF.md
+    // Verify DPDP statutory notice
     expect(
-      find.textContaining(
-          'Records are based on information entered by supply-chain participants',
-          findRichText: true),
+      find.textContaining('Protected under DPDP Act 2023', findRichText: true),
       findsOneWidget,
     );
 
@@ -36,7 +36,7 @@ void main() {
   });
 
   testWidgets(
-      'HomeScreen renders authenticated dual-tab navigation and KPI cards',
+      'HomeScreen renders authenticated 4-tab mobile navigation, farmer UID, and New Batch action',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -51,16 +51,15 @@ void main() {
     );
     await tester.pump();
 
-    // Verify authenticated dual tabs matching web portal
-    expect(find.text('Harvest Lots & Custody Ledger'), findsOneWidget);
-    expect(find.text('Analytics & Farm Insights'), findsOneWidget);
+    // Verify authenticated 4-tab navigation destinations
+    expect(find.text('Batches'), findsWidgets);
+    expect(find.text('Handover'), findsOneWidget);
+    expect(find.text('Insights'), findsOneWidget);
+    expect(find.text('Profile'), findsOneWidget);
 
-    // Verify action button and clean empty ledger (zero prebuilt template lots)
-    expect(find.textContaining('Register New Harvest Lot'), findsWidgets);
-    expect(
-      find.text('No harvest lots in custody matching your filters.'),
-      findsOneWidget,
-    );
+    // Verify Unique Farmer ID and Floating Action Button
+    expect(find.text('202628120000919876543210'), findsOneWidget);
+    expect(find.text('New Batch'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
