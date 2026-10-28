@@ -882,24 +882,23 @@
   });
 
   window.openProducerOperationalDashboard = function (initialTab) {
-    const p = wizardState.profile || {};
-    if (p.status !== 'VERIFIED' && currentRole !== 'ADMIN') {
-      showToast('Registration is under review by State & C-DAC authorities. Console access unlocks upon verification.', 'info');
-      const contentArea = document.getElementById('workspaceDynamicContent');
-      if (contentArea) renderUnderReviewCard(contentArea);
-      return;
-    }
+    wizardState.forceWizardView = false;
     wizardState.forceConsoleView = true;
     const contentArea = document.getElementById('workspaceDynamicContent');
     if (contentArea) {
       renderVerifiedOperationalConsole(contentArea);
+      updateLotMetrics();
+      applyLotFilters();
       if (initialTab) {
         setTimeout(() => window.switchProducerConsoleTab(initialTab), 60);
       }
     }
+    const ws = document.getElementById('confinedWorkspace');
+    if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   window.openProducerRegistrationWizard = async function () {
+    wizardState.forceWizardView = true;
     wizardState.forceConsoleView = false;
     const contentArea = document.getElementById('workspaceDynamicContent');
     if (!contentArea) return;
@@ -931,16 +930,79 @@
       }
     }
     renderWizardInterface(contentArea);
+    const ws = document.getElementById('confinedWorkspace');
+    if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.openProducerRegistrationReviewStatus = function () {
+    wizardState.forceWizardView = false;
+    const contentArea = document.getElementById('workspaceDynamicContent');
+    if (contentArea) renderUnderReviewCard(contentArea);
+    const ws = document.getElementById('confinedWorkspace');
+    if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  function renderUniversalNodeSwitcherBar(activeRole) {
+    const curRole = String(activeRole || currentRole || 'PRODUCER').toUpperCase();
+    return `
+      <div class="entity-node-switcher-bar" style="background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 8px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.5px;">
+          <span style="color: #047857;">${getIcon('sprout', 16, '#047857')}</span>
+          <span>Entity Node Consoles:</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <button type="button" class="node-pill ${curRole === 'PRODUCER' ? 'active' : ''}" onclick="window.switchEntityRole('PRODUCER')">Producer (Farmer)</button>
+          <button type="button" class="node-pill ${curRole === 'AGGREGATOR' ? 'active' : ''}" onclick="window.switchEntityRole('AGGREGATOR')">Aggregator (Mandi)</button>
+          <button type="button" class="node-pill ${curRole === 'PROCESSOR' ? 'active' : ''}" onclick="window.switchEntityRole('PROCESSOR')">Processor (Packer)</button>
+          <button type="button" class="node-pill ${curRole === 'WHOLESALER' ? 'active' : ''}" onclick="window.switchEntityRole('WHOLESALER')">Wholesaler</button>
+          <button type="button" class="node-pill ${curRole === 'DISTRIBUTOR' ? 'active' : ''}" onclick="window.switchEntityRole('DISTRIBUTOR')">Distributor</button>
+          <button type="button" class="node-pill ${curRole === 'RETAILER' ? 'active' : ''}" onclick="window.switchEntityRole('RETAILER')">Retailer</button>
+          <button type="button" class="node-pill ${curRole === 'ADMIN' ? 'active' : ''}" onclick="window.switchEntityRole('ADMIN')" style="border-color: #f59e0b; color: ${curRole === 'ADMIN' ? '#fff' : '#b45309'}; ${curRole === 'ADMIN' ? 'background: #d97706;' : ''}">Admin Verifier</button>
+        </div>
+      </div>
+    `;
+  }
+  window.renderUniversalNodeSwitcherBar = renderUniversalNodeSwitcherBar;
+
+  window.switchEntityRole = function (role) {
+    if (!role) return;
+    const r = String(role).toUpperCase();
+    currentRole = r;
+    localStorage.setItem('annasutra_role', r);
+    const savedPhone = localStorage.getItem('annasutra_phone') || '';
+    
+    // Update navbar badge
+    const activeUserEl = document.getElementById('activeUserName');
+    if (activeUserEl && window.formatEntityUserBadge) {
+      activeUserEl.innerText = window.formatEntityUserBadge(r, savedPhone, getLang());
+    } else if (activeUserEl) {
+      const digits = String(savedPhone).replace(/\D/g, '');
+      const last4 = digits.length >= 4 ? digits.slice(-4) : '0000';
+      activeUserEl.innerText = r + ' (X' + last4 + ')';
+    }
+
+    if (window.renderCurrentWorkspace) {
+      window.renderCurrentWorkspace();
+    }
+    
+    const ws = document.getElementById('confinedWorkspace');
+    if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showToast(`Switched to ${r} Console`, 'success');
   };
 
   window.renderCurrentWorkspace = async function () {
     const container = document.getElementById('confinedWorkspace');
     if (!container) return;
 
+    window.activateEntityConsoleView();
+    container.style.display = 'block';
+    const wsCont = document.getElementById('confinedWorkspaceContainer');
+    if (wsCont) wsCont.style.display = 'block';
+
     const toolsGrid = document.getElementById('workspaceTools');
     const batchesList = document.getElementById('workspaceBatchesList');
     if (toolsGrid) toolsGrid.style.display = 'none';
-    if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'none';
+    if (batchesList) batchesList.style.display = 'none';
 
     let contentArea = document.getElementById('workspaceDynamicContent');
     if (!contentArea) {
@@ -981,13 +1043,13 @@
 
       updateRegisteredHeaderBanner(wizardState.profile);
 
-      if (cachedProfile.status === 'VERIFIED' || wizardState.forceConsoleView) {
+      if (wizardState.forceWizardView && cachedProfile.status !== 'VERIFIED') {
+        renderWizardInterface(contentArea);
+        hasRenderedCached = true;
+      } else {
         renderVerifiedOperationalConsole(contentArea);
         updateLotMetrics();
         applyLotFilters();
-        hasRenderedCached = true;
-      } else if (cachedProfile.status === 'SUBMITTED') {
-        renderUnderReviewCard(contentArea);
         hasRenderedCached = true;
       }
     }
@@ -1023,7 +1085,7 @@
         localStorage.removeItem('annasutra_cached_plots');
         wizardState.profile = { status: 'DRAFT', role: 'PRODUCER', version: 1 };
         updateRegisteredHeaderBanner(wizardState.profile);
-        renderWizardInterface(contentArea);
+        renderVerifiedOperationalConsole(contentArea);
         return;
       }
 
@@ -1064,24 +1126,20 @@
       updateRegisteredHeaderBanner(wizardState.profile);
 
       const pStatus = wizardState.profile.status;
-      if (pStatus === 'VERIFIED' || wizardState.forceConsoleView || (window._producerLots && window._producerLots.length > 0)) {
-        if (!hasRenderedCached) {
-          renderVerifiedOperationalConsole(contentArea);
-        }
+      if (wizardState.forceWizardView && pStatus !== 'VERIFIED') {
+        renderWizardInterface(contentArea);
+      } else {
+        renderVerifiedOperationalConsole(contentArea);
         updateLotMetrics();
         applyLotFilters();
         if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
           renderProducerAnalytics();
         }
-      } else if (pStatus === 'SUBMITTED') {
-        renderUnderReviewCard(contentArea);
-      } else {
-        renderWizardInterface(contentArea);
       }
     } catch (err) {
       if (!hasRenderedCached) {
         updateRegisteredHeaderBanner(wizardState.profile);
-        renderWizardInterface(contentArea);
+        renderVerifiedOperationalConsole(contentArea);
       }
     }
   };
@@ -1152,6 +1210,9 @@
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         
+        <!-- UNIVERSAL NODE SWITCHER BAR -->
+        ${renderUniversalNodeSwitcherBar('ADMIN')}
+
         <!-- Sovereign Admin Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
@@ -2013,20 +2074,66 @@ function renderAdminEntityInspector(ent, t) {
     const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node';
     const locationStr = [p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ') || 'Registered Agricultural Producer';
 
-    // Hide legacy tools grid & separate batches card
+    // Ensure workspace container is visible & hide legacy placeholders
     const toolsGrid = document.getElementById('workspaceTools');
     const batchesList = document.getElementById('workspaceBatchesList');
     if (toolsGrid) toolsGrid.style.display = 'none';
-    if (batchesList && batchesList.parentNode) batchesList.parentNode.style.display = 'none';
+    if (batchesList) batchesList.style.display = 'none';
+    const ws = document.getElementById('confinedWorkspace');
+    if (ws) ws.style.display = 'block';
+    const wsCont = document.getElementById('confinedWorkspaceContainer');
+    if (wsCont) wsCont.style.display = 'block';
+
+    const statusBannerHtml = (p.status === 'SUBMITTED') ? `
+      <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; color: #b45309;">
+            ${getIcon('shield', 18, '#b45309')}
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 800; color: #78350f;">Registration Under Administrative Review</div>
+            <div style="font-size: 12px; color: #92400e;">Your profile &amp; KYC documents are being verified field-by-field by the Sovereign Verifier.</div>
+          </div>
+        </div>
+        <button type="button" class="action-btn-pill" onclick="window.openProducerRegistrationReviewStatus()" style="font-size: 12px; background: #fff;">
+          View Review Status &rarr;
+        </button>
+      </div>
+    ` : (p.status !== 'VERIFIED') ? `
+      <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #dbeafe; display: flex; align-items: center; justify-content: center; color: #1d4ed8;">
+            ${getIcon('alert', 18, '#1d4ed8')}
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 800; color: #1e3a8a;">Farmer Registration In Progress (Draft Mode)</div>
+            <div style="font-size: 12px; color: #3b82f6;">Complete your 4-step registration application to submit your farm KYC to C-DAC &amp; State Authorities.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 7px 16px; font-size: 12px; font-weight: 800;" onclick="window.openProducerRegistrationWizard()">
+          Complete Registration Form &rarr;
+        </button>
+      </div>
+    ` : '';
+
+    const verifiedBadgeText = (p.status === 'VERIFIED') ? (t.verifiedNodeBadge || 'VERIFIED PRODUCER NODE')
+      : (p.status === 'SUBMITTED') ? 'REGISTRATION UNDER REVIEW'
+      : 'PRODUCER REGISTRATION DRAFT';
 
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         
+        <!-- UNIVERSAL NODE SWITCHER BAR -->
+        ${renderUniversalNodeSwitcherBar('PRODUCER')}
+
+        <!-- REGISTRATION STATUS NOTICE (IF NOT YET FULLY VERIFIED) -->
+        ${statusBannerHtml}
+
         <!-- TOP HEADER BAR: VERIFIED BADGE, FARMER NAME, UNIQUE FARMER UID & LOG OUT -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
-            <div style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #86efac; color: #065f46; font-size: 11.5px; font-weight: 800; padding: 3px 10px; border-radius: 20px; margin-bottom: 5px;">
-              <span>${getIcon('check', 13, '#15803d', 2.8)}</span> <span>${escapeHtml(t.verifiedNodeBadge || 'VERIFIED PRODUCER NODE')}</span>
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: ${p.status === 'VERIFIED' ? '#ecfdf5' : '#f1f5f9'}; border: 1px solid ${p.status === 'VERIFIED' ? '#86efac' : '#cbd5e1'}; color: ${p.status === 'VERIFIED' ? '#065f46' : '#334155'}; font-size: 11.5px; font-weight: 800; padding: 3px 10px; border-radius: 20px; margin-bottom: 5px;">
+              <span>${getIcon(p.status === 'VERIFIED' ? 'check' : 'shield', 13, p.status === 'VERIFIED' ? '#15803d' : '#475569', 2.8)}</span> <span>${escapeHtml(verifiedBadgeText)}</span>
             </div>
             <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">${escapeHtml(orgDisplayName)}</h3>
             <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(locationStr)}</span>
@@ -3366,6 +3473,9 @@ function renderAdminEntityInspector(ent, t) {
     container.innerHTML = `
       <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
         
+        <!-- UNIVERSAL NODE SWITCHER BAR -->
+        ${renderUniversalNodeSwitcherBar(activeRole)}
+
         <!-- Header Banner -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
@@ -5195,7 +5305,6 @@ function renderAdminEntityInspector(ent, t) {
 
   window.renderAdminConsoleUI = renderAdminConsoleUI;
   window.renderWizardInterface = renderWizardInterface;
-})();
 
   window.toggleCropCheckbox = function (cropId, isChecked) {
     if (!wizardState.selectedCrops) wizardState.selectedCrops = [];
@@ -5696,3 +5805,178 @@ function renderAdminEntityInspector(ent, t) {
       </svg>
     `;
   }
+
+  /* --------------------------------------------------------------------------
+     CUSTODY HANDOVER DISPATCH MODAL (DISPATCH TO NEXT PARTY)
+     -------------------------------------------------------------------------- */
+  window.openCustodyHandoverRequestModal = function (lotCode) {
+    window.openQuickDispatchModal(lotCode);
+  };
+
+  window.openQuickDispatchModal = function (selectedLotCode) {
+    let modal = document.getElementById('quickDispatchModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'quickDispatchModal';
+      modal.className = 'modal-backdrop-custom';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 10050; display: flex; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); box-sizing: border-box;';
+      modal.onclick = function (e) {
+        if (e.target === modal) window.closeQuickDispatchModal();
+      };
+      document.body.appendChild(modal);
+    }
+
+    const myLots = (window._producerLots || []).concat(window._downstreamCustody || []);
+    const defaultLot = selectedLotCode || (myLots[0] ? (myLots[0].public_code || myLots[0].batch_id) : '');
+
+    const roleOptions = [
+      { role: 'AGGREGATOR', label: 'Aggregator / FPO Collection Node' },
+      { role: 'PROCESSOR', label: 'Food Processor & Manufacturer (e.g. Lay\'s / Mill)' },
+      { role: 'WHOLESALER', label: 'Wholesale Mandi Distributor' },
+      { role: 'DISTRIBUTOR', label: 'Regional Logistics & Cold-Chain Warehouse' },
+      { role: 'RETAILER', label: 'Retail Counter & Point-of-Sale Store' }
+    ];
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 16px; padding: 24px; max-width: 580px; width: 100%; box-shadow: 0 20px 45px rgba(0,0,0,0.3); box-sizing: border-box;" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: #ecfdf5; border: 1px solid #a7f3d0; display: flex; align-items: center; justify-content: center; color: #047857;">
+              ${getIcon('send', 18, '#047857')}
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 17.5px; font-weight: 800; color: #0f172a;">Custody Handover (Dispatch to Next Party)</h3>
+              <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Transfer produce custody with 2-way cryptographic handshake.</p>
+            </div>
+          </div>
+          <button type="button" onclick="window.closeQuickDispatchModal()" style="background: transparent; border: none; font-size: 18px; color: #64748b; cursor: pointer;">✕</button>
+        </div>
+
+        <form id="form_quick_dispatch" onsubmit="window.submitQuickDispatchForm(event)">
+          <!-- 1. Select Batch / Lot -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">1. Select Batch / Lot Code to Dispatch <span style="color:#dc2626;">*</span></label>
+            ${myLots.length > 0 ? `
+              <select class="form-select" id="dispatch_lot_code" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 700; background: #fff; font-family: monospace;">
+                ${myLots.map(l => {
+                  const c = l.public_code || l.batch_id || l.code;
+                  const desc = `${c} — ${l.crop || l.category || 'Produce'} (${l.quantity || l.net_weight_kg || l.qty_kg || 0} Kg)`;
+                  return `<option value="${escapeHtml(c)}" ${c === defaultLot ? 'selected' : ''}>${escapeHtml(desc)}</option>`;
+                }).join('')}
+              </select>
+            ` : `
+              <input type="text" class="form-input" id="dispatch_lot_code" value="${escapeHtml(defaultLot)}" placeholder="e.g. AS-IN-MH-2026-VG-001" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-family: monospace; font-weight: 700;" />
+            `}
+          </div>
+
+          <!-- 2. Target Role & Destination Entity -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+              <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">2. Next Receiving Tier <span style="color:#dc2626;">*</span></label>
+              <select class="form-select" id="dispatch_target_role" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: #fff; font-weight: 700;">
+                ${roleOptions.map(r => `<option value="${r.role}">${escapeHtml(r.label)}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">3. Receiver Mobile / Entity ID <span style="color:#dc2626;">*</span></label>
+              <input type="text" class="form-input" id="dispatch_target_phone" placeholder="+91 9876543210" value="+919876543210" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" />
+            </div>
+          </div>
+
+          <!-- 3. Declared Net Weight & Vehicle No -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+              <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">4. Dispatch Net Weight (Kg) <span style="color:#dc2626;">*</span></label>
+              <input type="number" step="0.1" min="0.1" class="form-input" id="dispatch_declared_qty" value="500" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 800;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">5. Transport Vehicle Number</label>
+              <input type="text" class="form-input" id="dispatch_vehicle_no" placeholder="e.g. MH-15-EG-4912" value="MH-15-EG-4912" style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600; text-transform: uppercase;" />
+            </div>
+          </div>
+
+          <!-- 4. Dispatch Remarks -->
+          <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">6. Dispatch Facility / Origin Remarks</label>
+            <input type="text" class="form-input" id="dispatch_remarks" placeholder="e.g. Crates loaded from cold storage bay 2" value="Freshly packed crates dispatched" style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1;" />
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+            <button type="button" class="action-btn-pill" onclick="window.closeQuickDispatchModal()" style="padding: 9px 18px; font-size: 13px;">Cancel</button>
+            <button type="submit" id="btnSubmitDispatch" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 24px; font-size: 13px; font-weight: 800;">
+              Confirm Handover Dispatch &rarr;
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  };
+
+  window.closeQuickDispatchModal = function () {
+    const modal = document.getElementById('quickDispatchModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.submitQuickDispatchForm = async function (e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitDispatch');
+    const lotCode = (document.getElementById('dispatch_lot_code')?.value || '').trim();
+    const targetRole = (document.getElementById('dispatch_target_role')?.value || 'AGGREGATOR').trim();
+    const targetPhone = (document.getElementById('dispatch_target_phone')?.value || '').trim();
+    const declaredQty = parseFloat(document.getElementById('dispatch_declared_qty')?.value || '100');
+    const vehicleNo = (document.getElementById('dispatch_vehicle_no')?.value || '').trim();
+    const remarks = (document.getElementById('dispatch_remarks')?.value || '').trim();
+
+    if (!lotCode) {
+      showToast('Please specify a Lot code to dispatch', 'error');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = 'Dispatching Handover...';
+    }
+
+    try {
+      const res = await fetch(`/api/v1/lots/${encodeURIComponent(lotCode)}/handover-request`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+          target_role: targetRole,
+          target_phone: targetPhone,
+          declared_qty_kg: declaredQty,
+          vehicle_no: vehicleNo,
+          remarks: remarks
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.detail || 'Could not initiate handover request', 'error');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Confirm Handover Dispatch →';
+        }
+        return;
+      }
+
+      window.closeQuickDispatchModal();
+      const pin = data.handover_pin || data.pin || '123456';
+      showToast(`Lot ${lotCode} dispatched to ${targetRole}! Verification PIN: ${pin}`, 'success');
+
+      if (window.renderCurrentWorkspace) {
+        await window.renderCurrentWorkspace();
+      }
+    } catch (err) {
+      showToast('Network error during handover dispatch', 'error');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = 'Confirm Handover Dispatch →';
+      }
+    }
+  };
+
+})();
