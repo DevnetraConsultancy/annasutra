@@ -361,18 +361,18 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // SECTION 1: QR Label Serial & 10 Product Category Codes
+                // SECTION 1: Batch Identification & Product Category
                 _buildSectionHeader(
-                    '1. Deterministic Batch ID & 10 Product Categories',
+                    '1. Batch Identification & Product Category',
                     Icons.qr_code_2),
                 const SizedBox(height: 12),
 
-                // Product Category Code (FG, PU, OI, FR, VG, SP, CC, LS, SC, OT)
+                // Product Category
                 DropdownButtonFormField<String>(
                   isExpanded: true,
                   value: _selectedCategoryCode,
                   decoration: const InputDecoration(
-                    labelText: 'Product Category Code (Mentor Scheme) *',
+                    labelText: 'Product Category *',
                     border: OutlineInputBorder(),
                   ),
                   items: kProductCategoryCodes.entries
@@ -404,7 +404,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                         textCapitalization: TextCapitalization.characters,
                         decoration: const InputDecoration(
                           labelText: 'QR Label Serial *',
-                          hintText: 'YYYYDDHHMMSS+CountryCodeMobile+Code+Seq',
+                          hintText: 'Auto-generated Batch ID',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -423,8 +423,7 @@ class _BatchCreateScreenState extends ConsumerState<BatchCreateScreen> {
                           _regenerateDeterministicBatchId();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text(
-                                    'Generated fresh deterministic batch ID.')),
+                                content: Text('Generated new batch ID.')),
                           );
                         },
                         child: const Icon(Icons.refresh),

@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../domain/auth_state.dart';
 import 'controllers/auth_controller.dart';
 import 'dpdp_consent_dialog.dart';
@@ -17,9 +20,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  final TextEditingController _googleEmailController = TextEditingController();
-  final TextEditingController _googleNameController = TextEditingController();
-  final TextEditingController _googlePhoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   bool _isGoogleMode = false;
@@ -43,10 +43,78 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     _phoneController.dispose();
     _otpController.dispose();
-    _googleEmailController.dispose();
-    _googleNameController.dispose();
-    _googlePhoneController.dispose();
     super.dispose();
+  }
+
+  Future<void> _openGoogleOAuthConsentModal(BuildContext context) async {
+    final oauthUrl =
+        'https://annasutra.vercel.app/api/v1/auth/google/oauth/start?role=${Uri.encodeComponent(_selectedRole)}';
+    if (kIsWeb) {
+      return;
+    }
+
+    final controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setUserAgent(
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36',
+      );
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) {
+        controller.setNavigationDelegate(
+          NavigationDelegate(
+            onPageFinished: (String url) async {
+              try {
+                final rawEvent = await controller.runJavaScriptReturningResult(
+                  "localStorage.getItem('annasutra_google_oauth_event')",
+                );
+                final cleanStr = rawEvent.toString();
+                if (cleanStr.isNotEmpty &&
+                    cleanStr != 'null' &&
+                    cleanStr.contains('access_token')) {
+                  String jsonPayload = cleanStr;
+                  if (jsonPayload.startsWith('"') &&
+                      jsonPayload.endsWith('"')) {
+                    jsonPayload = jsonDecode(jsonPayload) as String;
+                  }
+                  final decoded =
+                      jsonDecode(jsonPayload) as Map<String, dynamic>;
+                  final dataMap =
+                      Map<String, dynamic>.from(decoded['data'] as Map);
+                  if (dialogCtx.mounted) {
+                    Navigator.of(dialogCtx).pop();
+                  }
+                  await ref
+                      .read(authControllerProvider.notifier)
+                      .completeGoogleOAuthSession(dataMap, _selectedRole);
+                }
+              } catch (_) {}
+            },
+          ),
+        );
+        controller.loadRequest(Uri.parse(oauthUrl));
+
+        return Dialog.fullscreen(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+              title: const Text(
+                'Sign in with Google',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(dialogCtx).pop(),
+              ),
+            ),
+            body: WebViewWidget(controller: controller),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -345,23 +413,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ],
                     ] else ...[
-                      // Google Sign-In with Mobile Number Linking for Deterministic Farmer UID
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFECFDF5),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0xFFA7F3D0)),
-                        ),
-                        child: const Text(
-                          'Google Sign-In links your verified email with your mobile number to mint your deterministic Unique Farmer ID (YYYYDDHHMMSS+CountryCodeMobileNumber).',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF065F46),
-                              height: 1.4),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
                       DropdownButtonFormField<String>(
                         value: _selectedRole,
                         decoration: const InputDecoration(
@@ -379,72 +430,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           if (val != null) setState(() => _selectedRole = val);
                         },
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _googleEmailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          labelText: 'Google Email Address *',
-                          hintText: 'farmer@gmail.com',
-                          prefixIcon: Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (val) => (val == null || !val.contains('@'))
-                            ? 'Enter a valid Google email'
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _googleNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name / Farm Name *',
-                          hintText: 'Enter your full name or FPO name',
-                          prefixIcon: Icon(Icons.person_outline),
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (val) => (val == null || val.trim().isEmpty)
-                            ? 'Enter your name'
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _googlePhoneController,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          labelText:
-                              'Mobile Number (+91) for Unique Farmer ID *',
-                          hintText: '+919876543210',
-                          prefixIcon: Icon(Icons.phone_android),
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (val) =>
-                            (val == null || val.trim().length < 10)
-                                ? 'Mobile number is required for UID'
-                                : null,
-                      ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
                       SizedBox(
                         height: 52,
                         child: ElevatedButton.icon(
                           onPressed: isLoading
                               ? null
-                              : () {
-                                  if (_formKey.currentState?.validate() ??
-                                      false) {
-                                    authNotifier.signInWithGoogle(
-                                      email: _googleEmailController.text.trim(),
-                                      fullName:
-                                          _googleNameController.text.trim(),
-                                      phone: _googlePhoneController.text.trim(),
-                                      role: _selectedRole,
-                                    );
-                                  }
-                                },
-                          icon: const Icon(Icons.login),
+                              : () => _openGoogleOAuthConsentModal(context),
+                          icon: const Icon(Icons.account_circle_outlined),
                           label: const Text(
-                            'Continue with Google & Mint Farmer ID',
+                            'Continue with Google',
                             style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),

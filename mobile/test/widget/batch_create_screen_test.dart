@@ -27,11 +27,11 @@ void main() {
     // Verify fields and sections
     expect(find.text('Create Harvest Batch'), findsOneWidget);
     expect(
-      find.text('1. Deterministic Batch ID & 10 Product Categories'),
+      find.text('1. Batch Identification & Product Category'),
       findsOneWidget,
     );
     expect(
-      find.text('Product Category Code (Mentor Scheme) *'),
+      find.text('Product Category *'),
       findsOneWidget,
     );
     expect(find.text('QR Label Serial *'), findsOneWidget);

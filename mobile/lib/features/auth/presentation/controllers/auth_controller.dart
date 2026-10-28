@@ -230,7 +230,7 @@ class AuthController extends StateNotifier<AuthState> {
       state = state.copyWith(
         status: AuthStatus.error,
         errorMessage:
-            'Mobile number (+91...) is required to mint your deterministic Unique Farmer ID.',
+            'Mobile number (+91...) is required to link your account.',
       );
       return false;
     }
@@ -306,6 +306,46 @@ class AuthController extends StateNotifier<AuthState> {
       );
       return false;
     }
+  }
+
+  /// Complete session from Google OAuth 2.0 Consent callback payload
+  Future<void> completeGoogleOAuthSession(
+      Map<String, dynamic> data, String role) async {
+    final accessToken =
+        (data['access_token'] ?? data['access'] ?? '').toString();
+    final refreshToken =
+        (data['refresh_token'] ?? data['refresh'] ?? '').toString();
+    final userMap = data['user'] is Map
+        ? Map<String, dynamic>.from(data['user'] as Map)
+        : <String, dynamic>{};
+    final phone = (userMap['phone'] ?? '').toString();
+    final email = (userMap['email'] ?? '').toString();
+    final name = (userMap['name'] ?? email).toString();
+    final farmerUid =
+        (data['farmer_uid'] ?? userMap['farmer_uid'] ?? '').toString();
+
+    await _secureStore.write('access_token', accessToken);
+    await _secureStore.write('refresh_token', refreshToken);
+    await _secureStore.write('org_name', name);
+    await _secureStore.write('org_type', role);
+    await _secureStore.write('org_verification', 'VERIFIED');
+    await _secureStore.write('phone', phone);
+    await _secureStore.write('email', email);
+    await _secureStore.write('farmer_uid', farmerUid);
+    await _secureStore.write('auth_provider', 'GOOGLE');
+
+    state = state.copyWith(
+      status: AuthStatus.authenticated,
+      phone: phone,
+      email: email,
+      farmerUid: farmerUid,
+      authProvider: 'GOOGLE',
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      orgVerification: 'VERIFIED',
+      orgName: name,
+      orgType: role,
+    );
   }
 
   Future<bool> registerOrganisation({

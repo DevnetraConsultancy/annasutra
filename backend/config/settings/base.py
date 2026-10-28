@@ -149,6 +149,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Cache configuration for OTP rate limiting and challenge storage
 CACHES = {
     "default": {
+        "default_timeout": 300,
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "annasutra-local-cache",
     }
@@ -167,6 +168,11 @@ OTP_DEBUG = env.bool("OTP_DEBUG", default=False)
 WEBAUTHN_RP_ID = env("WEBAUTHN_RP_ID", default="localhost")
 WEBAUTHN_RP_NAME = env("WEBAUTHN_RP_NAME", default="AnnaSutra")
 WEBAUTHN_ORIGIN = env("WEBAUTHN_ORIGIN", default="http://localhost:8000")
+
+# Google OAuth 2.0 Configuration
+GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID", default="")
+GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET", default="")
+GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI", default="")
 
 # JWT configuration
 JWT_SECRET_KEY = env("JWT_SECRET_KEY", default=SECRET_KEY)
@@ -206,6 +212,7 @@ REST_FRAMEWORK = {
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 
 # CERT-In direction: 180-day ICT logging retention configuration
 if os.environ.get("VERCEL"):

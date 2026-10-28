@@ -10,6 +10,8 @@ from .views import (
     DeviceListCreateView,
     DeviceDetailView,
     GoogleAuthView,
+    GoogleOAuthStartView,
+    GoogleOAuthCallbackView,
 )
 
 urlpatterns = [
@@ -19,6 +21,10 @@ urlpatterns = [
     path("otp/verify/", OtpVerifyView.as_view(), name="auth_otp_verify_slash"),
     path("google", GoogleAuthView.as_view(), name="auth_google"),
     path("google/", GoogleAuthView.as_view(), name="auth_google_slash"),
+    path("google/oauth/start", GoogleOAuthStartView.as_view(), name="auth_google_oauth_start"),
+    path("google/oauth/start/", GoogleOAuthStartView.as_view(), name="auth_google_oauth_start_slash"),
+    path("google/callback", GoogleOAuthCallbackView.as_view(), name="auth_google_callback"),
+    path("google/callback/", GoogleOAuthCallbackView.as_view(), name="auth_google_callback_slash"),
 
     path("refresh", RefreshTokenView.as_view(), name="auth_refresh"),
     path("passkeys/register/options", PasskeyRegisterOptionsView.as_view(), name="auth_passkeys_register_options"),
