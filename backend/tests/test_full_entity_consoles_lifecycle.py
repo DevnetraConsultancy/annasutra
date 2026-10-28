@@ -63,13 +63,31 @@ def create_user_and_org(phone, name, org_type="FARMER", role="PRODUCER", verific
     user.profile = prof
     return user
 
+def create_admin_user(phone="+919800000001", name="National Authority"):
+    org = Organisation.objects.create(
+        org_id=uuid.uuid4(),
+        name=name,
+        org_type="OPERATOR",
+        verification="VERIFIED",
+    )
+    user = AppUser.objects.create(
+        user_id=uuid.uuid4(),
+        org=org,
+        phone_e164=phone,
+        role="STAFF",
+        status="ACTIVE",
+    )
+    tokens = TokenService.issue_token_pair(user)
+    user.tokens = tokens
+    return user
+
 @pytest.mark.django_db
 def test_full_entity_consoles_lifecycle(client):
     # 1. Setup actors
     farmer_user = create_user_and_org("+919876543210", "Ramesh Bhosale", "FARMER", "PRODUCER", "VERIFIED")
     aggregator_user = create_user_and_org("+919800000002", "Nashik Agro Hub", "AGGREGATOR", "AGGREGATOR", "VERIFIED")
     processor_user = create_user_and_org("+919800000003", "Sahyadri Snacks", "OPERATOR", "PROCESSOR", "VERIFIED")
-    admin_user = create_user_and_org("+919800000001", "National Authority", "OPERATOR", "ADMIN", "VERIFIED")
+    admin_user = create_admin_user("+919800000001", "National Authority")
 
     # STEP 1: Land Plot Cadastral Mapping
     plot = EntityPlot.objects.create(
