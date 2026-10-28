@@ -50,7 +50,7 @@ void main() {
       r'C:\Users\Dr_Nee\.gemini\antigravity\brain\88621903-92e6-491a-8803-57d56c55f134';
 
   final testLots = [
-    HarvestLot(
+    const HarvestLot(
       publicCode: 'LOT-2026-WB-0042',
       crop: 'Basmati Paddy',
       variety: 'Pusa 1121',
@@ -65,7 +65,7 @@ void main() {
       basePricePerUnit: 34.50,
       estimatedValue: 50025.0,
     ),
-    HarvestLot(
+    const HarvestLot(
       publicCode: 'LOT-2026-WB-0039',
       crop: 'Organic Mustard',
       variety: 'Pusa Bold',
