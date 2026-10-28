@@ -622,25 +622,60 @@ class GoogleOAuthCallbackView(APIView):
             token_pair = _complete_google_user_session(email, name, resolved_phone, role)
             payload_json = json.dumps(token_pair)
             html = f"""<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Signed In — AnnaSutra</title></head>
-<body style="background:#07271d;color:#fff;font-family:system-ui;display:flex;align-items:center;justify-content:center;height:90vh;">
-<script>
-  const data = {payload_json};
-  const token = data.access_token || data.access;
-  if (token) localStorage.setItem('annasutra_access_token', token);
-  if (data.user && data.user.phone) localStorage.setItem('annasutra_phone', data.user.phone);
-  if (data.user && data.user.farmer_uid) localStorage.setItem('annasutra_farmer_uid', data.user.farmer_uid);
-  localStorage.setItem('annasutra_role', '{role}');
-  localStorage.setItem('annasutra_google_oauth_event', JSON.stringify({{ ts: Date.now(), data: data, role: '{role}' }}));
-  if (window.opener && !window.opener.closed) {{
-    try {{ window.opener.postMessage({{ type: 'ANNASUTRA_GOOGLE_AUTH_SUCCESS', data: data, role: '{role}' }}, window.location.origin); }} catch(e) {{}}
-    window.close();
-  }} else {{
-    window.location.href = '/?google_auth=1';
-  }}
-</script>
-<p>Completing Google Sign-In...</p>
-</body></html>"""
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signed In — AnnaSutra</title>
+  <style>
+    body {{ background: #062419; color: #fff; font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 24px; box-sizing: border-box; }}
+    .card {{ background: #0c3527; border: 1.5px solid #10b981; border-radius: 18px; padding: 28px 24px; text-align: center; max-width: 360px; width: 100%; box-shadow: 0 20px 45px rgba(0,0,0,0.5); }}
+    .check-icon {{ width: 52px; height: 52px; border-radius: 50%; background: #10b981; color: #041c14; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 26px; font-weight: 900; }}
+    h2 {{ margin: 0 0 8px; font-size: 19px; font-weight: 800; color: #ecfdf5; }}
+    p {{ margin: 0 0 20px; font-size: 13px; color: #a7f3d0; line-height: 1.5; }}
+    button {{ background: #10b981; color: #041c14; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 800; font-size: 13.5px; cursor: pointer; width: 100%; }}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="check-icon">&#10003;</div>
+    <h2>Signed In Successfully!</h2>
+    <p>Session verified. Returning to AnnaSutra...</p>
+    <button onclick="closeNow()">Return to AnnaSutra</button>
+  </div>
+  <script>
+    const data = {payload_json};
+    const token = data.access_token || data.access;
+    if (token) localStorage.setItem('annasutra_access_token', token);
+    if (data.user && data.user.phone) localStorage.setItem('annasutra_phone', data.user.phone);
+    if (data.user && data.user.farmer_uid) localStorage.setItem('annasutra_farmer_uid', data.user.farmer_uid);
+    localStorage.setItem('annasutra_role', '{role}');
+    localStorage.setItem('annasutra_google_oauth_event', JSON.stringify({{ ts: Date.now(), data: data, role: '{role}' }}));
+
+    function notifyOpener() {{
+      if (window.opener && !window.opener.closed) {{
+        try {{
+          window.opener.postMessage({{ type: 'ANNASUTRA_GOOGLE_AUTH_SUCCESS', data: data, role: '{role}' }}, window.location.origin);
+        }} catch(e) {{}}
+      }}
+    }}
+
+    function closeNow() {{
+      notifyOpener();
+      try {{ window.close(); }} catch(e) {{}}
+      setTimeout(() => {{
+        if (!window.opener && window.name !== 'AnnaSutraGoogleOAuth') {{
+          window.location.href = '/?google_auth=1';
+        }}
+      }}, 300);
+    }}
+
+    notifyOpener();
+    try {{ window.close(); }} catch(e) {{}}
+    setTimeout(closeNow, 300);
+  </script>
+</body>
+</html>"""
             return HttpResponse(html, content_type="text/html")
 
         # First-time Google user: ask once for mobile number to link their account
@@ -720,10 +755,14 @@ class GoogleOAuthCallbackView(APIView):
         localStorage.setItem('annasutra_google_oauth_event', JSON.stringify({{ ts: Date.now(), data: data, role: '{role}' }}));
         if (window.opener && !window.opener.closed) {{
           try {{ window.opener.postMessage({{ type: 'ANNASUTRA_GOOGLE_AUTH_SUCCESS', data: data, role: '{role}' }}, window.location.origin); }} catch(e) {{}}
-          window.close();
-        }} else {{
-          window.location.href = '/?google_auth=1';
         }}
+        try {{ window.close(); }} catch(e) {{}}
+        setTimeout(() => {{
+          try {{ window.close(); }} catch(e) {{}}
+          if (!window.opener && window.name !== 'AnnaSutraGoogleOAuth') {{
+            window.location.href = '/?google_auth=1';
+          }}
+        }}, 350);
       }} catch (e) {{
         errBox.style.display = 'block';
         errBox.textContent = 'Network error. Please try again.';

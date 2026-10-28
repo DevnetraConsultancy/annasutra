@@ -3455,6 +3455,16 @@
 
   <!-- TRANSLATION & CLIENT WORKSPACE ENGINE -->
   <script>
+    // Safety guard: if this page was ever loaded inside the Google OAuth popup, close it immediately!
+    if (window.name === 'AnnaSutraGoogleOAuth') {
+      try {
+        if (window.opener && !window.opener.closed) {
+          window.opener.focus();
+        }
+        window.close();
+      } catch(e) {}
+    }
+
     let currentLang = '{{ user_lang|default:"en" }}';
     let currentRole = 'PRODUCER';
     let currentPreviewRole = 'PRODUCER';
@@ -6150,6 +6160,9 @@
       }
     }
 
+    let _googleOAuthPopupRef = null;
+    let _googlePopupPollTimer = null;
+
     function startGoogleOAuthLogin() {
       const role = encodeURIComponent(currentRole || 'PRODUCER');
       const phoneInputVal = (document.getElementById('phoneInput')?.value || '').trim();
@@ -6162,18 +6175,56 @@
       const height = 640;
       const left = Math.max(0, (window.screen.width - width) / 2);
       const top = Math.max(0, (window.screen.height - height) / 2);
-      const popup = window.open(
+
+      if (_googleOAuthPopupRef && !_googleOAuthPopupRef.closed) {
+        try { _googleOAuthPopupRef.close(); } catch(e) {}
+      }
+
+      _googleOAuthPopupRef = window.open(
         oauthUrl,
         'AnnaSutraGoogleOAuth',
         `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
       );
-      if (!popup) {
+
+      if (!_googleOAuthPopupRef) {
         window.location.href = oauthUrl;
+        return;
       }
+
+      // Opener-driven polling to guarantee closure even if Chrome blocks script closure inside popup
+      if (_googlePopupPollTimer) clearInterval(_googlePopupPollTimer);
+      _googlePopupPollTimer = setInterval(() => {
+        try {
+          if (!_googleOAuthPopupRef || _googleOAuthPopupRef.closed) {
+            clearInterval(_googlePopupPollTimer);
+            _googlePopupPollTimer = null;
+            return;
+          }
+          const ev = localStorage.getItem('annasutra_google_oauth_event');
+          if (ev) {
+            const parsed = JSON.parse(ev);
+            if (parsed && parsed.data && (Date.now() - parsed.ts < 45000)) {
+              clearInterval(_googlePopupPollTimer);
+              _googlePopupPollTimer = null;
+              try { _googleOAuthPopupRef.close(); } catch(e) {}
+              _googleOAuthPopupRef = null;
+              _handleGoogleOAuthCompletion(parsed.data, parsed.role);
+            }
+          }
+        } catch(e) {}
+      }, 400);
     }
 
     function _handleGoogleOAuthCompletion(data, role) {
       if (!data) return;
+      if (_googlePopupPollTimer) {
+        clearInterval(_googlePopupPollTimer);
+        _googlePopupPollTimer = null;
+      }
+      if (_googleOAuthPopupRef && !_googleOAuthPopupRef.closed) {
+        try { _googleOAuthPopupRef.close(); } catch(e) {}
+        _googleOAuthPopupRef = null;
+      }
       const token = data.access_token || data.access;
       if (token) localStorage.setItem('annasutra_access_token', token);
       const resolvedPhone = (data.user && data.user.phone) || localStorage.getItem('annasutra_phone') || '+919999999999';
@@ -6574,19 +6625,29 @@
       const entityFooter = document.getElementById('entityConsoleFooter');
       if (entityFooter) entityFooter.style.display = 'block';
 
+      const wsCont = document.getElementById('confinedWorkspaceContainer');
+      if (wsCont) wsCont.style.display = 'block';
       const ws = document.getElementById('confinedWorkspace');
       if (ws) ws.style.display = 'block';
 
       const bgVid = document.getElementById('heroBgVideo');
       if (bgVid) bgVid.pause();
 
-      if (typeof renderCurrentWorkspace === 'function') {
-        try {
-          renderCurrentWorkspace();
-        } catch (e) {
-          console.error('renderCurrentWorkspace failed:', e);
+      let retryCount = 0;
+      function triggerWorkspaceRender() {
+        if (typeof renderCurrentWorkspace === 'function') {
+          try {
+            renderCurrentWorkspace();
+          } catch (e) {
+            console.error('renderCurrentWorkspace failed:', e);
+          }
+        } else if (retryCount < 20) {
+          retryCount++;
+          setTimeout(triggerWorkspaceRender, 50);
         }
       }
+      triggerWorkspaceRender();
+
       if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
