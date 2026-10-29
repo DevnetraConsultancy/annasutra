@@ -13,7 +13,7 @@ AGENTS.md                  rules the agent must follow (copy in .agent/rules/)
 .agent/rules/              workspace rules
 .agent/workflows/          /plan-phase, /implement-phase, /write-tests, /security-review, /release-checklist
 docs/Core/annasutra_entity_console_architecture.md   the ONLY spec under docs/ (Gold Standard, locked)
-db/schema.sql              PostgreSQL schema (loaded and constraint-tested on PostgreSQL 16)
+db/schema_mysql.sql        Aiven Cloud MySQL 8.0+ schema (InnoDB, utf8mb4, append-only triggers & constraints)
 api/openapi.yaml           API contract, 35 paths (validated as OpenAPI 3.0.3)
 assets/diagrams/           12 diagrams as SVG and PNG
 tools/gen_diagrams.py      regenerates the diagrams
@@ -39,6 +39,6 @@ tools/gen_openapi.py       regenerates api/openapi.yaml
 
 ## What was and was not checked
 
-Checked while preparing this package: the SQL schema loads and its key constraints behave as designed on PostgreSQL 16; the OpenAPI file validates; the diagrams render. Researched on 11 October 2026: DPDP timeline, CERT-In directions, OWASP ASVS version, ISO 22005 edition, Flutter passkey platform minimums, Antigravity settings. **Not checked:** GS1, FSSAI, APEDA and e-NAM details, store requirements, any code (none exists yet). Items marked [verify] must be confirmed against official sources.
+Checked while preparing this package: the MySQL 8.0+ SQL schema (`db/schema_mysql.sql`) loads and its key constraints behave as designed on Aiven Cloud MySQL 8.0+; the OpenAPI file validates; the diagrams render. Researched on 11 October 2026: DPDP timeline, CERT-In directions, OWASP ASVS version, ISO 22005 edition, Flutter passkey platform minimums, Antigravity settings. **Not checked:** GS1, FSSAI, APEDA and e-NAM details, store requirements, any code (none exists yet). Items marked [verify] must be confirmed against official sources.
 
 No software is flawless. This design reduces risk and makes failures visible. It cannot prove what is physically inside a package.

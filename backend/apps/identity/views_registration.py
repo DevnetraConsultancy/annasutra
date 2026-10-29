@@ -1,4 +1,4 @@
-"""Registration & Profile API views adhering to AnnaSutra_Registration_Handover.md."""
+"""Registration & Profile API views adhering to AnnaSutra Entity Console Architecture."""
 
 import hashlib
 import json
@@ -20,6 +20,7 @@ from rest_framework.views import APIView
 
 from apps.labels.models import QrBlock, QrLabel
 from .models import (
+    AppUser,
     EntityConsentRecord,
     EntityDeletionRequest,
     EntityDocument,
@@ -33,6 +34,7 @@ from .models import (
 )
 from .services.crypto import CryptoService
 from .services.entity_allocation import get_or_mint_farmer_uid
+from .views import ALL_ENTITY_ROLES, SINGLE_ADMIN_EMAIL, build_portal_registrations_for_user
 
 PAN_REGEX = re.compile(r"^[A-Z]{5}[0-9]{4}[A-Z]{1}$")
 PIN_REGEX = re.compile(r"^[0-9]{6}$")
@@ -40,27 +42,58 @@ IFSC_REGEX = re.compile(r"^[A-Z]{4}0[A-Z0-9]{6}$")
 AADHAAR_LAST4_REGEX = re.compile(r"^[0-9]{4}$")
 
 MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+VALID_ROLES = set(ALL_ENTITY_ROLES)
 
 
-def _get_entity_profile_for_user(user, auto_create=False, initial_role="PRODUCER"):
-    """Fetch EntityProfile bound to user, optionally creating a DRAFT."""
-    profile = EntityProfile.objects.filter(user_id=user.user_id).first()
-    if not profile:
-        # Check if an existing profile was previously created for this phone
-        profile = EntityProfile.objects.filter(phone_e164=user.phone_e164).first()
-        if profile and profile.user_id != user.user_id:
-            profile.user_id = user.user_id
-            profile.save(update_fields=["user_id"])
+def _resolve_requested_role(request, fallback=None):
+    """Extract target entity role from X-Entity-Role header, query param, or request body."""
+    if not request:
+        return fallback if fallback in VALID_ROLES else None
+    header_role = (request.headers.get("X-Entity-Role") or "").strip().upper()
+    if header_role in VALID_ROLES:
+        return header_role
+    query_role = (request.query_params.get("role") or "").strip().upper() if hasattr(request, "query_params") else ""
+    if query_role in VALID_ROLES:
+        return query_role
+    if hasattr(request, "data") and isinstance(request.data, dict):
+        body_role = str(request.data.get("role") or "").strip().upper()
+        if body_role in VALID_ROLES:
+            return body_role
+    return fallback if fallback in VALID_ROLES else None
+
+
+def _get_entity_profile_for_user(user, auto_create=False, initial_role=None, request=None):
+    """Fetch EntityProfile bound to user (and optional specific role), optionally creating a DRAFT."""
+    target_role = _resolve_requested_role(request, fallback=initial_role)
+
+    if target_role:
+        profile = EntityProfile.objects.filter(user_id=user.user_id, role=target_role).first()
+        if not profile and user.phone_e164:
+            profile = EntityProfile.objects.filter(phone_e164=user.phone_e164, role=target_role).first()
+            if profile and profile.user_id != user.user_id:
+                profile.user_id = user.user_id
+                profile.save(update_fields=["user_id"])
+    else:
+        profile = EntityProfile.objects.filter(user_id=user.user_id).order_by("-verified_at", "-updated_at").first()
+        if not profile and user.phone_e164:
+            profile = EntityProfile.objects.filter(phone_e164=user.phone_e164).order_by("-verified_at", "-updated_at").first()
+            if profile and profile.user_id != user.user_id:
+                profile.user_id = user.user_id
+                profile.save(update_fields=["user_id"])
 
     if not profile and auto_create:
-        role = getattr(user, "role", initial_role) or initial_role
+        role_to_create = target_role or (getattr(user, "role", None) if getattr(user, "role", None) in VALID_ROLES else None) or initial_role or "PRODUCER"
+        if role_to_create not in VALID_ROLES:
+            role_to_create = "PRODUCER"
+        sibling = EntityProfile.objects.filter(user_id=user.user_id).first()
         profile = EntityProfile.objects.create(
             entity_id=uuid.uuid4(),
             user_id=user.user_id,
-            role=role if role in dict(EntityProfile.ROLE_CHOICES) else "PRODUCER",
-            phone_e164=user.phone_e164,
-            first_name="",
-            last_name="",
+            role=role_to_create,
+            phone_e164=user.phone_e164 or (sibling.phone_e164 if sibling else None),
+            email=user.email or (sibling.email if sibling else None),
+            first_name=sibling.first_name if sibling else "",
+            last_name=sibling.last_name if sibling else "",
             organisation_name="",
             village_town="",
             district="",
@@ -80,6 +113,7 @@ def _serialize_profile(profile):
     role_details = EntityRoleDetails.objects.filter(entity=profile).first()
     plots = EntityPlot.objects.filter(entity=profile)
     consent = EntityConsentRecord.objects.filter(entity=profile).order_by("-given_at").first()
+    latest_review = VerificationReview.objects.filter(entity=profile).order_by("-created_at").first()
 
     sensitive_masked = None
     if sensitive:
@@ -97,20 +131,24 @@ def _serialize_profile(profile):
         }
 
     farmer_uid = get_or_mint_farmer_uid(profile) if profile.status == "VERIFIED" else None
-    role_details = EntityRoleDetails.objects.filter(entity=profile).first()
+    user_obj = AppUser.objects.filter(user_id=profile.user_id).first()
+    email_val = (profile.email or (user_obj.email if user_obj else "") or "").strip().lower() or None
 
     return {
         "entity_id": str(profile.entity_id),
+        "application_ref": f"APP-{str(profile.entity_id)[:8].upper()}",
         "user_id": str(profile.user_id),
         "role": profile.role,
         "entity_code": profile.entity_code,
         "farmer_uid": farmer_uid,
+        "role_uid": farmer_uid,
         "first_name": profile.first_name,
         "last_name": profile.last_name,
         "organisation_name": profile.organisation_name,
         "gender": profile.gender,
         "phone_e164": profile.phone_e164,
-        "email": profile.email,
+        "email": email_val,
+        "is_admin": email_val == SINGLE_ADMIN_EMAIL,
         "total_land_acres": float(profile.total_land_acres) if profile.total_land_acres else None,
         "address_line1": profile.address_line1,
         "address_line2": profile.address_line2,
@@ -121,6 +159,7 @@ def _serialize_profile(profile):
         "photo_object_key": profile.photo_object_key,
         "photo_url": f"/media/{profile.photo_object_key}" if profile.photo_object_key else None,
         "status": profile.status,
+        "admin_remark": latest_review.reason if latest_review and latest_review.reason else None,
         "version": profile.version,
         "submitted_at": profile.submitted_at.isoformat() if profile.submitted_at else None,
         "verified_at": profile.verified_at.isoformat() if profile.verified_at else None,
@@ -137,35 +176,96 @@ def _serialize_profile(profile):
     }
 
 
-class MyProfileView(APIView):
-    """Retrieve or save draft profile for current authenticated entity."""
+class MyRegistrationsPortalView(APIView):
+    """GET / POST /api/v1/me/registrations
+    Decision 31 & 35: Multi-Registration per Gmail & Login Status Portal.
+    - GET returns all 6 entity roles with the user's current registration status, Application Ref or Role ID,
+      Admin remark, and approved_roles list for the top-bar role switcher.
+    - POST creates or opens a role registration for the requested role (max 1 per role per Gmail).
+    """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
-        if not profile:
-            profile = EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first()
-            if profile and profile.user_id != request.user.user_id:
-                profile.user_id = request.user.user_id
-                profile.save(update_fields=["user_id"])
+        portal = build_portal_registrations_for_user(request.user)
+        email_val = (request.user.email or "").strip().lower()
+        if not email_val:
+            first_prof = EntityProfile.objects.filter(user_id=request.user.user_id).exclude(email__isnull=True).exclude(email="").first()
+            if first_prof:
+                email_val = first_prof.email.strip().lower()
+        return Response({
+            "user_id": str(request.user.user_id),
+            "email": email_val or None,
+            "phone_e164": request.user.phone_e164,
+            "is_admin": email_val == SINGLE_ADMIN_EMAIL,
+            "registrations": portal["registrations"],
+            "approved_roles": portal["approved_roles"],
+        }, status=status.HTTP_200_OK)
 
+    def post(self, request):
+        role = str(request.data.get("role") or "PRODUCER").strip().upper()
+        if role not in VALID_ROLES:
+            raise exceptions.ValidationError({"detail": f"Invalid role '{role}'.", "code": "INVALID_ROLE"})
+
+        existing = EntityProfile.objects.filter(user_id=request.user.user_id, role=role).first()
+        if existing:
+            portal = build_portal_registrations_for_user(request.user)
+            return Response({
+                "already_registered": existing.status != "DRAFT",
+                "status": existing.status,
+                "profile": _serialize_profile(existing),
+                "registrations": portal["registrations"],
+                "approved_roles": portal["approved_roles"],
+            }, status=status.HTTP_200_OK)
+
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, initial_role=role, request=request)
+        portal = build_portal_registrations_for_user(request.user)
+        return Response({
+            "already_registered": False,
+            "status": profile.status,
+            "profile": _serialize_profile(profile),
+            "registrations": portal["registrations"],
+            "approved_roles": portal["approved_roles"],
+        }, status=status.HTTP_201_CREATED)
+
+
+class MyProfileView(APIView):
+    """Retrieve or save draft/self-editable profile for current authenticated entity."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
+        portal = build_portal_registrations_for_user(request.user)
         if not profile:
+            email_val = (request.user.email or "").strip().lower() or None
             return Response(
                 {
                     "status": "NEW",
-                    "role": getattr(request.user, "role", "PRODUCER"),
+                    "role": _resolve_requested_role(request, fallback=getattr(request.user, "role", "PRODUCER")) or "PRODUCER",
                     "phone_e164": request.user.phone_e164,
+                    "email": email_val,
+                    "is_admin": email_val == SINGLE_ADMIN_EMAIL,
                     "farmer_uid": get_or_mint_farmer_uid(request.user),
                     "profile": None,
+                    "registrations": portal["registrations"],
+                    "approved_roles": portal["approved_roles"],
                 },
                 status=status.HTTP_200_OK,
             )
-        return Response(_serialize_profile(profile), status=status.HTTP_200_OK)
+        data = _serialize_profile(profile)
+        data["registrations"] = portal["registrations"]
+        data["approved_roles"] = portal["approved_roles"]
+        return Response(data, status=status.HTTP_200_OK)
 
     def put(self, request):
         with transaction.atomic():
-            profile = _get_entity_profile_for_user(request.user, auto_create=True, initial_role=request.data.get("role", "PRODUCER"))
+            profile = _get_entity_profile_for_user(
+                request.user,
+                auto_create=True,
+                initial_role=request.data.get("role", "PRODUCER"),
+                request=request,
+            )
 
             if profile.status in ("SUBMITTED", "VERIFIED") and not request.data.get("override_lock"):
                 raise exceptions.ValidationError(
@@ -191,12 +291,11 @@ class MyProfileView(APIView):
             before_bytes = json.dumps(_serialize_profile(profile), sort_keys=True).encode("utf-8")
             before_hash = hashlib.sha256(before_bytes).digest()
 
-            # Update mutable fields (partial save permitted for DRAFT)
+            # Update mutable fields (Primary Gmail is frozen once set on AppUser/EntityProfile)
             updatable_fields = [
                 "first_name",
                 "last_name",
                 "organisation_name",
-                "email",
                 "address_line1",
                 "address_line2",
                 "village_town",
@@ -207,6 +306,34 @@ class MyProfileView(APIView):
                 if field in request.data:
                     val = request.data[field]
                     setattr(profile, field, str(val).strip() if val is not None else "")
+
+            # Primary Gmail is immutable once set; only set if profile.email was empty
+            if "email" in request.data and request.data["email"]:
+                incoming_email = str(request.data["email"]).strip().lower()
+                primary_email = (request.user.email or profile.email or "").strip().lower()
+                if not primary_email:
+                    profile.email = incoming_email
+
+            # Adding a first mobile number is self-editable; changing an already verified mobile requires Admin Change Request
+            raw_phone = request.data.get("phone_e164") or request.data.get("phone")
+            if raw_phone:
+                digits = re.sub(r"\D", "", str(raw_phone))
+                norm_phone = f"+91{digits}" if len(digits) == 10 else (f"+{digits}" if len(digits) >= 11 else "")
+                if norm_phone:
+                    if not profile.phone_e164:
+                        profile.phone_e164 = norm_phone
+                        if not request.user.phone_e164 and not AppUser.objects.filter(phone_e164=norm_phone).exclude(user_id=request.user.user_id).exists():
+                            request.user.phone_e164 = norm_phone
+                            request.user.save(update_fields=["phone_e164"])
+                    elif profile.phone_e164 != norm_phone and profile.status == "VERIFIED":
+                        raise exceptions.ValidationError(
+                            {
+                                "detail": "Verified mobile number is locked. Please submit an Admin Change Request to update your mobile number.",
+                                "code": "MOBILE_LOCKED_CHANGE_REQUEST_REQUIRED",
+                            }
+                        )
+                    elif profile.status in ("DRAFT", "NEEDS_CHANGES", "CHANGES_REQUESTED"):
+                        profile.phone_e164 = norm_phone
 
             if "gender" in request.data:
                 raw_gender = str(request.data.get("gender") or "").strip().upper()
@@ -241,7 +368,9 @@ class MyProfileView(APIView):
                 profile.photo_object_key = str(request.data["photo_object_key"]).strip()
 
             if "role" in request.data and request.data["role"] in dict(EntityProfile.ROLE_CHOICES):
-                profile.role = request.data["role"]
+                new_role = request.data["role"]
+                if profile.role != new_role and not EntityProfile.objects.filter(user_id=request.user.user_id, role=new_role).exclude(entity_id=profile.entity_id).exists():
+                    profile.role = new_role
 
             profile.version += 1
             profile.save()
@@ -283,12 +412,12 @@ class MyProfileView(APIView):
 
 
 class SubmitProfileView(APIView):
-    """Perform rigorous validation and transition profile state from DRAFT to SUBMITTED."""
+    """Perform rigorous validation and transition profile state from DRAFT/NEEDS_CHANGES to SUBMITTED."""
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         if not profile:
             raise exceptions.NotFound({"detail": "Profile does not exist. Please create a draft first.", "code": "PROFILE_NOT_FOUND"})
 
@@ -386,6 +515,7 @@ class SubmitProfileView(APIView):
         return Response(
             {
                 "status": "SUBMITTED",
+                "application_ref": f"APP-{str(profile.entity_id)[:8].upper()}",
                 "message": "Profile submitted successfully for verification. Your application is under review.",
                 "profile": _serialize_profile(profile),
             },
@@ -399,7 +529,7 @@ class MySensitiveView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         if not profile:
             return Response({"sensitive": None}, status=status.HTTP_200_OK)
 
@@ -433,7 +563,7 @@ class MySensitiveView(APIView):
         )
 
     def put(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         if profile.status in ("SUBMITTED", "VERIFIED"):
             raise exceptions.ValidationError(
                 {"detail": "KYC details are locked. Administrative review is required for updates.", "code": "PROFILE_LOCKED"}
@@ -497,7 +627,8 @@ class MySensitiveView(APIView):
         if upi:
             upi_enc = CryptoService.encrypt(str(upi).strip(), entity_id=entity_id_str)
 
-        if pan_hmac and EntitySensitive.objects.filter(pan_hmac=pan_hmac).exclude(entity=profile).exists():
+        # Allow same user across different roles to share their own PAN, but block different users from using same PAN
+        if pan_hmac and EntitySensitive.objects.filter(pan_hmac=pan_hmac).exclude(entity__user_id=request.user.user_id).exists():
             raise exceptions.ValidationError(
                 {"detail": "This PAN is already registered with another entity.", "code": "DUPLICATE_PAN"}
             )
@@ -553,7 +684,7 @@ class MyPlotsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         if not profile:
             raise exceptions.NotFound({"detail": "Profile not found.", "code": "NOT_FOUND"})
 
@@ -581,7 +712,7 @@ class MyPlotsView(APIView):
         return Response({"plots": results}, status=status.HTTP_200_OK)
 
     def put(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         if profile.status in ("SUBMITTED", "VERIFIED") and not request.data.get("override_lock"):
             raise exceptions.ValidationError(
                 {"detail": f"Profile in {profile.status} status is locked from plot modifications.", "code": "PROFILE_LOCKED"}
@@ -676,7 +807,7 @@ class UploadPhotoView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         photo_file = request.FILES.get("photo")
 
         if not photo_file:
@@ -695,7 +826,7 @@ class UploadPhotoView(APIView):
             from PIL import ImageOps
 
             image = Image.open(photo_file)
-            image.verify()  # Verify integrity
+            image.verify()
             photo_file.seek(0)
             image = Image.open(photo_file)
             try:
@@ -703,7 +834,6 @@ class UploadPhotoView(APIView):
             except Exception:
                 pass
 
-            # Convert to RGB while stripping EXIF metadata into a fresh canvas
             if image.mode in ("RGBA", "LA") or (image.mode == "P" and "transparency" in image.info):
                 rgba_img = image.convert("RGBA")
                 clean_image = Image.new("RGB", rgba_img.size, (255, 255, 255))
@@ -713,7 +843,6 @@ class UploadPhotoView(APIView):
                 clean_image = Image.new("RGB", rgb_conv.size)
                 clean_image.paste(rgb_conv)
 
-            # Resize if dimensions exceed 1024x1024
             max_dim = 1024
             if clean_image.width > max_dim or clean_image.height > max_dim:
                 clean_image.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
@@ -758,7 +887,7 @@ class UploadDocumentView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         doc_file = request.FILES.get("document")
         doc_type = str(request.data.get("doc_type", "OTHER") or "OTHER").strip().upper()
 
@@ -778,7 +907,6 @@ class UploadDocumentView(APIView):
         file_bytes = doc_file.read()
         sha256_hash = hashlib.sha256(file_bytes).digest()
 
-        # Save to disk securely
         ext = Path(doc_file.name).suffix.lower()
         if ext not in (".jpg", ".jpeg", ".png", ".pdf"):
             ext = ".bin"
@@ -836,7 +964,7 @@ class RecordConsentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         notice_version = request.data.get("notice_version", "v1.0-2026")
         language = request.data.get("language", "en")
         purposes = request.data.get("purposes", "DPDP_PURPOSE_LIMITATION,AADHAAR_VOLUNTARY_LAST4,TRACEABILITY_PILOT_TERMS")
@@ -933,7 +1061,7 @@ class MyQrBlockSheetPdfView(APIView):
         if not serials:
             raise exceptions.ValidationError({"detail": "No serials found in this block.", "code": "EMPTY_BLOCK"})
 
-        profile = EntityProfile.objects.filter(user_id=request.user.user_id).first()
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         entity_code = get_or_mint_farmer_uid(profile) if profile else user_org.name[:16]
         org_name = profile.organisation_name if profile and profile.organisation_name else user_org.name
 
@@ -954,20 +1082,18 @@ class MyQrBlockSheetPdfView(APIView):
 class MyRoleStatsView(APIView):
     """GET /api/v1/me/stats
     Return real database-computed operational statistics for the authenticated entity conforming to Section 10.
-    Zero fabricated metrics, zero placeholder data.
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         user_org = getattr(request.user, "org", None)
 
         from apps.lots.models import Lot
         from apps.inventory.models import LotBalance
         from apps.custody.models import Handover
 
-        # Real DB queries
         lots_count = 0
         total_kg = 0.0
         pending_handovers = 0
@@ -1026,13 +1152,12 @@ class MyRoleStatsView(APIView):
 class MySeasonAllocationsView(APIView):
     """GET / POST / DELETE /api/v1/me/season-allocations
     Manage Season Crop Class Acreage Allocations across 10 agricultural domains.
-    Validates allocated acreage against verified total land parcel capacity.
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         allocations = role_details.details.get("season_allocations", [])
         total_allocated = sum(float(a.get("acres") or 0) for a in allocations)
@@ -1047,7 +1172,7 @@ class MySeasonAllocationsView(APIView):
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         allocations = role_details.details.setdefault("season_allocations", [])
 
@@ -1097,7 +1222,7 @@ class MySeasonAllocationsView(APIView):
         }, status=status.HTTP_201_CREATED)
 
     def delete(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         allocations = role_details.details.get("season_allocations", [])
 
@@ -1119,7 +1244,7 @@ class MyHarvestRecordsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         harvests = role_details.details.get("harvest_records", [])
 
@@ -1138,7 +1263,7 @@ class MyHarvestRecordsView(APIView):
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         harvests = role_details.details.setdefault("harvest_records", [])
 
@@ -1189,27 +1314,26 @@ class MyHarvestRecordsView(APIView):
 
 class MyChangeRequestsView(APIView):
     """GET / POST /api/v1/me/change-requests
-    Submit modification requests for Admin-locked profile attributes (Name, KYC, Land, Bank).
-    Self-editable fields (Email, Language, Alternate Phone, UPI) can be updated immediately.
+    Submit modification requests for Admin-locked profile attributes (KYC: PAN, Aadhaar, Bank, or changing verified mobile).
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         change_requests = role_details.details.get("change_requests", [])
         return Response({"change_requests": change_requests}, status=status.HTTP_200_OK)
 
     def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=True)
+        profile = _get_entity_profile_for_user(request.user, auto_create=True, request=request)
         role_details, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
         change_requests = role_details.details.setdefault("change_requests", [])
 
         data = request.data
-        field_group = str(data.get("field_group") or "PROFILE_UPDATE").strip().upper()
+        field_group = str(data.get("field_group") or "KYC_UPDATE").strip().upper()
         requested_changes = data.get("requested_changes") or {}
-        reason = str(data.get("reason") or "Farmer profile data update").strip()
+        reason = str(data.get("reason") or "KYC / Profile data update").strip()
 
         if not requested_changes or not isinstance(requested_changes, dict):
             raise exceptions.ValidationError({"detail": "requested_changes dictionary is required.", "code": "FIELD_REQUIRED"})
@@ -1220,6 +1344,7 @@ class MyChangeRequestsView(APIView):
             "farmer_uid": get_or_mint_farmer_uid(profile) if profile.status == "VERIFIED" else None,
             "farmer_name": f"{profile.first_name} {profile.last_name}".strip() or profile.organisation_name,
             "phone_e164": profile.phone_e164,
+            "email": profile.email or request.user.email,
             "field_group": field_group,
             "requested_changes": requested_changes,
             "reason": reason,
@@ -1240,448 +1365,238 @@ class MyChangeRequestsView(APIView):
 
 
 class MyProfileDeleteRequestView(APIView):
-
     """Handles entity profile deletion requests (Right to Erasure / Deactivation).
-
     Supports GET (pre-flight status and checks) and POST (OTP request or final submission).
-
+    Decision 30 & 35: Sends verification code to Gmail by default (and to verified mobile if on file).
     """
 
     permission_classes = [IsAuthenticated]
 
-
-
     def get(self, request):
-
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
-
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         del_req = None
-
         if profile:
-
             try:
-
                 del_req = EntityDeletionRequest.objects.filter(entity=profile, status="PENDING").first()
-
             except Exception:
-
                 del_req = None
 
-
-
         org = getattr(request.user, "org", None)
-
         in_transit_count = 0
-
         active_custody_count = 0
-
         blocking_reasons = []
 
-
-
         try:
-
             from apps.custody.models import Handover
-
             from apps.lots.models import Lot
 
-
-
             if org:
-
                 in_transit_count = Lot.objects.filter(
-
                     Q(custodian_org=org) | Q(created_by_org=org),
-
                     state__in=["IN_TRANSIT", "HANDOVER_REQUESTED", "DISPUTED"]
-
                 ).count()
-
                 open_handovers = Handover.objects.filter(from_org=org, state="INITIATED").count()
-
                 if open_handovers > 0:
-
                     in_transit_count += open_handovers
-
-
 
                 active_custody_count = Lot.objects.filter(custodian_org=org, state="IN_CUSTODY").count()
 
-
-
             if in_transit_count > 0:
-
                 blocking_reasons.append(
-
                     f"You have {in_transit_count} lot(s) currently in transit or pending handover. Complete or cancel open dispatches first."
-
                 )
-
-
 
             if profile and profile.role in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER") and active_custody_count > 0:
-
                 blocking_reasons.append(
-
                     f"You currently have {active_custody_count} active lot(s) in custody. All stock must be dispatched, closed, or marked sold out before account deletion."
-
                 )
-
         except Exception:
-
             pass
 
-
+        email_val = (profile.email if profile else None) or getattr(request.user, "email", None)
+        phone_val = (profile.phone_e164 if profile else None) or getattr(request.user, "phone_e164", "")
 
         return Response({
-
             "has_pending_request": del_req is not None,
-
             "entity_status": profile.status if profile else "NEW",
-
             "can_request_deletion": len(blocking_reasons) == 0,
-
             "blocking_reasons": blocking_reasons,
-
             "active_in_transit_count": in_transit_count,
-
             "active_custody_count": active_custody_count,
-
-            "registered_phone": profile.phone_e164 if profile else getattr(request.user, "phone_e164", ""),
-
+            "registered_phone": phone_val or "",
+            "registered_email": email_val or "",
             "pending_request": {
-
                 "request_id": str(del_req.request_id),
-
                 "reason": del_req.reason,
-
                 "reason_display": del_req.get_reason_display(),
-
                 "remarks": del_req.remarks,
-
                 "created_at": del_req.created_at.isoformat(),
-
                 "status": del_req.status,
-
             } if del_req else None,
-
         })
 
-
-
     def post(self, request):
-
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
-
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         user_role = getattr(request.user, "role", "OWNER")
-
         if user_role not in ("OWNER", "PRODUCER", "AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER", ""):
-
             raise exceptions.PermissionDenied({"detail": "Only the registered account owner can request account deletion.", "code": "OWNER_ONLY"})
 
-
-
         data = request.data or {}
-
         action = data.get("action")
-
-        phone_e164 = profile.phone_e164 if profile else getattr(request.user, "phone_e164", "")
-
-
+        phone_e164 = (profile.phone_e164 if profile else None) or getattr(request.user, "phone_e164", None)
+        email_addr = (profile.email if profile else None) or getattr(request.user, "email", None)
 
         if action == "request_otp":
-
             from .services.otp import OtpService
-
-            otp_res = OtpService.request_otp(phone_e164, language=data.get("language", "en"))
-
+            otp_res = OtpService.request_otp(
+                phone=phone_e164,
+                language=data.get("language", "en"),
+                email=email_addr,
+            )
+            dest_label = email_addr or (phone_e164[-4:].rjust(len(phone_e164), "*") if phone_e164 else "registered account")
             res_payload = {
-
                 "status": "OTP_SENT",
-
-                "message": f"Verification OTP sent to registered mobile {phone_e164[-4:].rjust(len(phone_e164), '*') if phone_e164 else 'on file'}.",
-
+                "channel": otp_res.get("channel", "GMAIL"),
+                "message": f"Verification code sent to {dest_label}.",
                 "expires_in": otp_res.get("expires_in", 300),
-
             }
-
             if "debug_code" in otp_res:
-
                 res_payload["debug_code"] = otp_res["debug_code"]
-
             return Response(res_payload, status=status.HTTP_202_ACCEPTED)
 
-
-
         # If user has no saved profile yet, delete/deactivate user directly
-
         if not profile:
-
             otp_code = str(data.get("otp_code", "")).strip()
-
             from .services.otp import OtpService
-
             otp_valid = False
-
             if (getattr(settings, "OTP_DEBUG", False) or getattr(settings, "DEBUG", False)) and otp_code in ("123456", data.get("debug_code")):
-
                 otp_valid = True
-
-            elif phone_e164 and otp_code:
-
-                otp_valid = OtpService.verify_otp(phone_e164, otp_code)
-
+            elif otp_code and (phone_e164 or email_addr):
+                otp_valid = OtpService.verify_otp(phone=phone_e164, code=otp_code, email=email_addr)
             elif not otp_code:
-
                 raise exceptions.ValidationError({"detail": "Verification code is required to delete account.", "code": "OTP_REQUIRED"})
 
-
-
             if not otp_valid:
-
                 raise exceptions.ValidationError({"detail": "Invalid or expired verification code.", "code": "INVALID_OTP"})
 
-
-
             user = request.user
-
             user.status = "DISABLED"
-
             user.save(update_fields=["status"])
-
             return Response({
-
                 "status": "DELETED",
-
                 "message": "Account successfully deleted.",
-
             }, status=status.HTTP_200_OK)
 
-
-
         reason = str(data.get("reason", "")).strip()
-
         remarks = str(data.get("remarks", "")).strip()
-
         otp_code = str(data.get("otp_code", "")).strip()
 
-
-
         valid_reasons = dict(EntityDeletionRequest.REASON_CHOICES)
-
         if not reason or reason not in valid_reasons:
-
             raise exceptions.ValidationError({"detail": f"Valid reason required. Choices: {list(valid_reasons.keys())}", "code": "INVALID_REASON"})
 
-
-
         if not otp_code:
-
             raise exceptions.ValidationError({"detail": "OTP code is required to authenticate deletion request.", "code": "OTP_REQUIRED"})
 
-
-
         from .services.otp import OtpService
-
         otp_valid = False
-
         if (getattr(settings, "OTP_DEBUG", False) or getattr(settings, "DEBUG", False)) and otp_code in ("123456", data.get("debug_code")):
-
             otp_valid = True
-
         else:
-
-            otp_valid = OtpService.verify_otp(profile.phone_e164, otp_code)
-
-
+            otp_valid = OtpService.verify_otp(phone=phone_e164, code=otp_code, email=email_addr)
 
         if not otp_valid:
-
             raise exceptions.ValidationError({"detail": "Invalid or expired OTP code.", "code": "INVALID_OTP"})
 
-
-
         org = getattr(request.user, "org", None)
-
         try:
-
             from apps.custody.models import Handover
-
             from apps.lots.models import Lot
 
-
-
             if org:
-
                 in_transit = Lot.objects.filter(
-
                     Q(custodian_org=org) | Q(created_by_org=org),
-
                     state__in=["IN_TRANSIT", "HANDOVER_REQUESTED", "DISPUTED"]
-
                 ).count()
-
                 open_handovers = Handover.objects.filter(from_org=org, state="INITIATED").count()
-
                 if (in_transit + open_handovers) > 0:
-
                     raise exceptions.ValidationError({
-
                         "detail": "Cannot submit account deletion request while lots are in transit. Complete or cancel open dispatches first.",
-
                         "code": "IN_TRANSIT_BLOCK"
-
                     })
 
-
-
                 if profile.role in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
-
                     active_stock = Lot.objects.filter(custodian_org=org, state="IN_CUSTODY").count()
-
                     if active_stock > 0:
-
                         raise exceptions.ValidationError({
-
                             "detail": f"You currently have {active_stock} active lot(s) in custody. All stock must be dispatched, closed, or marked sold out before account deletion.",
-
                             "code": "ACTIVE_STOCK_BLOCK"
-
                         })
-
         except exceptions.ValidationError:
-
             raise
-
         except Exception:
-
             pass
 
-
-
         del_req, _ = EntityDeletionRequest.objects.update_or_create(
-
             entity=profile,
-
             status="PENDING",
-
             defaults={
-
                 "requested_by_user_id": request.user.user_id,
-
                 "reason": reason,
-
                 "remarks": remarks,
-
                 "created_at": timezone.now(),
-
             }
-
         )
-
-
 
         profile.status = "DELETION_REQUESTED"
-
         profile.save(update_fields=["status", "updated_at"])
 
-
-
         VerificationReview.objects.create(
-
             entity=profile,
-
             reviewer_id=request.user.user_id,
-
             decision="DELETION_REQUESTED",
-
             reason=f"Account deletion requested by registered owner. Reason: {valid_reasons.get(reason)}. Remarks: {remarks}".strip(),
-
         )
 
-
-
         return Response({
-
             "status": "DELETION_REQUESTED",
-
             "request_id": str(del_req.request_id),
-
             "message": "Account deletion request submitted. Operations are now frozen pending administrative review.",
-
         }, status=status.HTTP_201_CREATED)
 
 
-
-
-
 class MyProfileDeleteRequestCancelView(APIView):
-
     """Allows an entity owner to withdraw/cancel a pending account deletion request."""
-
     permission_classes = [IsAuthenticated]
 
-
-
     def post(self, request):
-
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
-
+        profile = _get_entity_profile_for_user(request.user, auto_create=False, request=request)
         if not profile:
-
             return Response({"status": "CANCELLED", "message": "No pending deletion request found."})
 
-
-
         del_req = None
-
         try:
-
             del_req = EntityDeletionRequest.objects.filter(entity=profile, status="PENDING").first()
-
         except Exception:
-
             del_req = None
 
-
-
         if not del_req:
-
             return Response({"status": "CANCELLED", "message": "No pending account deletion request found."})
 
-
-
         del_req.status = "CANCELLED"
-
         del_req.save(update_fields=["status", "updated_at"])
 
-
-
         profile.status = "VERIFIED"
-
         profile.save(update_fields=["status", "updated_at"])
 
-
-
         VerificationReview.objects.create(
-
             entity=profile,
-
             reviewer_id=request.user.user_id,
-
             decision="RESTORED",
-
             reason="Account deletion request cancelled by entity owner.",
-
         )
 
-
-
         return Response({
-
             "status": "VERIFIED",
-
             "message": "Account deletion request successfully withdrawn. Normal operations restored.",
-
         }, status=status.HTTP_200_OK)
-

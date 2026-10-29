@@ -12,8 +12,13 @@ class JWTAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get("Authorization")
         entity_phone = (request.headers.get("X-Entity-Phone") or "").strip()
+        entity_email = (request.headers.get("X-Entity-Email") or "").strip().lower()
 
         if not auth_header:
+            if entity_email:
+                user = AppUser.objects.select_related("org").filter(email__iexact=entity_email, status="ACTIVE").first()
+                if user:
+                    return (user, None)
             if entity_phone:
                 user = AppUser.objects.select_related("org").filter(phone_e164=entity_phone, status="ACTIVE").first()
                 if user:
@@ -28,6 +33,10 @@ class JWTAuthentication(authentication.BaseAuthentication):
         try:
             payload = TokenService.decode_token(raw_token, expected_type="access")
         except Exception as e:
+            if entity_email:
+                user = AppUser.objects.select_related("org").filter(email__iexact=entity_email, status="ACTIVE").first()
+                if user:
+                    return (user, raw_token)
             if entity_phone:
                 user = AppUser.objects.select_related("org").filter(phone_e164=entity_phone, status="ACTIVE").first()
                 if user:

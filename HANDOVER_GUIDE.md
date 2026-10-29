@@ -51,7 +51,7 @@ Android and Flutter help: Google announced an Android command-line tool and open
 
 ```
 You are building AnnaSutra, a traceability app for Android and Web (one Flutter codebase) with a Django backend. Read AGENTS.md and every file
-in docs/Core/annasutra_entity_console_architecture.md, plus api/openapi.yaml and db/schema.sql.
+in docs/Core/annasutra_entity_console_architecture.md, plus api/openapi.yaml and db/schema_mysql.sql.
 Do not write code yet.
 Run /plan-phase for Phase 0 (see docs/Core/annasutra_entity_console_architecture.md). List every dependency
 with reason, size, licence and risk. List questions and anything you must verify.
@@ -66,7 +66,7 @@ Then approve or correct the plan, and run `/implement-phase` for Phase 0. Repeat
 Build AnnaSutra end to end in one continuous run, following the docs exactly.
 Targets: Flutter for Android and Web from ONE codebase, Django backend, tiny public page.
 Read AGENTS.md, docs/Core/annasutra_entity_console_architecture.md, plus api/openapi.yaml
-and db/schema.sql. Never invent endpoints, fields, standards or legal duties.
+and db/schema_mysql.sql. Never invent endpoints, fields, standards or legal duties.
 
 Work phase by phase (docs/Core/annasutra_entity_console_architecture.md). Each phase on its own branch, all tests green before the
 next phase starts. After each phase write reports/phase-N.md (what changed, what was

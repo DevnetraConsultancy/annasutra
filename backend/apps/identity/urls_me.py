@@ -3,6 +3,7 @@
 from django.urls import path
 from .views_registration import (
     MyProfileView,
+    MyRegistrationsPortalView,
     SubmitProfileView,
     MySensitiveView,
     MyPlotsView,
@@ -21,6 +22,8 @@ from .views_registration import (
 
 urlpatterns = [
     path("", MyProfileView.as_view(), name="me_root"),
+    path("registrations", MyRegistrationsPortalView.as_view(), name="me_registrations"),
+    path("registrations/", MyRegistrationsPortalView.as_view(), name="me_registrations_slash"),
     path("profile", MyProfileView.as_view(), name="me_profile"),
     path("profile/", MyProfileView.as_view(), name="me_profile_slash"),
     path("profile/submit", SubmitProfileView.as_view(), name="me_profile_submit"),

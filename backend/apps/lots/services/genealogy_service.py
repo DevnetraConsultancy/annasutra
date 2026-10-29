@@ -23,7 +23,7 @@ from apps.publicview.services import refresh_public_view
 
 
 def to_db_uuid(val):
-    """Formats UUID according to database engine (hex for MySQL/SQLite, native UUID for PostgreSQL)."""
+    """Formats UUID according to database engine (hex string for Aiven Cloud MySQL 8.0+ and SQLite)."""
     if val is None:
         return None
     if not connection.features.has_native_uuid_field:

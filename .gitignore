@@ -2,8 +2,6 @@
 .env
 .env.*
 !.env.example
-.neon
-.neon/
 *.pem
 *.key
 *.keystore

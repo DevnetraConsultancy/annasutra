@@ -870,6 +870,31 @@ erDiagram
 
 **Tamper evidence:** each event stores the hash of the previous event for the same lot (a hash chain). Every day, a single root hash of all events is calculated and stored internally.
 
+### 10.1 Aiven Cloud MySQL 8.0+ Physical Schema & Technology Stack (Approved)
+
+- **Primary Database Engine:** **Aiven Cloud MySQL 8.0+** (`InnoDB`, `utf8mb4_unicode_ci`) connected via pure-Python `PyMySQL` (`DATABASE_URL=mysql://...`). All legacy PostgreSQL / PLpgSQL files have been permanently retired.
+- **Physical Schema File Location:** [`db/schema_mysql.sql`](file:///c:/Users/Dr_Nee/Videos/@CDAC/Traciability/annasutra/db/schema_mysql.sql) and [`backend/apps/organisations/migrations/0001_initial.py`](file:///c:/Users/Dr_Nee/Videos/@CDAC/Traciability/annasutra/backend/apps/organisations/migrations/0001_initial.py).
+- **20 Core MySQL 8.0+ Tables & Kernel Constraints:**
+  1. **Identity & Access:** `organisation` (with `CHECK` on `org_type` and `verification`), `app_user` (`email` Gmail primary identity, optional `phone_e164`), `device` (`ES256` public key), `passkey_credential`, `consent_record`, `partner_link`.
+  2. **Land & Origin:** `facility`, `farmer_profile`, `plot` (`DECIMAL(8,3)` area with `CHECK (area_ha > 0)`, `lat`/`lon` coordinates, GeoJSON boundary).
+  3. **Lots, Labels & Lineage Graph (DAG):** `product`, `lot` (`head_seq`, `head_hash`, custodian & transit checks), `qr_block`, `qr_label` (`ISSUED`, `BOUND`, `VOID`), `lot_edge` (`parent_lot`, `child_lot`, `qty_kg` with `CHECK (parent_lot <> child_lot)`).
+  4. **Kernel-Level Mass Balance (`lot_balance`):** Enforces the `on_hand_nonnegative` check constraint at the MySQL engine level:
+     `CHECK (qty_in_kg + 0.001 >= qty_out_transferred_kg + qty_split_out_kg + qty_rejected_kg + qty_waste_kg + qty_sold_kg + qty_variance_kg)`
+  5. **Immutable Hash-Chained Event Ledger (`trace_event`):** Stores `lot_seq`, `payload` (`JSON`), `prev_hash` (`VARBINARY(255)`), `event_hash` (`VARBINARY(255)`), and `device_signature` (`LONGBLOB`). Protected by MySQL `BEFORE UPDATE` and `BEFORE DELETE` triggers (`trace_event_no_update`, `trace_event_no_delete`) that fire `SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'trace_event is append-only'`.
+  6. **Custody Handover (`handover`):** Uses a MySQL 8.0 virtual generated column `pending_lot_id VARCHAR(36) GENERATED ALWAYS AS (IF(state = 'PENDING', lot_id, NULL)) VIRTUAL` with `UNIQUE KEY one_open_handover (pending_lot_id)` so a lot can never have two open handovers at the same time.
+  7. **Quality, Public View, Anomalies & Audit:** `inspection`, `evidence`, `lab_certificate`, `scan_log`, `alert`, `recall`, `public_view`, `audit_access_log`, `hash_anchor`.
+
+- **Complete Technology Stack (Web & Android):**
+
+| Layer | Web Application & Backend Stack | Android Application Stack (Universal APK) |
+|---|---|---|
+| **Runtime & Framework** | Python 3.12, Django 5.1, Django REST Framework 3.15 | 100% Pure Native Flutter 3.24+ / Dart 3.5+ (Material 3, Zero-WebView) |
+| **Frontend / State** | Server-rendered HTML5, Vanilla ES6 JS, 0ms `localStorage` cache hydration, Lucide SVG icons | `flutter_riverpod` state management, `go_router` declarative navigation |
+| **Database & Storage** | **Aiven Cloud MySQL 8.0+** (`InnoDB`, `PyMySQL`), SQLite in-memory for fast unit tests | `drift` + `sqlcipher` encrypted offline outbox, `flutter_secure_storage` (Android Keystore) |
+| **Auth & Security** | Google OAuth 2.0 (Gmail PK), `PyJWT`, `cryptography`, `webauthn`, OWASP ASVS 5.0 middleware | Native Google Sign-In (`google_sign_in`), `local_auth` biometric unlock, OWASP MASVS |
+| **Hardware & Media** | Browser MediaDevices camera capture, HTML5 Geolocation, thermal/A4 print CSS | `mobile_scanner` (CameraX + Google ML Kit), Android Print framework + Bluetooth thermal |
+| **Deployment & CI** | Vercel Serverless + Docker (`mysql:8.0`), GitHub Actions CI running on `mysql:8.0` | Universal multi-ABI fat binary (`AnnaSutra_latest.apk`: `arm64-v8a`, `armeabi-v7a`, `x86_64`) |
+
 ---
 
 ## 11. Premium UI System (no emojis)

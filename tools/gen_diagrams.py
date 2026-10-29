@@ -172,7 +172,7 @@ def d_architecture():
     s.box(510, 230, 220, 56, "Public page", "Reads summary only", "purple")
     s.arrow([(250, 258), (266, 258)])
     s.box(30, 330, 220, 56, "File storage", "Photos, certificates", "teal")
-    s.box(270, 330, 220, 56, "PostgreSQL", "History, never edited", "teal")
+    s.box(270, 330, 220, 56, "Aiven MySQL 8.0", "History, never edited", "teal")
     s.arrow([(310, 286), (310, 308), (140, 308), (140, 326)])
     s.arrow([(380, 286), (380, 326)])
     s.arrow([(620, 286), (620, 358), (494, 358)])

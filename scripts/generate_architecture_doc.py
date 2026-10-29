@@ -530,7 +530,7 @@ def build_document():
     doc.add_paragraph(
         "A critical vulnerability in traditional supply-chain software is 'inventory phantom creation' - where intermediaries "
         "artificially inflate quantities or sell more certified organic produce than they legitimately received. "
-        "AnnaSutra models mass balance at the database kernel level through the LotBalance table and PostgreSQL check constraints:"
+        "AnnaSutra models mass balance at the database kernel level through the LotBalance table and Aiven MySQL 8.0 check constraints:"
     )
 
     doc.add_paragraph(
@@ -665,7 +665,7 @@ def build_document():
     )
     doc.add_paragraph(
         "The software has undergone full regression testing (89 out of 89 tests passing) and is officially live in production at: "
-        "https://annasutra.vercel.app with verified real-time database connectivity to the sovereign Aiven PostgreSQL ledger."
+        "https://annasutra.vercel.app with verified real-time database connectivity to the sovereign Aiven Aiven MySQL 8.0 ledger."
     )
 
     # Save to both destinations

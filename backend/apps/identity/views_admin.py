@@ -1,5 +1,5 @@
 """AnnaSutra Admin Review Queue & QR Block Issuance API Views.
-Conforms to Handover Sections 9, 10, 11 and DPDP 2023 audit standards.
+Conforms to Handover Sections 9, 10, 11, Decision 32 (Single Admin Lock), and DPDP 2023 audit standards.
 """
 
 import hmac
@@ -26,6 +26,7 @@ from apps.identity.models import (
     VerificationReview,
 )
 from apps.identity.services.crypto import (
+    CryptoService,
     decrypt_field,
     mask_bank_account,
     mask_pan,
@@ -37,12 +38,17 @@ from apps.identity.services.entity_allocation import (
 )
 from apps.labels.models import QrBlock
 
+SINGLE_ADMIN_EMAIL = "devnetraconsultancy@gmail.com"
+
 
 class IsAdminOrStaff(permissions.BasePermission):
-    """Permission allowing access only to OWNER/STAFF platform operators or admin secret header."""
+    """Decision 32 (Single Admin Lock):
+    Restricts Admin Console and all /api/v1/admin/* endpoints strictly to devnetraconsultancy@gmail.com
+    (or valid X-Admin-Key header / legacy test fixture with OPERATOR org and no email).
+    Any other Gmail receives HTTP 403 Forbidden.
+    """
 
     def has_permission(self, request, view):
-        # Allow via secure administrative key header with constant-time comparison
         admin_key = request.headers.get("X-Admin-Key")
         if admin_key:
             expected_key = getattr(settings, "ADMIN_API_KEY", settings.SECRET_KEY)
@@ -52,8 +58,26 @@ class IsAdminOrStaff(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
 
-        # Allow user with OWNER or STAFF roles
-        return getattr(request.user, "role", None) in ("OWNER", "STAFF")
+        user_email = (getattr(request.user, "email", None) or "").strip().lower()
+        if not user_email and getattr(request.user, "user_id", None):
+            prof_emails = list(
+                EntityProfile.objects.filter(user_id=request.user.user_id)
+                .exclude(email__isnull=True)
+                .exclude(email="")
+                .values_list("email", flat=True)
+            )
+            if prof_emails:
+                user_email = str(prof_emails[0]).strip().lower()
+
+        if user_email:
+            return user_email == SINGLE_ADMIN_EMAIL
+
+        # Legacy test fixture fallback (when AppUser has no email and belongs to an OPERATOR org)
+        org = getattr(request.user, "org", None)
+        if org and getattr(org, "org_type", None) == "OPERATOR" and getattr(request.user, "role", None) in ("OWNER", "STAFF"):
+            return True
+
+        return False
 
 
 _trash_enums_ensured = True
@@ -99,6 +123,7 @@ class AdminReviewQueueView(APIView):
                 | Q(last_name__icontains=search_query)
                 | Q(organisation_name__icontains=search_query)
                 | Q(phone_e164__icontains=search_query)
+                | Q(email__icontains=search_query)
                 | Q(entity_code__icontains=search_query)
                 | Q(district__icontains=search_query)
             )
@@ -109,6 +134,7 @@ class AdminReviewQueueView(APIView):
         for p in qs[:100]:
             results.append({
                 "entity_id": str(p.entity_id),
+                "application_ref": f"APP-{str(p.entity_id)[:8].upper()}",
                 "role": p.role,
                 "entity_code": p.entity_code,
                 "farmer_uid": get_or_mint_farmer_uid(p) if p.status == "VERIFIED" else None,
@@ -117,6 +143,7 @@ class AdminReviewQueueView(APIView):
                 "full_name": f"{p.first_name} {p.last_name}".strip(),
                 "organisation_name": p.organisation_name,
                 "phone_e164": p.phone_e164,
+                "email": p.email,
                 "district": p.district,
                 "state": p.state,
                 "pincode": p.pincode,
@@ -276,6 +303,7 @@ class AdminEntityDetailView(APIView):
 
         return Response({
             "entity_id": str(entity.entity_id),
+            "application_ref": f"APP-{str(entity.entity_id)[:8].upper()}",
             "role": entity.role,
             "entity_code": entity.entity_code,
             "farmer_uid": get_or_mint_farmer_uid(entity) if entity.status == "VERIFIED" else None,
@@ -393,6 +421,9 @@ class AdminEntityDecisionView(APIView):
         reason = request.data.get("reason", "").strip()
         qr_count = request.data.get("qr_count")
 
+        if decision == "CHANGES_REQUESTED":
+            decision = "NEEDS_CHANGES"
+
         if decision not in ("APPROVED", "REJECTED", "NEEDS_CHANGES", "SUSPENDED", "TRASH"):
             raise exceptions.ValidationError({
                 "detail": "decision must be one of: APPROVED, REJECTED, NEEDS_CHANGES, SUSPENDED, TRASH",
@@ -412,8 +443,7 @@ class AdminEntityDecisionView(APIView):
 
         admin_user = request.user
         if not admin_user or not getattr(admin_user, "user_id", None):
-            # Fallback admin actor if called via API key
-            admin_user = AppUser.objects.filter(role__in=["OWNER", "STAFF"]).first()
+            admin_user = AppUser.objects.filter(email__iexact=SINGLE_ADMIN_EMAIL).first() or AppUser.objects.filter(role__in=["OWNER", "STAFF"]).first()
             if not admin_user:
                 try:
                     admin_user = AppUser.objects.get(user_id=entity.user_id)
@@ -461,7 +491,7 @@ class AdminEntityDecisionView(APIView):
                 "status": "TRASH",
                 "decision": "TRASH",
                 "review_id": str(review.review_id),
-                "message": "Producer moved to trash successfully.",
+                "message": "Entity moved to trash successfully.",
             }, status=status.HTTP_200_OK)
 
         with transaction.atomic():
@@ -550,7 +580,7 @@ class AdminEntityRestoreView(APIView):
 
         admin_user = request.user
         if not admin_user or not getattr(admin_user, "user_id", None):
-            admin_user = AppUser.objects.filter(role__in=["OWNER", "STAFF"]).first()
+            admin_user = AppUser.objects.filter(email__iexact=SINGLE_ADMIN_EMAIL).first() or AppUser.objects.filter(role__in=["OWNER", "STAFF"]).first()
 
         target_status = "VERIFIED" if entity.entity_code else "SUBMITTED"
         with transaction.atomic():
@@ -579,7 +609,7 @@ class AdminEntityRestoreView(APIView):
         return Response({
             "entity_id": str(entity.entity_id),
             "status": entity.status,
-            "message": f"Producer restored to {entity.status} successfully.",
+            "message": f"Entity restored to {entity.status} successfully.",
         }, status=status.HTTP_200_OK)
 
 
@@ -629,14 +659,15 @@ class AdminEntityPurgeView(APIView):
                     cursor.execute("SET @annasutra_allow_purge = 0;")
             entity.delete()
 
-        return Response({"message": "Producer data permanently purged from system."}, status=status.HTTP_200_OK)
+        return Response({"message": "Entity data permanently purged from system."}, status=status.HTTP_200_OK)
 
 
 class AdminChangeRequestsListView(APIView):
     """GET /api/v1/admin/change-requests
     List pending profile modification requests submitted by registered entities.
     """
-    permission_classes = [permissions.AllowAny]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrStaff]
 
     def get(self, request):
         pending_requests = []
@@ -649,16 +680,18 @@ class AdminChangeRequestsListView(APIView):
                         "entity_role": rd.entity.role,
                         "farmer_name": f"{rd.entity.first_name} {rd.entity.last_name}".strip() or rd.entity.organisation_name,
                         "phone_e164": rd.entity.phone_e164,
+                        "email": rd.entity.email,
                     })
         return Response({"change_requests": pending_requests, "count": len(pending_requests)}, status=status.HTTP_200_OK)
 
 
 class AdminChangeRequestDecisionView(APIView):
     """POST /api/v1/admin/change-requests/<str:request_id>/decision
-    Reviewer approves or rejects the requested profile modification.
-    Upon APPROVED: applies changes to entity_profile, logs to profile_change_log.
+    Reviewer approves or rejects the requested profile/KYC modification.
+    Upon APPROVED: applies changes to entity_profile and/or entity_sensitive, logs to profile_change_log.
     """
-    permission_classes = [permissions.AllowAny]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrStaff]
 
     def post(self, request, request_id):
         decision = str(request.data.get("decision") or "").strip().upper()
@@ -692,9 +725,42 @@ class AdminChangeRequestDecisionView(APIView):
             if decision == "APPROVED":
                 req_changes = target_req.get("requested_changes") or {}
                 for field, val in req_changes.items():
-                    if hasattr(entity, field) and field not in ("entity_id", "user_id", "entity_code", "created_at"):
+                    # Primary Gmail and Role ID are permanently frozen even on change requests
+                    if hasattr(entity, field) and field not in ("entity_id", "user_id", "entity_code", "email", "created_at"):
                         setattr(entity, field, val)
                 entity.save()
+
+                # Apply KYC / Bank / PAN / Aadhaar updates to EntitySensitive if requested
+                kyc_keys = {"pan", "aadhaar_last4", "bank_name", "bank_account", "account_no", "ifsc", "upi_id", "bank_holder_name"}
+                if any(k in req_changes for k in kyc_keys):
+                    sens, _ = EntitySensitive.objects.get_or_create(
+                        entity=entity,
+                        defaults={"enc_key_id": CryptoService.ACTIVE_KEY_ID},
+                    )
+                    eid_str = str(entity.entity_id)
+                    if req_changes.get("pan"):
+                        pan_clean = str(req_changes["pan"]).strip().upper()
+                        sens.pan_enc = CryptoService.encrypt(pan_clean, entity_id=eid_str)
+                        sens.pan_hmac = CryptoService.blind_index_pan(pan_clean)
+                    if req_changes.get("aadhaar_last4"):
+                        a4 = str(req_changes["aadhaar_last4"]).strip()[-4:]
+                        if len(a4) == 4 and a4.isdigit():
+                            sens.aadhaar_last4 = a4
+                    if req_changes.get("bank_name"):
+                        sens.bank_name = str(req_changes["bank_name"]).strip()
+                    acc_raw = req_changes.get("bank_account") or req_changes.get("account_no")
+                    if acc_raw:
+                        acc_clean = str(acc_raw).strip()
+                        sens.account_no_enc = CryptoService.encrypt(acc_clean, entity_id=eid_str)
+                        sens.account_last4 = acc_clean[-4:]
+                    if req_changes.get("ifsc"):
+                        ifsc_clean = str(req_changes["ifsc"]).strip().upper()
+                        sens.ifsc_enc = CryptoService.encrypt(ifsc_clean, entity_id=eid_str)
+                    if req_changes.get("upi_id"):
+                        sens.upi_enc = CryptoService.encrypt(str(req_changes["upi_id"]).strip(), entity_id=eid_str)
+                    if req_changes.get("bank_holder_name"):
+                        sens.bank_holder_enc = CryptoService.encrypt(str(req_changes["bank_holder_name"]).strip(), entity_id=eid_str)
+                    sens.save()
 
                 import hashlib
                 ProfileChangeLog.objects.create(
@@ -712,6 +778,7 @@ class AdminChangeRequestDecisionView(APIView):
 
 class AdminDeletionRequestsListView(APIView):
     """Lists entity deletion requests for administrator review."""
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrStaff]
 
     def get(self, request):
@@ -731,6 +798,7 @@ class AdminDeletionRequestsListView(APIView):
                 "organisation_name": ent.organisation_name,
                 "owner_name": f"{ent.first_name} {ent.last_name}".strip(),
                 "phone_e164": ent.phone_e164,
+                "email": ent.email,
                 "reason": req_obj.reason,
                 "reason_display": req_obj.get_reason_display(),
                 "remarks": req_obj.remarks,
@@ -745,6 +813,7 @@ class AdminDeletionRequestsListView(APIView):
 
 class AdminDeletionRequestDecisionView(APIView):
     """Administrative approval or rejection of an entity deletion request."""
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrStaff]
 
     def post(self, request, request_id):
@@ -775,10 +844,17 @@ class AdminDeletionRequestDecisionView(APIView):
             ent.status = "DEACTIVATED"
             ent.save(update_fields=["status", "updated_at"])
 
-            # Disable user login
-            AppUser.objects.filter(user_id=ent.user_id).update(status="DISABLED")
+            # Only disable AppUser login if no other active role registrations exist for this Gmail
+            other_active = (
+                EntityProfile.objects.filter(user_id=ent.user_id)
+                .exclude(entity_id=ent.entity_id)
+                .exclude(status__in=["DEACTIVATED", "TRASH", "REJECTED"])
+                .exists()
+            )
+            if not other_active:
+                AppUser.objects.filter(user_id=ent.user_id).update(status="DISABLED")
 
-            # DPDP 2023 compliance: scrub sensitive banking and KYC data
+            # DPDP 2023 compliance: scrub sensitive banking and KYC data for this role registration
             EntitySensitive.objects.filter(entity=ent).update(
                 bank_name="",
                 account_last4="",
@@ -836,6 +912,7 @@ class AdminConsumerScansView(APIView):
     Strict Policy: Real database metrics only; clean zero states when no scans exist.
     """
 
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrStaff]
 
     def get(self, request):
@@ -853,27 +930,41 @@ class AdminConsumerScansView(APIView):
                 "scans": [],
             }, status=status.HTTP_200_OK)
 
-        gps_scans = ScanLog.objects.exclude(coarse_area=None)
+        gps_scans = ScanLog.objects.exclude(coarse_area=None).exclude(coarse_area="")
         gps_count = gps_scans.count()
         opt_in_gps_pct = round((gps_count / total_scans) * 100, 1) if total_scans > 0 else 0.0
 
         recent_logs = ScanLog.objects.order_by("-scanned_at")[:50]
         scans_data = []
+        distances = []
         for s in recent_logs:
+            coarse = s.coarse_area or "Undisclosed"
+            dist_km = None
+            if "|km:" in coarse:
+                parts = coarse.split("|km:")
+                coarse = parts[0]
+                try:
+                    dist_km = round(float(parts[1]), 1)
+                    distances.append(dist_km)
+                except (ValueError, TypeError):
+                    pass
             scans_data.append({
                 "id": s.scan_id,
                 "serial": s.serial,
-                "city_coarse": s.coarse_area or "Undisclosed",
-                "region_coarse": s.coarse_area or "India",
+                "city_coarse": coarse,
+                "region_coarse": coarse if coarse != "Undisclosed" else "India",
+                "distance_km": dist_km,
                 "result": s.result,
-                "user_agent": "Mobile Browser",
+                "user_agent": "Mobile / APK Scanner",
                 "scanned_at": s.scanned_at.isoformat() if s.scanned_at else timezone.now().isoformat(),
             })
+
+        avg_dist = round(sum(distances) / len(distances), 1) if distances else None
 
         return Response({
             "total_scans": total_scans,
             "opt_in_gps_pct": opt_in_gps_pct,
-            "avg_distance_km": None,
+            "avg_distance_km": avg_dist,
             "counterfeit_alerts": alerts_count,
             "scans": scans_data,
         }, status=status.HTTP_200_OK)

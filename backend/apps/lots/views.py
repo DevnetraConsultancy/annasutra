@@ -1,5 +1,6 @@
-"""Lots API views conforming to api/openapi.yaml."""
+"""Lots API views conforming to AnnaSutra Entity Console Architecture."""
 
+from decimal import Decimal
 import hashlib
 import json
 import re
@@ -16,14 +17,15 @@ from apps.custody.models import Handover
 from apps.identity.authentication import IsVerifiedOrg
 from apps.identity.models import AppUser, EntityPlot, EntityProfile
 from apps.identity.services.crypto import CryptoService
-from apps.identity.services.entity_allocation import get_or_mint_farmer_uid
+from apps.identity.services.entity_allocation import get_or_mint_farmer_uid, resolve_identity_segment
 from apps.inventory.models import LotBalance
 from apps.labels.models import QrBlock, QrLabel
 from apps.ledger.models import TraceEvent
 from apps.organisations.models import Organisation
-from .models import Lot, Product
+from .models import Lot, LotEdge, Product
 
 CROCKFORD_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+ISO7064_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ*"
 
 # Mentor's 10-Category Product Code Taxonomy
 PRODUCT_CATEGORY_CATALOG = {
@@ -38,6 +40,18 @@ PRODUCT_CATEGORY_CATALOG = {
     "SC": "Special Crops",
     "OT": "Others",
 }
+
+
+def compute_iso7064_check_char(payload: str) -> str:
+    """Compute 1-character ISO 7064 Mod 37,2 check character for alphanumeric Lot Code."""
+    p = 0
+    for ch in str(payload or "").upper():
+        val = ISO7064_ALPHABET.find(ch)
+        if val < 0:
+            val = 0
+        p = ((p + val) * 2) % 37
+    check_val = (38 - p) % 37
+    return "X" if check_val == 36 else ISO7064_ALPHABET[check_val]
 
 
 def resolve_product_category(category_raw: str, crop_raw: str = "") -> tuple[str, str]:
@@ -77,24 +91,22 @@ def generate_crockford_serial(length: int = 12) -> str:
 
 
 def generate_mentor_batch_id(user, cat_code: str, user_org, dt=None) -> str:
-    """Generate unlimited unique Batch/Lot ID per mentor specification:
-    YYYYDDHHMMSS + CountryCodeMobileNumber + ProductCode + 4DigitSequence
-    Example: 202627223510919876543210FR0001
+    """Generate 32-character Batch/Lot ID per Section 3.2 & Decision 29:
+    YYYYMMDDHHMMSS (14) + 91 (2) + IdentitySegment(10) + CropClass(2) + Seq(3) + Check(1) = 32 chars.
     """
     now = dt or timezone.now()
-    ts_part = now.strftime("%Y%d%H%M%S")
-    phone_raw = getattr(user, "phone_e164", "") or "910000000000"
-    digits = re.sub(r"\D", "", str(phone_raw))
-    if len(digits) == 10:
-        digits = "91" + digits
-    elif not digits:
-        digits = "910000000000"
+    ts_part = now.strftime("%Y%m%d%H%M%S")
+    identity_seg = resolve_identity_segment(user)
+    digits = f"91{identity_seg}"
 
     clean_cat = cat_code if cat_code in PRODUCT_CATEGORY_CATALOG else "OT"
     seq = (Lot.objects.filter(created_by_org=user_org).count() if user_org else 0) + 1
 
     while True:
-        candidate = f"{ts_part}{digits}{clean_cat}{seq:04d}"
+        seq_3 = ((seq - 1) % 999) + 1
+        base_31 = f"{ts_part}{digits}{clean_cat}{seq_3:03d}"
+        check_ch = compute_iso7064_check_char(base_31)
+        candidate = f"{base_31}{check_ch}"
         if not Lot.objects.filter(public_code=candidate).exists() and not QrLabel.objects.filter(serial=candidate).exists():
             return candidate
         seq += 1
@@ -123,10 +135,12 @@ def _extract_origin_coords_for_lot(lot, create_payload: dict) -> tuple[float, fl
         except (ValueError, TypeError):
             pass
 
-    # Check creator's EntityProfile & EntityPlot
     creator_user = AppUser.objects.filter(org_id=lot.created_by_org_id).first()
     if creator_user:
-        profile = EntityProfile.objects.filter(user_id=creator_user.user_id).first() or EntityProfile.objects.filter(phone_e164=creator_user.phone_e164).first()
+        profile = (
+            EntityProfile.objects.filter(user_id=creator_user.user_id).first()
+            or (EntityProfile.objects.filter(phone_e164=creator_user.phone_e164).first() if creator_user.phone_e164 else None)
+        )
         if profile:
             if not loc_name:
                 parts = [p for p in [profile.village_town, profile.district, profile.state] if p]
@@ -138,7 +152,6 @@ def _extract_origin_coords_for_lot(lot, create_payload: dict) -> tuple[float, fl
                     gj = json.loads(raw)
                     coords = gj.get("coordinates", [[]])[0]
                     if coords and isinstance(coords[0], (list, tuple)) and len(coords[0]) >= 2:
-                        # GeoJSON is [lng, lat] or [lat, lng]
                         c0, c1 = float(coords[0][0]), float(coords[0][1])
                         if 6.0 <= c1 <= 38.0 and 68.0 <= c0 <= 98.0:
                             return c1, c0, str(loc_name or e_plot.plot_name)
@@ -149,15 +162,16 @@ def _extract_origin_coords_for_lot(lot, create_payload: dict) -> tuple[float, fl
     return 23.2324, 87.8615, str(loc_name or "Purba Bardhaman, West Bengal")
 
 
-def _build_lot_item(lot: Lot) -> dict:
-    """Serialize a Lot with full traceability checkpoints, custody status, and mentor IDs."""
+def _build_lot_item(lot: Lot, _depth: int = 0) -> dict:
+    """Serialize a Lot with full traceability checkpoints, custody status, and parent/child packet batch lineage."""
     balance = LotBalance.objects.filter(lot=lot).first()
     events = list(TraceEvent.objects.filter(lot=lot).order_by("lot_seq"))
 
     create_payload = {}
     for ev in events:
-        if ev.event_type in ("HARVEST_CREATE", "LOT_UPDATE"):
-            create_payload = ev.payload or {}
+        if ev.event_type in ("HARVEST_CREATE", "LOT_UPDATE", "PACKET_BATCH_CREATED", "SPLIT_CHILD"):
+            if not create_payload or ev.event_type in ("HARVEST_CREATE", "LOT_UPDATE"):
+                create_payload = ev.payload or {}
 
     qty_val = float(balance.qty_on_hand_kg) if balance else float(create_payload.get("net_qty_kg", 0.0))
     crop_name = lot.product.name if lot.product else create_payload.get("product", {}).get("name", "")
@@ -172,35 +186,44 @@ def _build_lot_item(lot: Lot) -> dict:
     if not farmer_uid:
         creator_user = AppUser.objects.filter(org_id=lot.created_by_org_id).first()
         if creator_user:
-            prof = EntityProfile.objects.filter(user_id=creator_user.user_id).first() or EntityProfile.objects.filter(phone_e164=creator_user.phone_e164).first()
+            prof = (
+                EntityProfile.objects.filter(user_id=creator_user.user_id).first()
+                or (EntityProfile.objects.filter(phone_e164=creator_user.phone_e164).first() if creator_user.phone_e164 else None)
+            )
             farmer_uid = get_or_mint_farmer_uid(prof if prof else creator_user)
 
-    # Build chronological journey checkpoints
-    checkpoints = [
-        {
-            "step": 1,
-            "event_type": "HARVEST_CREATE",
-            "role": "PRODUCER",
-            "actor_name": create_payload.get("farmer_name") or (lot.created_by_org.name if lot.created_by_org else "Producer Farm"),
-            "location_name": origin_loc,
-            "lat": origin_lat,
-            "lng": origin_lng,
-            "weight_kg": float(create_payload.get("net_qty_kg", qty_val)),
-            "condition": f"Fresh Harvest ({create_payload.get('grade', 'Grade A')})",
-            "storage_temp": "Pre-Cooled (4°C)" if create_payload.get("cold_wash_applied") else "Farm Ambient",
-            "photo_url": create_payload.get("harvest_photo_url") or None,
-            "vehicle_no": None,
-            "remarks": create_payload.get("remarks", ""),
-            "timestamp": create_payload.get("harvest_date") or lot.created_at.isoformat(),
-        }
-    ]
+    checkpoints = []
+    # If this is a child packet batch with upstream checkpoints stored or a parent lot edge, inherit parent checkpoints
+    upstream_cps = create_payload.get("upstream_checkpoints")
+    if isinstance(upstream_cps, list) and upstream_cps:
+        for cp in upstream_cps:
+            checkpoints.append(dict(cp))
+    else:
+        checkpoints.append(
+            {
+                "step": 1,
+                "event_type": "HARVEST_CREATE",
+                "role": "PRODUCER",
+                "actor_name": create_payload.get("farmer_name") or (lot.created_by_org.name if lot.created_by_org else "Producer Farm"),
+                "location_name": origin_loc,
+                "lat": origin_lat,
+                "lng": origin_lng,
+                "weight_kg": float(create_payload.get("net_qty_kg", qty_val)),
+                "condition": f"Fresh Harvest ({create_payload.get('grade', 'Grade A')})",
+                "storage_temp": "Pre-Cooled (4°C)" if create_payload.get("cold_wash_applied") else "Farm Ambient",
+                "photo_url": create_payload.get("harvest_photo_url") or None,
+                "vehicle_no": None,
+                "remarks": create_payload.get("remarks", ""),
+                "timestamp": create_payload.get("harvest_date") or lot.created_at.isoformat(),
+            }
+        )
 
-    current_custodian_role = "PRODUCER"
+    current_custodian_role = create_payload.get("actor_role") or "PRODUCER"
     current_custodian_name = lot.custodian_org.name if lot.custodian_org else "Producer Farm"
     is_retailer_verified = False
     pending_handover = None
 
-    step_num = 2
+    step_num = len(checkpoints) + 1
     for ev in events:
         p = ev.payload or {}
         if ev.event_type == "HANDOVER_REQUEST":
@@ -211,6 +234,8 @@ def _build_lot_item(lot: Lot) -> dict:
                 "from_name": p.get("from_name", current_custodian_name),
                 "target_role": p.get("target_role", "AGGREGATOR"),
                 "target_phone": p.get("target_phone", ""),
+                "target_email": p.get("target_email", ""),
+                "target_role_id": p.get("target_role_id", ""),
                 "target_name": p.get("target_name", ""),
                 "declared_qty_kg": float(p.get("declared_qty_kg", qty_val)),
                 "vehicle_no": p.get("vehicle_no", ""),
@@ -248,9 +273,11 @@ def _build_lot_item(lot: Lot) -> dict:
                 }
             )
             step_num += 1
-        elif ev.event_type in ("CUSTODY_APPEND", "INSPECT", "SALE"):
+        elif ev.event_type in ("CUSTODY_APPEND", "INSPECT", "SALE", "PACKET_BATCH_CREATED"):
             actor_role = str(p.get("actor_role") or current_custodian_role).upper()
             actor_name = p.get("actor_name") or current_custodian_name
+            current_custodian_role = actor_role
+            current_custodian_name = actor_name
             if actor_role == "RETAILER" or p.get("retail_ready") or ev.event_type == "SALE":
                 is_retailer_verified = True
             checkpoints.append(
@@ -282,12 +309,40 @@ def _build_lot_item(lot: Lot) -> dict:
         and lot.custodian_org_id == lot.created_by_org_id
         and lot.pending_receiver_org_id is None
         and current_custodian_role == "PRODUCER"
+        and lot.lot_kind == "HARVEST"
     )
+
+    parent_lots = []
+    child_packet_batches = []
+    if _depth == 0:
+        for pe in LotEdge.objects.select_related("parent_lot").filter(child_lot=lot):
+            parent_lots.append({
+                "lot_id": str(pe.parent_lot.lot_id),
+                "public_code": pe.parent_lot.public_code,
+                "qty_kg": float(pe.qty_kg),
+            })
+        for ce in LotEdge.objects.select_related("child_lot").filter(parent_lot=lot):
+            c_lot = ce.child_lot
+            c_ev = TraceEvent.objects.filter(lot=c_lot, event_type__in=["PACKET_BATCH_CREATED", "SPLIT_CHILD"]).first()
+            c_pay = (c_ev.payload if c_ev else {}) or {}
+            child_packet_batches.append({
+                "lot_id": str(c_lot.lot_id),
+                "public_code": c_lot.public_code,
+                "batch_id": c_lot.public_code,
+                "qty_kg": float(ce.qty_kg),
+                "packet_weight_g": c_pay.get("packet_weight_g"),
+                "packet_count": c_pay.get("packet_count"),
+                "package_label": c_pay.get("package_label", "Retail Packet"),
+                "qr_url": f"https://annasutra.in/l/{c_lot.public_code}",
+                "state": c_lot.state,
+                "created_at": c_lot.created_at.isoformat(),
+            })
 
     return {
         "lot_id": str(lot.lot_id),
         "batch_id": lot.public_code,
         "public_code": lot.public_code,
+        "lot_kind": lot.lot_kind,
         "farmer_uid": farmer_uid,
         "product_category_code": cat_code,
         "product_category_name": cat_name,
@@ -300,6 +355,11 @@ def _build_lot_item(lot: Lot) -> dict:
         "is_retailer_verified": is_retailer_verified,
         "pending_handover": pending_handover,
         "journey_checkpoints": checkpoints,
+        "parent_lots": parent_lots,
+        "child_packet_batches": child_packet_batches,
+        "packet_weight_g": create_payload.get("packet_weight_g"),
+        "packet_count": create_payload.get("packet_count"),
+        "parent_lot_code": create_payload.get("parent_lot_code"),
         "on_hand_kg": qty_val,
         "net_qty_kg": qty_val,
         "unit": create_payload.get("unit", "Kg"),
@@ -352,7 +412,6 @@ class LotListCreateView(APIView):
             | models.Q(pending_receiver_org=user_org)
         )
 
-        # Filters
         crop_filter = request.query_params.get("crop")
         if crop_filter and crop_filter.upper() != "ALL":
             qs = qs.filter(product__name__iexact=crop_filter)
@@ -392,7 +451,6 @@ class LotListCreateView(APIView):
         net_qty = data.get("net_qty_kg") if data.get("net_qty_kg") is not None else data.get("quantity_kg")
         event_time_str = data.get("event_time") or timezone.now().isoformat()
 
-        # Handle simplified crop string in product_data if passed from simple form
         if isinstance(product_data, str):
             product_data = {"name": product_data, "variety": data.get("variety", "")}
         elif not product_data and data.get("crop"):
@@ -404,11 +462,9 @@ class LotListCreateView(APIView):
 
         user_org = request.user.org
 
-        # Auto-generate mentor Batch/Lot ID if label_serial is not explicitly supplied
         if not label_serial:
             label_serial = generate_mentor_batch_id(request.user, cat_code, user_org)
 
-        # Auto-generate event_id if not supplied
         if not event_id_str:
             event_id = uuid.uuid4()
             event_id_str = str(event_id)
@@ -431,14 +487,12 @@ class LotListCreateView(APIView):
         except (ValueError, TypeError):
             raise exceptions.ValidationError({"detail": "net_qty_kg must be a valid number.", "code": "INVALID_QTY"})
 
-        # 1. Idempotency check: if this event_id was already processed, return existing lot
         existing_event = TraceEvent.objects.filter(event_id=event_id).first()
         if existing_event:
             lot = existing_event.lot
             return Response(_build_lot_item(lot), status=status.HTTP_200_OK)
 
         with transaction.atomic():
-            # 2. Check label sticker: must exist in qr_label or auto-issue
             qr_label = QrLabel.objects.select_for_update().filter(serial=label_serial).first()
             if not qr_label:
                 block = QrBlock.objects.create(
@@ -454,7 +508,6 @@ class LotListCreateView(APIView):
                     status="ISSUED",
                 )
 
-            # Check if label serial is already bound to another lot
             if qr_label.lot_id or qr_label.status == "BOUND":
                 return Response(
                     {
@@ -467,7 +520,6 @@ class LotListCreateView(APIView):
                     status=status.HTTP_409_CONFLICT,
                 )
 
-            # 3. Product resolution
             prod_name = product_data.get("name")
             prod_variety = product_data.get("variety")
             product, _ = Product.objects.get_or_create(
@@ -475,7 +527,6 @@ class LotListCreateView(APIView):
                 variety=prod_variety,
             )
 
-            # 4. Resolve origin plot if provided
             plot_obj = None
             plot_id_val = data.get("plot_id") or data.get("origin_plot_id")
             if plot_id_val:
@@ -485,7 +536,6 @@ class LotListCreateView(APIView):
                 except Exception:
                     pass
 
-            # 5. Create Lot
             lot_id = uuid.uuid4()
             lot = Lot.objects.create(
                 lot_id=lot_id,
@@ -499,23 +549,24 @@ class LotListCreateView(APIView):
                 head_seq=1,
             )
 
-            # 6. Bind QR Label
             qr_label.lot = lot
             qr_label.status = "BOUND"
             qr_label.bound_at = timezone.now()
             qr_label.save(update_fields=["lot", "status", "bound_at"])
 
-            # 7. Initialize LotBalance
             LotBalance.objects.create(
                 lot=lot,
                 qty_in_kg=net_qty,
             )
 
-            prof = EntityProfile.objects.filter(user_id=request.user.user_id).first() or EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first()
+            prof = (
+                EntityProfile.objects.filter(user_id=request.user.user_id, role="PRODUCER").first()
+                or EntityProfile.objects.filter(user_id=request.user.user_id).first()
+                or (EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first() if request.user.phone_e164 else None)
+            )
             farmer_uid = get_or_mint_farmer_uid(prof if prof else request.user)
             farmer_name = (f"{prof.first_name} {prof.last_name}".strip() or prof.organisation_name) if prof else user_org.name
 
-            # 8. Record immutable TraceEvent with all possible harvest fields
             payload = {
                 "label_serial": label_serial,
                 "farmer_uid": farmer_uid,
@@ -526,7 +577,7 @@ class LotListCreateView(APIView):
                 "product": {"name": prod_name, "variety": prod_variety, "category": cat_name, "category_code": cat_code},
                 "net_qty_kg": float(net_qty),
                 "unit": data.get("unit", "Kg"),
-                "packages_count": int(data.get("packages_count", 1)),
+                "packages_count": int(data.get("packages_count") or data.get("crate_count") or 1),
                 "package_type": data.get("package_type", "Plastic Crates"),
                 "harvest_date": data.get("harvest_date") or event_time_str,
                 "sowing_date": data.get("sowing_date"),
@@ -588,7 +639,6 @@ class LotDetailView(APIView):
             raise exceptions.NotFound({"detail": "Lot not found.", "code": "NOT_FOUND"})
 
         user_org = request.user.org
-        # Cross-org access check: custodian, creator, or pending receiver may view lot details
         if (
             lot.custodian_org_id != user_org.org_id
             and lot.created_by_org_id != user_org.org_id
@@ -612,7 +662,6 @@ class LotDetailView(APIView):
                 {"detail": "You do not have permission to edit lots belonging to another organisation.", "code": "CROSS_ORG_FORBIDDEN"}
             )
 
-        # Enforce custody lock rule: only editable before approving/initiating next custody handover
         if (
             lot.state not in ("CREATED", "IN_CUSTODY")
             or lot.custodian_org_id != lot.created_by_org_id
@@ -640,7 +689,6 @@ class LotDetailView(APIView):
                 net_qty = None
 
         with transaction.atomic():
-            # Update product if changed
             if prod_data.get("name") or data.get("variety") or data.get("crop"):
                 cur_name = prod_data.get("name") or data.get("crop") or (lot.product.name if lot.product else "Produce")
                 cur_variety = prod_data.get("variety") or data.get("variety") or (lot.product.variety if lot.product else "")
@@ -651,7 +699,6 @@ class LotDetailView(APIView):
                 lot.product = product
                 lot.save(update_fields=["product"])
 
-            # Update origin plot if provided
             plot_id_val = data.get("plot_id") or data.get("origin_plot_id")
             if plot_id_val:
                 try:
@@ -662,7 +709,6 @@ class LotDetailView(APIView):
                 except Exception:
                     pass
 
-            # Update balance if quantity changed
             balance = LotBalance.objects.filter(lot=lot).first()
             if net_qty is not None and balance:
                 balance.qty_in_kg = net_qty
@@ -673,7 +719,6 @@ class LotDetailView(APIView):
             raw_cat = data.get("product_category_code") or data.get("category") or prev_payload.get("product_category_code") or "VG"
             cat_code, cat_name = resolve_product_category(raw_cat, lot.product.name)
 
-            # Append new TraceEvent
             lot.head_seq += 1
             payload = {
                 "label_serial": lot.public_code,
@@ -772,7 +817,7 @@ class LotEventsView(APIView):
 class LotHandoverRequestView(APIView):
     """POST /api/v1/lots/<str:code>/handover-request
     Initiate a secure 2-way custody handover request from the current custodian to the next party
-    (AGGREGATOR, WHOLESALER, DISTRIBUTOR, or RETAILER).
+    (AGGREGATOR, PROCESSOR, WHOLESALER, DISTRIBUTOR, or RETAILER) by Gmail, Role ID, or Mobile.
     """
 
     permission_classes = [IsVerifiedOrg]
@@ -807,6 +852,9 @@ class LotHandoverRequestView(APIView):
             elif len(digits) >= 11:
                 target_phone = f"+{digits}"
 
+        target_email = str(data.get("target_email") or data.get("to_email") or "").strip().lower()
+        target_role_id = str(data.get("target_role_id") or data.get("target_uid") or "").strip()
+
         target_name = str(data.get("target_name") or data.get("to_name") or f"Verified {target_role.title()}").strip()
         vehicle_no = str(data.get("vehicle_no") or "").strip().upper()
         location_name = str(data.get("location_name") or "").strip()
@@ -828,14 +876,24 @@ class LotHandoverRequestView(APIView):
             except (ValueError, TypeError):
                 pass
 
-        # Resolve or create target Organisation
+        # Resolve target Organisation by Gmail, Role ID, or Phone
         target_org = None
-        if target_phone:
+        if target_email:
+            t_user = AppUser.objects.select_related("org").filter(email__iexact=target_email).first()
+            if t_user and t_user.org:
+                target_org = t_user.org
+        if not target_org and target_role_id:
+            t_prof = EntityProfile.objects.filter(entity_code=target_role_id).first()
+            if t_prof:
+                t_user = AppUser.objects.select_related("org").filter(user_id=t_prof.user_id).first()
+                if t_user and t_user.org:
+                    target_org = t_user.org
+        if not target_org and target_phone:
             target_user = AppUser.objects.select_related("org").filter(phone_e164=target_phone).first()
             if target_user and target_user.org:
                 target_org = target_user.org
 
-        if not target_org:
+        if not target_org or target_org.org_id == lot.custodian_org_id:
             org_type_map = {
                 "AGGREGATOR": "AGGREGATOR",
                 "PROCESSOR": "PROCESSOR",
@@ -844,7 +902,7 @@ class LotHandoverRequestView(APIView):
                 "RETAILER": "RETAILER",
             }
             target_org = Organisation.objects.create(
-                name=target_name or f"{target_role.title()} ({target_phone[-4:] if target_phone else 'Partner'})",
+                name=target_name or f"{target_role.title()} ({target_email or target_phone[-4:] if target_phone else 'Partner'})",
                 org_type=org_type_map.get(target_role, "AGGREGATOR"),
                 verification="VERIFIED",
             )
@@ -856,7 +914,6 @@ class LotHandoverRequestView(APIView):
         from_name = (prof.organisation_name or f"{prof.first_name} {prof.last_name}".strip()) if prof else user_org.name
 
         with transaction.atomic():
-            # Expire any stale open handovers on this lot
             Handover.objects.filter(lot=lot, state="PENDING").update(state="EXPIRED")
 
             handover = Handover.objects.create(
@@ -879,6 +936,8 @@ class LotHandoverRequestView(APIView):
                 "from_name": from_name,
                 "target_role": target_role,
                 "target_phone": target_phone,
+                "target_email": target_email,
+                "target_role_id": target_role_id,
                 "target_name": target_name,
                 "declared_qty_kg": declared_qty_kg,
                 "vehicle_no": vehicle_no,
@@ -916,18 +975,21 @@ class LotHandoverRequestView(APIView):
 class IncomingHandoversView(APIView):
     """GET /api/v1/lots/handovers/incoming
     Return pending custody handover requests and active custody lots for downstream roles
-    (Aggregator, Wholesaler, Distributor, Retailer).
+    (Aggregator, Processor, Wholesaler, Distributor, Retailer).
     """
 
     permission_classes = [IsVerifiedOrg]
 
     def get(self, request):
         user_org = request.user.org
-        prof = EntityProfile.objects.filter(user_id=request.user.user_id).first() or EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first()
+        prof = (
+            EntityProfile.objects.filter(user_id=request.user.user_id).first()
+            or (EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first() if request.user.phone_e164 else None)
+        )
         role_filter = str(request.query_params.get("role") or (prof.role if prof else "")).strip().upper()
         user_phone = getattr(request.user, "phone_e164", "") or ""
+        user_email = (getattr(request.user, "email", "") or "").strip().lower()
 
-        # 1. All lots currently IN_TRANSIT
         transit_lots = Lot.objects.select_related(
             "product", "origin_plot", "custodian_org", "created_by_org", "pending_receiver_org"
         ).filter(state="IN_TRANSIT").order_by("-created_at")[:100]
@@ -936,10 +998,10 @@ class IncomingHandoversView(APIView):
         for lot in transit_lots:
             item = _build_lot_item(lot)
             ph = item.get("pending_handover") or {}
-            # Match if directed to this user's org, phone, or target role (or if no role filter)
             is_match = (
                 lot.pending_receiver_org_id == user_org.org_id
                 or (user_phone and ph.get("target_phone") == user_phone)
+                or (user_email and ph.get("target_email") == user_email)
                 or (role_filter and ph.get("target_role") == role_filter)
                 or not role_filter
                 or role_filter == "PRODUCER"
@@ -947,7 +1009,6 @@ class IncomingHandoversView(APIView):
             if is_match:
                 pending_requests.append(item)
 
-        # 2. Active custody lots held by this org or role
         custody_qs = Lot.objects.select_related(
             "product", "origin_plot", "custodian_org", "created_by_org", "pending_receiver_org"
         ).filter(state__in=["IN_CUSTODY", "CREATED"]).order_by("-created_at")[:100]
@@ -973,8 +1034,9 @@ class IncomingHandoversView(APIView):
 
 class LotHandoverAcceptView(APIView):
     """POST /api/v1/lots/<str:code>/handover-accept
-    Next party (Aggregator, Wholesaler, Distributor, or Retailer) confirms custody acceptance
+    Next party (Aggregator, Processor, Wholesaler, Distributor, or Retailer) confirms custody acceptance
     by scanning/verifying the lot QR code and logging current weight, condition, photo, and GPS.
+    Permanently locks the Farmer's batch record.
     """
 
     permission_classes = [IsVerifiedOrg]
@@ -985,10 +1047,12 @@ class LotHandoverAcceptView(APIView):
             raise exceptions.NotFound({"detail": "Lot not found for scanned QR code.", "code": "NOT_FOUND"})
 
         user_org = request.user.org
-        prof = EntityProfile.objects.filter(user_id=request.user.user_id).first() or EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first()
+        prof = (
+            EntityProfile.objects.filter(user_id=request.user.user_id).first()
+            or (EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first() if request.user.phone_e164 else None)
+        )
 
         data = request.data
-        # Determine accepting role from payload, pending handover, or profile
         last_req = TraceEvent.objects.filter(lot=lot, event_type="HANDOVER_REQUEST").order_by("-lot_seq").first()
         req_role = (last_req.payload or {}).get("target_role") if last_req else None
 
@@ -1029,7 +1093,6 @@ class LotHandoverAcceptView(APIView):
                 pass
 
         with transaction.atomic():
-            # Resolve acceptor organisation
             acceptor_org = lot.pending_receiver_org or user_org
             if acceptor_org.org_id == lot.created_by_org_id:
                 org_type_map = {
@@ -1113,7 +1176,7 @@ class LotHandoverAcceptView(APIView):
 
 class LotAppendScanUpdateView(APIView):
     """POST /api/v1/lots/<str:code>/append-scan
-    Downstream parties (Aggregator, Wholesaler, Distributor, Retailer) scan the lot QR code
+    Downstream parties (Aggregator, Processor, Wholesaler, Distributor, Retailer) scan the lot QR code
     to append current weight, product condition, storage temperature, photo capture, and GPS location.
     Cannot overwrite original farmer harvest data.
     """
@@ -1126,7 +1189,10 @@ class LotAppendScanUpdateView(APIView):
             raise exceptions.NotFound({"detail": "Lot not found for scanned QR code.", "code": "NOT_FOUND"})
 
         user_org = request.user.org
-        prof = EntityProfile.objects.filter(user_id=request.user.user_id).first() or EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first()
+        prof = (
+            EntityProfile.objects.filter(user_id=request.user.user_id).first()
+            or (EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first() if request.user.phone_e164 else None)
+        )
 
         current_item = _build_lot_item(lot)
         data = request.data
@@ -1213,6 +1279,215 @@ class LotAppendScanUpdateView(APIView):
         item["message"] = f"Scan update appended to immutable ledger by {actor_name} ({actor_role})."
         return Response(item, status=status.HTTP_201_CREATED)
 
+
+class LotPacketBatchesView(APIView):
+    """POST /api/v1/lots/<str:code>/packet-batches
+    Section 3.7 & Decision 34 (Small Packet Batches with Child Batch QR):
+    Allows Aggregator, Processor, Wholesaler, Distributor, or Retailer to split/repack an accepted lot
+    into small consumer packet batches (e.g., 500 g packets).
+    Each packet batch is a child lot with its own 32-char Lot Code and one batch-level child QR
+    printed across all packets of that batch, preserving full parent lineage and enforcing mass balance.
+    """
+
+    permission_classes = [IsVerifiedOrg]
+
+    def post(self, request, code):
+        parent_lot = Lot.objects.select_related("custodian_org", "created_by_org", "product", "origin_plot").filter(public_code=code).first()
+        if not parent_lot:
+            raise exceptions.NotFound({"detail": "Parent lot not found.", "code": "NOT_FOUND"})
+
+        parent_item = _build_lot_item(parent_lot)
+        data = request.data or {}
+
+        prof = (
+            EntityProfile.objects.filter(user_id=request.user.user_id).first()
+            or (EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first() if request.user.phone_e164 else None)
+        )
+        actor_role = str(
+            data.get("actor_role")
+            or (parent_item.get("current_custodian_role") if parent_item.get("current_custodian_role") != "PRODUCER" else "")
+            or (prof.role if prof and prof.role != "PRODUCER" else "PROCESSOR")
+        ).strip().upper()
+        if actor_role not in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
+            actor_role = "PROCESSOR"
+
+        actor_name = str(
+            data.get("actor_name")
+            or parent_item.get("current_custodian_name")
+            or (prof.organisation_name if prof and prof.organisation_name else request.user.org.name)
+        ).strip()
+
+        try:
+            packet_weight_g = float(data.get("packet_weight_g") or 500.0)
+            packet_count = int(data.get("packet_count") or 10)
+        except (ValueError, TypeError):
+            raise exceptions.ValidationError({"detail": "packet_weight_g and packet_count must be positive numbers.", "code": "INVALID_PACKETS"})
+
+        if packet_weight_g <= 0 or packet_count <= 0:
+            raise exceptions.ValidationError({"detail": "packet_weight_g and packet_count must be greater than zero.", "code": "INVALID_PACKETS"})
+
+        batch_qty_kg = data.get("batch_qty_kg")
+        if batch_qty_kg is not None:
+            batch_qty_kg = float(batch_qty_kg)
+        else:
+            batch_qty_kg = round((packet_weight_g * packet_count) / 1000.0, 3)
+
+        package_label = str(data.get("package_label") or f"{int(packet_weight_g)}g Consumer Packet").strip()
+        location_name = str(data.get("location_name") or f"{actor_role.title()} Packhouse").strip()
+        remarks = str(data.get("remarks") or f"Packed {packet_count} x {int(packet_weight_g)}g packets from parent lot {parent_lot.public_code}.").strip()
+
+        with transaction.atomic():
+            parent_balance = LotBalance.objects.select_for_update().filter(lot=parent_lot).first()
+            available_kg = float(parent_balance.qty_on_hand_kg) if parent_balance else float(parent_item.get("on_hand_kg") or 0.0)
+
+            if batch_qty_kg > available_kg + 0.001:
+                raise exceptions.ValidationError({
+                    "detail": f"Mass balance exceeded: requested packet batch weight ({batch_qty_kg} kg) exceeds available parent lot balance ({available_kg} kg).",
+                    "code": "MASS_BALANCE_EXCEEDED",
+                })
+
+            cat_code = parent_item.get("product_category_code") or "VG"
+            cat_name = parent_item.get("product_category_name") or "Vegetables"
+            child_code = generate_mentor_batch_id(request.user, cat_code, parent_lot.custodian_org)
+
+            block = QrBlock.objects.create(
+                block_id=uuid.uuid4(),
+                issued_to_org=parent_lot.custodian_org,
+                issued_by=request.user,
+                count=1,
+            )
+            child_lot = Lot.objects.create(
+                lot_id=uuid.uuid4(),
+                public_code=child_code,
+                product=parent_lot.product,
+                origin_plot=parent_lot.origin_plot,
+                created_by_org=parent_lot.created_by_org,
+                lot_kind="SPLIT_CHILD",
+                state="IN_CUSTODY",
+                custodian_org=parent_lot.custodian_org,
+                head_seq=1,
+            )
+            QrLabel.objects.create(
+                serial=child_code,
+                block=block,
+                issued_to_org=parent_lot.custodian_org,
+                lot=child_lot,
+                status="BOUND",
+                bound_at=timezone.now(),
+            )
+            LotBalance.objects.create(
+                lot=child_lot,
+                qty_in_kg=Decimal(str(batch_qty_kg)),
+            )
+
+            if parent_balance:
+                parent_balance.qty_split_out_kg = Decimal(str(float(parent_balance.qty_split_out_kg) + batch_qty_kg))
+                parent_balance.save(update_fields=["qty_split_out_kg"])
+
+            split_event_id = uuid.uuid4()
+            LotEdge.objects.create(
+                parent_lot=parent_lot,
+                child_lot=child_lot,
+                qty_kg=Decimal(str(batch_qty_kg)),
+                event_id=split_event_id,
+            )
+
+            # Record TraceEvent on child packet batch preserving full upstream lineage
+            child_payload = {
+                "label_serial": child_code,
+                "parent_lot_code": parent_lot.public_code,
+                "farmer_uid": parent_item.get("farmer_uid", ""),
+                "farmer_name": parent_item.get("journey_checkpoints", [{}])[0].get("actor_name", "Origin Producer"),
+                "product_category_code": cat_code,
+                "product_category_name": cat_name,
+                "category": cat_name,
+                "product": {
+                    "name": parent_lot.product.name if parent_lot.product else parent_item.get("crop", ""),
+                    "variety": parent_lot.product.variety if parent_lot.product else parent_item.get("variety", ""),
+                    "category": cat_name,
+                    "category_code": cat_code,
+                },
+                "net_qty_kg": batch_qty_kg,
+                "unit": "Kg",
+                "packages_count": packet_count,
+                "package_type": package_label,
+                "packet_weight_g": packet_weight_g,
+                "packet_count": packet_count,
+                "package_label": package_label,
+                "harvest_date": parent_item.get("harvest_date"),
+                "shelf_life_days": parent_item.get("shelf_life_days", 14),
+                "origin_lat": parent_item.get("origin_lat"),
+                "origin_lng": parent_item.get("origin_lng"),
+                "origin_location": parent_item.get("origin_location"),
+                "grade": parent_item.get("grade", "Grade A"),
+                "farming_method": parent_item.get("farming_method", "Conventional"),
+                "actor_role": actor_role,
+                "actor_name": actor_name,
+                "location_name": location_name,
+                "action_stage": f"Packet Batch Created ({packet_count} x {int(packet_weight_g)}g)",
+                "condition": f"{packet_count} packets ({int(packet_weight_g)}g each)",
+                "retail_ready": actor_role == "RETAILER",
+                "upstream_checkpoints": parent_item.get("journey_checkpoints", []),
+                "remarks": remarks,
+            }
+            c_hash = calculate_event_hash(b"", "PACKET_BATCH_CREATED", 1, child_payload)
+            TraceEvent.objects.create(
+                event_id=split_event_id,
+                lot=child_lot,
+                lot_seq=1,
+                event_type="PACKET_BATCH_CREATED",
+                event_time=timezone.now().isoformat(),
+                org=parent_lot.custodian_org,
+                user=request.user,
+                qty_kg=Decimal(str(batch_qty_kg)),
+                payload=child_payload,
+                event_hash=c_hash,
+            )
+            child_lot.head_hash = c_hash
+            child_lot.save(update_fields=["head_hash"])
+
+            # Also record a CUSTODY_APPEND note on parent lot so parent journey reflects the packet split
+            parent_lot.head_seq += 1
+            p_payload = {
+                "actor_role": actor_role,
+                "actor_name": actor_name,
+                "current_weight_kg": max(0.0, round(available_kg - batch_qty_kg, 3)),
+                "action_stage": f"Split Packet Batch {child_code} ({packet_count} x {int(packet_weight_g)}g = {batch_qty_kg} kg)",
+                "condition": f"Packet Batch Minted ({child_code})",
+                "location_name": location_name,
+                "child_batch_code": child_code,
+                "packet_weight_g": packet_weight_g,
+                "packet_count": packet_count,
+                "remarks": remarks,
+            }
+            p_hash = calculate_event_hash(bytes(parent_lot.head_hash or b""), "CUSTODY_APPEND", parent_lot.head_seq, p_payload)
+            TraceEvent.objects.create(
+                event_id=uuid.uuid4(),
+                lot=parent_lot,
+                lot_seq=parent_lot.head_seq,
+                event_type="CUSTODY_APPEND",
+                event_time=timezone.now().isoformat(),
+                org=parent_lot.custodian_org,
+                user=request.user,
+                qty_kg=Decimal(str(batch_qty_kg)),
+                payload=p_payload,
+                event_hash=p_hash,
+            )
+            parent_lot.head_hash = p_hash
+            parent_lot.save(update_fields=["head_seq", "head_hash"])
+
+            from apps.publicview.services import refresh_public_view
+            refresh_public_view(parent_lot)
+            refresh_public_view(child_lot)
+
+        child_item = _build_lot_item(child_lot)
+        updated_parent = _build_lot_item(parent_lot)
+        return Response({
+            "status": "created",
+            "message": f"Small packet batch {child_code} ({packet_count} x {int(packet_weight_g)}g = {batch_qty_kg} kg) created with child QR.",
+            "packet_batch": child_item,
+            "parent_lot": updated_parent,
+        }, status=status.HTTP_201_CREATED)
 
 
 class LotInspectionView(APIView):

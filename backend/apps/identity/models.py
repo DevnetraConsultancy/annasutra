@@ -18,13 +18,27 @@ class AppUser(models.Model):
 
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     org = models.ForeignKey("organisations.Organisation", on_delete=models.CASCADE, related_name="users", db_column="org_id")
-    phone_e164 = models.TextField(unique=True)
+    email = models.EmailField(max_length=190, unique=True, null=True, blank=True)
+    phone_e164 = models.TextField(unique=True, null=True, blank=True)
     role = models.TextField(choices=ROLE_CHOICES)
     status = models.TextField(choices=STATUS_CHOICES, default="ACTIVE")
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = "app_user"
+
+    def save(self, *args, **kwargs):
+        if self.email is not None:
+            cleaned_email = str(self.email).strip().lower()
+            self.email = cleaned_email if cleaned_email else None
+        if self.phone_e164 is not None:
+            cleaned_phone = str(self.phone_e164).strip()
+            self.phone_e164 = cleaned_phone if cleaned_phone else None
+        if not self._state.adding and self.pk:
+            orig = AppUser.objects.filter(pk=self.pk).values("email").first()
+            if orig and orig.get("email") and self.email and orig["email"].lower() != self.email.lower():
+                raise PermissionError("Primary Gmail identity (email) is immutable and cannot be changed.")
+        super().save(*args, **kwargs)
 
     @property
     def is_authenticated(self):
@@ -106,14 +120,14 @@ class EntityProfile(models.Model):
     ]
 
     entity_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user_id = models.UUIDField(unique=True)
+    user_id = models.UUIDField()
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    entity_code = models.CharField(max_length=24, null=True, blank=True, unique=True)
+    entity_code = models.CharField(max_length=32, null=True, blank=True, unique=True)
     first_name = models.CharField(max_length=80)
     last_name = models.CharField(max_length=80)
     organisation_name = models.CharField(max_length=160)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default="UNSPECIFIED")
-    phone_e164 = models.CharField(max_length=20, unique=True)
+    phone_e164 = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(max_length=190, null=True, blank=True)
     total_land_acres = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     address_line1 = models.CharField(max_length=200)
@@ -133,6 +147,7 @@ class EntityProfile(models.Model):
 
     class Meta:
         db_table = "entity_profile"
+        unique_together = (("user_id", "role"),)
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(total_land_acres__isnull=True) | models.Q(total_land_acres__gt=0),
@@ -143,6 +158,15 @@ class EntityProfile(models.Model):
                 name="chk_verified",
             ),
         ]
+
+    def save(self, *args, **kwargs):
+        if self.email is not None:
+            cleaned_email = str(self.email).strip().lower()
+            self.email = cleaned_email if cleaned_email else None
+        if self.phone_e164 is not None:
+            cleaned_phone = str(self.phone_e164).strip()
+            self.phone_e164 = cleaned_phone if cleaned_phone else None
+        super().save(*args, **kwargs)
 
 
 class EntitySensitive(models.Model):
@@ -360,4 +384,3 @@ class EntityDeletionRequest(models.Model):
 
     class Meta:
         db_table = "entity_deletion_request"
-
