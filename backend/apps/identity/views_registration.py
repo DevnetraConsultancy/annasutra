@@ -125,6 +125,7 @@ def _serialize_profile(profile):
         "submitted_at": profile.submitted_at.isoformat() if profile.submitted_at else None,
         "verified_at": profile.verified_at.isoformat() if profile.verified_at else None,
         "role_details": role_details.details if role_details else {},
+        "consents": (role_details.details.get("consents") if role_details and isinstance(role_details.details, dict) else {}),
         "plots_count": plots.count(),
         "has_sensitive": sensitive is not None,
         "sensitive_masked": sensitive_masked,
@@ -254,8 +255,16 @@ class MyProfileView(APIView):
             if "role_details" in request.data and isinstance(request.data["role_details"], dict):
                 role_det, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
                 existing_uid = (role_det.details or {}).get("farmer_uid") or get_or_mint_farmer_uid(profile)
-                merged_details = dict(request.data["role_details"])
+                merged_details = dict(role_det.details or {})
+                merged_details.update(request.data["role_details"])
                 merged_details["farmer_uid"] = existing_uid
+                role_det.details = merged_details
+                role_det.save()
+
+            if "consents" in request.data and isinstance(request.data["consents"], dict):
+                role_det, _ = EntityRoleDetails.objects.get_or_create(entity=profile)
+                merged_details = dict(role_det.details or {})
+                merged_details["consents"] = request.data["consents"]
                 role_det.details = merged_details
                 role_det.save()
 
@@ -425,9 +434,9 @@ class MySensitiveView(APIView):
 
     def put(self, request):
         profile = _get_entity_profile_for_user(request.user, auto_create=True)
-        if profile.status in ("SUBMITTED", "VERIFIED") and not request.data.get("override_lock"):
+        if profile.status in ("SUBMITTED", "VERIFIED"):
             raise exceptions.ValidationError(
-                {"detail": f"Profile in {profile.status} status is locked from editing sensitive details.", "code": "PROFILE_LOCKED"}
+                {"detail": "KYC details are locked. Administrative review is required for updates.", "code": "PROFILE_LOCKED"}
             )
 
         pan = request.data.get("pan")

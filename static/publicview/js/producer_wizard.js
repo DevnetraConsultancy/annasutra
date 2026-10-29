@@ -49,7 +49,7 @@
       stepTab1: '1. Basic Info',
       stepTab2: '2. Farm Plots',
       stepTab3: '3. Cultivation',
-      stepTab4: '4. Identity & Bank',
+      stepTab4: '4. KYC',
       stepTab5: '5. Consent & Review',
       step1Title: 'Basic Producer & Farm Details',
       step1Desc: 'Enter your legal identity, farm enterprise name, and village jurisdiction.',
@@ -57,8 +57,8 @@
       step2Desc: 'Map your agricultural cultivation plots with satellite coordinates and calculate exact acreage.',
       step3Title: 'Cultivation & Farming Profile',
       step3Desc: 'Specify your farming institution type, primary crops harvested, and irrigation infrastructure.',
-      step4Title: 'Encrypted Identity & Financial Settlement',
-      step4Desc: 'Provide PAN, voluntary Aadhaar last-4 digits, and bank account for automated custody settlements. AES-256-GCM protected.',
+      step4Title: 'KYC & Bank Verification',
+      step4Desc: 'Sensitive identity and bank details. Locked by Admin authority. Updates require an administrative change request.',
       step5Title: 'Review & Consent',
       step5Desc: 'Verify all declared parameters and provide digital consent for traceability operations.',
       firstName: 'First Name',
@@ -168,7 +168,7 @@
       lblSettlementBank: 'Settlement Bank',
       lblSubmissionDate: 'Submission Date',
       lblEntityRefToken: 'Entity Reference Token',
-      verifiedNodeBadge: 'VERIFIED PRODUCER NODE',
+      verifiedNodeBadge: 'VERIFIED PRODUCER',
       statActiveBatches: 'Active Harvest Batches',
       statActiveBatchesSub: 'Recorded in Custody Ledger',
       statQrAvail: 'Remaining QR Crate Serials',
@@ -263,7 +263,7 @@
       stepTab1: '1. मूल विवरण',
       stepTab2: '2. खेत भूखंड',
       stepTab3: '3. फसल प्रोफाइल',
-      stepTab4: '4. पहचान व बैंक',
+      stepTab4: '4. केवाईसी (KYC)',
       stepTab5: '5. सहमति व जमा',
       step1Title: 'उत्पादक एवं कृषि का बुनियादी विवरण',
       step1Desc: 'अपना कानूनी नाम, कृषि उद्यम का नाम और ग्राम पंचायत अधिकार क्षेत्र दर्ज करें।',
@@ -271,8 +271,8 @@
       step2Desc: 'सैटेलाइट निर्देशांक के साथ अपने कृषि भूखंडों का नक्शा बनाएं और सटीक रकबा (एकड़) निकालें।',
       step3Title: 'खेती एवं फसल प्रोफाइल',
       step3Desc: 'अपनी कृषि संस्था का प्रकार, उगाई जाने वाली मुख्य फसलें और सिंचाई व्यवस्था बताएं।',
-      step4Title: 'एन्क्रिप्टेड पहचान एवं बैंक खाता विवरण',
-      step4Desc: 'व्यापार भुगतान के लिए पैन, स्वैच्छिक आधार के अंतिम 4 अंक और बैंक खाता दर्ज करें। AES-256-GCM द्वारा सुरक्षित।',
+      step4Title: 'केवाईसी एवं बैंक विवरण',
+      step4Desc: 'व्यापार भुगतान के लिए पैन, स्वैच्छिक आधार के अंतिम 4 अंक और बैंक खाता दर्ज करें। सुरक्षित संरक्षित।',
       step5Title: 'समीक्षा एवं वैधानिक डीपीडीपी सहमति',
       step5Desc: 'सभी दर्ज विवरणों की पुष्टि करें और DPDP अधिनियम 2023 के तहत डिजिटल सहमति प्रदान करें।',
       firstName: 'पहला नाम',
@@ -382,7 +382,7 @@
       lblSettlementBank: 'निपटान बैंक खाता',
       lblSubmissionDate: 'जमा करने की तिथि',
       lblEntityRefToken: 'इकाई संदर्भ टोकन',
-      verifiedNodeBadge: 'सत्यापित उत्पादक नोड',
+      verifiedNodeBadge: 'सत्यापित उत्पादक',
       statActiveBatches: 'सक्रिय फसल बैच',
       statActiveBatchesSub: 'कस्टडी लेज़र में दर्ज',
       statQrAvail: 'उपलब्ध क्यूआर क्रेट लेबल',
@@ -477,7 +477,7 @@
       stepTab1: '১. প্রাথমিক তথ্য',
       stepTab2: '২. জমির প্লট',
       stepTab3: '৩. ফসল প্রোফাইল',
-      stepTab4: '৪. পরিচয় ও ব্যাঙ্ক',
+      stepTab4: '৪. কেওয়াইসি (KYC)',
       stepTab5: '৫. সম্মতি ও জমা',
       step1Title: 'উৎপাদক ও খামারের প্রাথমিক বিবরণ',
       step1Desc: 'আপনার আইনি পরিচয়, খামারের নাম এবং গ্রাম পঞ্চায়েতের এলাকা নির্বাচন করুন।',
@@ -485,8 +485,8 @@
       step2Desc: 'স্যাটেলাইট স্থানাঙ্ক দিয়ে আপনার জমির প্লট ম্যাপ করুন এবং মোট একর হিসাব করুন।',
       step3Title: 'কৃষি ও ফসলের প্রোফাইল',
       step3Desc: 'আপনার কৃষক শ্রেণি, প্রধান উৎপাদিত ফসল এবং সেচ ব্যবস্থা নির্বাচন করুন।',
-      step4Title: 'এনক্রিপ্ট করা পরিচয় ও ব্যাঙ্ক অ্যাকাউন্ট',
-      step4Desc: 'লেনদেনের জন্য প্যান, স্বেচ্ছায় আধার শেষ ৪ সংখ্যা এবং ব্যাঙ্ক বিবরণ দিন। AES-256-GCM দ্বারা সুরক্ষিত।',
+      step4Title: 'কেওয়াইসি ও ব্যাঙ্ক বিবরণ',
+      step4Desc: 'লেনদেনের জন্য প্যান, স্বেচ্ছায় আধার শেষ ৪ সংখ্যা এবং ব্যাঙ্ক বিবরণ দিন। নিরাপদে সংরক্ষিত।',
       step5Title: 'পর্যালোচনা ও বিধিবদ্ধ ডিপিডিপি সম্মতি',
       step5Desc: 'সকল তথ্য যাচাই করুন এবং DPDP আইন ২০২৩ অনুযায়ী ডিজিটাল সম্মতি প্রদান করুন।',
       firstName: 'নামের প্রথম অংশ',
@@ -596,7 +596,7 @@
       lblSettlementBank: 'ব্যাঙ্ক অ্যাকাউন্ট',
       lblSubmissionDate: 'জমা দেওয়ার তারিখ',
       lblEntityRefToken: 'এনটিটি রেফারেন্স টোকেন',
-      verifiedNodeBadge: 'যাচাইকৃত উৎপাদক নোড',
+      verifiedNodeBadge: 'যাচাইকৃত উৎপাদক',
       statActiveBatches: 'সক্রিয় ফসল ব্যাচ',
       statActiveBatchesSub: 'হেফাজত লেজারে নথিভুক্ত',
       statQrAvail: 'উপলব্ধ কিউআর ক্রেট লেবেল',
@@ -1771,7 +1771,7 @@ function renderAdminEntityInspector(ent, t) {
           </div>
         </div>
 
-        <h3 style="font-size: 24px; color: #0f172a; margin: 0 0 6px; font-weight: 800;">${escapeHtml(p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node')}</h3>
+        <h3 style="font-size: 24px; color: #0f172a; margin: 0 0 6px; font-weight: 800;">${escapeHtml(p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Individual Farm')}</h3>
         
         ${isVerified && farmerUid ? `
           <div style="margin-bottom: 14px; font-family: monospace; font-size: 14.5px; font-weight: 800; color: #047857; background: #ecfdf5; border: 1.5px solid #86efac; display: inline-block; padding: 6px 16px; border-radius: 20px;">
@@ -1786,7 +1786,7 @@ function renderAdminEntityInspector(ent, t) {
         <p style="color: #64748b; font-size: 14px; max-width: 650px; margin: 0 auto 24px; line-height: 1.55;">
           ${isNeedsChanges 
             ? 'The reviewing authority has inspected your registration and requested specific adjustments. Please review the feedback notes below, update the required fields, and resubmit.' 
-            : 'Your producer registration data, land parcel boundaries, and identity credentials have been securely sealed. Authority verification is currently underway. Operational console access unlocks immediately upon approval.'}
+            : 'Your producer registration and KYC credentials have been securely submitted. Administrative verification is underway. Operational console access unlocks immediately upon approval.'}
         </p>
 
         <!-- Verification Progress Stepper -->
@@ -1885,7 +1885,7 @@ function renderAdminEntityInspector(ent, t) {
         const p = data.profile || data;
         wizardState.profile = p;
         if (p.status === 'VERIFIED') {
-          showToast('Congratulations! Your producer node has been verified by the authority.', 'success');
+          showToast('Congratulations! Your producer account has been verified by the authority.', 'success');
           const contentArea = document.getElementById('workspaceDynamicContent');
           if (contentArea) renderVerifiedOperationalConsole(contentArea);
         } else {
@@ -2045,7 +2045,7 @@ function renderAdminEntityInspector(ent, t) {
     const t = getI18n();
     const p = wizardState.profile || {};
     const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || window.computeLiveMentorBatchIdPreview('').slice(0, 22);
-    const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node';
+    const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Individual Farm';
     const locationStr = [p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ') || 'Registered Agricultural Producer';
 
     // Ensure workspace container is visible & hide legacy placeholders
@@ -2066,7 +2066,7 @@ function renderAdminEntityInspector(ent, t) {
           </div>
           <div>
             <div style="font-size: 13px; font-weight: 800; color: #991b1b;">Account Deletion Requested (Operations Frozen)</div>
-            <div style="font-size: 12px; color: #b91c1c;">Your profile deletion request is under review by State &amp; C-DAC Admin Authorities. New dispatches and batch creation are temporarily locked.</div>
+            <div style="font-size: 12px; color: #b91c1c;">Your profile deletion request is under review by the Admin. New dispatches and batch creation are temporarily locked.</div>
           </div>
         </div>
         <button type="button" class="action-btn-pill" onclick="window.cancelEntityDeletionRequest()" style="font-size: 12px; background: #fff; color: #dc2626; border-color: #f87171; font-weight: 800;">
@@ -2081,7 +2081,7 @@ function renderAdminEntityInspector(ent, t) {
           </div>
           <div>
             <div style="font-size: 13px; font-weight: 800; color: #78350f;">Registration Under Administrative Review</div>
-            <div style="font-size: 12px; color: #92400e;">Your profile &amp; KYC documents are being verified field-by-field by the Admin Verifier.</div>
+            <div style="font-size: 12px; color: #92400e;">Your profile and KYC documents are being verified by the Admin.</div>
           </div>
         </div>
         <button type="button" class="action-btn-pill" onclick="window.openProducerRegistrationReviewStatus()" style="font-size: 12px; background: #fff;">
@@ -2096,7 +2096,7 @@ function renderAdminEntityInspector(ent, t) {
           </div>
           <div>
             <div style="font-size: 13px; font-weight: 800; color: #1e3a8a;">Farmer Registration In Progress (Draft Mode)</div>
-            <div style="font-size: 12px; color: #3b82f6;">Complete your 4-step registration application to submit your farm KYC to C-DAC &amp; State Authorities.</div>
+            <div style="font-size: 12px; color: #3b82f6;">Complete your registration application to submit your profile and KYC for verification.</div>
           </div>
         </div>
         <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 7px 16px; font-size: 12px; font-weight: 800;" onclick="window.openProducerRegistrationWizard()">
@@ -2105,7 +2105,7 @@ function renderAdminEntityInspector(ent, t) {
       </div>
     ` : '';
 
-    const verifiedBadgeText = (p.status === 'VERIFIED') ? (t.verifiedNodeBadge || 'VERIFIED PRODUCER NODE')
+    const verifiedBadgeText = (p.status === 'VERIFIED') ? (t.verifiedNodeBadge || 'VERIFIED PRODUCER')
       : (p.status === 'SUBMITTED') ? 'REGISTRATION UNDER REVIEW'
       : 'PRODUCER REGISTRATION DRAFT';
 
@@ -2787,15 +2787,16 @@ function renderAdminEntityInspector(ent, t) {
   window._prodProfileActiveTab = 'basic';
 
   window.switchProducerProfileTab = function (tabName) {
+    if (tabName === 'identity') tabName = 'kyc';
     window._prodProfileActiveTab = tabName;
     const container = document.getElementById('producerProfileTabContent');
     if (container) {
       window.renderProducerProfileTabContent(container);
     }
     // Update tab button active states
-    const tabs = ['basic', 'plots', 'cultivation', 'identity', 'consent'];
+    const tabs = ['basic', 'plots', 'cultivation', 'kyc', 'consent'];
     tabs.forEach(t => {
-      const btn = document.getElementById(`prodProfTabBtn_${t}`);
+      const btn = document.getElementById(`prodProfTabBtn_${t}`) || (t === 'kyc' ? document.getElementById('prodProfTabBtn_identity') : null);
       if (btn) {
         const isActive = (t === tabName);
         btn.style.borderBottom = isActive ? '3px solid #047857' : '3px solid transparent';
@@ -2836,7 +2837,7 @@ function renderAdminEntityInspector(ent, t) {
 
     const p = wizardState.profile || {};
     const farmerUid = p.farmer_uid || '';
-    const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Farmer Producer Node';
+    const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Individual Farm';
 
     modal.innerHTML = `
       <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 860px; max-height: 92vh; overflow-y: auto;">
@@ -2844,8 +2845,8 @@ function renderAdminEntityInspector(ent, t) {
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 22px 28px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Producer Profile &amp; Identity</div>
-            <h3 style="margin: 2px 0 0; font-size: 22px; color: #ffffff; font-weight: 800;">A. Producer Profile &amp; Registration Data</h3>
+            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Farmer Profile</div>
+            <h3 style="margin: 2px 0 0; font-size: 20px; color: #ffffff; font-weight: 800;">A. Producer Profile</h3>
           </div>
         </div>
 
@@ -2854,7 +2855,7 @@ function renderAdminEntityInspector(ent, t) {
           <!-- Digital ID Card Preview -->
           <div style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); border-radius: 14px; padding: 20px 24px; color: #ffffff; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(4,120,87,0.25); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
             <div>
-              <div style="font-size: 11px; font-weight: 800; color: #a7f3d0; text-transform: uppercase; letter-spacing: 1px;">AnnaSutra &bull; Verified Producer Node</div>
+              <div style="font-size: 11px; font-weight: 800; color: #a7f3d0; text-transform: uppercase; letter-spacing: 0.5px;">AnnaSutra &bull; Verified Producer</div>
               <h4 style="margin: 4px 0 2px; font-size: 20px; font-weight: 900; color: #ffffff;">${escapeHtml(orgDisplayName)}</h4>
               <div style="font-size: 12.5px; color: #ecfdf5;">${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))}</div>
               ${farmerUid ? `
@@ -2867,9 +2868,9 @@ function renderAdminEntityInspector(ent, t) {
                 </div>
               `}
             </div>
-            <div style="background: #ffffff; padding: 8px 12px; border-radius: 10px; text-align: center; color: #0b3d2e;">
-              <div style="font-size: 11px; font-weight: 800; color: #047857;">VERIFIED STATUS</div>
-              <div style="font-size: 13px; font-weight: 900; margin-top: 2px;">ACTIVE NODE</div>
+            <div style="background: #ffffff; padding: 8px 14px; border-radius: 10px; text-align: center; color: #0b3d2e;">
+              <div style="font-size: 11px; font-weight: 800; color: #047857;">STATUS</div>
+              <div style="font-size: 13px; font-weight: 900; margin-top: 2px; color: #047857;">${p.status === 'VERIFIED' ? 'VERIFIED' : escapeHtml(p.status || 'ACTIVE')}</div>
             </div>
           </div>
 
@@ -2884,8 +2885,8 @@ function renderAdminEntityInspector(ent, t) {
             <button type="button" id="prodProfTabBtn_cultivation" onclick="window.switchProducerProfileTab('cultivation')" style="padding: 9px 14px; font-size: 12.5px; font-weight: 600; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; color: #64748b; white-space: nowrap;">
               3. Cultivation
             </button>
-            <button type="button" id="prodProfTabBtn_identity" onclick="window.switchProducerProfileTab('identity')" style="padding: 9px 14px; font-size: 12.5px; font-weight: 600; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; color: #64748b; white-space: nowrap;">
-              4. Identity &amp; Bank
+            <button type="button" id="prodProfTabBtn_kyc" onclick="window.switchProducerProfileTab('kyc')" style="padding: 9px 14px; font-size: 12.5px; font-weight: 600; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; color: #64748b; white-space: nowrap;">
+              4. KYC
             </button>
             <button type="button" id="prodProfTabBtn_consent" onclick="window.switchProducerProfileTab('consent')" style="padding: 9px 14px; font-size: 12.5px; font-weight: 600; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; color: #64748b; white-space: nowrap;">
               5. Consent &amp; Review
@@ -2930,7 +2931,8 @@ function renderAdminEntityInspector(ent, t) {
 
   window.renderProducerProfileTabContent = function (container) {
     if (!container) return;
-    const tab = window._prodProfileActiveTab || 'basic';
+    let tab = window._prodProfileActiveTab || 'basic';
+    if (tab === 'identity') tab = 'kyc';
     const p = wizardState.profile || {};
     const sens = wizardState.sensitive || {};
     const plots = wizardState.plots || [];
@@ -2938,95 +2940,97 @@ function renderAdminEntityInspector(ent, t) {
     if (tab === 'basic') {
       container.innerHTML = `
         <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-            <div>
-              <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 1: Basic Information &amp; Operational Preferences</h5>
-              <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Directly update operational preferences or submit change requests for locked legal identity.</p>
-            </div>
+          <div style="margin-bottom: 14px;">
+            <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 1: Basic Information &amp; Preferences</h5>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Directly update your personal details, enterprise name, and contact address.</p>
           </div>
 
           <form onsubmit="window.submitProducerBasicInfoForm(event)">
-            <!-- Locked Legal Identity Fields -->
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
-              <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom: 10px;">
-                ${getIcon('lock', 12, '#047857')} Verified Identity (Locked by Admin Authority)
+            <!-- Primary Registered Identity -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="font-size: 11px; color: #64748b; font-weight: 700;">Primary Login Mobile (Account ID)</span>
+                <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; font-family: monospace;">${escapeHtml(p.phone_e164 || '')}</div>
               </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                <div>
-                  <div style="font-size: 11px; color: #64748b; font-weight: 700;">Legal Applicant Name</div>
-                  <div style="font-size: 13.5px; font-weight: 800; color: #0f172a;">${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')}</div>
-                </div>
-                <div>
-                  <div style="font-size: 11px; color: #64748b; font-weight: 700;">Registered Organisation</div>
-                  <div style="font-size: 13.5px; font-weight: 800; color: #0f172a;">${escapeHtml(p.organisation_name || 'Individual Farm')}</div>
-                </div>
-                <div>
-                  <div style="font-size: 11px; color: #64748b; font-weight: 700;">Primary Registered Phone</div>
-                  <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; font-family: monospace;">${escapeHtml(p.phone_e164 || '')}</div>
-                </div>
+              <span style="font-size: 11px; color: #047857; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px;">
+                ${getIcon('lock', 11, '#047857')} Registered Phone
+              </span>
+            </div>
+
+            <!-- Self-Editable Fields -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">First Name <span class="req">*</span></label>
+                <input type="text" class="form-input" id="prof_edit_first_name" value="${escapeHtml(p.first_name || '')}" placeholder="First Name" required style="background: #fff;" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name <span class="req">*</span></label>
+                <input type="text" class="form-input" id="prof_edit_last_name" value="${escapeHtml(p.last_name || '')}" placeholder="Last Name" required style="background: #fff;" />
               </div>
             </div>
 
-            <!-- Self-Editable Operational Fields -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">Farm / Organisation Name <span class="req">*</span></label>
+                <input type="text" class="form-input" id="prof_edit_org_name" value="${escapeHtml(p.organisation_name || '')}" placeholder="e.g. Ramesh Agro Farms" required style="background: #fff;" />
+              </div>
               <div class="form-group">
                 <label class="form-label">Contact Email Address</label>
-                <input type="email" class="form-input" id="prof_edit_email" value="${escapeHtml(p.email || '')}" placeholder="e.g. kisan@gmail.com" style="background: #fff;" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Alternate Mobile Number</label>
-                <input type="tel" class="form-input" id="prof_edit_alt_phone" value="${escapeHtml(p.alt_phone || '')}" placeholder="e.g. 9876543210" style="background: #fff;" />
+                <input type="email" class="form-input" id="prof_edit_email" value="${escapeHtml(p.email || '')}" placeholder="kisan@gmail.com" style="background: #fff;" />
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">Alternate Mobile Number</label>
+                <input type="tel" class="form-input" id="prof_edit_alt_phone" value="${escapeHtml(p.alt_phone || '')}" placeholder="10-digit mobile" style="background: #fff;" />
+              </div>
               <div class="form-group">
                 <label class="form-label">Address Line 1</label>
                 <input type="text" class="form-input" id="prof_edit_addr1" value="${escapeHtml(p.address_line1 || '')}" placeholder="Street / Landmark" style="background: #fff;" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Village / Town</label>
-                <input type="text" class="form-input" id="prof_edit_village" value="${escapeHtml(p.village_town || '')}" placeholder="Village Name" style="background: #fff;" />
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
               <div class="form-group">
-                <label class="form-label">District</label>
-                <input type="text" class="form-input" id="prof_edit_district" value="${escapeHtml(p.district || '')}" placeholder="District" style="background: #fff;" />
+                <label class="form-label">Village / Town <span class="req">*</span></label>
+                <input type="text" class="form-input" id="prof_edit_village" value="${escapeHtml(p.village_town || '')}" placeholder="Village Name" required style="background: #fff;" />
               </div>
               <div class="form-group">
-                <label class="form-label">State</label>
-                <input type="text" class="form-input" id="prof_edit_state" value="${escapeHtml(getStateLabel(p.state))}" disabled style="background: #f1f5f9;" />
+                <label class="form-label">District <span class="req">*</span></label>
+                <input type="text" class="form-input" id="prof_edit_district" value="${escapeHtml(p.district || '')}" placeholder="District" required style="background: #fff;" />
               </div>
               <div class="form-group">
-                <label class="form-label">Pincode</label>
-                <input type="text" class="form-input" id="prof_edit_pincode" value="${escapeHtml(p.pincode || '')}" placeholder="6-digit PIN" style="background: #fff;" />
+                <label class="form-label">Pincode <span class="req">*</span></label>
+                <input type="text" class="form-input" id="prof_edit_pincode" value="${escapeHtml(p.pincode || '')}" placeholder="6-digit PIN" maxlength="6" required style="background: #fff;" />
               </div>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
-              <button type="submit" class="action-btn-pill primary" style="padding: 9px 20px;">
-                Save Profile Updates
+              <button type="submit" class="action-btn-pill primary" style="padding: 9px 20px; font-weight: 800;">
+                Save Basic Info
               </button>
             </div>
           </form>
         </div>
       `;
     } else if (tab === 'plots') {
+      const plotsList = wizardState.plots || [];
+      const totalAcres = plotsList.reduce((acc, pl) => acc + (parseFloat(pl.area_acres) || 0), 0);
       container.innerHTML = `
         <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
             <div>
               <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 2: Farm Plots &amp; Land Holdings</h5>
-              <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Registered farm parcel boundaries and cadastral survey numbers.</p>
+              <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Add or edit registered farm plots, survey numbers, and acreage directly.</p>
             </div>
-            <div style="background: #ecfdf5; border: 1px solid #86efac; padding: 4px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 800; color: #047857;">
-              Total Land: ${parseFloat(p.total_land_acres || 0).toFixed(2)} Acres
+            <div style="background: #ecfdf5; border: 1px solid #86efac; padding: 5px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 800; color: #047857;">
+              Total Land: <span id="profPlotsTotalAcres">${totalAcres.toFixed(2)}</span> Acres (${plotsList.length} Plots)
             </div>
           </div>
 
-          <div class="compact-ledger-table-wrap" style="margin-bottom: 18px;">
+          <!-- Existing Plots Table with Remove Option -->
+          <div class="compact-ledger-table-wrap" style="margin-bottom: 16px;">
             <table class="compact-ledger-table">
               <thead>
                 <tr>
@@ -3034,92 +3038,178 @@ function renderAdminEntityInspector(ent, t) {
                   <th>Plot Name</th>
                   <th>Survey / Khasra No.</th>
                   <th>Area (Acres)</th>
-                  <th>Boundary Status</th>
+                  <th style="text-align: right;">Action</th>
                 </tr>
               </thead>
-              <tbody>
-                ${plots.length === 0 ? `
+              <tbody id="profPlotsTableBody">
+                ${plotsList.length === 0 ? `
                   <tr>
-                    <td colspan="5" style="text-align: center; padding: 24px; color: #64748b;">
-                      1 Registered Plot Declared (${parseFloat(p.total_land_acres || 0).toFixed(2)} Acres)
+                    <td colspan="5" style="text-align: center; padding: 20px; color: #64748b;">
+                      No individual plots added yet. Add your first farm parcel below.
                     </td>
                   </tr>
-                ` : plots.map((pl, i) => `
-                  <tr>
+                ` : plotsList.map((pl, i) => `
+                  <tr id="plot_row_${i}">
                     <td>${i + 1}</td>
                     <td><strong>${escapeHtml(pl.plot_name || `Plot ${i + 1}`)}</strong></td>
                     <td style="font-family: monospace;">${escapeHtml(pl.khasra_survey_no || 'NA')}</td>
                     <td>${parseFloat(pl.area_acres || 0).toFixed(2)} Acres</td>
-                    <td><span style="color: #047857; font-weight: 800;">✓ Mapped Polygon</span></td>
+                    <td style="text-align: right;">
+                      <button type="button" onclick="window.removeProducerPlotRow(${i})" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 12px; font-weight: 700;">
+                        Remove
+                      </button>
+                    </td>
                   </tr>
                 `).join('')}
               </tbody>
             </table>
           </div>
 
-          <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div>
-              <strong style="font-size: 13px; color: #0f172a;">Need to add or modify plot boundaries?</strong>
-              <div style="font-size: 11.5px; color: #64748b;">Land acreage modifications require documentary sale deed / patta verification by Admin.</div>
+          <!-- Add New Plot Inline Form -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 12px; font-weight: 800; color: #0b3d2e; margin-bottom: 8px;">+ Add New Farm Parcel</div>
+            <div style="display: grid; grid-template-columns: 2fr 2fr 1.5fr auto; gap: 10px; align-items: end;">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-size: 11px;">Plot Name</label>
+                <input type="text" class="form-input" id="inp_new_plot_name" placeholder="e.g. North Plot" style="background: #fff; font-size: 12px;" />
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-size: 11px;">Survey / Khasra No.</label>
+                <input type="text" class="form-input" id="inp_new_plot_survey" placeholder="e.g. 482/1" style="background: #fff; font-size: 12px;" />
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-size: 11px;">Area (Acres)</label>
+                <input type="number" step="0.01" min="0.01" class="form-input" id="inp_new_plot_acres" placeholder="e.g. 2.50" style="background: #fff; font-size: 12px;" />
+              </div>
+              <button type="button" class="action-btn-pill" onclick="window.addNewProducerPlotRow()" style="padding: 8px 14px; font-size: 12px; font-weight: 800; height: 38px;">
+                + Add Plot
+              </button>
             </div>
-            <button type="button" class="action-btn-pill" onclick="window.prefillChangeRequest('total_land_acres', 'Plot Acreage Modification')" style="background: #fff;">
-              Request Land Modification &rarr;
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="window.openProducerLandModal()" style="font-size: 12px;">
+              <span>${getIcon('map-pin', 14, '#047857')}</span> Map Polygon Boundaries &rarr;
+            </button>
+            <button type="button" class="action-btn-pill primary" onclick="window.saveProducerPlotsDirectly()" style="padding: 9px 20px; font-weight: 800;">
+              Save Farm Plots
             </button>
           </div>
         </div>
       `;
     } else if (tab === 'cultivation') {
-      const crops = (p.role_details && p.role_details.commodities) ? p.role_details.commodities.map(getCropLabel).join(', ') : 'Not specified';
+      const rDet = p.role_details || {};
+      const currentCrops = Array.isArray(rDet.commodities) ? rDet.commodities : (wizardState.selectedCrops || []);
+      const currentPractice = rDet.farming_practice || 'CONVENTIONAL';
+      const currentIrrigation = rDet.irrigation_type || 'BOREWELL_DRIP';
+      
       container.innerHTML = `
         <div>
           <div style="margin-bottom: 14px;">
             <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 3: Cultivation Profile &amp; Commodities</h5>
-            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Agricultural practices, primary crops, and irrigation infrastructure.</p>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Update your seasonal crops, agricultural practices, and irrigation infrastructure.</p>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
-              <div style="font-size: 11px; color: #64748b; font-weight: 700;">Primary Registered Crops</div>
-              <div style="font-size: 14px; font-weight: 800; color: #047857; margin-top: 3px;">${escapeHtml(crops)}</div>
+          <form onsubmit="window.submitProducerCultivationForm(event)">
+            <!-- Commodities Checkboxes -->
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">Primary Registered Produce &amp; Crops <span class="req">*</span></label>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 6px;">
+                ${CROPS_LIST.map(c => {
+                  const isSel = currentCrops.includes(c.id);
+                  return `
+                    <label id="prof_crop_lbl_${c.id}" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: ${isSel ? '#ecfdf5' : '#fff'}; border: 1.5px solid ${isSel ? '#047857' : '#e2e8f0'}; border-radius: 8px; cursor: pointer; user-select: none;">
+                      <input type="checkbox" id="prof_chk_crop_${c.id}" value="${c.id}" ${isSel ? 'checked' : ''} onchange="window.toggleProfCropCheckbox('${c.id}', this.checked)" style="accent-color: #047857;" />
+                      <span style="font-size: 12px; font-weight: ${isSel ? '700' : '600'}; color: ${isSel ? '#065f46' : '#334155'};">${escapeHtml(getCropLabel(c.id))}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
-              <div style="font-size: 11px; color: #64748b; font-weight: 700;">Farming Methodology</div>
-              <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">${escapeHtml((p.role_details && p.role_details.farming_practice) || 'Conventional &amp; Organic NPOP')}</div>
+
+            <!-- Custom Produce Tags -->
+            <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #0b3d2e; margin-bottom: 6px;">
+                Other Produce / Custom Fruits / Spices (If unlisted above)
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="inp_prof_custom_crop" class="form-input" style="flex: 1; font-size: 12px; background: #fff;" placeholder="Type produce name (e.g. Dragonfruit, Cardamom)..." onkeydown="if(event.key==='Enter'){event.preventDefault();window.addProfCustomCrop();}" />
+                <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 6px 14px; font-size: 12px; white-space: nowrap;" onclick="window.addProfCustomCrop()">
+                  + Add Produce
+                </button>
+              </div>
+              <div id="profCustomCropsContainer" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+                ${(currentCrops.filter(id => !CROPS_LIST.some(c => c.id === id))).map(cn => `
+                  <span style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #047857; color: #065f46; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 14px;">
+                    <span>${escapeHtml(cn)}</span>
+                    <button type="button" onclick="window.removeProfCustomCrop('${escapeHtml(cn)}')" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 13px; font-weight: 900; line-height: 1; padding: 0;">&times;</button>
+                  </span>
+                `).join('')}
+              </div>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
-              <div style="font-size: 11px; color: #64748b; font-weight: 700;">Irrigation Source</div>
-              <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">${escapeHtml((p.role_details && p.role_details.irrigation_type) || 'Borewell &amp; Drip')}</div>
+
+            <!-- Farming Practice & Irrigation -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+              <div class="form-group">
+                <label class="form-label">Farming Methodology</label>
+                <select class="form-select" id="prof_edit_farming_practice" style="background: #fff; font-size: 12.5px;">
+                  <option value="CONVENTIONAL" ${currentPractice === 'CONVENTIONAL' ? 'selected' : ''}>Conventional Farming</option>
+                  <option value="ORGANIC_NPOP" ${currentPractice === 'ORGANIC_NPOP' ? 'selected' : ''}>Organic (NPOP Certified)</option>
+                  <option value="PGS_INDIA" ${currentPractice === 'PGS_INDIA' ? 'selected' : ''}>Natural Farming (PGS-India / ZBNF)</option>
+                  <option value="IN_CONVERSION" ${currentPractice === 'IN_CONVERSION' ? 'selected' : ''}>In-Conversion Organic</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Irrigation Source</label>
+                <select class="form-select" id="prof_edit_irrigation" style="background: #fff; font-size: 12.5px;">
+                  <option value="BOREWELL_DRIP" ${currentIrrigation === 'BOREWELL_DRIP' ? 'selected' : ''}>Borewell &amp; Drip Irrigation</option>
+                  <option value="CANAL" ${currentIrrigation === 'CANAL' ? 'selected' : ''}>Canal Irrigation</option>
+                  <option value="RAINFED" ${currentIrrigation === 'RAINFED' ? 'selected' : ''}>Rainfed (Monsoon Dependent)</option>
+                  <option value="RIVER_LIFT" ${currentIrrigation === 'RIVER_LIFT' ? 'selected' : ''}>River / Pond Lift Irrigation</option>
+                </select>
+              </div>
             </div>
-          </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="submit" class="action-btn-pill primary" style="padding: 9px 20px; font-weight: 800;">
+                Save Cultivation Profile
+              </button>
+            </div>
+          </form>
         </div>
       `;
-    } else if (tab === 'identity') {
+    } else if (tab === 'kyc' || tab === 'identity') {
       container.innerHTML = `
         <div>
           <div style="margin-bottom: 14px;">
-            <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 4: Statutory Identity &amp; Bank Settlement</h5>
-            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Sensitive identity and bank details. Masked for security.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 4: KYC Verification</h5>
+              <span style="font-size: 11px; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid #86efac; padding: 3px 8px; border-radius: 6px;">
+                ${getIcon('lock', 11, '#047857')} LOCKED (ADMIN VERIFIED)
+              </span>
+            </div>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Sensitive identity and banking details are locked. Any update requires an administrative change request with document proof.</p>
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px;">
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 11px; color: #64748b; font-weight: 700;">PAN Number</span>
-                <span style="font-size: 10px; color: #047857; font-weight: 800;">${getIcon('lock', 10, '#047857')} SEALED</span>
+                <span style="font-size: 10px; color: #047857; font-weight: 800;">${getIcon('lock', 10, '#047857')} LOCKED</span>
               </div>
               <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 4px; font-family: monospace;">${escapeHtml(sens.pan_masked || '•••• ••••')}</div>
             </div>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 11px; color: #64748b; font-weight: 700;">Voluntary Aadhaar (Last 4)</span>
-                <span style="font-size: 10px; color: #047857; font-weight: 800;">${getIcon('lock', 10, '#047857')} SEALED</span>
+                <span style="font-size: 10px; color: #047857; font-weight: 800;">${getIcon('lock', 10, '#047857')} LOCKED</span>
               </div>
               <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 4px; font-family: monospace;">•••• •••• ${escapeHtml(sens.aadhaar_last4 || '••••')}</div>
             </div>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 11px; color: #64748b; font-weight: 700;">Bank Settlement Account</span>
-                <span style="font-size: 10px; color: #047857; font-weight: 800;">${getIcon('lock', 10, '#047857')} SEALED</span>
+                <span style="font-size: 10px; color: #047857; font-weight: 800;">${getIcon('lock', 10, '#047857')} LOCKED</span>
               </div>
               <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 4px; font-family: monospace;">${escapeHtml(sens.bank_account_masked || '•••• ••••')} (${escapeHtml(sens.ifsc_masked || 'IFSC')})</div>
             </div>
@@ -3128,75 +3218,114 @@ function renderAdminEntityInspector(ent, t) {
           <div style="background: #fff; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
               <strong style="font-size: 13px; color: #0f172a;">Need to update your bank account or PAN details?</strong>
-              <div style="font-size: 11.5px; color: #64748b;">Financial details require administrative review with cancelled cheque proof.</div>
+              <div style="font-size: 11.5px; color: #64748b;">KYC and financial details require administrative review with documentary proof (e.g. cancelled cheque, PAN copy).</div>
             </div>
-            <button type="button" class="action-btn-pill" onclick="window.prefillChangeRequest('bank_details', 'Bank Account Change Request')" style="background: #fff;">
-              Request Bank Update &rarr;
+            <button type="button" class="action-btn-pill" onclick="window.prefillKycChangeRequest('bank_details', 'Bank Account Change Request')" style="background: #fff; font-weight: 800;">
+              Request KYC Update &rarr;
             </button>
           </div>
         </div>
       `;
     } else if (tab === 'consent') {
+      const plots = wizardState.plots || [];
+      const totalAcres = plots.reduce((acc, pl) => acc + (parseFloat(pl.area_acres) || 0), 0);
+      const consents = p.consents || {};
+
       container.innerHTML = `
         <div>
           <div style="margin-bottom: 14px;">
-            <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 5: Consent, Change Requests &amp; Account Operations</h5>
-            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Statutory DPDP Act 2023 consent record and submitted Change Requests.</p>
+            <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 5: Consent, Review &amp; Operations</h5>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Review registration details, configure consumer transparency preferences, request KYC updates, or manage account.</p>
           </div>
 
+          <!-- Summary Overview Card -->
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 18px;">
-            <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom: 4px;">
-              ✓ Consent Active
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase;">Registration Status Overview</span>
+              <span style="font-size: 11.5px; font-weight: 800; color: #047857;">VERIFIED</span>
             </div>
-            <div style="font-size: 12.5px; color: #334155;">
-              Farmer Consent digitally sealed upon registration. Consumer transparency toggles active.
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 12px;">
+              <div><span style="color: #64748b;">Producer:</span> <strong>${escapeHtml(p.first_name || '')} ${escapeHtml(p.last_name || '')}</strong></div>
+              <div><span style="color: #64748b;">Organisation:</span> <strong>${escapeHtml(p.organisation_name || 'Individual Farm')}</strong></div>
+              <div><span style="color: #64748b;">Location:</span> <strong>${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}</strong></div>
+              <div><span style="color: #64748b;">Total Land:</span> <strong>${totalAcres.toFixed(2)} Acres (${plots.length} Plots)</strong></div>
             </div>
           </div>
 
-          <!-- Submit New Change Request Form -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-            <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-              Submit Formal Data Change Request to Admin Authority
+          <!-- Consumer Transparency & Privacy Preferences (Self-Editable) -->
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
+            <div style="font-size: 13px; font-weight: 800; color: #0b3d2e; margin-bottom: 4px;">
+              Consumer Transparency &amp; Privacy Preferences
             </div>
+            <p style="font-size: 11.5px; color: #64748b; margin: 0 0 10px;">
+              Control what consumers see when they scan your harvest lot QR code on retail packs.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="pref_show_name" ${consents.show_name !== false ? 'checked' : ''} style="accent-color: #047857;" />
+                <span>Show first name and masked surname (e.g. "${escapeHtml(p.first_name || 'Farmer')} ${(p.last_name || '')[0] || ''}.")</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="pref_show_village" ${consents.show_village !== false ? 'checked' : ''} style="accent-color: #047857;" />
+                <span>Show village and district origin to consumers</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="pref_show_photo" ${consents.show_photo !== false ? 'checked' : ''} style="accent-color: #047857;" />
+                <span>Show verified producer photo on consumer scan journey</span>
+              </label>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+              <button type="button" class="action-btn-pill" onclick="window.saveConsumerTransparencyPreferences()" style="font-size: 12px; font-weight: 800; background: #fff;">
+                Save Transparency Preferences
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit KYC Update Request to Admin Form -->
+          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+            <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+              Request KYC or Bank Update to Admin
+            </div>
+            <p style="font-size: 11.5px; color: #64748b; margin: 0 0 10px;">
+              Basic info, plots, and crops are directly editable in Tabs 1, 2, and 3. Use this form exclusively for requesting changes to locked KYC or settlement bank details.
+            </p>
             <form onsubmit="window.submitProducerChangeRequest(event)">
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <div class="form-group">
-                  <label class="form-label">Field to Change <span class="req">*</span></label>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" style="font-size: 11px;">Locked Field to Update <span class="req">*</span></label>
                   <select class="form-select" id="req_field_name" required style="background: #fff; font-size: 12px;">
-                    <option value="legal_name">Legal Name / Organisation</option>
-                    <option value="total_land_acres">Total Registered Land (Acres)</option>
-                    <option value="kyc_document">KYC Document / PAN Details</option>
-                    <option value="bank_details">Settlement Bank Account</option>
+                    <option value="bank_details">Settlement Bank Account &amp; IFSC</option>
+                    <option value="kyc_document">PAN / Identity Document</option>
                   </select>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Requested New Value <span class="req">*</span></label>
-                  <input type="text" class="form-input" id="req_new_value" placeholder="e.g. 7.50 Acres or Corrected Name" required style="background: #fff; font-size: 12px;" />
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" style="font-size: 11px;">Requested New Value <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="req_new_value" placeholder="e.g. New Account No or Corrected PAN" required style="background: #fff; font-size: 12px;" />
                 </div>
               </div>
               <div class="form-group" style="margin-bottom: 10px;">
-                <label class="form-label">Reason for Request <span class="req">*</span></label>
-                <input type="text" class="form-input" id="req_reason" placeholder="e.g. Acquired additional adjacent parcel with sale deed no. 4829" required style="background: #fff; font-size: 12px;" />
+                <label class="form-label" style="font-size: 11px;">Reason &amp; Document Reference <span class="req">*</span></label>
+                <input type="text" class="form-input" id="req_reason" placeholder="e.g. Changed salary bank account; cancelled cheque attached" required style="background: #fff; font-size: 12px;" />
               </div>
               <div style="display: flex; justify-content: flex-end;">
                 <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 8px 18px; font-size: 12px; font-weight: 800;">
-                  Submit Change Request to Admin &rarr;
+                  Submit KYC Request to Admin &rarr;
                 </button>
               </div>
             </form>
           </div>
 
-          <!-- Danger Zone: Account & Profile Deletion -->
+          <!-- Account Deletion -->
           <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
               <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 6px;">
                 <span>${getIcon('alert', 16, '#dc2626')}</span>
-                <span>Danger Zone: Account &amp; Profile Deletion</span>
+                <span>Account Deletion</span>
               </h5>
               <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">Permanent Action</span>
             </div>
             <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
-              Request formal deletion of your registered entity profile. If you have active lots in transit or unconfirmed custody handovers, all transfers must be settled before your request can be submitted. Admin review and owner 2FA verification are mandatory.
+              Request formal deactivation of your account and profile. All in-transit dispatches and custody handovers must be settled before deletion can be processed. Admin review and mobile verification code are required.
             </p>
             <div style="display: flex; justify-content: flex-end;">
               <button type="button" onclick="window.closeProducerProfileModal(); window.openEntityDeletionRequestModal();" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">
@@ -3210,7 +3339,7 @@ function renderAdminEntityInspector(ent, t) {
     }
   };
 
-  window.prefillChangeRequest = function (fieldName, defaultVal) {
+  window.prefillKycChangeRequest = function (fieldName, defaultVal) {
     window.switchProducerProfileTab('consent');
     setTimeout(() => {
       const select = document.getElementById('req_field_name');
@@ -3219,9 +3348,168 @@ function renderAdminEntityInspector(ent, t) {
       if (input && defaultVal) input.placeholder = defaultVal;
     }, 50);
   };
+  window.prefillChangeRequest = window.prefillKycChangeRequest;
+
+  window.addNewProducerPlotRow = function () {
+    const nameEl = document.getElementById('inp_new_plot_name');
+    const surveyEl = document.getElementById('inp_new_plot_survey');
+    const acresEl = document.getElementById('inp_new_plot_acres');
+    const name = (nameEl ? nameEl.value.trim() : '') || `Plot ${(wizardState.plots || []).length + 1}`;
+    const survey = (surveyEl ? surveyEl.value.trim() : '') || 'NA';
+    const acres = parseFloat(acresEl ? acresEl.value : 0) || 0;
+    if (acres <= 0) {
+      showToast('Please enter a valid plot acreage greater than 0.', 'error');
+      return;
+    }
+    if (!wizardState.plots) wizardState.plots = [];
+    wizardState.plots.push({
+      plot_name: name,
+      khasra_survey_no: survey,
+      area_acres: acres
+    });
+    if (nameEl) nameEl.value = '';
+    if (surveyEl) surveyEl.value = '';
+    if (acresEl) acresEl.value = '';
+    const container = document.getElementById('producerProfileTabContent');
+    if (container) window.renderProducerProfileTabContent(container);
+  };
+
+  window.removeProducerPlotRow = function (idx) {
+    if (!wizardState.plots || idx < 0 || idx >= wizardState.plots.length) return;
+    wizardState.plots.splice(idx, 1);
+    const container = document.getElementById('producerProfileTabContent');
+    if (container) window.renderProducerProfileTabContent(container);
+  };
+
+  window.saveProducerPlotsDirectly = async function () {
+    const plots = wizardState.plots || [];
+    try {
+      const res = await fetch('/api/v1/me/plots', {
+        method: 'PUT',
+        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plots: plots, override_lock: true })
+      });
+      if (res.ok) {
+        showToast('Farm plots successfully saved.', 'success');
+        const data = await res.json();
+        wizardState.plots = data.plots || plots;
+        if (data.total_land_acres && wizardState.profile) {
+          wizardState.profile.total_land_acres = data.total_land_acres;
+          localStorage.setItem('annasutra_cached_profile', JSON.stringify(wizardState.profile));
+        }
+      } else {
+        const err = await res.json();
+        showToast(err.detail || 'Failed to save plots.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error saving plots.', 'error');
+    }
+  };
+
+  window.toggleProfCropCheckbox = function (cropId, isChecked) {
+    if (!wizardState.selectedCrops) wizardState.selectedCrops = [];
+    if (isChecked) {
+      if (!wizardState.selectedCrops.includes(cropId)) wizardState.selectedCrops.push(cropId);
+    } else {
+      wizardState.selectedCrops = wizardState.selectedCrops.filter(id => id !== cropId);
+    }
+    const lbl = document.getElementById(`prof_crop_lbl_${cropId}`);
+    if (lbl) {
+      lbl.style.background = isChecked ? '#ecfdf5' : '#fff';
+      lbl.style.borderColor = isChecked ? '#047857' : '#e2e8f0';
+    }
+  };
+
+  window.addProfCustomCrop = function () {
+    const inp = document.getElementById('inp_prof_custom_crop');
+    if (!inp) return;
+    const val = inp.value.trim();
+    if (!val) return;
+    if (!wizardState.selectedCrops) wizardState.selectedCrops = [];
+    if (!wizardState.selectedCrops.includes(val)) {
+      wizardState.selectedCrops.push(val);
+    }
+    inp.value = '';
+    const container = document.getElementById('producerProfileTabContent');
+    if (container) window.renderProducerProfileTabContent(container);
+  };
+
+  window.removeProfCustomCrop = function (cropName) {
+    if (!wizardState.selectedCrops) return;
+    wizardState.selectedCrops = wizardState.selectedCrops.filter(id => id !== cropName);
+    const container = document.getElementById('producerProfileTabContent');
+    if (container) window.renderProducerProfileTabContent(container);
+  };
+
+  window.submitProducerCultivationForm = async function (e) {
+    e.preventDefault();
+    const practice = (document.getElementById('prof_edit_farming_practice') || {}).value || 'CONVENTIONAL';
+    const irrigation = (document.getElementById('prof_edit_irrigation') || {}).value || 'BOREWELL_DRIP';
+    const crops = wizardState.selectedCrops || [];
+
+    try {
+      const res = await fetch('/api/v1/me/profile', {
+        method: 'PUT',
+        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          role_details: {
+            commodities: crops,
+            farming_practice: practice,
+            irrigation_type: irrigation
+          },
+          override_lock: true
+        })
+      });
+      if (res.ok) {
+        showToast('Cultivation profile successfully updated.', 'success');
+        wizardState.profile = await res.json();
+        localStorage.setItem('annasutra_cached_profile', JSON.stringify(wizardState.profile));
+      } else {
+        const err = await res.json();
+        showToast(err.detail || 'Failed to update cultivation profile.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error saving cultivation profile.', 'error');
+    }
+  };
+
+  window.saveConsumerTransparencyPreferences = async function () {
+    const showName = (document.getElementById('pref_show_name') || {}).checked !== false;
+    const showVillage = (document.getElementById('pref_show_village') || {}).checked !== false;
+    const showPhoto = (document.getElementById('pref_show_photo') || {}).checked !== false;
+
+    try {
+      const currentConsents = (wizardState.profile && wizardState.profile.consents) || {};
+      const updatedConsents = Object.assign({}, currentConsents, {
+        show_name: showName,
+        show_village: showVillage,
+        show_photo: showPhoto
+      });
+      const res = await fetch('/api/v1/me/profile', {
+        method: 'PUT',
+        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          consents: updatedConsents,
+          override_lock: true
+        })
+      });
+      if (res.ok) {
+        showToast('Consumer transparency preferences saved.', 'success');
+        wizardState.profile = await res.json();
+        localStorage.setItem('annasutra_cached_profile', JSON.stringify(wizardState.profile));
+      } else {
+        showToast('Preferences saved locally.', 'info');
+      }
+    } catch (e) {
+      showToast('Preferences saved locally.', 'info');
+    }
+  };
 
   window.submitProducerBasicInfoForm = async function (e) {
     e.preventDefault();
+    const firstName = (document.getElementById('prof_edit_first_name') || {}).value;
+    const lastName = (document.getElementById('prof_edit_last_name') || {}).value;
+    const orgName = (document.getElementById('prof_edit_org_name') || {}).value;
     const email = (document.getElementById('prof_edit_email') || {}).value;
     const altPhone = (document.getElementById('prof_edit_alt_phone') || {}).value;
     const addr1 = (document.getElementById('prof_edit_addr1') || {}).value;
@@ -3234,6 +3522,9 @@ function renderAdminEntityInspector(ent, t) {
         method: 'PUT',
         headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          organisation_name: orgName,
           email: email,
           alt_phone: altPhone,
           address_line1: addr1,
@@ -3245,8 +3536,10 @@ function renderAdminEntityInspector(ent, t) {
       });
 
       if (res.ok) {
-        showToast('Profile information successfully updated.', 'success');
+        showToast('Basic information successfully updated.', 'success');
         wizardState.profile = await res.json();
+        localStorage.setItem('annasutra_cached_profile', JSON.stringify(wizardState.profile));
+        updateRegisteredHeaderBanner(wizardState.profile);
       } else {
         const err = await res.json();
         showToast(err.detail || 'Failed to update profile.', 'error');

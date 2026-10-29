@@ -203,39 +203,38 @@ flowchart LR
 - **Minting Exclusively Upon Admin Approval:** The deterministic 24-digit Unique Farmer ID (`YYYYMMDDHHMMSS` + `91` + 10-digit mobile number) is minted and sealed into `EntityRoleDetails` exclusively at the moment of Admin approval (`approve_entity_registration`).
 - **UI Guard:** Producer console headers, badges, and ID cards must strictly check for `farmer_uid`. If the entity is unverified or in draft status, the UI displays `Code: PR-PENDING` or `Application Ref` rather than a valid Farmer ID.
 
-### 4.3 A. Profile (5-Step Registration Form Inspection, Data Updation & Identity)
+### 4.3 A. Profile (Unified 5-Step Registration Dataset & Self-Service Management)
 
 The original 5-step registration dataset remains permanently accessible under **A. Profile** in the Producer Console for continuous inspection, self-service updates, and formal change requests:
 
 - **Instant 0ms Cache Hydration:** The profile view mounts and renders immediately using local storage cache (`annasutra_cached_profile`), performing non-blocking background server sync (`/api/v1/me/profile` and `/api/v1/me/sensitive`) without UI delay or spinners.
 - **Header:** Photo, applicant name, organisation name, `BadgeCheck` Verified badge, Unique Farmer ID (monospace, with copy button), and verified location summary.
 - **Digital ID Card:** Downloadable or printable card with verified QR code. Buyers scan this card to initiate handover.
-- **The 5 Registration Tabs Under Profile:**
+- **The Unified 5 Registration Tabs Under Profile:**
   1. **Step 1: Basic Info**
-     - Applicant Name, Legal Organisation, Primary Phone, Email, Address Lines 1 & 2, Village/Town, District, State, Pincode.
-     - *Self-Editable:* Alternate Phone, Email, Address Line 2, Preferred Language.
-     - *Locked (Admin Review):* Legal First/Last Name, Primary Phone, State/District Jurisdiction.
-  2. **Step 2: Farm Plots & Cadastral Boundaries**
-     - Registered farm parcels, survey numbers, acreage, and GeoJSON boundary geometry.
-     - *Self-Editable:* Plot nickname, seasonal notes.
-     - *Locked (Admin Review):* Total registered land acreage, cadastral survey numbers, plot boundary polygon re-mapping.
+     - First Name, Last Name, Registered Enterprise/Farm Name, Alternate Phone, Contact Email, Address Line 1, Village/Town, District, State, Pincode.
+     - *Fully Self-Editable:* All personal, organisation, and geographical contact fields are directly editable and saved via `PUT /api/v1/me/profile` without requiring Admin approval.
+     - *Locked (Account ID Handle):* Primary Login Mobile (`phone_e164`) is frozen at initial registration.
+  2. **Step 2: Farm Plots & Land Holdings**
+     - Registered farm parcels, survey/khasra numbers, acreage, and GeoJSON boundary geometry.
+     - *Fully Self-Editable:* Direct self-service addition, modification, and removal of farm parcels and acreages via `PUT /api/v1/me/plots`. Total land updates automatically. Satellite boundary mapping via Modal B.
   3. **Step 3: Cultivation Profile**
-     - Primary and secondary commodities (e.g. Potato, Paddy, Turmeric), irrigation infrastructure, farming practice (Conventional, Organic NPOP, Natural Farming).
-     - *Self-Editable:* Secondary seasonal crops, irrigation method, organic certification notes.
-  4. **Step 4: Identity & Bank Settlement**
+     - Primary registered crops (10-category taxonomy), custom produce/fruits/spices, agricultural practice (Conventional, Organic NPOP, Natural Farming / PGS-India, In-Conversion), and irrigation infrastructure.
+     - *Fully Self-Editable:* Directly selectable and updated via `PUT /api/v1/me/profile`.
+  4. **Step 4: KYC (Statutory Identity & Bank Verification)**
      - Masked PAN (`•••• ••••`), voluntary Aadhaar last-4 digits, Bank name, masked Account number, IFSC, UPI handle.
-     - *Strictly Locked (Admin Review):* All financial settlement details and KYC credentials require an explicit Change Request with documentary proof.
-  5. **Step 5: Consent, Change Requests & Account Review**
-     - Active privacy and traceability consent timestamp and agreement terms.
-     - Interactive tracking of all submitted Change Requests (`PENDING`, `APPROVED`, `REJECTED`).
-     - **Account Deletion Section:** Clean, non-exaggerated access to request account deactivation.
+     - *Strictly Locked (Admin Approval Mandatory):* All financial settlement details and statutory KYC credentials are locked upon initial verification. Any update strictly requires an administrative Change Request (`POST /api/v1/me/change-requests`) with documentary proof (e.g. cancelled cheque, PAN card copy).
+  5. **Step 5: Consent, Review & Operations**
+     - *Symmetric / Unified 5-Step Model between Onboarding and Console:*
+       - *During 1st-Time Registration:* Comprehensive review of declared parameters across all 4 prior steps, statutory DPDP Act 2023 consent, and submission to Admin Verifier.
+       - *In Operational Profile Modal:* Clean profile review summary, self-service consumer transparency toggles (show/hide first name, village, profile photo on retail scan pages), KYC update request submission (focused strictly on locked KYC/bank changes), and clean Account Deletion with zero-custody checks. Redundant change requests for basic info, plots, or cultivation are omitted since they are directly editable in Tabs 1, 2, and 3.
 
 - **Field Lock & Change Request Rules:**
 
 | Change type | Fields | Flow |
 |---|---|---|
-| **Self-editable** | Alternate mobile, Email, Language, Notification preferences, Consumer visibility toggles | Directly saved via `PUT /api/v1/me/profile` |
-| **Locked (Admin Approval)** | Legal Name, DOB, Gender, KYC, Profile photo, Bank details, Land records, Certifications, Primary mobile | Creates a Change Request (`POST /api/v1/me/change-request`) with old value, new value, reason, and document proof. The old value stays active until Admin approves. |
+| **Self-editable** | First Name, Last Name, Enterprise Name, Alternate mobile, Email, Address, Village, District, State, Pincode, Farm Plots, Acreage, Commodities/Crops, Farming Practice, Irrigation, Consumer transparency toggles | Directly saved via `PUT /api/v1/me/profile` and `PUT /api/v1/me/plots` with `override_lock: true` |
+| **Locked (Admin Approval)** | KYC (PAN, Voluntary Aadhaar), Bank settlement account, IFSC, Primary registered login mobile | Creates an Admin Change Request (`POST /api/v1/me/change-requests`) with old value, new value, reason, and document proof. The old value stays active until Admin approves. |
 
 #### 4.3.1 Entity Account Deletion & Deactivation Workflow (Approved)
 
@@ -797,6 +796,11 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
 
 | Prohibited Exaggeration | Approved Standard Terminology |
 | :--- | :--- |
+| `AnnaSutra • Verified Producer Node` | **AnnaSutra • Verified Producer** |
+| `Producer Profile & Identity` | **Farmer Profile** / **Producer Profile** |
+| `ACTIVE NODE` / `VERIFIED STATUS` | **ACTIVE** / **VERIFIED** |
+| `Step 4: Statutory Identity & Bank Settlement` | **Step 4: KYC Verification** / **4. KYC** |
+| `Danger Zone: Account & Profile Deletion` | **Account Deletion** |
 | `Right to Erasure • DPDP Act 2023` | **Account Settings** / **Request Account Deletion** |
 | `Failed to connect to verification ledger` | **Unable to connect to server. Please check network connection.** |
 | `Under the AnnaSutra Diamond Rules...` | **Entities with active dispatches or lots in transit cannot be deleted...** |
@@ -914,8 +918,9 @@ In-app + SMS (+ WhatsApp later), plain text only. Triggers: registration status,
 | 20 | Farmer on consumer page | Photo if the farmer consents, masked details only (first name + surname initial, district) | **Approved** |
 | 21 | Multi-Lot Truck Dispatch & Rapid-Scan Acceptance | Master Truck Gate-Pass QR + continuous camera loop to accept multi-lot shipments in one screen | **Approved** |
 | 22 | Entity Profile Deletion Option (Farmer and all business entities) | Every entity console provides a "Request Account Deletion" option under Profile & Premises. Requires owner mobile OTP + zero active dispatches, transitions entity to `DELETION_REQUESTED`, and requires Admin approval. Draft/unregistered users are deleted immediately. Upon approval, personal PII is scrubbed under DPDP Act 2023 while preserving immutable historical ledger hash chains. | **Approved** |
-| 23 | Zero Fake Data & Anti-Buzzword Standard | All telemetry, distances, scan counts, and lot records must be genuine database counts or mathematically calculated haversine distances. No simulated or mock data anywhere in production UI or consumer views. Elimination of exaggerated legal/crypto slogans. | **Approved** |
+| 23 | Zero Fake Data & Anti-Buzzword Standard | All telemetry, distances, scan counts, and lot records must be genuine database counts or mathematically calculated haversine distances. No simulated or mock data anywhere in production UI or consumer views. Elimination of exaggerated legal/crypto buzzwords (e.g. replacing "Verified Producer Node" with "Verified Producer", "Statutory Identity" with "KYC", and removing "Danger Zone"). | **Approved** |
 | 24 | Root Modal Lifecycle, 0ms Cache Hydration & Universal Dismissal | All modals mount directly to the window root (`document.body`), pre-hydrate from local cached state in 0ms, and dismiss predictably on outside backdrop tap or Back/Escape key. | **Approved** |
 | 25 | Unified Navigation & Single Logout Architecture | Console headers must not contain duplicate in-card logout buttons. Authentication and session logout are strictly unified in the primary top navigation bar user profile menu across all roles. | **Approved** |
 | 26 | Web-First Master & Android Platform Parity Architecture | Web UI/UX is the primary design benchmark. Android continuously synchronizes and mirrors 100% of Web features, buttons, and workflows, implemented via idiomatic native mobile UX (Bottom Sheets, Material 3, CameraX, Haptics). Android always follows what the Web version has. | **Approved** |
 | 27 | 100% Pure Native Flutter/Dart & Universal Single APK Architecture | The Android mobile application is strictly implemented in 100% pure native Flutter/Dart (Zero-WebView wrapper). A single universal APK serves all 7 entity roles with dynamic role-based rendering and universal multi-ABI support. | **Approved** |
+| 28 | Unified 5-Step Model, KYC Locking & Universal Self-Service Profile Editing | Both 1st-time registration and post-approval Profile modal share the exact same 5-step model (1. Basic Info, 2. Farm Plots, 3. Cultivation, 4. KYC, 5. Consent & Review). Steps 1-3 are directly self-editable by the producer. Step 4 (KYC: PAN, Aadhaar, Bank) is permanently locked and strictly requires an Admin Change Request. Step 5 houses consumer transparency toggles, KYC update requests, and clean account deletion. | **Approved** |
