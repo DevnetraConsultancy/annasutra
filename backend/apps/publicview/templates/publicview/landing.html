@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
   <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261029v3" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261029v5" defer></script>
+  <script src="/static/publicview/js/producer_wizard.js?v=20261029v6" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -2315,7 +2315,7 @@
       <div class="home-stat-card">
         <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
         <div class="home-stat-num" id="statPrivacy">0.0%</div>
-        <div class="home-stat-label" id="statPrivacyLabel">Data Leakage (DPDP)</div>
+        <div class="home-stat-label" id="statPrivacyLabel">Data Privacy & Security</div>
       </div>
       <div class="home-stat-card">
         <div class="home-stat-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
@@ -2815,7 +2815,7 @@
     <div class="trust-standards-container">
       <h3 id="trustTitle">National Trust & Verification Standards</h3>
       <p class="trust-subtitle" id="trustSubtitle">
-        Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.
+        Cryptographic verification upholding food safety, farmer privacy, and tamper-evident trade across Bharat.
       </p>
 
       <div class="trust-pillars-grid">
@@ -2851,7 +2851,7 @@
             Farmer personal identity, precise farm GPS coordinates, and commercial trade margins are strictly protected and redacted under the Digital Personal Data Protection (DPDP) Act 2023.
           </p>
           <div class="pillar-pills">
-            <span class="pillar-pill" id="trust2Pill1">DPDP Act 2023</span>
+            <span class="pillar-pill" id="trust2Pill1">Privacy Protection</span>
             <span class="pillar-pill" id="trust2Pill2">PII Redaction</span>
             <span class="pillar-pill" id="trust2Pill3">Geofence Privacy</span>
           </div>
@@ -2887,7 +2887,7 @@
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
           <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span id="trustRibbonDpdp">DPDP Act 2023 Certified</span>
+          <span id="trustRibbonDpdp">Privacy Compliant</span>
         </div>
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
@@ -2897,7 +2897,7 @@
         <div class="trust-assurance-divider"></div>
         <div class="trust-assurance-item">
           <span class="trust-assurance-bullet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span id="trustRibbonCdac">C-DAC Sovereign Cloud Node</span>
+          <span id="trustRibbonCdac">National Cloud Node</span>
         </div>
       </div>
     </div>
@@ -2914,7 +2914,7 @@
             <img src="{{ brand_logo }}" alt="AnnaSutra" class="ataraxis-brand-logo" />
           </a>
           <p class="ataraxis-mission-text" id="footerMissionText">
-            National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.
+            Cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and protected food supply chain.
           </p>
 
           <!-- Toll-Free Helpline Box -->
@@ -3034,7 +3034,7 @@
             <li>
               <button type="button" onclick="openDpdpModal()">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkDpdp">DPDP Act 2023 Policy & Notice</span>
+                <span id="footerLinkDpdp">Privacy Policy & Notice</span>
               </button>
             </li>
             <li>
@@ -3064,7 +3064,7 @@
             <li>
               <button type="button" onclick="openGovModal('cdac')">
                 <span class="ataraxis-link-arrow">›</span>
-                <span id="footerLinkCdac">C-DAC Sovereign Digital Mandate</span>
+                <span id="footerLinkCdac">Technical Standards & Mandate</span>
               </button>
             </li>
           </ul>
@@ -3360,8 +3360,8 @@
     <div class="modal-box">
       <button class="modal-close" onclick="closeDpdpModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
-        <h3 id="dpdpTitle">DPDP Act 2023 Compliance</h3>
-        <p id="dpdpSub">Digital Personal Data Protection Notice</p>
+        <h3 id="dpdpTitle">Data Privacy & Protection</h3>
+        <p id="dpdpSub">Privacy and Personal Data Protection Notice</p>
       </div>
       <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 16px;">
         <p id="dpdpNoticeP1">AnnaSutra collects only supply-chain event records necessary for food safety and traceability. Farmer personal identifiers, precise farm GPS coordinates, and commercial transaction prices are never exposed publicly.</p>
@@ -3431,6 +3431,15 @@
         <h3 id="helpModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">AnnaSutra — Help &amp; User Guide</h3>
         <p id="helpModalSubtitle" style="margin: 0; font-size: 13px; color: var(--text-muted);">National Agri-Produce Traceability &amp; Verification Assistance</p>
       </div>
+
+  <!-- 18. PRODUCER PROFILE MODAL -->
+  <div class="modal-overlay" id="producerProfileModal" onclick="closeModalOnBackdrop(event)"></div>
+
+  <!-- 19. DOWNSTREAM ENTITY PROFILE MODAL -->
+  <div class="modal-overlay" id="downstreamProfileModal" onclick="closeModalOnBackdrop(event)"></div>
+
+  <!-- 20. ENTITY DELETION REQUEST MODAL -->
+  <div class="modal-overlay" id="entityDeletionRequestModal" onclick="closeModalOnBackdrop(event)"></div>
 
       <div class="help-section-card">
         <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
@@ -3504,7 +3513,7 @@
         lblHelplineConsumer: "National Consumer Helpline:",
         lblHelplineTech: "Technical Assistance:",
         btnBackToTopText: "BACK TO TOP",
-        footerMissionText: "National sovereign cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and DPDP Act 2023 protected food security.",
+        footerMissionText: "Cryptographic ledger infrastructure for farm-to-fork agricultural custody, tamper-evident produce verification, and protected food supply chain.",
         footerColExploreTitle: "EXPLORE & OPERATE",
         footerLinkHome: "National Homepage",
         footerLinkVerify: "Verify Produce Lot",
@@ -3560,7 +3569,7 @@
         portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
         portalSecurityNote: "Cryptographic role confinement active. Unauthorized access attempts logged to immutable audit ledger.",
         trustTitle: "National Trust & Verification Standards",
-        trustSubtitle: "Sovereign cryptographic guarantees upholding food safety, farmer privacy, and tamper-proof trade across Bharat.",
+        trustSubtitle: "Cryptographic verification upholding food safety, farmer privacy, and tamper-evident trade across Bharat.",
         trustRibbonLedger: "Append-Only SHA-256 Ledger",
         trustRibbonDpdp: "DPDP Act 2023 Certified",
         trustRibbonAgmark: "Certified Quality Grading",
@@ -5848,7 +5857,7 @@
       grievance: {
         icon: 'user',
         en: {
-          title: 'Grievance Redressal Officer (DPDP Act 2023)',
+          title: 'Grievance Redressal Officer',
           sub: 'Statutory Citizen & Operator Resolution Mechanism',
           content: `
             <p>In compliance with the Digital Personal Data Protection Act 2023 and Information Technology Rules, users may reach out to the designated Grievance Officer for privacy requests or dispute resolution.</p>
@@ -6339,8 +6348,24 @@
         if (window.closeHelpModal) window.closeHelpModal();
         if (window.closeProducerProfileModal) window.closeProducerProfileModal();
         if (window.closeDownstreamProfileModal) window.closeDownstreamProfileModal();
+        if (window.closeEntityDeletionRequestModal) window.closeEntityDeletionRequestModal();
       }
     }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLoginModal();
+        closeDpdpModal();
+        closeOperationModal();
+        closeEntityPortalModal();
+        closeQrModal();
+        closeGovModal();
+        if (window.closeHelpModal) window.closeHelpModal();
+        if (window.closeProducerProfileModal) window.closeProducerProfileModal();
+        if (window.closeDownstreamProfileModal) window.closeDownstreamProfileModal();
+        if (window.closeEntityDeletionRequestModal) window.closeEntityDeletionRequestModal();
+      }
+    });
 
     function toggleHeroVideoPlay() {
       const vid = document.getElementById('heroBgVideo');

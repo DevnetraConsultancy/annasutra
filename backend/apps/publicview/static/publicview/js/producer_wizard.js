@@ -59,8 +59,8 @@
       step3Desc: 'Specify your farming institution type, primary crops harvested, and irrigation infrastructure.',
       step4Title: 'Encrypted Identity & Financial Settlement',
       step4Desc: 'Provide PAN, voluntary Aadhaar last-4 digits, and bank account for automated custody settlements. AES-256-GCM protected.',
-      step5Title: 'Review & Statutory DPDP Consent',
-      step5Desc: 'Verify all declared parameters and provide purpose-limited digital consent under the DPDP Act 2023.',
+      step5Title: 'Review & Consent',
+      step5Desc: 'Verify all declared parameters and provide digital consent for traceability operations.',
       firstName: 'First Name',
       firstNamePh: 'Enter first name',
       lastName: 'Last Name',
@@ -123,7 +123,7 @@
       maskedPreview: 'Masked Preview',
       aadhaarLabel: 'Voluntary Aadhaar (Last 4 Digits Only)',
       aadhaarPh: '4 digits only',
-      aadhaarNotice: 'Under statutory UIDAI regulations, full Aadhaar is never collected or stored.',
+      aadhaarNotice: 'Full Aadhaar number is never collected or stored. Only last 4 digits are used for verification.',
       bankName: 'Bank Name',
       bankNamePh: 'Enter bank name',
       ifsc: 'Bank IFSC Code',
@@ -151,7 +151,7 @@
       noneSelected: 'None selected',
       plotsWord: 'Plots',
       encryptedWord: 'Encrypted',
-      consentHeader: 'DPDP Act 2023 Statutory Declarations',
+      consentHeader: 'Consent & Declarations',
       consent1: 'I grant purpose-limited consent under DPDP Act 2023 for my farm location and crop harvest data to be processed strictly for supply-chain traceability and trade integrity.',
       consent2: 'I voluntarily declare the last 4 digits of my Aadhaar for local identity attestation on the AnnaSutra platform. I acknowledge full Aadhaar is never requested.',
       consent3: 'I certify that all declared crop, plot acreage, and yield information accurately represent genuine agricultural production.',
@@ -178,7 +178,7 @@
       btnDownloadQrPdf: 'Download Printable A4 Sticker Sheet (PDF)',
       loadingRegistry: 'Loading verified entity registry...',
       adminQueueTitle: 'Entity Verification Review Queue',
-      adminQueueSub: 'Inspect submitted KYC, farm plot boundaries, and statutory consent to approve entities.',
+      adminQueueSub: 'Inspect submitted KYC, farm plot boundaries, and consent declarations to approve entities.',
       filterAll: 'All Applications',
       filterSubmitted: 'Pending Review',
       filterVerified: 'Verified',
@@ -1789,7 +1789,7 @@ function renderAdminEntityInspector(ent, t) {
             : 'Your producer registration data, land parcel boundaries, and identity credentials have been securely sealed. Authority verification is currently underway. Operational console access unlocks immediately upon approval.'}
         </p>
 
-        <!-- Verification Progress Stepper (Anti-Spoofing & Sovereign Trust) -->
+        <!-- Verification Progress Stepper -->
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
           <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
             <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px;">✓</div>
@@ -3088,7 +3088,7 @@ function renderAdminEntityInspector(ent, t) {
         <div>
           <div style="margin-bottom: 14px;">
             <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #0b3d2e;">Step 4: Statutory Identity &amp; Bank Settlement</h5>
-            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Statutory DPDP Act 2023 protected credentials. Encrypted at rest.</p>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Sensitive identity and bank details. Masked for security.</p>
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px;">
@@ -3136,7 +3136,7 @@ function renderAdminEntityInspector(ent, t) {
 
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 18px;">
             <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom: 4px;">
-              ✓ DPDP Act 2023 Statutory Consent Active
+              ✓ Consent Active
             </div>
             <div style="font-size: 12.5px; color: #334155;">
               Farmer Consent digitally sealed upon registration. Consumer transparency toggles active.
@@ -3183,7 +3183,7 @@ function renderAdminEntityInspector(ent, t) {
                 <span>${getIcon('alert', 16, '#dc2626')}</span>
                 <span>Danger Zone: Account &amp; Profile Deletion</span>
               </h5>
-              <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">DPDP Act 2023</span>
+              <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">Permanent Action</span>
             </div>
             <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
               Request formal deletion of your registered entity profile. If you have active lots in transit or unconfirmed custody handovers, all transfers must be settled before your request can be submitted. Admin review and owner 2FA verification are mandatory.
@@ -3483,7 +3483,7 @@ function renderAdminEntityInspector(ent, t) {
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 22px 28px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Cadastral Geo-Mapping &bull; EUDR Ready</div>
+            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Farm Plot &amp; Boundary Mapping</div>
             <h3 style="margin: 2px 0 0; font-size: 22px; color: #ffffff; font-weight: 800;">B. Land Management &amp; Season Crop Class Allocation</h3>
           </div>
         </div>
@@ -3979,16 +3979,14 @@ function renderAdminEntityInspector(ent, t) {
               <span>${getIcon('check', 13, '#15803d', 2.8)}</span> <span>${escapeHtml(activeRole)} OPERATIONAL CONSOLE</span>
             </div>
             <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">${escapeHtml(roleTitles[activeRole] || activeRole)}</h3>
-            <span style="font-size: 12.5px; color: #64748b;">Sovereign Custody Checkpoint &bull; Anti-Spoofing Proof of Possession</span>
+            <span style="font-size: 12.5px; color: #64748b;">Custody Checkpoint &bull; Verified Physical Possession</span>
           </div>
 
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
             <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #047857; border-color: #86efac; font-weight: 800; background: #f0fdf4;" onclick="window.openDownstreamProfileModal('${activeRole}')">
               ${getIcon('user', 14, '#047857')} Profile &amp; Premises
             </button>
-            <button type="button" class="btn-wizard-action btn-wizard-draft" style="padding: 7px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5; font-weight: 800;" onclick="window.logoutEntitySession()">
-              Log Out
-            </button>
+
           </div>
         </div>
 
@@ -5368,7 +5366,7 @@ function renderAdminEntityInspector(ent, t) {
     const c3 = document.getElementById('chk_consent_3');
 
     if ((c1 && !c1.checked) || (c2 && !c2.checked) || (c3 && !c3.checked)) {
-      showToast('Please accept all three statutory DPDP Act 2023 declarations.', 'warning');
+      showToast('Please accept all three consent declarations.', 'warning');
       return;
     }
 
@@ -6548,7 +6546,7 @@ function renderAdminEntityInspector(ent, t) {
                 <span>${getIcon('alert', 16, '#dc2626')}</span>
                 <span>Danger Zone: Account &amp; Profile Deletion</span>
               </h5>
-              <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">DPDP Act 2023</span>
+              <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">Permanent Action</span>
             </div>
             <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
               Request formal deletion and deactivation of this ${activeRole} entity node. All stock in custody must be settled or marked sold out, and no lots may be in transit. Admin approval and owner 2FA OTP verification are required.
@@ -6573,13 +6571,34 @@ function renderAdminEntityInspector(ent, t) {
     if (modal) modal.style.display = 'none';
   };
 
+  window.clearLocalEntityAccount = function () {
+    try {
+      localStorage.removeItem('annasutra_access_token');
+      localStorage.removeItem('annasutra_refresh_token');
+      localStorage.removeItem('annasutra_user');
+      localStorage.removeItem('annasutra_entity_role');
+      localStorage.removeItem('annasutra_active_role');
+      localStorage.removeItem('annasutra_producer_wizard_state');
+      localStorage.removeItem('annasutra_entity_profile');
+      localStorage.removeItem('annasutra_cached_profile');
+      sessionStorage.clear();
+    } catch (_) {}
+    if (window.closeEntityDeletionRequestModal) window.closeEntityDeletionRequestModal();
+    if (window.closeProducerProfileModal) window.closeProducerProfileModal();
+    if (window.closeDownstreamProfileModal) window.closeDownstreamProfileModal();
+    showToast('Local account session cleared. Returning to home...', 'info');
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 600);
+  };
+
   window.openEntityDeletionRequestModal = async function () {
     let modal = document.getElementById('entityDeletionRequestModal');
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'entityDeletionRequestModal';
       modal.className = 'modal-overlay';
-      modal.onclick = (e) => { if (e.target === modal) window.closeEntityDeletionRequestModal(); };
+      modal.onclick = (e) => { if (e.target === modal || e.target.classList.contains('modal-overlay')) window.closeEntityDeletionRequestModal(); };
       document.body.appendChild(modal);
     }
 
@@ -6589,15 +6608,15 @@ function renderAdminEntityInspector(ent, t) {
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); padding: 22px 28px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #fecaca; text-transform: uppercase; letter-spacing: 0.5px;">Right to Erasure &bull; DPDP Act 2023</div>
-            <h3 style="margin: 2px 0 0; font-size: 21px; color: #ffffff; font-weight: 800;">Request Profile Deletion</h3>
+            <div style="font-size: 11px; font-weight: 800; color: #fecaca; text-transform: uppercase; letter-spacing: 0.5px;">Account Settings</div>
+            <h3 style="margin: 2px 0 0; font-size: 21px; color: #ffffff; font-weight: 800;">Request Account Deletion</h3>
           </div>
         </div>
 
         <div style="padding: 24px 28px;" id="deletionModalBody">
           <div style="text-align: center; padding: 30px;">
             <div style="width: 32px; height: 32px; border: 3px solid #cbd5e1; border-top-color: #dc2626; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
-            <p style="font-size: 13px; font-weight: 700; color: #64748b;">Checking active dispatches and custody ledger...</p>
+            <p style="font-size: 13px; font-weight: 700; color: #64748b;">Checking active dispatches and stock...</p>
           </div>
         </div>
       </div>
@@ -6607,18 +6626,86 @@ function renderAdminEntityInspector(ent, t) {
 
     // Fetch preflight check
     try {
-      const res = await fetch('/api/v1/me/profile/delete-request', { headers: getAuthHeader() });
-      if (!res.ok) {
-        throw new Error('Failed to load deletion request status');
+      const res = await fetch('/api/v1/me/profile/delete-request', {
+        headers: getAuthHeader(),
+        credentials: 'same-origin'
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        const body = document.getElementById('deletionModalBody');
+        if (body) {
+          body.innerHTML = `
+            <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #92400e; margin-bottom: 8px;">
+                <span>${getIcon('alert', 18, '#d97706')}</span>
+                <span>Session Not Authenticated</span>
+              </div>
+              <p style="font-size: 12.5px; color: #78350f; margin: 0 0 14px; line-height: 1.5;">
+                You are currently browsing without an active server login or your session has expired. You can clear your local profile data now.
+              </p>
+              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
+                <button type="button" onclick="window.clearLocalEntityAccount()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
+                  Clear Local Profile &amp; Exit
+                </button>
+              </div>
+            </div>
+          `;
+        }
+        return;
       }
+
+      if (!res.ok) {
+        let msg = 'Failed to check account status (' + res.status + ')';
+        try {
+          const errData = await res.json();
+          if (errData && (errData.detail || errData.message)) msg = errData.detail || errData.message;
+        } catch (_) {}
+        const body = document.getElementById('deletionModalBody');
+        if (body) {
+          body.innerHTML = `
+            <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #991b1b; margin-bottom: 8px;">
+                <span>${getIcon('alert', 18, '#dc2626')}</span>
+                <span>Unable to Check Deletion Status</span>
+              </div>
+              <p style="font-size: 12.5px; color: #7f1d1d; margin: 0 0 14px; line-height: 1.5;">
+                ${escapeHtml(msg)}
+              </p>
+              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
+                <button type="button" onclick="window.openEntityDeletionRequestModal()" class="action-btn-pill" style="border-color: #047857; color: #047857; font-weight: 800;">Retry</button>
+                <button type="button" onclick="window.clearLocalEntityAccount()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
+                  Clear Local Profile &amp; Exit
+                </button>
+              </div>
+            </div>
+          `;
+        }
+        return;
+      }
+
       const data = await res.json();
       window.renderEntityDeletionModalContent(data);
     } catch (e) {
       const body = document.getElementById('deletionModalBody');
       if (body) {
         body.innerHTML = `
-          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 16px; color: #991b1b; font-size: 13px;">
-            Failed to connect to verification ledger. Please check network connectivity.
+          <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #991b1b; margin-bottom: 8px;">
+              <span>${getIcon('alert', 18, '#dc2626')}</span>
+              <span>Connection Error</span>
+            </div>
+            <p style="font-size: 12.5px; color: #7f1d1d; margin: 0 0 14px; line-height: 1.5;">
+              Unable to connect to the server. Please check your network connection and try again.
+            </p>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
+              <button type="button" onclick="window.openEntityDeletionRequestModal()" class="action-btn-pill" style="border-color: #047857; color: #047857; font-weight: 800;">Retry</button>
+              <button type="button" onclick="window.clearLocalEntityAccount()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
+                Clear Local Profile &amp; Exit
+              </button>
+            </div>
           </div>
         `;
       }
@@ -6671,7 +6758,7 @@ function renderAdminEntityInspector(ent, t) {
             <span>Account Deletion Blocked by Active Custody Obligations</span>
           </div>
           <p style="font-size: 12.5px; color: #7f1d1d; margin: 0 0 12px;">
-            Under the AnnaSutra Diamond Rules, entities with active custody transactions cannot be deleted. Please resolve the following blocking items first:
+            Entities with active dispatches or lots in transit cannot be deleted. Please complete or settle the following active transactions first:
           </p>
           <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 12.5px; color: #b91c1c; font-weight: 700;">
             ${(data.blocking_reasons || []).map(r => `<li>${escapeHtml(r)}</li>`).join('')}
@@ -6684,13 +6771,13 @@ function renderAdminEntityInspector(ent, t) {
       return;
     }
 
-    // Pre-flight passed: render Request Form with 2FA OTP
+    // Pre-flight passed: render Request Form with mobile OTP
     body.innerHTML = `
       <form onsubmit="window.submitEntityDeletionRequest(event)">
         <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 12.5px; color: #334155;">
           <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #047857; margin-bottom: 4px;">
             <span>${getIcon('check', 14, '#047857')}</span>
-            <span>Pre-flight Checks Clear: Zero active in-transit dispatches</span>
+            <span>Verification Check Clear: No active in-transit dispatches</span>
           </div>
           <div>Registered Mobile: <strong>${escapeHtml(data.registered_phone || '')}</strong></div>
         </div>
@@ -6698,25 +6785,25 @@ function renderAdminEntityInspector(ent, t) {
         <div class="form-group" style="margin-bottom: 14px;">
           <label class="form-label">1. Reason for Deletion <span class="req">*</span></label>
           <select class="form-select" id="del_reason" required style="background: #fff; font-weight: 700;">
-            <option value="">-- Select Mandatory Reason --</option>
+            <option value="">-- Select Reason --</option>
             <option value="CEASING_OPERATIONS">Ceasing agricultural / business operations</option>
             <option value="LAND_TRANSFER">Sale, transfer, or lease termination of land/premises</option>
-            <option value="DPDP_ERASURE">Right to Erasure / Privacy request under DPDP Act 2023</option>
+            <option value="DPDP_ERASURE">Account deletion and data privacy request</option>
             <option value="DUPLICATE">Duplicate or accidental registration</option>
             <option value="OTHER">Other</option>
           </select>
         </div>
 
         <div class="form-group" style="margin-bottom: 14px;">
-          <label class="form-label">2. Remarks / Compliance Justification</label>
-          <textarea class="form-input" id="del_remarks" rows="2" placeholder="e.g. Closing farming business. All lots sold and handed over." style="background: #fff; resize: vertical; font-size: 12px;"></textarea>
+          <label class="form-label">2. Remarks / Context</label>
+          <textarea class="form-input" id="del_remarks" rows="2" placeholder="e.g. Closing farming operations. All produce sold and handed over." style="background: #fff; resize: vertical; font-size: 12px;"></textarea>
         </div>
 
-        <!-- 2FA OTP Verification Box -->
+        <!-- Mobile OTP Verification Box -->
         <div style="background: #fff7ed; border: 1.5px solid #ffedd5; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;">
-          <div style="font-size: 12.5px; font-weight: 800; color: #9a3412; margin-bottom: 6px;">3. Owner 2FA OTP Verification</div>
+          <div style="font-size: 12.5px; font-weight: 800; color: #9a3412; margin-bottom: 6px;">3. Mobile Verification Code</div>
           <div style="font-size: 11.5px; color: #7c2d12; margin-bottom: 12px;">
-            To prevent unauthorized account deletion, a 6-digit confirmation code must be verified on your primary registered mobile.
+            A 6-digit confirmation code will be sent to your primary registered mobile to confirm this action.
           </div>
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
             <button type="button" id="btnRequestDelOtp" onclick="window.requestDeletionOtp()" class="action-btn-pill" style="background: #fff; font-size: 12px; border-color: #ea580c; color: #c2410c; font-weight: 800;">
@@ -6739,23 +6826,24 @@ function renderAdminEntityInspector(ent, t) {
 
   window.requestDeletionOtp = async function () {
     const btn = document.getElementById('btnRequestDelOtp');
-    if (btn) btn.innerText = 'Dispatching OTP...';
+    if (btn) btn.innerText = 'Sending OTP...';
     try {
       const res = await fetch('/api/v1/me/profile/delete-request', {
         method: 'POST',
         headers: getAuthHeader(),
+        credentials: 'same-origin',
         body: JSON.stringify({ action: 'request_otp' })
       });
       const data = await res.json();
       if (res.ok) {
-        showToast(data.message || 'OTP dispatched to registered mobile', 'success');
-        if (btn) btn.innerText = 'OTP Dispatched ✓';
+        showToast(data.message || 'OTP sent to registered mobile', 'success');
+        if (btn) btn.innerText = 'OTP Sent ✓';
         if (data.debug_code) {
           const otpInput = document.getElementById('del_otp_code');
           if (otpInput) otpInput.value = data.debug_code;
         }
       } else {
-        showToast(data.detail || 'Failed to dispatch OTP', 'error');
+        showToast(data.detail || 'Failed to send OTP', 'error');
         if (btn) btn.innerText = 'Retry Send OTP';
       }
     } catch (e) {
@@ -6771,7 +6859,7 @@ function renderAdminEntityInspector(ent, t) {
     const otp = (document.getElementById('del_otp_code') || {}).value;
 
     if (!reason) {
-      showToast('Please select a mandatory reason for deletion.', 'error');
+      showToast('Please select a reason for deletion.', 'error');
       return;
     }
     if (!otp) {
@@ -6789,6 +6877,7 @@ function renderAdminEntityInspector(ent, t) {
       const res = await fetch('/api/v1/me/profile/delete-request', {
         method: 'POST',
         headers: getAuthHeader(),
+        credentials: 'same-origin',
         body: JSON.stringify({
           reason: reason,
           remarks: remarks,
@@ -6797,7 +6886,12 @@ function renderAdminEntityInspector(ent, t) {
       });
       const data = await res.json();
       if (res.ok) {
-        showToast('Account deletion request submitted. Operations frozen.', 'success');
+        if (data.status === 'DELETED') {
+          showToast(data.message || 'Account successfully deleted.', 'success');
+          window.clearLocalEntityAccount();
+          return;
+        }
+        showToast('Account deletion request submitted.', 'success');
         window.closeEntityDeletionRequestModal();
         window.closeProducerProfileModal();
         window.closeDownstreamProfileModal();
@@ -6827,7 +6921,8 @@ function renderAdminEntityInspector(ent, t) {
     try {
       const res = await fetch('/api/v1/me/profile/delete-request/cancel', {
         method: 'POST',
-        headers: getAuthHeader()
+        headers: getAuthHeader(),
+        credentials: 'same-origin'
       });
       const data = await res.json();
       if (res.ok) {
@@ -6872,7 +6967,7 @@ function renderAdminEntityInspector(ent, t) {
                 <span>${getIcon('trash', 16, '#dc2626')}</span>
                 <span>Entity Profile Deletion Requests (${items.length})</span>
               </h4>
-              <span style="font-size: 12px; color: #64748b;">DPDP Act 2023 Right to Erasure review queue with immutable append-only ledger audit compliance.</span>
+              <span style="font-size: 12px; color: #64748b;">Queue of entity account deletion requests. Admin verification ensures no active custody transactions before deactivation.</span>
             </div>
             <button type="button" class="action-btn-pill" onclick="window.renderAdminDeletionRequestsTab(document.getElementById('adminTabDynamicContent'))">
               ${getIcon('refresh', 13, '#047857')} Refresh Queue

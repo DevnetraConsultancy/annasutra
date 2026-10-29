@@ -87,16 +87,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'kycPending': 'KYC Under Review',
       'maskedPan': 'PAN Identity',
       'bankAccount': 'Settlement Bank',
-      'statutoryConsent': 'DPDP Act 2023 Consent Active',
+      'statutoryConsent': 'Consent Active',
       'btnLogout': 'Log Out',
       'loginTitle': 'Farm-to-Fork Traceability',
-      'loginSub': 'National Sovereign Agri-Traceability Console',
+      'loginSub': 'Agri-Traceability Console',
       'phoneLabel': 'Mobile Number',
       'otpLabel': 'Enter 6-digit OTP',
       'btnSendOtp': 'Get OTP via SMS',
       'btnVerifyOtp': 'Verify & Sign In',
       'btnGoogle': 'Sign in with Google',
-      'dpdpNotice': 'Protected under DPDP Act 2023 • C-DAC Sovereign Node',
+      'dpdpNotice': 'Privacy Protected • National Cloud Node',
     },
     'hi': {
       'appTitle': 'अन्नसूत्र',
@@ -1606,8 +1606,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Color(0xFFDC2626)),
-                title: const Text('Request Account Deletion (DPDP Act § 12(3))', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
-                subtitle: const Text('Statutory right to erasure of personal data and profile node', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                title: const Text('Request Account Deletion', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
+                subtitle: const Text('Submit request to delete profile and deactivate node', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
                 trailing: const Icon(Icons.chevron_right, size: 20, color: Color(0xFFDC2626)),
                 onTap: () => _showDpdpDeletionModal(context, authState),
               ),
@@ -1640,7 +1640,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SizedBox(width: 8),
             Expanded(
               child: Text(
-                'DPDP Act 2023 § 12(3)\nRight to Erasure Request',
+                'Request Account Deletion',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF991B1B)),
               ),
             ),
@@ -1710,7 +1710,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Navigator.pop(dialogCtx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Account deletion request submitted under DPDP Act 2023.'),
+                    content: Text('Account deletion request submitted.'),
                     backgroundColor: Color(0xFFDC2626),
                     behavior: SnackBarBehavior.floating,
                   ),
