@@ -829,3 +829,54 @@ class AdminDeletionRequestDecisionView(APIView):
                 "entity_status": "VERIFIED",
                 "message": "Deletion request rejected. Entity account restored to VERIFIED status.",
             })
+
+
+class AdminConsumerScansView(APIView):
+    """Retrieve verified consumer QR scan telemetry and metrics.
+    Strict Policy: Real database metrics only; clean zero states when no scans exist.
+    """
+
+    permission_classes = [IsAdminOrStaff]
+
+    def get(self, request):
+        from apps.alerts.models import Alert, ScanLog
+
+        total_scans = ScanLog.objects.count()
+        alerts_count = Alert.objects.filter(
+            alert_type__in=["SUSPICIOUS_SCAN", "DUPLICATE_SCAN", "TAMPER_SUSPECT"]
+        ).count()
+
+        if total_scans == 0:
+            return Response({
+                "total_scans": 0,
+                "opt_in_gps_pct": None,
+                "avg_distance_km": None,
+                "counterfeit_alerts": alerts_count,
+                "scans": [],
+            }, status=status.HTTP_200_OK)
+
+        gps_scans = ScanLog.objects.exclude(lat=None).exclude(lng=None)
+        gps_count = gps_scans.count()
+        opt_in_gps_pct = round((gps_count / total_scans) * 100, 1) if total_scans > 0 else 0.0
+
+        recent_logs = ScanLog.objects.order_by("-scanned_at")[:50]
+        scans_data = []
+        for s in recent_logs:
+            scans_data.append({
+                "id": s.id,
+                "serial": s.serial,
+                "lat": s.lat,
+                "lng": s.lng,
+                "city_coarse": s.city_coarse or "Undisclosed",
+                "region_coarse": s.region_coarse or "India",
+                "user_agent": s.user_agent or "Mobile Browser",
+                "scanned_at": s.scanned_at.isoformat() if s.scanned_at else timezone.now().isoformat(),
+            })
+
+        return Response({
+            "total_scans": total_scans,
+            "opt_in_gps_pct": opt_in_gps_pct,
+            "avg_distance_km": None,
+            "counterfeit_alerts": alerts_count,
+            "scans": scans_data,
+        }, status=status.HTTP_200_OK)

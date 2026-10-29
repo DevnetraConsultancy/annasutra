@@ -13,6 +13,7 @@ from .views_admin import (
     AdminChangeRequestDecisionView,
     AdminDeletionRequestsListView,
     AdminDeletionRequestDecisionView,
+    AdminConsumerScansView,
 )
 
 urlpatterns = [
@@ -38,4 +39,6 @@ urlpatterns = [
     path("deletion-requests/", AdminDeletionRequestsListView.as_view(), name="admin_deletion_requests_slash"),
     path("deletion-requests/<str:request_id>/decision", AdminDeletionRequestDecisionView.as_view(), name="admin_deletion_request_decision"),
     path("deletion-requests/<str:request_id>/decision/", AdminDeletionRequestDecisionView.as_view(), name="admin_deletion_request_decision_slash"),
+    path("consumer-scans", AdminConsumerScansView.as_view(), name="admin_consumer_scans"),
+    path("consumer-scans/", AdminConsumerScansView.as_view(), name="admin_consumer_scans_slash"),
 ]

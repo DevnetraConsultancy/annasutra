@@ -20,6 +20,8 @@ from .views import (
 
 urlpatterns = [
     path("", LotListCreateView.as_view(), name="lot_list_create"),
+    path("create-with-qr", LotListCreateView.as_view(), name="lot_create_with_qr"),
+    path("create-with-qr/", LotListCreateView.as_view(), name="lot_create_with_qr_slash"),
     path("merge", LotMergeView.as_view(), name="lot_merge"),
     path("handovers/incoming", IncomingHandoversView.as_view(), name="lot_incoming_handovers"),
     path("handovers/incoming/", IncomingHandoversView.as_view(), name="lot_incoming_handovers_slash"),
@@ -40,4 +42,3 @@ urlpatterns = [
     path("<str:code>/sales", LotSaleView.as_view(), name="lot_sales"),
     path("<str:code>/label-reissue", LotLabelReissueView.as_view(), name="lot_label_reissue"),
 ]
-
