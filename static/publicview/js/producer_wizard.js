@@ -2805,23 +2805,24 @@ function renderAdminEntityInspector(ent, t) {
     });
   };
 
-  window.openProducerProfileModal = async function () {
+  window.closeProducerProfileModal = function () {
+    const modal = document.getElementById('producerProfileModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.openProducerProfileModal = function () {
     let modal = document.getElementById('producerProfileModal');
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'producerProfileModal';
       modal.className = 'modal-overlay';
-      modal.onclick = (e) => { if (e.target === modal) window.closeProducerProfileModal(); };
       document.body.appendChild(modal);
     }
-
-    // Refresh profile state
-    try {
-      const pRes = await fetch('/api/v1/me/profile', { credentials: 'same-origin', headers: getAuthHeader() });
-      if (pRes.ok) wizardState.profile = await pRes.json();
-      const sRes = await fetch('/api/v1/me/sensitive', { credentials: 'same-origin', headers: getAuthHeader() });
-      if (sRes.ok) wizardState.sensitive = await sRes.json();
-    } catch (e) {}
+    modal.onclick = function (e) {
+      if (e.target === modal || e.target.classList.contains('modal-overlay')) {
+        window.closeProducerProfileModal();
+      }
+    };
 
     const p = wizardState.profile || {};
     const farmerUid = p.farmer_uid || '';
@@ -2890,6 +2891,31 @@ function renderAdminEntityInspector(ent, t) {
 
     modal.style.display = 'flex';
     window.renderProducerProfileTabContent(document.getElementById('producerProfileTabContent'));
+
+    // Non-blocking background sync for fresh profile & sensitive state without modal delay
+    Promise.all([
+      fetch('/api/v1/me/profile', { credentials: 'same-origin', headers: getAuthHeader() }).then(r => r.ok ? r.json() : null),
+      fetch('/api/v1/me/sensitive', { credentials: 'same-origin', headers: getAuthHeader() }).then(r => r.ok ? r.json() : null)
+    ]).then(([freshProfile, freshSensitive]) => {
+      let changed = false;
+      if (freshProfile) {
+        wizardState.profile = freshProfile;
+        changed = true;
+      }
+      if (freshSensitive) {
+        wizardState.sensitive = freshSensitive;
+        changed = true;
+      }
+      if (changed) {
+        const curModal = document.getElementById('producerProfileModal');
+        if (curModal && curModal.style.display === 'flex') {
+          const tabContent = document.getElementById('producerProfileTabContent');
+          if (tabContent) {
+            window.renderProducerProfileTabContent(tabContent);
+          }
+        }
+      }
+    }).catch(() => {});
   };
 
   window.renderProducerProfileTabContent = function (container) {
@@ -6966,3 +6992,20 @@ function renderAdminEntityInspector(ent, t) {
       showToast('Network error processing administrative decision.', 'error');
     }
   };
+
+  // Global Escape key listener to close active modals
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      if (window.closeProducerProfileModal) window.closeProducerProfileModal();
+      if (window.closeDownstreamProfileModal) window.closeDownstreamProfileModal();
+      if (window.closeProducerLandModal) window.closeProducerLandModal();
+      if (window.closeProducerHarvestModal) window.closeProducerHarvestModal();
+      if (window.closeTrackLotModal) window.closeTrackLotModal();
+      if (window.closeEditLotModal) window.closeEditLotModal();
+      if (window.closeUnlimitedQrPrintModal) window.closeUnlimitedQrPrintModal();
+      if (window.closeEntityDeletionRequestModal) window.closeEntityDeletionRequestModal();
+      if (window.closeDownstreamInboxModal) window.closeDownstreamInboxModal();
+      if (window.closeDownstreamAppendModal) window.closeDownstreamAppendModal();
+      if (window.closeRoleOpsModal) window.closeRoleOpsModal();
+    }
+  });
