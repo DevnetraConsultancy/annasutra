@@ -2,7 +2,8 @@
 
 Read `docs/Core/annasutra_entity_console_architecture.md` (the locked Gold Standard blueprint, the only doc under `docs/`) before any task. Keep it updated whenever the Web UI/UX changes.
 
-When asked for the end-to-end flow, explain it in the order and style of blueprint Section 1.1 (Gmail sign-in > registration > Admin approval > console > batch + QR + print > dispatch > scan-accept > append > child packet batches > retailer > customer scan).
+**Locked Core (`Core of AnnaSutra`, C1–C16 at the top of the blueprint):** never remove, reorder, merge, bypass or reword any step of the 16-step core chain, and always use its exact string when asked for the end-to-end flow:
+"Sign in with Gmail > the login portal shows every registration this Gmail already has, with its status > the entity registers with their details > Admin approves (only now is the Unique ID created) > the entity gets its console > the entity can update more details, except KYC (KYC changes need an Admin change request) > the farmer creates a batch with all required details > mints the batch QR / barcode > prints it on Web or APK and sticks it on the delivery lot > sends a dispatch request to the next party > the next party accepts by scanning the lot QR (live photo, weight, GPS), and the farmer's record is locked > the next party adds more data to the lot > the relevant entity makes small packet batches, each with a child QR > the packets reach the retailer shop > a customer scans with the AnnaSutra APK (optional location, recorded for Admin) > the customer sees the product's origin, a short summary and its journey."
 
 ## Always
 - Plan first. Wait for the human's approval before writing code for a phase.

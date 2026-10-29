@@ -1,9 +1,37 @@
 # AnnaSutra: Core Entity Console Architecture (Gold Standard — Locked)
 
 > [!IMPORTANT]
-> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 35 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
+> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 36 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
 >
 > This file is the **only** document under `/docs`. Every other spec has been retired into it.
+
+---
+
+## Core of AnnaSutra (Locked)
+
+> [!CAUTION]
+> **LOCKED CORE LOGIC — DO NOT CHANGE.** This chain is the immutable core of AnnaSutra (Decision 36). No step may be removed, reordered, merged, bypassed or reworded by any agent, on Web, backend or Android. Every other section of this blueprint must serve this chain. A change is allowed only on an explicit written instruction from the product owner that says "unlock the core".
+
+"Sign in with Gmail > the login portal shows every registration this Gmail already has, with its status > the entity registers with their details > Admin approves (only now is the Unique ID created) > the entity gets its console > the entity can update more details, except KYC (KYC changes need an Admin change request) > the farmer creates a batch with all required details > mints the batch QR / barcode > prints it on Web or APK and sticks it on the delivery lot > sends a dispatch request to the next party > the next party accepts by scanning the lot QR (live photo, weight, GPS), and the farmer's record is locked > the next party adds more data to the lot > the relevant entity makes small packet batches, each with a child QR > the packets reach the retailer shop > a customer scans with the AnnaSutra APK (optional location, recorded for Admin) > the customer sees the product's origin, a short summary and its journey."
+
+| # | Locked step | Blueprint detail |
+|---|---|---|
+| C1 | Sign in with Gmail | 2.5 |
+| C2 | Login portal: every registration of this Gmail + status | 2.5 |
+| C3 | Entity registers with details | 4.1, 4.2, 6.1 to 6.3 |
+| C4 | Admin (`devnetraconsultancy@gmail.com`) approves; Unique ID minted only now | 3.1, 4.2.1, 9 |
+| C5 | Entity gets its console | 4.7, 6.6 |
+| C6 | Entity updates details except KYC (KYC via Admin Change Request) | 4.3 |
+| C7 | Farmer creates batch with all required details | 4.4 to 4.6 |
+| C8 | Mint batch QR / barcode | 3.2, 3.4 |
+| C9 | Print on Web or APK, stick on delivery lot | 3.6 |
+| C10 | Dispatch request to next party | 4.6, 5 |
+| C11 | Next party scan-accepts (live photo, weight, GPS); farmer record locked | 5 |
+| C12 | Next party appends data | 6.7 |
+| C13 | Relevant entity makes small packet batches with child QR | 3.7, 6.8 |
+| C14 | Packets reach retailer shop | 6.8 |
+| C15 | Customer scans with APK (optional location, recorded for Admin) | 7, 8 |
+| C16 | Customer sees origin, short summary, journey | 7 |
 
 ---
 
@@ -37,10 +65,7 @@ AnnaSutra is a farm-to-fork trust ledger. Every person signs in with their Gmail
 
 ### 1.1 End-to-End Flow (canonical, how AnnaSutra is always explained)
 
-> [!IMPORTANT]
-> Whenever the end-to-end flow is described (in docs, demos, or answers), it is told in this order and in this style.
-
-**Sign in with Gmail** > **Entity registers with their details** (the login portal first shows every registration this Gmail already has and its status) > **Admin approves** (only after approval is the Unique ID minted) > **Entity gets its console** > **Entity can update more details, except KYC** (KYC changes need an Admin Change Request) > **Farmer creates a batch** with all required details (harvest, crop, weight, units, photos) > **Mints the batch QR / barcode** > **Prints the label** (Web or APK) and **sticks it on the delivery lot** > **Sends a dispatch request to the next party** (lot becomes In Transit) > **Next party scans the lot QR to accept** (with live photo, weight, GPS), and custody passes to them (farmer's record is locked forever) > **Next party appends more data** to that lot (weight check, grade, storage, quality test) > **The relevant entity (Aggregator, Processor, Wholesaler, Distributor or Retailer) makes small packet batches** from that lot, each with its own **child batch QR** linked to the parent lot > **Packets reach the retailer shop** > **A customer scans the packet QR** with the AnnaSutra APK (or any phone camera). If they grant location permission, AnnaSutra records the scan location for Admin analytics > **The customer sees** product origin, a short summary, and the journey in short bites.
+**See the top of this file (`Core of AnnaSutra (Locked)`, steps C1 to C16).** The diagram below maps those 16 locked steps:
 
 ```mermaid
 flowchart LR
@@ -1030,3 +1055,4 @@ In-app + email to the account Gmail (always) + SMS only if a verified mobile exi
 | 33 | Print labels on Web and APK | Lot / batch QR and barcode labels are printable from the Web console and natively from the Android APK. | **Approved** |
 | 34 | Small packet batches with child batch QR | Aggregator, Processor, Wholesaler, Distributor and Retailer can split a lot into packet batches. Each packet batch is a child lot with one batch-level QR printed on all its packets, linked to the parent lot, under mass balance. | **Approved** |
 | 35 | Login portal and verification codes | After Google Sign-In, the portal lists every role with this Gmail's registration status. Verification codes (consent e-sign, deletion) go to the Gmail, plus the mobile if verified. Customer scans via APK or web; opt-in location is recorded for Admin. | **Approved** |
+| 36 | Core of AnnaSutra locked | The 16-step chain C1 to C16 at the top of this blueprint is immutable. No agent may remove, reorder, bypass or reword a step without an explicit "unlock the core" instruction from the product owner. | **Locked** |
