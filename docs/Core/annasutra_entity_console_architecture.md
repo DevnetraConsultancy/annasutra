@@ -62,6 +62,10 @@ AnnaSutra is a farm-to-fork trust ledger. Every person signs in with their Gmail
 | 15 | Gmail is the identity | A Gmail address is the primary key of every user account. Gmail is mandatory, mobile is optional. One Gmail can file several entity registrations (Producer, Aggregator, Processor, Wholesaler, Distributor, Retailer), and each one is approved separately. |
 | 16 | Single Admin identity | Only `devnetraconsultancy@gmail.com` can sign in to the Admin Console. Any other Gmail is refused, on Web and Android. |
 | 17 | Print anywhere | Lot / batch QR and barcode labels can be printed from both the Web console and the Android APK. |
+| 18 | Pure Single-Codebase Architecture | The platform is strictly maintained as one clean monorepo: Web UI/UX Frontend, Database schema, Django Backend, and Flutter Android APK. Container wrappers (`docker-compose.yml`, `Dockerfile`) and temporary scripts are banned from the codebase. |
+| 19 | Zero Preloaded Mock Lots Policy | Production and local development databases must boot clean with zero preloaded mock lots. Only the single superuser admin identity (`devnetraconsultancy@gmail.com`) is seeded. All lot records must stem from genuine entity harvest/creation workflows. |
+| 20 | Vercel & Cloned Local PC Exact Parity | The Web application guarantees 100% visual, operational, and architectural parity whether deployed serverless on Vercel or cloned onto any developer PC using one-click runners (`run_local.bat` / `run_local.sh`). Both environments execute identical Django views and templates with zero Node.js build steps. |
+| 21 | Custodian-Only Lot Append Authorization | Only the active physical custodian or original creator can append operational inspection or quality data (`POST /api/v1/lots/{id}/scan-update/`). Non-custodian entities receive HTTP 403 Forbidden. |
 
 ### 1.1 End-to-End Flow (canonical, how AnnaSutra is always explained)
 
@@ -1006,6 +1010,17 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
   * **Universal ABI Packaging:** Built as a standalone universal fat APK (`armeabi-v7a`, `arm64-v8a`, `x86_64`) that installs effortlessly on any Android device (Android 8.0 Oreo / API 26 through Android 15+) without ABI mismatch errors.
   * **Release Packaging & Distribution:** Compiled directly via `flutter build apk --release` to `build_artifacts/AnnaSutra_latest.apk` and distributed through GitHub Releases, direct in-app download (`get_latest_apk.bat`), and Google Play Store track.
 
+### 11.5 Web Version Gold Standard & Deployment Parity
+
+- **Pure Server-Rendered HTML5 & Vanilla ES6+:** The Web UI is delivered natively through Django server templates (`apps/publicview/templates/publicview/`) and lightweight vanilla JavaScript modules (`static/publicview/js/`). No Node.js build processes, webpack bundling, or frontend framework churn are required, eliminating frontend drift.
+- **Strict Zero-Emoji UI Guarantee:** Absolute ban on Unicode graphical emojis across all HTML templates, JavaScript notifications, modals, printable QR sheets, receipts, and SMS copy. Only Lucide SVGs and accessible CSS status chips are permitted.
+- **Strict Zero Preloaded Data:** The Web UI and database boot with zero mock lots. The landing and entity console dashboards start completely clean until genuine harvests and lots are registered.
+- **One-Click Cloned Local PC Parity:** Any developer or user who clones the repository can execute:
+  * Windows: `run_local.bat`
+  * Linux / macOS: `./run_local.sh`
+  These runners automatically initialize a clean Python virtualenv, execute Django database migrations against local SQLite, provision the single admin, collect static assets, and launch `http://127.0.0.1:8000/`. The rendered Web UI is 100% identical to the Vercel cloud deployment.
+- **Vercel Serverless Architecture:** Production deployment runs directly from the repository via `vercel.json` pointing to `backend/config/wsgi.py`, ensuring instantaneous serverless execution and strict template parity with local clones.
+
 ---
 
 ## 12. Notifications
@@ -1081,3 +1096,8 @@ In-app + email to the account Gmail (always) + SMS only if a verified mobile exi
 | 34 | Small packet batches with child batch QR | Aggregator, Processor, Wholesaler, Distributor and Retailer can split a lot into packet batches. Each packet batch is a child lot with one batch-level QR printed on all its packets, linked to the parent lot, under mass balance. | **Approved** |
 | 35 | Login portal and verification codes | After Google Sign-In, the portal lists every role with this Gmail's registration status. Verification codes (consent e-sign, deletion) go to the Gmail, plus the mobile if verified. Customer scans via APK or web; opt-in location is recorded for Admin. | **Approved** |
 | 36 | Core of AnnaSutra locked | The 16-step chain C1 to C16 at the top of this blueprint is immutable. No agent may remove, reorder, bypass or reword a step without an explicit "unlock the core" instruction from the product owner. | **Locked** |
+| 37 | Web Version Zero Preloaded Data Standard | The Web platform and database boot with zero mock or synthetic lots. Only the single admin superuser `devnetraconsultancy@gmail.com` is seeded into the database. All harvest lots must originate from genuine farmer creation. | **Approved** |
+| 38 | Pure Single-Codebase Architecture (Zero Docker / Spurious Scripts) | The entire repository operates as a single monorepo. All legacy Docker container files (`docker-compose.yml`, `Dockerfile`) and temporary audit/patch scripts are completely purged from the codebase. | **Approved** |
+| 39 | Vercel & Cloned Local PC UI/UX Exact Parity | Any user cloning the GitHub repo on their computer gets the identical Web UI/UX as Vercel by running `run_local.bat` / `run_local.sh`, executing the exact same Django templates and static assets. | **Approved** |
+| 40 | Custodian-Only Lot Append Authorization Gate | Operational inspection and scan update appending (`POST /api/v1/lots/{id}/scan-update/`) is strictly restricted to the current custodian or creator. Unauthorized entities receive HTTP 403 Forbidden. | **Approved** |
+| 41 | Mandatory 28-Point Blueprint Test Suite Enforcement | A dedicated automated test suite (`test_blueprint_gold_standard.py`) enforces C1–C16, ASVS security headers, DPDP Act 2023 consent, UI emoji absence, and database integrity before deployment. | **Approved** |
