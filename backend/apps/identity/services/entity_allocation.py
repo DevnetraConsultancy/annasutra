@@ -181,21 +181,42 @@ def generate_farmer_uid(phone_e164: str, dt=None) -> str:
 
 
 def get_or_mint_farmer_uid(profile_or_user, dt=None) -> str:
-    """Return existing or newly minted YYYYDDHHMMSS+CountryCodeMobileNumber Farmer ID."""
-    from apps.identity.models import EntityRoleDetails
+    """Return existing or newly minted YYYYDDHHMMSS+CountryCodeMobileNumber Farmer ID.
+    CRITICAL POLICY: Per specification, first-time producer registrations until admin
+    approves them (status == 'VERIFIED') MUST NOT receive a Unique Farmer ID.
+    Unapproved / pending / needs_changes profiles return an empty string.
+    """
+    from apps.identity.models import EntityRoleDetails, EntityProfile, AppUser
 
-    phone = getattr(profile_or_user, "phone_e164", "") or "910000000000"
-    created_at = getattr(profile_or_user, "created_at", None) or dt or timezone.now()
+    if profile_or_user is None:
+        return ""
 
+    profile = None
     if isinstance(profile_or_user, EntityProfile):
-        role_det = EntityRoleDetails.objects.filter(entity=profile_or_user).first()
+        profile = profile_or_user
+    elif isinstance(profile_or_user, AppUser):
+        profile = EntityProfile.objects.filter(user_id=profile_or_user.user_id).first()
+        if not profile and profile_or_user.phone_e164:
+            profile = EntityProfile.objects.filter(phone_e164=profile_or_user.phone_e164).first()
+
+    if profile:
+        # Strict enforcement: only verified producers receive a Unique Farmer ID
+        if profile.status != "VERIFIED":
+            return ""
+        if profile.role != "PRODUCER":
+            return ""
+
+        role_det = EntityRoleDetails.objects.filter(entity=profile).first()
         if role_det and isinstance(role_det.details, dict):
             existing = role_det.details.get("farmer_uid")
             if existing and re.match(r"^\d{20,30}$", str(existing)):
                 return str(existing)
+
+        phone = getattr(profile, "phone_e164", "") or "910000000000"
+        created_at = getattr(profile, "verified_at", None) or getattr(profile, "created_at", None) or dt or timezone.now()
         uid = generate_farmer_uid(phone, created_at)
         try:
-            role_det, _ = EntityRoleDetails.objects.get_or_create(entity=profile_or_user, defaults={"details": {}})
+            role_det, _ = EntityRoleDetails.objects.get_or_create(entity=profile, defaults={"details": {}})
             details = dict(role_det.details or {})
             details["farmer_uid"] = uid
             role_det.details = details
@@ -204,7 +225,15 @@ def get_or_mint_farmer_uid(profile_or_user, dt=None) -> str:
             pass
         return uid
 
-    return generate_farmer_uid(phone, created_at)
+    if isinstance(profile_or_user, AppUser):
+        # Fallback for AppUser without EntityProfile: check verified org
+        user_org = getattr(profile_or_user, "org", None)
+        if user_org and user_org.verification == "VERIFIED" and getattr(user_org, "org_type", "") == "FARMER":
+            phone = getattr(profile_or_user, "phone_e164", "") or "910000000000"
+            created_at = getattr(profile_or_user, "date_joined", None) or dt or timezone.now()
+            return generate_farmer_uid(phone, created_at)
+
+    return ""
 
 
 
@@ -344,9 +373,12 @@ def approve_entity_registration(
             admin_user=admin_user,
         )
 
+    farmer_uid_val = get_or_mint_farmer_uid(entity, dt=now) if entity.role == "PRODUCER" else ""
+
     return {
         "entity_id": str(entity.entity_id),
         "entity_code": entity.entity_code,
+        "farmer_uid": farmer_uid_val,
         "status": "VERIFIED",
         "verified_at": entity.verified_at.isoformat(),
         "block_id": str(block.block_id),

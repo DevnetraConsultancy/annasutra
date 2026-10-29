@@ -96,7 +96,7 @@ def _serialize_profile(profile):
             "has_upi": bool(sensitive.upi_enc),
         }
 
-    farmer_uid = get_or_mint_farmer_uid(profile)
+    farmer_uid = get_or_mint_farmer_uid(profile) if profile.status == "VERIFIED" else None
     role_details = EntityRoleDetails.objects.filter(entity=profile).first()
 
     return {
@@ -998,7 +998,7 @@ class MyRoleStatsView(APIView):
             "role": profile.role,
             "status": profile.status,
             "entity_code": profile.entity_code,
-            "farmer_uid": get_or_mint_farmer_uid(profile),
+            "farmer_uid": get_or_mint_farmer_uid(profile) if profile.status == "VERIFIED" else None,
             "stats": {
                 "batches_created": lots_count,
                 "total_kg_declared": total_kg,
@@ -1208,7 +1208,7 @@ class MyChangeRequestsView(APIView):
         entry = {
             "request_id": str(uuid.uuid4()),
             "entity_id": str(profile.entity_id),
-            "farmer_uid": get_or_mint_farmer_uid(profile),
+            "farmer_uid": get_or_mint_farmer_uid(profile) if profile.status == "VERIFIED" else None,
             "farmer_name": f"{profile.first_name} {profile.last_name}".strip() or profile.organisation_name,
             "phone_e164": profile.phone_e164,
             "field_group": field_group,

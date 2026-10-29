@@ -552,10 +552,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'LIVE AGRICULTURAL TELEMETRY',
                         style: TextStyle(
@@ -567,8 +567,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    const Row(
+                    SizedBox(width: 6),
+                    Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text('● ', style: TextStyle(color: Color(0xFF10B981), fontSize: 10)),
