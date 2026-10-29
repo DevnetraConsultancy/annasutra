@@ -25,9 +25,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   static const List<Map<String, String>> _roles = [
     {'code': 'PRODUCER', 'label': 'Farmer / FPO Producer'},
     {'code': 'AGGREGATOR', 'label': 'Mandi Aggregator / APMC'},
+    {'code': 'PROCESSOR', 'label': 'Processor / Mill'},
     {'code': 'WHOLESALER', 'label': 'Wholesaler'},
     {'code': 'DISTRIBUTOR', 'label': 'Distributor / Cold Chain'},
     {'code': 'RETAILER', 'label': 'Retailer Shop'},
+    {'code': 'VERIFIER', 'label': 'Public Consumer / Verifier'},
   ];
 
   @override
@@ -375,9 +377,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       SizedBox(
                         height: 52,
                         child: ElevatedButton.icon(
-                          onPressed: isLoading
-                              ? null
-                              : () => _continueWithGoogle(),
+                          onPressed:
+                              isLoading ? null : () => _continueWithGoogle(),
                           icon: const Icon(Icons.account_circle_outlined),
                           label: const Text(
                             'Continue with Google',
@@ -409,7 +410,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const Divider(),
                     const SizedBox(height: 12),
                     const Text(
-                      'Protected under Digital Personal Data Protection (DPDP) Act 2023 • C-DAC Sovereign Ledger',
+                      'Protected under DPDP Act 2023 • National Cloud Node',
                       style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
                       textAlign: TextAlign.center,
                     ),

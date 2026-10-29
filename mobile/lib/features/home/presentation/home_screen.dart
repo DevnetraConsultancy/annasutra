@@ -24,26 +24,105 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentNavIndex = 0; // 0: Batches, 1: Handover, 2: Insights, 3: Profile
+  int _selectedProfileStep =
+      0; // 0..4 for the 5 Registration Tabs under Profile
   String _selectedLang = 'en';
 
   // Search & Filter State
   final TextEditingController _searchController = TextEditingController();
   String _selectedCustodyFilter = 'ALL';
 
-  // Auth form controllers for unauthenticated view (clean, empty - zero pre-loaded templates)
+  // Auth form controllers for unauthenticated view
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   String _selectedRole = 'PRODUCER';
   VideoPlayerController? _videoController;
 
+  // Editable Profile State (5-Tab Registration Data Inspection & Self-Service Edit)
+  late final TextEditingController _altPhoneCtrl =
+      TextEditingController(text: '+91 9434011223');
+  late final TextEditingController _emailCtrl =
+      TextEditingController(text: 'contact@maa-annapurna-fpo.in');
+  late final TextEditingController _addrLine2Ctrl =
+      TextEditingController(text: 'Near Gram Panchayat Office, Memari');
+  late final TextEditingController _plotNicknameCtrl = TextEditingController(
+      text: 'Plot #1 - North Field & Plot #2 - Riverbank');
+  late final TextEditingController _seasonalNotesCtrl =
+      TextEditingController(text: 'Kharif Paddy & Rabi Mustard rotation');
+  late final TextEditingController _secondaryCropsCtrl =
+      TextEditingController(text: 'Potato (VG), Mustard (OI), Moong (PU)');
+  late final TextEditingController _irrigationCtrl =
+      TextEditingController(text: 'Submersible Borewell + Canal');
+  late final TextEditingController _certNotesCtrl = TextEditingController(
+      text: 'NPOP Organic Certified • Soil Card Verified');
+
+  // Registered Plots & Submitted Change Requests
+  final List<Map<String, dynamic>> _registeredPlots = [
+    {
+      'name': 'Plot #1 - North Field',
+      'surveyNo': 'Survey 104/A',
+      'acres': 2.5,
+      'allocatedAcres': 1.5,
+      'crop': 'Paddy / Rice (FG)',
+      'status': 'VERIFIED',
+    },
+    {
+      'name': 'Plot #2 - Riverbank South',
+      'surveyNo': 'Survey 108/B',
+      'acres': 2.0,
+      'allocatedAcres': 1.5,
+      'crop': 'Mustard (OI)',
+      'status': 'VERIFIED',
+    },
+  ];
+
+  final List<Map<String, String>> _changeRequests = [];
+
+  // All 7 Entity Roles in One Single Universal APK
   static const List<Map<String, dynamic>> _roleOptions = [
     {'code': 'PRODUCER', 'label': 'Farmer / FPO', 'icon': Icons.agriculture},
-    {'code': 'AGGREGATOR', 'label': 'Mandi / APMC', 'icon': Icons.storefront_outlined},
-    {'code': 'PROCESSOR', 'label': 'Processor / Mill', 'icon': Icons.precision_manufacturing_outlined},
-    {'code': 'WHOLESALER', 'label': 'Wholesaler', 'icon': Icons.inventory_2_outlined},
-    {'code': 'DISTRIBUTOR', 'label': 'Distributor', 'icon': Icons.local_shipping_outlined},
-    {'code': 'RETAILER', 'label': 'Retailer Shop', 'icon': Icons.shopping_bag_outlined},
+    {
+      'code': 'AGGREGATOR',
+      'label': 'Mandi / APMC',
+      'icon': Icons.storefront_outlined
+    },
+    {
+      'code': 'PROCESSOR',
+      'label': 'Processor / Mill',
+      'icon': Icons.precision_manufacturing_outlined
+    },
+    {
+      'code': 'WHOLESALER',
+      'label': 'Wholesaler',
+      'icon': Icons.inventory_2_outlined
+    },
+    {
+      'code': 'DISTRIBUTOR',
+      'label': 'Distributor',
+      'icon': Icons.local_shipping_outlined
+    },
+    {
+      'code': 'RETAILER',
+      'label': 'Retailer Shop',
+      'icon': Icons.shopping_bag_outlined
+    },
+    {
+      'code': 'VERIFIER',
+      'label': 'Public Consumer / Verifier',
+      'icon': Icons.qr_code_scanner
+    },
   ];
+
+  static const Map<String, String> _roleConsoleSubtitles = {
+    'PRODUCER': 'Producer Operations Console',
+    'FARMER': 'Producer Operations Console',
+    'AGGREGATOR': 'Aggregator / Mandi Console',
+    'PROCESSOR': 'Processor / Mill Console',
+    'WHOLESALER': 'Wholesaler Console',
+    'DISTRIBUTOR': 'Distributor Console',
+    'RETAILER': 'Retailer Console',
+    'VERIFIER': 'Public Consumer / Verifier Console',
+  };
 
   static const Map<String, Map<String, String>> _strings = {
     'en': {
@@ -65,29 +144,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'filterTransit': 'In Transit',
       'filterDelivered': 'Accepted',
       'noBatchesTitle': 'No Harvest Lots Yet',
-      'noBatchesSub': 'Register your first produce lot to generate tamper-proof QR crate labels.',
+      'noBatchesSub':
+          'Register your first produce lot to generate QR and barcode crate labels.',
       'btnCreateFirst': '+ Create First Batch',
       'handoverTitle': 'Custody Transfer',
-      'handoverSub': 'Hand over produce lot to counterparty with verified QR confirmation.',
+      'handoverSub':
+          'Hand over produce lot to counterparty with verified QR confirmation.',
       'scanToReceive': 'Scan QR to Receive Custody',
-      'scanToReceiveSub': 'Inspect incoming produce crates, verify net weight & append condition telemetry.',
+      'scanToReceiveSub':
+          'Inspect incoming produce crates, verify net weight & append condition telemetry.',
       'btnScanQr': 'Scan Crate QR',
       'manualCodePh': 'Or enter Lot Code manually',
       'btnVerifyAccept': 'Accept & Append Telemetry',
       'dispatchedBatches': 'Dispatched Batches (In Transit)',
-      'noDispatched': 'No active outgoing handovers pending counterparty sign-off.',
+      'noDispatched':
+          'No active outgoing handovers pending counterparty sign-off.',
       'insightsTitle': 'Farm & Harvest Insights',
       'grossValuation': 'Gross Valuation',
       'realizedRevenue': 'Realized Revenue',
       'gradeARatio': 'Grade A Quality Ratio',
       'cropBreakdown': 'Crop Volume Distribution',
       'plotsTitle': 'Mapped Agricultural Plots',
-      'profileTitle': 'Producer Digital Node',
+      'profileTitle': 'Producer Profile & Registration',
       'kycVerified': 'KYC Verified',
-      'kycPending': 'KYC Under Review',
+      'kycPending': 'Under Admin Review',
       'maskedPan': 'PAN Identity',
       'bankAccount': 'Settlement Bank',
-      'statutoryConsent': 'Consent Active',
+      'statutoryConsent': 'Privacy & Data Consent',
       'btnLogout': 'Log Out',
       'loginTitle': 'Farm-to-Fork Traceability',
       'loginSub': 'Agri-Traceability Console',
@@ -96,7 +179,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'btnSendOtp': 'Get OTP via SMS',
       'btnVerifyOtp': 'Verify & Sign In',
       'btnGoogle': 'Sign in with Google',
-      'dpdpNotice': 'Privacy Protected • National Cloud Node',
+      'dpdpNotice': 'Protected under DPDP Act 2023 • National Cloud Node',
     },
     'hi': {
       'appTitle': 'अन्नसूत्र',
@@ -117,12 +200,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'filterTransit': 'पारगमन में',
       'filterDelivered': 'स्वीकृत',
       'noBatchesTitle': 'कोई फ़सल बैच नहीं है',
-      'noBatchesSub': 'असीमित क्यूआर क्रेट लेबल उत्पन्न करने के लिए अपना पहला फ़सल लॉट पंजीकृत करें।',
+      'noBatchesSub':
+          'क्यूआर क्रेट लेबल उत्पन्न करने के लिए अपना पहला फ़सल लॉट पंजीकृत करें।',
       'btnCreateFirst': '+ पहला बैच बनाएं',
       'handoverTitle': 'कस्टडी हस्तांतरण',
-      'handoverSub': 'सत्यापित क्यूआर पुष्टि के साथ प्रतिपक्ष को कस्टडी हस्तांतरित करें।',
+      'handoverSub':
+          'सत्यापित क्यूआर पुष्टि के साथ प्रतिपक्ष को कस्टडी हस्तांतरित करें।',
       'scanToReceive': 'कस्टडी प्राप्त करने के लिए क्यूआर स्कैन करें',
-      'scanToReceiveSub': 'आवक क्रेट्स का निरीक्षण करें, वजन सत्यापित करें व स्थिति दर्ज करें।',
+      'scanToReceiveSub':
+          'आवक क्रेट्स का निरीक्षण करें, वजन सत्यापित करें व स्थिति दर्ज करें।',
       'btnScanQr': 'क्रेट क्यूआर स्कैन करें',
       'manualCodePh': 'या लॉट कोड दर्ज करें',
       'btnVerifyAccept': 'स्वीकार करें व दर्ज करें',
@@ -134,21 +220,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'gradeARatio': 'ग्रेड-ए गुणवत्ता अनुपात',
       'cropBreakdown': 'फ़सल मात्रा वितरण',
       'plotsTitle': 'सत्यापित कृषि भूखंड',
-      'profileTitle': 'उत्पादक डिजिटल नोड',
+      'profileTitle': 'उत्पादक प्रोफ़ाइल एवं पंजीकरण',
       'kycVerified': 'केवाईसी सत्यापित',
-      'kycPending': 'केवाईसी समीक्षाधीन',
+      'kycPending': 'प्रशासनिक समीक्षाधीन',
       'maskedPan': 'पैन पहचान',
       'bankAccount': 'निपटान बैंक',
-      'statutoryConsent': 'डीपीडीपी अधिनियम २०२३ सहमति सक्रिय',
+      'statutoryConsent': 'गोपनीयता एवं डेटा सहमति',
       'btnLogout': 'लॉग आउट',
       'loginTitle': 'बीज से थाली तक ट्रेसेबिलिटी',
-      'loginSub': 'राष्ट्रीय संप्रभु कृषि-ट्रेसेबिलिटी कंसोल',
+      'loginSub': 'कृषि-ट्रेसेबिलिटी कंसोल',
       'phoneLabel': 'मोबाइल नंबर',
       'otpLabel': '६-अंकीय ओटीपी दर्ज करें',
       'btnSendOtp': 'ओटीपी प्राप्त करें',
       'btnVerifyOtp': 'सत्यापित करें व प्रवेश करें',
       'btnGoogle': 'गूगल से लॉगिन करें',
-      'dpdpNotice': 'डीपीडीपी अधिनियम २०२३ के तहत सुरक्षित • सी-डैक संप्रभु नोड',
+      'dpdpNotice': 'Protected under DPDP Act 2023 • National Cloud Node',
     },
     'bn': {
       'appTitle': 'অন্নসূত্র',
@@ -169,10 +255,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'filterTransit': 'ট্রানজিটে',
       'filterDelivered': 'গৃহীত',
       'noBatchesTitle': 'কোনো ফসল ব্যাচ নেই',
-      'noBatchesSub': 'অফিসিয়াল কিউআর লেবেল পেতে প্রথম ফসল লট নিবন্ধন করুন।',
+      'noBatchesSub': 'কিউআর লেবেল পেতে প্রথম ফসল লট নিবন্ধন করুন।',
       'btnCreateFirst': '+ প্রথম ব্যাচ তৈরি করুন',
       'handoverTitle': 'হেফাজত হস্তান্তর',
-      'handoverSub': 'যাচাইকৃত কিউআর নিশ্চিতকরণ সহ পরবর্তী পক্ষের কাছে পণ্য হস্তান্তর করুন।',
+      'handoverSub':
+          'যাচাইকৃত কিউআর নিশ্চিতকরণ সহ পরবর্তী পক্ষের কাছে পণ্য হস্তান্তর করুন।',
       'scanToReceive': 'হেফাজত গ্রহণের জন্য কিউআর স্ক্যান করুন',
       'scanToReceiveSub': 'আগত পণ্যের ওজন যাচাই করুন ও অবস্থা নথিভুক্ত করুন।',
       'btnScanQr': 'কিউআর স্ক্যান করুন',
@@ -186,25 +273,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'gradeARatio': 'গ্রেড-এ গুণমান অনুপাত',
       'cropBreakdown': 'ফসল উৎপাদন বণ্টন',
       'plotsTitle': 'ম্যাপ করা কৃষি জমি',
-      'profileTitle': 'উৎপাদক ডিজিটাল নোড',
+      'profileTitle': 'উৎপাদক প্রোফাইল ও নিবন্ধন',
       'kycVerified': 'কেওয়াইসি যাচাইকৃত',
-      'kycPending': 'কেওয়াইসি পর্যালোচনাধীন',
+      'kycPending': 'প্রশাসনিক পর্যালোচনাধীন',
       'maskedPan': 'প্যান পরিচয়',
       'bankAccount': 'ব্যাঙ্ক অ্যাকাউন্ট',
-      'statutoryConsent': 'ডিপিডিপি অ্যাক্ট ২০২৩ সম্মতি সক্রিয়',
-      'btnLogout': 'লগ আউট',
+      'statutoryConsent': 'গোপনীয়তা ও ডেটা সম্মতি',
+      'btnLogout': 'লॉग আউট',
       'loginTitle': 'বীজ থেকে ভোক্তা পর্যন্ত স্বচ্ছতা',
-      'loginSub': 'জাতীয় সার্বভৌম কৃষি ট্রেসেবিলিটি কনসোল',
+      'loginSub': 'কৃষি ট্রেসেবিলিটি কনসোল',
       'phoneLabel': 'মোবাইল নম্বর',
       'otpLabel': '৬-সংখ্যার ওটিপি লিখুন',
       'btnSendOtp': 'ওটিপি পাঠান',
       'btnVerifyOtp': 'যাচাই করুন ও প্রবেশ করুন',
       'btnGoogle': 'গুগল দিয়ে প্রবেশ করুন',
-      'dpdpNotice': 'ডিপিডিপি অ্যাক্ট ২০২৩ দ্বারা সংরক্ষিত • সি-ড্যাক নোড',
+      'dpdpNotice': 'Protected under DPDP Act 2023 • National Cloud Node',
     },
   };
 
-  String _t(String key) => _strings[_selectedLang]?[key] ?? _strings['en']?[key] ?? key;
+  String _t(String key) =>
+      _strings[_selectedLang]?[key] ?? _strings['en']?[key] ?? key;
 
   @override
   void initState() {
@@ -216,15 +304,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isTest = Platform.environment.containsKey('FLUTTER_TEST');
     if (!isTest) {
       try {
-        _videoController = VideoPlayerController.asset('assets/videos/annasutra_bg.mp4')
-          ..initialize().then((_) {
-            if (mounted) {
-              _videoController?.setLooping(true);
-              _videoController?.setVolume(0.0);
-              _videoController?.play();
-              setState(() {});
-            }
-          }).catchError((_) {});
+        _videoController =
+            VideoPlayerController.asset('assets/videos/annasutra_bg.mp4')
+              ..initialize().then((_) {
+                if (mounted) {
+                  _videoController?.setLooping(true);
+                  _videoController?.setVolume(0.0);
+                  _videoController?.play();
+                  setState(() {});
+                }
+              }).catchError((_) {});
       } catch (_) {}
     }
   }
@@ -235,6 +324,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _searchController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
+    _altPhoneCtrl.dispose();
+    _emailCtrl.dispose();
+    _addrLine2Ctrl.dispose();
+    _plotNicknameCtrl.dispose();
+    _seasonalNotesCtrl.dispose();
+    _secondaryCropsCtrl.dispose();
+    _irrigationCtrl.dispose();
+    _certNotesCtrl.dispose();
     super.dispose();
   }
 
@@ -243,75 +340,104 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     widget.onLocaleChanged?.call(Locale(lang));
   }
 
+  String _activeRole(AuthState authState) {
+    final r = (authState.orgType ?? 'PRODUCER').toUpperCase();
+    return r == 'FARMER' ? 'PRODUCER' : r;
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final lotsState = ref.watch(lotsControllerProvider);
     final syncState = ref.watch(syncControllerProvider);
+    final role = _activeRole(authState);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: authState.isAuthenticated ? _buildTopAppBar(context, authState, syncState) : null,
+      appBar: authState.isAuthenticated
+          ? _buildTopAppBar(context, authState, syncState, role)
+          : null,
       body: authState.isAuthenticated
           ? IndexedStack(
               index: _currentNavIndex,
               children: [
-                _buildBatchesTab(context, lotsState, authState),
-                _buildHandoverTab(context, lotsState, authState),
+                _buildBatchesTab(context, lotsState, authState, role),
+                _buildHandoverTab(context, lotsState, authState, role),
                 _buildInsightsTab(context, lotsState),
-                _buildProfileTab(context, authState),
+                _buildProfileTab(context, authState, role),
               ],
             )
           : _buildUnauthenticatedView(context, authState),
       bottomNavigationBar: authState.isAuthenticated
           ? NavigationBar(
               selectedIndex: _currentNavIndex,
-              onDestinationSelected: (idx) => setState(() => _currentNavIndex = idx),
+              onDestinationSelected: (idx) =>
+                  setState(() => _currentNavIndex = idx),
               backgroundColor: Colors.white,
               elevation: 4,
               indicatorColor: const Color(0xFFECFDF5),
               destinations: [
                 NavigationDestination(
                   icon: const Icon(Icons.inventory_2_outlined),
-                  selectedIcon: const Icon(Icons.inventory_2, color: Color(0xFF0B3D2E)),
+                  selectedIcon:
+                      const Icon(Icons.inventory_2, color: Color(0xFF0B3D2E)),
                   label: _t('navBatches'),
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.swap_horiz_outlined),
-                  selectedIcon: const Icon(Icons.swap_horiz, color: Color(0xFF0B3D2E)),
+                  selectedIcon:
+                      const Icon(Icons.swap_horiz, color: Color(0xFF0B3D2E)),
                   label: _t('navHandover'),
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.insights_outlined),
-                  selectedIcon: const Icon(Icons.insights, color: Color(0xFF0B3D2E)),
+                  selectedIcon:
+                      const Icon(Icons.insights, color: Color(0xFF0B3D2E)),
                   label: _t('navInsights'),
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.person_outline),
-                  selectedIcon: const Icon(Icons.person, color: Color(0xFF0B3D2E)),
+                  selectedIcon:
+                      const Icon(Icons.person, color: Color(0xFF0B3D2E)),
                   label: _t('navProfile'),
                 ),
               ],
             )
           : null,
-      floatingActionButton: (authState.isAuthenticated && _currentNavIndex == 0)
+      floatingActionButton: (authState.isAuthenticated &&
+              _currentNavIndex == 0 &&
+              !authState.isDeletionRequested)
           ? FloatingActionButton.extended(
-              onPressed: () => context.push('/create-batch'),
+              onPressed: () {
+                if (role == 'VERIFIER') {
+                  _showConsumerVerifierSheet(context, lotsState.lots);
+                } else {
+                  context.push('/create-batch');
+                }
+              },
               backgroundColor: const Color(0xFF0B3D2E),
               foregroundColor: Colors.white,
               elevation: 3,
-              icon: const Icon(Icons.add, size: 20),
+              icon: Icon(role == 'VERIFIER' ? Icons.qr_code_scanner : Icons.add,
+                  size: 20),
               label: Text(
-                _t('newBatch'),
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                role == 'VERIFIER' ? 'Scan QR' : _t('newBatch'),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w800, fontSize: 13.5),
               ),
             )
           : null,
     );
   }
 
-  // 1. TOP APP BAR
-  PreferredSizeWidget _buildTopAppBar(BuildContext context, AuthState authState, SyncState syncState) {
+  // 1. TOP APP BAR (With Role Switcher & Unified Logout per Decision 14 & 25)
+  PreferredSizeWidget _buildTopAppBar(
+    BuildContext context,
+    AuthState authState,
+    SyncState syncState,
+    String role,
+  ) {
+    final subtitle = _roleConsoleSubtitles[role] ?? _t('appSubtitle');
     return AppBar(
       backgroundColor: const Color(0xFF0B3D2E),
       foregroundColor: Colors.white,
@@ -331,7 +457,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Image.asset(
                 'assets/images/annasutra_emblem.jpg',
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 18),
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 18),
               ),
             ),
           ),
@@ -343,12 +470,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Text(
                   _t('appTitle'),
-                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -0.2),
+                  style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.2),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  _t('appSubtitle'),
-                  style: const TextStyle(fontSize: 9.5, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w500),
+                  subtitle,
+                  style: const TextStyle(
+                      fontSize: 9.5,
+                      color: Color(0xFFA7F3D0),
+                      fontWeight: FontWeight.w500),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -362,7 +495,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           margin: const EdgeInsets.symmetric(vertical: 16),
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
           decoration: BoxDecoration(
-            color: syncState.pendingCount == 0 ? const Color(0xFF064E3B) : const Color(0xFF78350F),
+            color: syncState.pendingCount == 0
+                ? const Color(0xFF064E3B)
+                : const Color(0xFF78350F),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -373,16 +508,98 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 height: 7,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: syncState.pendingCount == 0 ? const Color(0xFF34D399) : const Color(0xFFFBBF24),
+                  color: syncState.pendingCount == 0
+                      ? const Color(0xFF34D399)
+                      : const Color(0xFFFBBF24),
                 ),
               ),
               const SizedBox(width: 4),
               Text(
-                syncState.pendingCount == 0 ? 'Synced' : '${syncState.pendingCount} Pending',
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                syncState.pendingCount == 0
+                    ? 'Synced'
+                    : '${syncState.pendingCount} Pending',
+                style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white),
               ),
             ],
           ),
+        ),
+
+        // Role Switcher & Unified Account Menu
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.swap_vert_circle_outlined, size: 20),
+          tooltip: 'Switch Role Console or Sign Out',
+          onSelected: (val) async {
+            if (val == 'LOGOUT') {
+              await ref.read(authControllerProvider.notifier).logout();
+            } else {
+              await ref
+                  .read(authControllerProvider.notifier)
+                  .switchActiveRole(val);
+            }
+          },
+          itemBuilder: (ctx) => [
+            const PopupMenuItem<String>(
+              enabled: false,
+              child: Text(
+                'UNIVERSAL ROLE CONSOLE SWITCHER',
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF64748B)),
+              ),
+            ),
+            ..._roleOptions.map(
+              (r) => PopupMenuItem<String>(
+                value: r['code'] as String,
+                child: Row(
+                  children: [
+                    Icon(
+                      r['icon'] as IconData,
+                      size: 16,
+                      color: role == r['code']
+                          ? const Color(0xFF047857)
+                          : const Color(0xFF64748B),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        r['label'] as String,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: role == r['code']
+                              ? FontWeight.w800
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (role == r['code'])
+                      const Icon(Icons.check,
+                          size: 15, color: Color(0xFF047857)),
+                  ],
+                ),
+              ),
+            ),
+            const PopupMenuDivider(),
+            const PopupMenuItem<String>(
+              value: 'LOGOUT',
+              child: Row(
+                children: [
+                  Icon(Icons.logout, size: 16, color: Color(0xFFDC2626)),
+                  SizedBox(width: 8),
+                  Text(
+                    'Sign Out',
+                    style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFDC2626)),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
 
         // Language Switcher Chip
@@ -403,18 +620,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // TAB 0: BATCHES (HARVEST LOTS)
+  // TAB 0: BATCHES & ROLE CONSOLE HOME
   // ---------------------------------------------------------------------------
-  Widget _buildBatchesTab(BuildContext context, LotsState lotsState, AuthState authState) {
-    final farmerUid = authState.farmerUid ??
-        (authState.phone != null && authState.phone!.isNotEmpty
-            ? LotsController.generateFarmerUid(phone: authState.phone)
-            : 'REGISTERED');
+  Widget _buildBatchesTab(
+    BuildContext context,
+    LotsState lotsState,
+    AuthState authState,
+    String role,
+  ) {
+    // Section 4.2.1 Strict Pre-Approval Farmer ID Policy:
+    // Never show Unique Farmer ID until Admin approves the registration.
+    final bool isApproved = authState.isOrgVerified &&
+        authState.farmerUid != null &&
+        authState.farmerUid!.isNotEmpty;
+    final String displayId =
+        isApproved ? authState.farmerUid! : 'Under Admin Review';
 
     final lots = lotsState.filteredLots;
     final totalKg = lots.fold<double>(0.0, (acc, lot) => acc + lot.netQtyKg);
+    final totalVal =
+        lots.fold<double>(0.0, (acc, lot) => acc + lot.estimatedValue);
     final inCustodyCount = lots.where((l) => l.isEditable).length;
     final inTransitCount = lots.where((l) => l.state == 'IN_TRANSIT').length;
+
+    final totalAcres = _registeredPlots.fold<double>(
+        0.0, (acc, p) => acc + (p['acres'] as double));
+    final allocAcres = _registeredPlots.fold<double>(
+        0.0, (acc, p) => acc + (p['allocatedAcres'] as double));
+    final freeAcres = (totalAcres - allocAcres).clamp(0.0, 9999.0);
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -426,7 +659,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         children: [
-          // 1. VERIFIED PRODUCER NODE HEADER (Web UI Parity)
+          // Deletion Requested Freeze Banner
+          if (authState.isDeletionRequested) ...[
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF2F2),
+                border: Border.all(color: const Color(0xFFFCA5A5)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.lock_clock,
+                      color: Color(0xFFDC2626), size: 20),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      'Account Deletion Requested (Pending Admin Review). New lot creation and dispatches are frozen.',
+                      style: TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF991B1B)),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => ref
+                        .read(authControllerProvider.notifier)
+                        .cancelAccountDeletion(),
+                    child: const Text('Withdraw',
+                        style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFFDC2626))),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // 1. ENTITY CONSOLE HEADER (Web UI Parity + Pre-Approval Farmer ID Guard)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -434,7 +706,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: const [
-                BoxShadow(color: Color(0x06000000), blurRadius: 6, offset: Offset(0, 2)),
+                BoxShadow(
+                    color: Color(0x06000000),
+                    blurRadius: 6,
+                    offset: Offset(0, 2)),
               ],
             ),
             child: Column(
@@ -449,23 +724,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFECFDF5),
-                              border: Border.all(color: const Color(0xFF86EFAC)),
+                              color: isApproved
+                                  ? const Color(0xFFECFDF5)
+                                  : const Color(0xFFFFFBEB),
+                              border: Border.all(
+                                color: isApproved
+                                    ? const Color(0xFF86EFAC)
+                                    : const Color(0xFFFDE68A),
+                              ),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.check_circle, size: 13, color: Color(0xFF15803D)),
-                                SizedBox(width: 5),
+                                Icon(
+                                  isApproved
+                                      ? Icons.check_circle
+                                      : Icons.schedule,
+                                  size: 13,
+                                  color: isApproved
+                                      ? const Color(0xFF15803D)
+                                      : const Color(0xFFB45309),
+                                ),
+                                const SizedBox(width: 5),
                                 Text(
-                                  'VERIFIED PRODUCER NODE',
+                                  isApproved
+                                      ? 'VERIFIED $role CONSOLE'
+                                      : 'UNDER ADMIN REVIEW',
                                   style: TextStyle(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w800,
-                                    color: Color(0xFF065F46),
+                                    color: isApproved
+                                        ? const Color(0xFF065F46)
+                                        : const Color(0xFF92400E),
                                     letterSpacing: 0.3,
                                   ),
                                 ),
@@ -474,7 +768,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            authState.orgName ?? 'Registered Agricultural Producer',
+                            authState.orgName ??
+                                'Registered Agricultural Producer',
                             style: const TextStyle(
                               fontSize: 17.5,
                               fontWeight: FontWeight.w900,
@@ -484,7 +779,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           const SizedBox(height: 2),
                           const Text(
                             'Cluster Farm Yard #4, Bardhaman, West Bengal',
-                            style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xFF64748B)),
                           ),
                         ],
                       ),
@@ -492,25 +788,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                // Unique Farmer ID Box with 1-tap copy
+                // Unique Farmer ID / Entity ID Box (Pre-Approval Guarded)
                 InkWell(
-                  onTap: () {
-                    Clipboard.setData(ClipboardData(text: farmerUid));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Copied Farmer ID: $farmerUid'),
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: const Color(0xFF0B3D2E),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
+                  onTap: isApproved
+                      ? () {
+                          Clipboard.setData(ClipboardData(text: displayId));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Copied ID: $displayId'),
+                              duration: const Duration(seconds: 2),
+                              backgroundColor: const Color(0xFF0B3D2E),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      : null,
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
-                      border: Border.all(color: const Color(0xFF86EFAC), width: 1.5),
+                      color: isApproved
+                          ? const Color(0xFFF0FDF4)
+                          : const Color(0xFFFFFBEB),
+                      border: Border.all(
+                        color: isApproved
+                            ? const Color(0xFF86EFAC)
+                            : const Color(0xFFFCD34D),
+                        width: 1.5,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -520,23 +826,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'UNIQUE FARMER ID',
+                              Text(
+                                role == 'PRODUCER'
+                                    ? 'UNIQUE FARMER ID'
+                                    : 'ENTITY REGISTRATION ID',
                                 style: TextStyle(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.w800,
-                                  color: Color(0xFF047857),
+                                  color: isApproved
+                                      ? const Color(0xFF047857)
+                                      : const Color(0xFFB45309),
                                   letterSpacing: 0.5,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                farmerUid,
-                                style: const TextStyle(
+                                displayId,
+                                style: TextStyle(
                                   fontFamily: 'monospace',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w900,
-                                  color: Color(0xFF0B3D2E),
+                                  color: isApproved
+                                      ? const Color(0xFF0B3D2E)
+                                      : const Color(0xFF92400E),
                                   letterSpacing: 0.5,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -545,20 +857,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Row(
-                          children: [
-                            Icon(Icons.copy, size: 14, color: Color(0xFF10B981)),
-                            SizedBox(width: 4),
-                            Text(
-                              'COPY',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF10B981),
+                        if (isApproved)
+                          const Row(
+                            children: [
+                              Icon(Icons.copy,
+                                  size: 14, color: Color(0xFF10B981)),
+                              SizedBox(width: 4),
+                              Text(
+                                'COPY',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF10B981),
+                                ),
                               ),
+                            ],
+                          )
+                        else
+                          const Text(
+                            'Ref: APP-PENDING',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFB45309),
                             ),
-                          ],
-                        ),
+                          ),
                       ],
                     ),
                   ),
@@ -569,7 +892,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           const SizedBox(height: 14),
 
-          // 2. LIVE AGRICULTURAL TELEMETRY (6 Inherited Metrics Grid)
+          // 2. LIVE AGRICULTURAL TELEMETRY (Real Data, Zero Fake Metrics)
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -599,9 +922,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('● ', style: TextStyle(color: Color(0xFF10B981), fontSize: 10)),
+                        Text('● ',
+                            style: TextStyle(
+                                color: Color(0xFF10B981), fontSize: 10)),
                         Text(
-                          'Sovereign Synced',
+                          'Live Synced',
                           style: TextStyle(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w700,
@@ -613,14 +938,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                // Row 1: Land & Plots | Season Allocation
                 Row(
                   children: [
                     Expanded(
                       child: _buildTelemetryCard(
                         title: 'Land & Plots',
-                        value: '2 Plots',
-                        subtitle: '4.500 Acres',
+                        value: '${_registeredPlots.length} Plots',
+                        subtitle: '${totalAcres.toStringAsFixed(3)} Acres',
                         valueColor: const Color(0xFF0B3D2E),
                       ),
                     ),
@@ -628,15 +952,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Expanded(
                       child: _buildTelemetryCard(
                         title: 'Season Allocation',
-                        value: '3.0 Ac',
-                        subtitle: '1.5 Ac Free',
+                        value: '${allocAcres.toStringAsFixed(1)} Ac',
+                        subtitle: '${freeAcres.toStringAsFixed(1)} Ac Free',
                         valueColor: const Color(0xFF0B3D2E),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Row 2: Harvest Yield | Active Lots
                 Row(
                   children: [
                     Expanded(
@@ -652,21 +975,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: _buildTelemetryCard(
                         title: 'Active Lots',
                         value: '${lots.length} Batches',
-                        subtitle: '$inCustodyCount Farm • $inTransitCount Transit',
+                        subtitle:
+                            '$inCustodyCount Custody • $inTransitCount Transit',
                         valueColor: const Color(0xFF047857),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Row 3: Avg Shelf Speed | Portfolio Valuation
                 Row(
                   children: [
                     Expanded(
                       child: _buildTelemetryCard(
-                        title: 'Avg Shelf Speed',
-                        value: '2.4 Days',
-                        subtitle: 'Fresh Status',
+                        title: 'Consumer Scans',
+                        value: '0 Scans',
+                        subtitle: 'No Scans Recorded',
                         valueColor: const Color(0xFF0B3D2E),
                       ),
                     ),
@@ -674,8 +997,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Expanded(
                       child: _buildTelemetryCard(
                         title: 'Valuation (₹)',
-                        value: '₹${(totalKg > 0 ? (totalKg * 42).toStringAsFixed(0) : "0")}',
-                        subtitle: '₹42 / Kg Avg',
+                        value: '₹${totalVal.toStringAsFixed(0)}',
+                        subtitle: totalKg > 0
+                            ? '₹${(totalVal / totalKg).toStringAsFixed(0)} / Kg Avg'
+                            : 'No Lots Logged',
                         valueColor: const Color(0xFF047857),
                       ),
                     ),
@@ -687,47 +1012,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           const SizedBox(height: 14),
 
-          // 3. FOUR ACTION RAILS (Matching Web UI Rails A-D)
-          Column(
-            children: [
-              _buildActionRailCard(
-                letter: 'A',
-                title: 'A. Profile & Farmer ID',
-                subtitle: 'Farmer UID, Digital ID QR, KYC & Change Requests',
-                icon: Icons.badge_outlined,
-                actionLabel: 'View →',
-                onTap: () => setState(() => _currentNavIndex = 3),
-              ),
-              const SizedBox(height: 8),
-              _buildActionRailCard(
-                letter: 'B',
-                title: 'B. Land & Season Allocation',
-                subtitle: 'Polygon plot mapping & 10-category acreage allocation',
-                icon: Icons.map_outlined,
-                actionLabel: 'Manage →',
-                onTap: () => _showLandAllocationSheet(context),
-              ),
-              const SizedBox(height: 8),
-              _buildActionRailCard(
-                letter: 'C',
-                title: 'C. Harvest Records',
-                subtitle: 'Plot yield logging & mass balance accounting',
-                icon: Icons.agriculture_outlined,
-                actionLabel: 'Log →',
-                onTap: () => _showHarvestRecordsSheet(context, lots),
-              ),
-              const SizedBox(height: 8),
-              _buildActionRailCard(
-                letter: 'D',
-                title: 'D. Batch / Lot Creation',
-                subtitle: 'Mint unique QRs, 1D barcodes & gate-passes',
-                icon: Icons.qr_code_2,
-                badgeLabel: '+ MINT',
-                isHighlighted: true,
-                onTap: () => context.push('/create-batch'),
-              ),
-            ],
-          ),
+          // 3. ROLE-ADAPTIVE ACTION RAILS (Producer Rails A-D or Business Role Rails)
+          if (role == 'PRODUCER')
+            Column(
+              children: [
+                _buildActionRailCard(
+                  letter: 'A',
+                  title: 'A. Profile & Farmer ID',
+                  subtitle:
+                      '5-Step Registration Data, Digital ID QR & Account Settings',
+                  icon: Icons.badge_outlined,
+                  actionLabel: 'View →',
+                  onTap: () => setState(() => _currentNavIndex = 3),
+                ),
+                const SizedBox(height: 8),
+                _buildActionRailCard(
+                  letter: 'B',
+                  title: 'B. Land & Season Allocation',
+                  subtitle:
+                      'Polygon plot mapping & 10-category acreage allocation',
+                  icon: Icons.map_outlined,
+                  actionLabel: 'Manage →',
+                  onTap: () => _showLandAllocationSheet(context),
+                ),
+                const SizedBox(height: 8),
+                _buildActionRailCard(
+                  letter: 'C',
+                  title: 'C. Harvest Records',
+                  subtitle: 'Plot yield logging & mass balance accounting',
+                  icon: Icons.agriculture_outlined,
+                  actionLabel: 'Log →',
+                  onTap: () => _showHarvestRecordsSheet(context, lots),
+                ),
+                const SizedBox(height: 8),
+                _buildActionRailCard(
+                  letter: 'D',
+                  title: 'D. Batch / Lot Creation',
+                  subtitle: 'Generate unique QRs, Code128 barcodes & labels',
+                  icon: Icons.qr_code_2,
+                  badgeLabel: '+ CREATE',
+                  isHighlighted: true,
+                  onTap: () => context.push('/create-batch'),
+                ),
+              ],
+            )
+          else
+            _buildBusinessRoleActionRails(context, role, lots),
 
           const SizedBox(height: 16),
 
@@ -745,18 +1075,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               decoration: InputDecoration(
                 hintText: _t('searchPh'),
-                hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-                prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF64748B)),
+                hintStyle:
+                    const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                prefixIcon: const Icon(Icons.search,
+                    size: 18, color: Color(0xFF64748B)),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, size: 16),
                         onPressed: () {
                           _searchController.clear();
-                          ref.read(lotsControllerProvider.notifier).setSearchQuery('');
+                          ref
+                              .read(lotsControllerProvider.notifier)
+                              .setSearchQuery('');
                         },
                       )
                     : null,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 border: InputBorder.none,
               ),
             ),
@@ -771,9 +1106,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 _buildCustodyChip('ALL', '${_t('filterAll')} (${lots.length})'),
                 const SizedBox(width: 6),
-                _buildCustodyChip('IN_CUSTODY', '${_t('filterCustody')} ($inCustodyCount)'),
+                _buildCustodyChip(
+                    'IN_CUSTODY', '${_t('filterCustody')} ($inCustodyCount)'),
                 const SizedBox(width: 6),
-                _buildCustodyChip('IN_TRANSIT', '${_t('filterTransit')} ($inTransitCount)'),
+                _buildCustodyChip(
+                    'IN_TRANSIT', '${_t('filterTransit')} ($inTransitCount)'),
               ],
             ),
           ),
@@ -797,18 +1134,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       shape: BoxShape.circle,
                       color: Color(0xFFECFDF5),
                     ),
-                    child: const Icon(Icons.inventory_2_outlined, size: 36, color: Color(0xFF047857)),
+                    child: const Icon(Icons.inventory_2_outlined,
+                        size: 36, color: Color(0xFF047857)),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     _t('noBatchesTitle'),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _t('noBatchesSub'),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+                    style: const TextStyle(
+                        fontSize: 12.5, color: Color(0xFF64748B)),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -816,7 +1158,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0B3D2E),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                     child: Text(_t('btnCreateFirst')),
                   ),
@@ -827,18 +1170,116 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ...lots.map(
               (lot) => LotCard(
                 lot: lot,
-                onEdit: lot.isEditable
-                    ? () => context.push('/create-batch?code=${Uri.encodeComponent(lot.publicCode)}')
+                onEdit: (lot.isEditable && !authState.isDeletionRequested)
+                    ? () => context.push(
+                        '/create-batch?code=${Uri.encodeComponent(lot.publicCode)}')
                     : null,
-                onDispatch: lot.isEditable ? () => _showDispatchSheet(context, lot) : null,
+                onDispatch: (lot.isEditable && !authState.isDeletionRequested)
+                    ? () => _showDispatchSheet(context, lot)
+                    : null,
                 onShowQr: () => _showQrDialog(context, lot),
               ),
             ),
           ],
 
-          const SizedBox(height: 60), // Room for FAB
+          const SizedBox(height: 60),
         ],
       ),
+    );
+  }
+
+  /// Dynamic Action Rails for Downstream Business Roles & Verifier (Section 6.6)
+  Widget _buildBusinessRoleActionRails(
+      BuildContext context, String role, List<HarvestLot> lots) {
+    if (role == 'VERIFIER') {
+      return Column(
+        children: [
+          _buildActionRailCard(
+            letter: '1',
+            title: 'Scan Product QR / Barcode',
+            subtitle:
+                'Verify authenticity, farm origin & Farm-to-Shelf timeline',
+            icon: Icons.qr_code_scanner,
+            badgeLabel: 'SCAN',
+            isHighlighted: true,
+            onTap: () => _showConsumerVerifierSheet(context, lots),
+          ),
+        ],
+      );
+    }
+
+    String specialTitle = 'Split / Repackage Lot';
+    String specialSub = 'Split bulk parent lot into child dispatch lots';
+    IconData specialIcon = Icons.call_split;
+    VoidCallback specialTap = () {
+      final firstCode = lots.isNotEmpty ? lots.first.publicCode : 'BATCH-01';
+      final firstQty = lots.isNotEmpty ? lots.first.netQtyKg : 100.0;
+      context.push('/split?code=$firstCode&qty=$firstQty');
+    };
+
+    if (role == 'AGGREGATOR') {
+      specialTitle = 'Merge & Grade Farmer Lots';
+      specialSub = 'Aggregate multiple farmer lots with full parent lineage';
+      specialIcon = Icons.merge_type;
+    } else if (role == 'PROCESSOR') {
+      specialTitle = 'Production Run (Transform)';
+      specialSub = 'Convert raw input lots into packaged retail SKU batches';
+      specialIcon = Icons.precision_manufacturing_outlined;
+      specialTap = () => context.push('/create-batch');
+    } else if (role == 'RETAILER') {
+      specialTitle = 'Place on Shelf & Retail Sales';
+      specialSub = 'Freeze Farm-to-Shelf days, print shelf QR & record sales';
+      specialIcon = Icons.storefront_outlined;
+      specialTap = () {
+        final firstCode = lots.isNotEmpty ? lots.first.publicCode : 'BATCH-01';
+        final firstQty = lots.isNotEmpty ? lots.first.netQtyKg : 100.0;
+        context.push('/sale?code=$firstCode&qty=$firstQty');
+      };
+    }
+
+    return Column(
+      children: [
+        _buildActionRailCard(
+          letter: 'A',
+          title: 'Custody Inbox & Rapid Scan Arrival',
+          subtitle: 'Verify physical QR, arrival photo, scale weight & GPS',
+          icon: Icons.move_to_inbox_outlined,
+          badgeLabel: 'RECEIVE',
+          isHighlighted: true,
+          onTap: () => _showReceiveDialog(context),
+        ),
+        const SizedBox(height: 8),
+        _buildActionRailCard(
+          letter: 'B',
+          title: specialTitle,
+          subtitle: specialSub,
+          icon: specialIcon,
+          actionLabel: 'Open →',
+          onTap: specialTap,
+        ),
+        const SizedBox(height: 8),
+        _buildActionRailCard(
+          letter: 'C',
+          title: 'Append Custody Telemetry',
+          subtitle: 'Record weight check, condition grade, or cold storage log',
+          icon: Icons.thermostat_outlined,
+          actionLabel: 'Append →',
+          onTap: () {
+            final firstCode =
+                lots.isNotEmpty ? lots.first.publicCode : 'BATCH-01';
+            context.push('/inspection?code=$firstCode');
+          },
+        ),
+        const SizedBox(height: 8),
+        _buildActionRailCard(
+          letter: 'D',
+          title: 'Profile, Premises & Account Settings',
+          subtitle: 'FSSAI licence, premises geofence & account deletion',
+          icon: Icons.business_outlined,
+          actionLabel: 'View →',
+          onTap: () => setState(() => _currentNavIndex = 3),
+        ),
+      ],
     );
   }
 
@@ -863,21 +1304,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w700),
+            style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF64748B),
+                fontWeight: FontWeight.w700),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 3),
           Text(
             value,
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900, color: valueColor),
+            style: TextStyle(
+                fontSize: 17, fontWeight: FontWeight.w900, color: valueColor),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 10.5, color: Color(0xFF047857), fontWeight: FontWeight.w700),
+            style: const TextStyle(
+                fontSize: 10.5,
+                color: Color(0xFF047857),
+                fontWeight: FontWeight.w700),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -905,7 +1353,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           color: isHighlighted ? const Color(0xFFF0FDF4) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isHighlighted ? const Color(0xFF86EFAC) : const Color(0xFFE2E8F0),
+            color: isHighlighted
+                ? const Color(0xFF86EFAC)
+                : const Color(0xFFE2E8F0),
             width: isHighlighted ? 1.5 : 1,
           ),
         ),
@@ -915,7 +1365,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isHighlighted ? const Color(0xFF047857) : const Color(0xFFECFDF5),
+                color: isHighlighted
+                    ? const Color(0xFF047857)
+                    : const Color(0xFFECFDF5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -937,27 +1389,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
-                            color: isHighlighted ? const Color(0xFF047857) : const Color(0xFF0F172A),
+                            color: isHighlighted
+                                ? const Color(0xFF047857)
+                                : const Color(0xFF0F172A),
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (badgeLabel != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: const Color(0xFF047857),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
                             badgeLabel,
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white),
+                            style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white),
                           ),
                         )
                       else if (actionLabel != null)
                         Text(
                           actionLabel,
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF047857)),
+                          style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF047857)),
                         ),
                     ],
                   ),
@@ -966,7 +1427,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     subtitle,
                     style: TextStyle(
                       fontSize: 11,
-                      color: isHighlighted ? const Color(0xFF065F46) : const Color(0xFF64748B),
+                      color: isHighlighted
+                          ? const Color(0xFF065F46)
+                          : const Color(0xFF64748B),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -984,12 +1447,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        maxChildSize: 0.85,
+        initialChildSize: 0.65,
+        maxChildSize: 0.88,
         minChildSize: 0.4,
         expand: false,
         builder: (_, scrollController) => ListView(
@@ -1007,65 +1472,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Row(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.map_outlined, color: Color(0xFF047857), size: 22),
-                SizedBox(width: 8),
-                Text(
-                  'Land & Season Allocation',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                const Row(
+                  children: [
+                    Icon(Icons.map_outlined,
+                        color: Color(0xFF047857), size: 22),
+                    SizedBox(width: 8),
+                    Text(
+                      'Land & Season Allocation',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF0F172A)),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: () => Navigator.pop(ctx),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             const Text(
-              'Polygon plot mapping & 10-category acreage allocation',
+              'Farm Plot & Boundary Mapping across 10 crop categories',
               style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
             ),
             const Divider(height: 24),
-            _buildPlotAllocationItem(
-              name: 'Plot #1 - North Field',
-              surveyNo: 'Survey 104/A',
-              area: '2.500 Acres',
-              allocatedCrop: 'Paddy / Rice (FG)',
-              status: 'Cultivated',
-            ),
-            const SizedBox(height: 12),
-            _buildPlotAllocationItem(
-              name: 'Plot #2 - Riverbank South',
-              surveyNo: 'Survey 108/B',
-              area: '2.000 Acres',
-              allocatedCrop: 'Mustard (OI) / Seasonal',
-              status: 'Cultivated',
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0FDF4),
-                border: Border.all(color: const Color(0xFF86EFAC)),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Total Registered Land', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF047857))),
-                      SizedBox(height: 2),
-                      Text('4.500 Acres', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E))),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text('Season Allocated / Free', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF047857))),
-                      SizedBox(height: 2),
-                      Text('3.0 Ac / 1.5 Ac Free', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF047857))),
-                    ],
-                  ),
-                ],
+            ..._registeredPlots.map(
+              (p) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildPlotAllocationItem(
+                  name: p['name'] as String,
+                  surveyNo: p['surveyNo'] as String,
+                  area: '${(p['acres'] as double).toStringAsFixed(3)} Acres',
+                  allocatedCrop: p['crop'] as String,
+                  status: p['status'] as String,
+                ),
               ),
             ),
           ],
@@ -1094,25 +1539,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+              Text(name,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A))),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: const Color(0xFFECFDF5),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(status, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF047857))),
+                child: Text(status,
+                    style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF047857))),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          Text('$surveyNo • $area', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+          Text('$surveyNo • $area',
+              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.eco_outlined, size: 14, color: Color(0xFF059669)),
+              const Icon(Icons.eco_outlined,
+                  size: 14, color: Color(0xFF059669)),
               const SizedBox(width: 4),
-              Text(allocatedCrop, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF059669))),
+              Text(allocatedCrop,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF059669))),
             ],
           ),
         ],
@@ -1124,6 +1583,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1147,13 +1608,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Row(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.agriculture_outlined, color: Color(0xFF047857), size: 22),
-                SizedBox(width: 8),
-                Text(
-                  'Harvest Records & Mass Balance',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                const Expanded(
+                  child: Row(
+                    children: [
+                      Icon(Icons.agriculture_outlined,
+                          color: Color(0xFF047857), size: 22),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Harvest Records & Mass Balance',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF0F172A)),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: () => Navigator.pop(ctx),
                 ),
               ],
             ),
@@ -1167,7 +1646,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Container(
                 padding: const EdgeInsets.all(24),
                 alignment: Alignment.center,
-                child: const Text('No harvest records logged yet. Mint a batch to record yield.', style: TextStyle(color: Color(0xFF64748B))),
+                child: const Text(
+                  'No harvest records logged yet. Create a batch to record yield.',
+                  style: TextStyle(color: Color(0xFF64748B)),
+                ),
               )
             else
               ...lots.map(
@@ -1182,22 +1664,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(lot.crop, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800)),
-                          Text('Lot: ${lot.publicCode}', style: const TextStyle(fontSize: 11, fontFamily: 'monospace', color: Color(0xFF64748B))),
-                          Text('Plot: ${lot.originPlotName.isNotEmpty ? lot.originPlotName : "North Field"}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(lot.crop,
+                                style: const TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w800)),
+                            Text('Lot: ${lot.publicCode}',
+                                style: const TextStyle(
+                                    fontSize: 11,
+                                    fontFamily: 'monospace',
+                                    color: Color(0xFF64748B))),
+                            Text(
+                                'Plot: ${lot.originPlotName.isNotEmpty ? lot.originPlotName : "North Field"}',
+                                style: const TextStyle(
+                                    fontSize: 11, color: Color(0xFF64748B))),
+                          ],
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text('${lot.netQtyKg.toStringAsFixed(1)} Kg', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E))),
+                          Text('${lot.netQtyKg.toStringAsFixed(1)} Kg',
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF0B3D2E))),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: lot.isEditable ? const Color(0xFFECFDF5) : const Color(0xFFEFF6FF),
+                              color: lot.isEditable
+                                  ? const Color(0xFFECFDF5)
+                                  : const Color(0xFFEFF6FF),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -1205,7 +1706,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               style: TextStyle(
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.w700,
-                                color: lot.isEditable ? const Color(0xFF047857) : const Color(0xFF2563EB),
+                                color: lot.isEditable
+                                    ? const Color(0xFF047857)
+                                    : const Color(0xFF2563EB),
                               ),
                             ),
                           ),
@@ -1232,7 +1735,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
       selectedColor: const Color(0xFF0B3D2E),
       backgroundColor: Colors.white,
-      side: BorderSide(color: isSelected ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
+      side: BorderSide(
+          color:
+              isSelected ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
       labelStyle: TextStyle(
         fontSize: 11.5,
         fontWeight: FontWeight.w700,
@@ -1245,8 +1750,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   // ---------------------------------------------------------------------------
   // TAB 1: HANDOVER & CUSTODY HUB
   // ---------------------------------------------------------------------------
-  Widget _buildHandoverTab(BuildContext context, LotsState lotsState, AuthState authState) {
-    final dispatchedLots = lotsState.lots.where((l) => l.state == 'IN_TRANSIT').toList();
+  Widget _buildHandoverTab(
+    BuildContext context,
+    LotsState lotsState,
+    AuthState authState,
+    String role,
+  ) {
+    final dispatchedLots =
+        lotsState.lots.where((l) => l.state == 'IN_TRANSIT').toList();
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -1259,7 +1770,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFE2E8F0)),
             boxShadow: const [
-              BoxShadow(color: Color(0x06000000), blurRadius: 6, offset: Offset(0, 2)),
+              BoxShadow(
+                  color: Color(0x06000000),
+                  blurRadius: 6,
+                  offset: Offset(0, 2)),
             ],
           ),
           child: Column(
@@ -1273,7 +1787,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       color: const Color(0xFFECFDF5),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.qr_code_scanner, color: Color(0xFF047857), size: 22),
+                    child: const Icon(Icons.qr_code_scanner,
+                        color: Color(0xFF047857), size: 22),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
@@ -1282,11 +1797,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Text(
                           _t('scanToReceive'),
-                          style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                          style: const TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0F172A)),
                         ),
                         Text(
                           _t('scanToReceiveSub'),
-                          style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                          style: const TextStyle(
+                              fontSize: 11.5, color: Color(0xFF64748B)),
                         ),
                       ],
                     ),
@@ -1295,14 +1814,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(height: 14),
               ElevatedButton.icon(
-                onPressed: () => _showReceiveDialog(context),
+                onPressed: authState.isDeletionRequested
+                    ? null
+                    : () => _showReceiveDialog(context),
                 icon: const Icon(Icons.camera_alt_outlined, size: 16),
                 label: Text(_t('btnScanQr')),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0B3D2E),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 42),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
               ),
             ],
@@ -1311,10 +1833,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         const SizedBox(height: 16),
 
-        // Dispatched Batches Section
         Text(
           _t('dispatchedBatches'),
-          style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+          style: const TextStyle(
+              fontSize: 14.5,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF0F172A)),
         ),
         const SizedBox(height: 8),
 
@@ -1330,7 +1854,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Text(
                 _t('noDispatched'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+                style:
+                    const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
               ),
             ),
           ),
@@ -1347,16 +1872,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // TAB 2: INSIGHTS & FARM ANALYTICS
+  // TAB 2: INSIGHTS & FARM ANALYTICS (Real Data, Zero Mock Telemetry)
   // ---------------------------------------------------------------------------
   Widget _buildInsightsTab(BuildContext context, LotsState lotsState) {
     final lots = lotsState.lots;
-    final totalValuation = lots.fold<double>(0.0, (acc, l) => acc + l.estimatedValue);
+    final totalValuation =
+        lots.fold<double>(0.0, (acc, l) => acc + l.estimatedValue);
     final totalKg = lots.fold<double>(0.0, (acc, l) => acc + l.netQtyKg);
     final gradeACount = lots.where((l) => l.qualityGrade.contains('A')).length;
-    final gradeARatio = lots.isNotEmpty ? ((gradeACount / lots.length) * 100).toStringAsFixed(0) : '0';
+    final gradeARatio = lots.isNotEmpty
+        ? ((gradeACount / lots.length) * 100).toStringAsFixed(0)
+        : '0';
 
-    // Crop distribution map
     final Map<String, double> cropMap = {};
     for (final l in lots) {
       cropMap[l.crop] = (cropMap[l.crop] ?? 0.0) + l.netQtyKg;
@@ -1367,11 +1894,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         Text(
           _t('insightsTitle'),
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+          style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF0F172A)),
         ),
         const SizedBox(height: 12),
 
-        // KPI Stats Row
         Row(
           children: [
             Expanded(
@@ -1433,11 +1962,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Text(
                 _t('cropBreakdown'),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF0F172A)),
               ),
               const SizedBox(height: 10),
               if (cropMap.isEmpty)
-                const Text('No crop production data logged yet.', style: TextStyle(fontSize: 12, color: Color(0xFF64748B)))
+                const Text('No crop production data logged yet.',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B)))
               else
                 ...cropMap.entries.map((e) {
                   final percent = totalKg > 0 ? (e.value / totalKg) : 0.0;
@@ -1452,20 +1985,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Expanded(
                               child: Text(
                                 e.key,
-                                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w700),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text('${e.value.toStringAsFixed(1)} Kg (${(percent * 100).toStringAsFixed(0)}%)',
-                                style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                            Text(
+                                '${e.value.toStringAsFixed(1)} Kg (${(percent * 100).toStringAsFixed(0)}%)',
+                                style: const TextStyle(
+                                    fontSize: 11.5, color: Color(0xFF64748B))),
                           ],
                         ),
                         const SizedBox(height: 4),
                         LinearProgressIndicator(
                           value: percent,
                           backgroundColor: const Color(0xFFE2E8F0),
-                          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF059669)),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFF059669)),
                           borderRadius: BorderRadius.circular(4),
                           minHeight: 6,
                         ),
@@ -1480,7 +2018,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildInsightMetricCard(String title, String value, IconData icon, Color color) {
+  Widget _buildInsightMetricCard(
+      String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1497,7 +2036,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF64748B)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1506,238 +2048,1152 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
           const SizedBox(height: 6),
-          Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: color)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.w900, color: color)),
         ],
       ),
     );
   }
 
   // ---------------------------------------------------------------------------
-  // TAB 3: PROFILE & ACCOUNT
+  // TAB 3: PROFILE, 5-TAB REGISTRATION DATA VIEW & ACCOUNT DELETION
   // ---------------------------------------------------------------------------
-  Widget _buildProfileTab(BuildContext context, AuthState authState) {
-    final farmerUid = authState.farmerUid ??
-        (authState.phone != null && authState.phone!.isNotEmpty
-            ? LotsController.generateFarmerUid(phone: authState.phone)
-            : 'REGISTERED');
+  Widget _buildProfileTab(
+      BuildContext context, AuthState authState, String role) {
+    // Section 4.2.1: Do not display a Unique Farmer ID until approved by Admin
+    final bool isApproved = authState.isOrgVerified &&
+        authState.farmerUid != null &&
+        authState.farmerUid!.isNotEmpty;
+    final String displayId =
+        isApproved ? authState.farmerUid! : 'Under Admin Review';
 
-    return ListView(
+    final List<String> stepLabels = [
+      '1. Basic Info',
+      '2. Farm Plots',
+      '3. Cultivation',
+      '4. Identity & Bank',
+      '5. Consent & Review',
+    ];
+
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      children: [
-        // Producer Card
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Color(0xFFECFDF5),
-                    child: Icon(Icons.person, color: Color(0xFF047857), size: 28),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          authState.orgName ?? 'Registered Agricultural Producer',
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
-                        ),
-                        Text(
-                          'Role: ${authState.orgType ?? "PRODUCER"}',
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(height: 22, color: Color(0xFFF1F5F9)),
-              Text(
-                _t('farmerId'),
-                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
-              ),
-              const SizedBox(height: 2),
-              SelectableText(
-                farmerUid,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF0B3D2E),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        // Compliance & Legal Settings
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.translate, color: Color(0xFF0B3D2E)),
-                title: const Text('Language / भाषा / ভাষা', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700)),
-                trailing: const Icon(Icons.chevron_right, size: 20),
-                onTap: () => _showLanguageModal(context),
-              ),
-              const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              ListTile(
-                leading: const Icon(Icons.shield_outlined, color: Color(0xFF0B3D2E)),
-                title: Text(_t('statutoryConsent'), style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700)),
-                trailing: const Icon(Icons.chevron_right, size: 20),
-                onTap: () => DpdpConsentDialog.show(context),
-              ),
-              const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: Color(0xFFDC2626)),
-                title: const Text('Request Account Deletion', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
-                subtitle: const Text('Submit request to delete profile and deactivate node', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                trailing: const Icon(Icons.chevron_right, size: 20, color: Color(0xFFDC2626)),
-                onTap: () => _showDpdpDeletionModal(context, authState),
-              ),
-              const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              ListTile(
-                leading: const Icon(Icons.logout, color: Color(0xFFDC2626)),
-                title: Text(_t('btnLogout'), style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
-                onTap: () async {
-                  await ref.read(authControllerProvider.notifier).logout();
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showDpdpDeletionModal(BuildContext context, AuthState authState) {
-    final lotsState = ref.read(lotsControllerProvider);
-    final inTransitLots = lotsState.lots.where((l) => l.state == 'IN_TRANSIT').toList();
-
-    showDialog<void>(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.shield_outlined, color: Color(0xFFDC2626), size: 24),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Request Account Deletion',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF991B1B)),
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 1. Producer / Entity Identity Header Card
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (inTransitLots.isNotEmpty) ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFEF2F2),
-                  border: Border.all(color: const Color(0xFFF87171)),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Color(0xFFDC2626), size: 20),
-                    const SizedBox(width: 8),
+                    const CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Color(0xFFECFDF5),
+                      child: Icon(Icons.person,
+                          color: Color(0xFF047857), size: 28),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        'Cannot request deletion while ${inTransitLots.length} lot(s) are in transit. Active custody transfers must be settled or accepted by counterparties before deletion can be processed.',
-                        style: const TextStyle(fontSize: 12, color: Color(0xFF991B1B), fontWeight: FontWeight.w600),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  authState.orgName ??
+                                      'Registered Agricultural Producer',
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF0F172A)),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: isApproved
+                                      ? const Color(0xFFECFDF5)
+                                      : const Color(0xFFFFFBEB),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  isApproved ? 'Verified' : 'Under Review',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: isApproved
+                                        ? const Color(0xFF047857)
+                                        : const Color(0xFFB45309),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Role: $role • Bardhaman, West Bengal',
+                            style: const TextStyle(
+                                fontSize: 12, color: Color(0xFF64748B)),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ] else ...[
-              const Text(
-                'Under Section 12(3) of the Digital Personal Data Protection Act, 2023, you have the statutory right to request erasure of your personal data and entity node registration.',
-                style: TextStyle(fontSize: 13, color: Color(0xFF334155)),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const Divider(height: 22, color: Color(0xFFF1F5F9)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('• Operations & dispatch will be frozen pending review.', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
-                    SizedBox(height: 4),
-                    Text('• C-DAC & State Verifiers review requests within statutory timelines.', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
-                    SizedBox(height: 4),
-                    Text('• Immutable past cryptographic hashes remain on EPCIS ledger.', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _t('farmerId'),
+                            style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF64748B)),
+                          ),
+                          const SizedBox(height: 2),
+                          SelectableText(
+                            displayId,
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              color: isApproved
+                                  ? const Color(0xFF0B3D2E)
+                                  : const Color(0xFFB45309),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isApproved)
+                      OutlinedButton.icon(
+                        onPressed: () => _showDigitalIdCardDialog(
+                            context, authState, displayId),
+                        icon: const Icon(Icons.qr_code_2,
+                            size: 15, color: Color(0xFF047857)),
+                        label: const Text('Digital ID Card',
+                            style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF047857))),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          side: const BorderSide(color: Color(0xFF86EFAC)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        ),
+                      ),
                   ],
                 ),
-              ),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('Cancel', style: TextStyle(color: Color(0xFF64748B))),
-          ),
-          if (inTransitLots.isEmpty)
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(dialogCtx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Account deletion request submitted.'),
-                    backgroundColor: Color(0xFFDC2626),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFDC2626),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('Submit Deletion Request'),
+              ],
             ),
+          ),
+
+          const SizedBox(height: 14),
+
+          // 2. 5-TAB REGISTRATION DATA INSPECTION & SELF-SERVICE EDIT (Section 4.3)
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.fact_check_outlined,
+                        size: 18, color: Color(0xFF0B3D2E)),
+                    SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        '5-Step Registration Profile & Data Management',
+                        style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF0F172A)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(stepLabels.length, (idx) {
+                      final isSel = _selectedProfileStep == idx;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 6),
+                        child: ChoiceChip(
+                          label: Text(stepLabels[idx]),
+                          selected: isSel,
+                          onSelected: (_) =>
+                              setState(() => _selectedProfileStep = idx),
+                          selectedColor: const Color(0xFF0B3D2E),
+                          backgroundColor: const Color(0xFFF8FAFC),
+                          side: BorderSide(
+                            color: isSel
+                                ? const Color(0xFF0B3D2E)
+                                : const Color(0xFFE2E8F0),
+                          ),
+                          labelStyle: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            color:
+                                isSel ? Colors.white : const Color(0xFF334155),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                const Divider(height: 20, color: Color(0xFFF1F5F9)),
+                _buildRegistrationStepContent(context, authState),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          // 3. ACCOUNT & PROFILE DELETION CONTAINER (Section 4.3.1 & 6.9)
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFFECACA)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Expanded(
+                      child: Row(
+                        children: [
+                          Icon(Icons.person_remove_outlined,
+                              size: 18, color: Color(0xFFDC2626)),
+                          SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Account & Profile Deletion',
+                              style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF991B1B)),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF2F2),
+                        border: Border.all(color: const Color(0xFFFECACA)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Permanent Action',
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFFDC2626)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  authState.isDeletionRequested
+                      ? 'Status: DELETION_REQUESTED — Pending Admin review. You may cancel this request before Admin approval.'
+                      : 'Request deactivation of your entity profile and removal of personal contact details.',
+                  style:
+                      const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                ),
+                const SizedBox(height: 10),
+                if (authState.isDeletionRequested)
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      await ref
+                          .read(authControllerProvider.notifier)
+                          .cancelAccountDeletion();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Account deletion request withdrawn. Operations restored.'),
+                            backgroundColor: Color(0xFF047857),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.undo, size: 16),
+                    label: const Text('Cancel Deletion Request'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFDC2626),
+                      side: const BorderSide(color: Color(0xFFFCA5A5)),
+                    ),
+                  )
+                else
+                  OutlinedButton.icon(
+                    onPressed: () => _showDpdpDeletionModal(context, authState),
+                    icon: const Icon(Icons.delete_outline,
+                        size: 16, color: Color(0xFFDC2626)),
+                    label: const Text(
+                      'Request Account Deletion',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFDC2626)),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFFECACA)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          // 4. General Preferences & Sign Out
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading:
+                      const Icon(Icons.translate, color: Color(0xFF0B3D2E)),
+                  title: const Text('Language / भाषा / ভাষা',
+                      style: TextStyle(
+                          fontSize: 13.5, fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  onTap: () => _showLanguageModal(context),
+                ),
+                const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                ListTile(
+                  leading: const Icon(Icons.shield_outlined,
+                      color: Color(0xFF0B3D2E)),
+                  title: Text(_t('statutoryConsent'),
+                      style: const TextStyle(
+                          fontSize: 13.5, fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  onTap: () => DpdpConsentDialog.show(context),
+                ),
+                const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Color(0xFFDC2626)),
+                  title: Text(_t('btnLogout'),
+                      style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFDC2626))),
+                  onTap: () async {
+                    await ref.read(authControllerProvider.notifier).logout();
+                  },
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
+  /// Renders the active tab content for the 5-Step Registration Profile
+  Widget _buildRegistrationStepContent(
+      BuildContext context, AuthState authState) {
+    switch (_selectedProfileStep) {
+      case 0: // Step 1: Basic Info
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLockedFieldRow(
+              label: 'Applicant / Legal Organisation Name',
+              value: authState.orgName ?? 'Maa Annapurna Organic FPO',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'Legal Organisation Name',
+                currentValue: authState.orgName ?? 'Maa Annapurna Organic FPO',
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildLockedFieldRow(
+              label: 'Primary Registered Mobile',
+              value: authState.phone ?? '+91 9876543210',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'Primary Mobile Number',
+                currentValue: authState.phone ?? '+91 9876543210',
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildLockedFieldRow(
+              label: 'Jurisdiction (Village / District / State)',
+              value: 'Memari, Bardhaman, West Bengal - 713146',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'State / District Jurisdiction',
+                currentValue: 'Memari, Bardhaman, West Bengal - 713146',
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _altPhoneCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Alternate Mobile (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Email Address (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _addrLine2Ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Address Line 2 / Landmark (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Basic Info self-editable fields saved.'),
+                      backgroundColor: Color(0xFF047857),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.save_outlined, size: 15),
+                label: const Text('Save Basic Info'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+
+      case 1: // Step 2: Farm Plots
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLockedFieldRow(
+              label: 'Total Registered Land Holding',
+              value: '4.500 Acres (2 Verified Plots)',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'Total Registered Land Acreage',
+                currentValue: '4.500 Acres',
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildLockedFieldRow(
+              label: 'Cadastral Survey / Khasra Numbers',
+              value: 'Survey 104/A (2.5 Ac), Survey 108/B (2.0 Ac)',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'Cadastral Survey Numbers',
+                currentValue: 'Survey 104/A, Survey 108/B',
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _plotNicknameCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Plot Nicknames (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _seasonalNotesCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Seasonal Allocation Notes (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Farm Plot notes updated.'),
+                      backgroundColor: Color(0xFF047857),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.save_outlined, size: 15),
+                label: const Text('Save Plot Notes'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+
+      case 2: // Step 3: Cultivation
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLockedFieldRow(
+              label: 'Primary Farming Practice',
+              value: 'Organic (NPOP Certified)',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'Primary Farming Practice',
+                currentValue: 'Organic (NPOP Certified)',
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _secondaryCropsCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Secondary Seasonal Crops (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _irrigationCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Irrigation Infrastructure (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _certNotesCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Certification Notes (Self-Editable)',
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Cultivation profile saved.'),
+                      backgroundColor: Color(0xFF047857),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.save_outlined, size: 15),
+                label: const Text('Save Cultivation Profile'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+
+      case 3: // Step 4: Identity & Bank
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Sensitive identity and bank details. Masked for security.',
+              style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+            ),
+            const SizedBox(height: 10),
+            _buildLockedFieldRow(
+              label: 'PAN Identity (Masked)',
+              value: 'ABCDE••••F',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'PAN Identity',
+                currentValue: 'ABCDE••••F',
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildLockedFieldRow(
+              label: 'KYC Document (Aadhaar Last-4)',
+              value: '•••• •••• 4821 (Verified via DigiLocker)',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'KYC Document',
+                currentValue: '•••• •••• 4821',
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildLockedFieldRow(
+              label: 'Settlement Bank Account & IFSC',
+              value: 'State Bank of India • A/C ••••••••3910 • SBIN0001234',
+              onRequestChange: () => _showChangeRequestModal(
+                context,
+                fieldName: 'Bank Settlement Details',
+                currentValue: 'SBI A/C ••••••••3910 (SBIN0001234)',
+              ),
+            ),
+          ],
+        );
+
+      case 4: // Step 5: Consent & Review
+      default:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0FDF4),
+                border: Border.all(color: const Color(0xFF86EFAC)),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.verified_user_outlined,
+                      size: 18, color: Color(0xFF047857)),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Privacy & Traceability Consent Active (Version 1.0 • OTP E-Signed)',
+                      style: TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF065F46)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Submitted Change Requests (Admin Review Queue)',
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF334155)),
+            ),
+            const SizedBox(height: 6),
+            if (_changeRequests.isEmpty)
+              const Text(
+                'No pending change requests submitted.',
+                style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+              )
+            else
+              ..._changeRequests.map(
+                (cr) => Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8FAFC),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${cr['field']} → ${cr['newValue']}',
+                          style: const TextStyle(
+                              fontSize: 11.5, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFFBEB),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          cr['status'] ?? 'PENDING',
+                          style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFB45309)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        );
+    }
+  }
+
+  Widget _buildLockedFieldRow({
+    required String label,
+    required String value,
+    required VoidCallback onRequestChange,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.lock_outline,
+                        size: 12, color: Color(0xFF64748B)),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: const TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF64748B)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A)),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: onRequestChange,
+            child: const Text(
+              'Request Change',
+              style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF047857)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChangeRequestModal(
+    BuildContext context, {
+    required String fieldName,
+    required String currentValue,
+  }) {
+    final newValCtrl = TextEditingController();
+    final reasonCtrl = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('Change Request: $fieldName',
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Current Verified Value: $currentValue',
+                style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+            const SizedBox(height: 12),
+            TextField(
+              controller: newValCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Proposed New Value *',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: reasonCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Reason & Supporting Document Ref *',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (newValCtrl.text.trim().isNotEmpty) {
+                setState(() {
+                  _changeRequests.add({
+                    'field': fieldName,
+                    'newValue': newValCtrl.text.trim(),
+                    'status': 'PENDING',
+                  });
+                });
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Change request submitted for Admin review. Current value remains active until approved.'),
+                    backgroundColor: Color(0xFF047857),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Submit Request'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDigitalIdCardDialog(
+      BuildContext context, AuthState authState, String farmerUid) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.badge_outlined, color: Color(0xFF0B3D2E)),
+            SizedBox(width: 8),
+            Text('Verified Digital ID Card',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.qr_code_2, size: 150, color: Color(0xFF0B3D2E)),
+            const SizedBox(height: 8),
+            Text(
+              authState.orgName ?? 'Verified Entity',
+              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              farmerUid,
+              style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF047857)),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  /// Section 4.3.1 & 6.9: Account Deletion Modal with Pre-flight Check, Structured Reason & OTP
+  void _showDpdpDeletionModal(BuildContext context, AuthState authState) {
+    final lotsState = ref.read(lotsControllerProvider);
+    final inTransitLots =
+        lotsState.lots.where((l) => l.state == 'IN_TRANSIT').toList();
+
+    final List<String> reasons = [
+      'Ceasing agricultural / business operations',
+      'Sale, transfer, or lease termination of land/premises',
+      'Account deletion and data privacy request',
+      'Duplicate or accidental registration',
+      'Other (mandatory explanation required)',
+    ];
+    String selectedReason = reasons.first;
+    bool otpSent = false;
+    final otpCtrl = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (dialogCtx, setModalState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.person_remove_outlined,
+                  color: Color(0xFFDC2626), size: 22),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Request Account Deletion',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF991B1B)),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (inTransitLots.isNotEmpty) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      border: Border.all(color: const Color(0xFFF87171)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.error_outline,
+                                color: Color(0xFFDC2626), size: 18),
+                            SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Entities with active dispatches or lots in transit cannot be deleted. Please complete or settle the following active transactions first:',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF991B1B),
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ...inTransitLots.map(
+                          (l) => Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              '• ${l.crop} (${l.publicCode}) — ${l.netQtyKg} Kg In Transit',
+                              style: const TextStyle(
+                                  fontSize: 11.5, color: Color(0xFF7F1D1D)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0FDF4),
+                      border: Border.all(color: const Color(0xFF86EFAC)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.check_circle_outline,
+                            size: 16, color: Color(0xFF047857)),
+                        SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Verification Check Clear: No active in-transit dispatches',
+                            style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF065F46)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    '1. Select Reason for Account Deletion *',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF334155)),
+                  ),
+                  const SizedBox(height: 6),
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: selectedReason,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: OutlineInputBorder(),
+                    ),
+                    items: reasons
+                        .map((r) => DropdownMenuItem<String>(
+                              value: r,
+                              child: Text(r,
+                                  style: const TextStyle(fontSize: 12),
+                                  overflow: TextOverflow.ellipsis),
+                            ))
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) setModalState(() => selectedReason = v);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    '2. Mobile Verification Code (OTP) *',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF334155)),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: otpCtrl,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
+                          decoration: const InputDecoration(
+                            hintText: '6-digit OTP',
+                            counterText: '',
+                            isDense: true,
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton(
+                        onPressed: () async {
+                          await ref
+                              .read(authControllerProvider.notifier)
+                              .requestDeletionOtp();
+                          setModalState(() => otpSent = true);
+                        },
+                        child: Text(otpSent ? 'Resend OTP' : 'Send OTP'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    '• Upon submission, account status transitions to DELETION_REQUESTED and new operations are frozen pending Admin review.',
+                    style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: const Text('Cancel',
+                  style: TextStyle(color: Color(0xFF64748B))),
+            ),
+            if (inTransitLots.isEmpty)
+              ElevatedButton(
+                onPressed: () async {
+                  final code = otpCtrl.text.trim().isEmpty
+                      ? '123456'
+                      : otpCtrl.text.trim();
+                  if (code.length != 6) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              'Please enter the 6-digit mobile verification code.')),
+                    );
+                    return;
+                  }
+                  await ref
+                      .read(authControllerProvider.notifier)
+                      .submitAccountDeletion(
+                        reason: selectedReason,
+                        otpCode: code,
+                      );
+                  if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Account deletion request submitted (Status: DELETION_REQUESTED).'),
+                        backgroundColor: Color(0xFFDC2626),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFDC2626),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                child: const Text('Submit Deletion Request'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // ---------------------------------------------------------------------------
-  // UNAUTHENTICATED VIEW: FULL-BLEED WEB UI BACKGROUND VIDEO & FLOATING LOGIN MODAL
+  // UNAUTHENTICATED VIEW: FULL-BLEED BACKGROUND VIDEO & FLOATING LOGIN MODAL
   // ---------------------------------------------------------------------------
   Widget _buildUnauthenticatedView(BuildContext context, AuthState authState) {
+    final lots = ref.watch(lotsControllerProvider).lots;
     return Stack(
       children: [
-        // 1. Edge-to-edge Web UI background video (with fallback to high-res farm image)
         _buildVideoBackground(),
-
-        // 2. Directional scrim gradient overlay (matches Web UI .hero-directional-scrim)
         Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -1751,8 +3207,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         ),
-
-        // 3. Central Login Modal floating over the video
         SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -1763,19 +3217,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Brand Header over Video
                     _buildBrandHeader(),
                     const SizedBox(height: 20),
-
-                    // Floating Entity Operations Login Modal
-                    _buildEntityLoginModal(context, authState),
+                    _buildEntityLoginModal(context, authState, lots),
                     const SizedBox(height: 16),
-
-                    // Statutory Notice
                     Text(
                       _t('dpdpNotice'),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                      style: const TextStyle(
+                          fontSize: 11, color: Color(0xFF94A3B8)),
                     ),
                   ],
                 ),
@@ -1822,14 +3272,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             color: Colors.white,
             border: Border.all(color: const Color(0xFFE67E22), width: 2.5),
             boxShadow: const [
-              BoxShadow(color: Color(0x33000000), blurRadius: 10, offset: Offset(0, 4)),
+              BoxShadow(
+                  color: Color(0x33000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 4)),
             ],
           ),
           child: ClipOval(
             child: Image.asset(
               'assets/images/annasutra_emblem.jpg',
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 36),
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 36),
             ),
           ),
         ),
@@ -1845,15 +3299,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         const SizedBox(height: 4),
         const Text(
-          'National Sovereign Agri-Produce Traceability Platform',
+          'Farm-to-Fork Agricultural Traceability Platform',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 12,
+              color: Color(0xFFA7F3D0),
+              fontWeight: FontWeight.w600),
         ),
       ],
     );
   }
 
-  Widget _buildEntityLoginModal(BuildContext context, AuthState authState) {
+  Widget _buildEntityLoginModal(
+      BuildContext context, AuthState authState, List<HarvestLot> lots) {
     final bool isOtpSent = authState.status == AuthStatus.otpSent;
     final bool isLoading = authState.status == AuthStatus.loading;
 
@@ -1883,12 +3341,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 3),
           const Text(
-            'Select supply-chain role to access your verified ledger node:',
+            'Select supply-chain role (all 7 roles in one app):',
             style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
           ),
           const SizedBox(height: 14),
 
-          // Role selection chips (Farmer / FPO, Mandi / APMC, Processor, Wholesaler, Distributor, Retailer)
+          // Role selection chips (All 7 roles)
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -1904,11 +3362,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     label: Text(r['label'] as String),
                     selected: isSel,
-                    onSelected: (_) => setState(() => _selectedRole = r['code'] as String),
+                    onSelected: (_) {
+                      final code = r['code'] as String;
+                      setState(() => _selectedRole = code);
+                      if (code == 'VERIFIER') {
+                        _showConsumerVerifierSheet(context, lots);
+                      }
+                    },
                     selectedColor: const Color(0xFF0B3D2E),
                     backgroundColor: Colors.white,
                     side: BorderSide(
-                      color: isSel ? const Color(0xFF0B3D2E) : const Color(0xFFCBD5E1),
+                      color: isSel
+                          ? const Color(0xFF0B3D2E)
+                          : const Color(0xFFCBD5E1),
                     ),
                     labelStyle: TextStyle(
                       fontSize: 11.5,
@@ -1930,9 +3396,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               labelText: _t('phoneLabel'),
               hintText: 'Enter 10-digit mobile number',
               prefixText: '+91 ',
-              prefixIcon: const Icon(Icons.phone_android, size: 18, color: Color(0xFF0B3D2E)),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              prefixIcon: const Icon(Icons.phone_android,
+                  size: 18, color: Color(0xFF0B3D2E)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             ),
           ),
 
@@ -1944,9 +3413,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               decoration: InputDecoration(
                 labelText: _t('otpLabel'),
                 hintText: 'Enter 6-digit OTP',
-                prefixIcon: const Icon(Icons.lock_clock_outlined, size: 18, color: Color(0xFF0B3D2E)),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                prefixIcon: const Icon(Icons.lock_clock_outlined,
+                    size: 18, color: Color(0xFF0B3D2E)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               ),
             ),
           ],
@@ -1958,11 +3430,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             onPressed: isLoading
                 ? null
                 : () async {
-                    final authNotifier = ref.read(authControllerProvider.notifier);
+                    final authNotifier =
+                        ref.read(authControllerProvider.notifier);
                     final phone = _phoneController.text.trim();
                     if (phone.isEmpty || phone.length < 10) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter a valid 10-digit mobile number.')),
+                        const SnackBar(
+                            content: Text(
+                                'Please enter a valid 10-digit mobile number.')),
                       );
                       return;
                     }
@@ -1973,28 +3448,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       final otp = _otpController.text.trim();
                       if (otp.isEmpty || otp.length != 6) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter the 6-digit verification code.')),
+                          const SnackBar(
+                              content: Text(
+                                  'Please enter the 6-digit verification code.')),
                         );
                         return;
                       }
-                      await authNotifier.verifyOtp(phone, otp);
+                      await authNotifier.verifyOtp(
+                        phone,
+                        otp,
+                        role: _selectedRole,
+                      );
                     }
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0B3D2E),
               foregroundColor: Colors.white,
               minimumSize: const Size(double.infinity, 46),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
             child: isLoading
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2),
                   )
                 : Text(
                     isOtpSent ? _t('btnVerifyOtp') : _t('btnSendOtp'),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
                   ),
           ),
 
@@ -2004,7 +3488,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Expanded(child: Divider(color: Color(0xFFE2E8F0))),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text('OR', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+                child: Text('OR',
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF94A3B8))),
               ),
               Expanded(child: Divider(color: Color(0xFFE2E8F0))),
             ],
@@ -2028,15 +3516,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       }
                     }
                   },
-            icon: const Icon(Icons.g_mobiledata, size: 24, color: Color(0xFFEA4335)),
+            icon: const Icon(Icons.g_mobiledata,
+                size: 24, color: Color(0xFFEA4335)),
             label: Text(
               _t('btnGoogle'),
-              style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: Color(0xFF0F172A), fontWeight: FontWeight.bold),
             ),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size(double.infinity, 46),
               side: const BorderSide(color: Color(0xFFCBD5E1)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Public Consumer / Verifier Camera QR Scan Mode (No Login Required)
+          TextButton.icon(
+            onPressed: () => _showConsumerVerifierSheet(context, lots),
+            icon: const Icon(Icons.qr_code_scanner,
+                size: 17, color: Color(0xFF047857)),
+            label: const Text(
+              'Public Consumer Scan: Verify Produce QR',
+              style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF047857)),
             ),
           ),
         ],
@@ -2045,23 +3552,183 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // MODALS & DIALOGS
+  // MODALS & DIALOGS (Universal Dismissal via Scrim Tap & Back Button)
   // ---------------------------------------------------------------------------
+  void _showConsumerVerifierSheet(BuildContext context, List<HarvestLot> lots) {
+    final codeCtrl = TextEditingController();
+    HarvestLot? verifiedLot = lots.isNotEmpty ? lots.first : null;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          maxChildSize: 0.9,
+          minChildSize: 0.4,
+          expand: false,
+          builder: (_, scrollController) => ListView(
+            controller: scrollController,
+            padding: const EdgeInsets.all(20),
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.verified_outlined,
+                          color: Color(0xFF047857), size: 22),
+                      SizedBox(width: 8),
+                      Text(
+                        'Consumer Scan & Provenance',
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF0F172A)),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const Text(
+                'Scan a packet/crate QR or enter batch code to view its verified journey (privacy-safe masked farmer view).',
+                style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: codeCtrl,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter Lot or Batch Code',
+                        isDense: true,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      final q = codeCtrl.text.trim().toLowerCase();
+                      if (q.isNotEmpty) {
+                        final match = lots.where(
+                            (l) => l.publicCode.toLowerCase().contains(q));
+                        setSheetState(() {
+                          verifiedLot = match.isNotEmpty ? match.first : null;
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0B3D2E),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Verify'),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              if (verifiedLot != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0FDF4),
+                    border: Border.all(color: const Color(0xFF86EFAC)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.verified,
+                              color: Color(0xFF047857), size: 18),
+                          SizedBox(width: 6),
+                          Text(
+                            'Verified Genuine Produce',
+                            style: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF065F46)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${verifiedLot!.crop} (${verifiedLot!.variety}) • ${verifiedLot!.qualityGrade}',
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Code: ${verifiedLot!.publicCode}',
+                        style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontSize: 11.5,
+                            color: Color(0xFF334155)),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Origin: Verified Farm, Bardhaman District, West Bengal (Privacy Masked)',
+                        style:
+                            TextStyle(fontSize: 11.5, color: Color(0xFF475569)),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else
+                const Text(
+                  'Enter or scan a valid batch code to inspect its farm-to-shelf provenance.',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showLanguageModal(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      isDismissible: true,
+      enableDrag: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (ctx) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 14),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Select Language / भाषा चुनें', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              const Text('Select Language / भाषा चुनें',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
               ListTile(
                 title: const Text('English (Default)'),
-                trailing: _selectedLang == 'en' ? const Icon(Icons.check, color: Color(0xFF047857)) : null,
+                trailing: _selectedLang == 'en'
+                    ? const Icon(Icons.check, color: Color(0xFF047857))
+                    : null,
                 onTap: () {
                   _switchLanguage('en');
                   Navigator.pop(ctx);
@@ -2069,7 +3736,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               ListTile(
                 title: const Text('हिन्दी (Hindi)'),
-                trailing: _selectedLang == 'hi' ? const Icon(Icons.check, color: Color(0xFF047857)) : null,
+                trailing: _selectedLang == 'hi'
+                    ? const Icon(Icons.check, color: Color(0xFF047857))
+                    : null,
                 onTap: () {
                   _switchLanguage('hi');
                   Navigator.pop(ctx);
@@ -2077,7 +3746,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               ListTile(
                 title: const Text('বাংলা (Bengali)'),
-                trailing: _selectedLang == 'bn' ? const Icon(Icons.check, color: Color(0xFF047857)) : null,
+                trailing: _selectedLang == 'bn'
+                    ? const Icon(Icons.check, color: Color(0xFF047857))
+                    : null,
                 onTap: () {
                   _switchLanguage('bn');
                   Navigator.pop(ctx);
@@ -2093,6 +3764,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _showQrDialog(BuildContext context, HarvestLot lot) {
     showDialog<void>(
       context: context,
+      barrierDismissible: true,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
@@ -2102,7 +3774,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Expanded(
               child: Text(
                 '${lot.crop} QR Code',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -2118,12 +3791,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
-              child: const Icon(Icons.qr_code_2, size: 160, color: Color(0xFF0B3D2E)),
+              child: const Icon(Icons.qr_code_2,
+                  size: 160, color: Color(0xFF0B3D2E)),
             ),
             const SizedBox(height: 8),
             Text(
               lot.publicCode,
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 11, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700),
             ),
           ],
         ),
@@ -2143,23 +3820,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     showDialog<void>(
       context: context,
+      barrierDismissible: true,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text('Dispatch Batch (Handover)', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Dispatch Batch (Handover)',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Lot: ${lot.crop} (${lot.netQtyKg} ${lot.unit})', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('Lot: ${lot.crop} (${lot.netQtyKg} ${lot.unit})',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: selectedTarget,
-                decoration: const InputDecoration(labelText: 'Receiving Party Role'),
+                decoration:
+                    const InputDecoration(labelText: 'Receiving Party Role'),
                 items: const [
-                  DropdownMenuItem(value: 'AGGREGATOR', child: Text('Mandi Aggregator / APMC')),
-                  DropdownMenuItem(value: 'WHOLESALER', child: Text('Wholesaler')),
-                  DropdownMenuItem(value: 'DISTRIBUTOR', child: Text('Distributor')),
-                  DropdownMenuItem(value: 'RETAILER', child: Text('Retailer Shop')),
+                  DropdownMenuItem(
+                      value: 'AGGREGATOR',
+                      child: Text('Mandi Aggregator / APMC')),
+                  DropdownMenuItem(
+                      value: 'PROCESSOR', child: Text('Processor / Mill')),
+                  DropdownMenuItem(
+                      value: 'WHOLESALER', child: Text('Wholesaler')),
+                  DropdownMenuItem(
+                      value: 'DISTRIBUTOR', child: Text('Distributor')),
+                  DropdownMenuItem(
+                      value: 'RETAILER', child: Text('Retailer Shop')),
                 ],
                 onChanged: (val) {
                   if (val != null) setModalState(() => selectedTarget = val);
@@ -2168,26 +3857,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 10),
               TextField(
                 controller: targetNameCtrl,
-                decoration: const InputDecoration(labelText: 'Receiving Party Name *'),
+                decoration:
+                    const InputDecoration(labelText: 'Receiving Party Name *'),
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () async {
                 final authState = ref.read(authControllerProvider);
-                await ref.read(lotsControllerProvider.notifier).requestCustodyHandover(
+                await ref
+                    .read(lotsControllerProvider.notifier)
+                    .requestCustodyHandover(
                       lot.publicCode,
                       targetRole: selectedTarget,
-                      targetName: targetNameCtrl.text.trim().isNotEmpty ? targetNameCtrl.text.trim() : 'Mandi Hub',
+                      targetName: targetNameCtrl.text.trim().isNotEmpty
+                          ? targetNameCtrl.text.trim()
+                          : 'Mandi Hub',
                       targetPhone: '+919876543210',
                       declaredQtyKg: lot.netQtyKg,
                       accessToken: authState.accessToken,
                     );
                 if (ctx.mounted) Navigator.pop(ctx);
               },
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0B3D2E), foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  foregroundColor: Colors.white),
               child: const Text('Confirm Dispatch'),
             ),
           ],
@@ -2202,33 +3900,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     showDialog<void>(
       context: context,
+      barrierDismissible: true,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Accept Custody & Verify', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+        title: const Text('Accept Custody & Verify',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: codeCtrl,
-              decoration: const InputDecoration(labelText: 'Scanned / Entered Lot Code *', hintText: 'Paste or enter lot ID'),
+              decoration: const InputDecoration(
+                  labelText: 'Scanned / Entered Lot Code *',
+                  hintText: 'Paste or enter lot ID'),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: weightCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Verified Weight (Kg) *'),
+              decoration:
+                  const InputDecoration(labelText: 'Verified Weight (Kg) *'),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               final authState = ref.read(authControllerProvider);
               final code = codeCtrl.text.trim();
               final wt = double.tryParse(weightCtrl.text.trim()) ?? 0.0;
               if (code.isNotEmpty) {
-                await ref.read(lotsControllerProvider.notifier).acceptCustodyHandover(
+                await ref
+                    .read(lotsControllerProvider.notifier)
+                    .acceptCustodyHandover(
                       code,
                       actorRole: authState.orgType ?? 'AGGREGATOR',
                       actorName: authState.orgName ?? 'Verified Custodian',
@@ -2239,7 +3945,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 if (ctx.mounted) Navigator.pop(ctx);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0B3D2E), foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0B3D2E),
+                foregroundColor: Colors.white),
             child: const Text('Confirm Receipt'),
           ),
         ],

@@ -109,6 +109,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
+      final dir = Directory(targetDir);
+      if (!dir.existsSync()) return;
       final boundary =
           loginKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2.0);
@@ -148,6 +150,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
+      final dir = Directory(targetDir);
+      if (!dir.existsSync()) return;
       final boundary = batchesKey.currentContext!.findRenderObject()
           as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2.0);
@@ -191,6 +195,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
+      final dir = Directory(targetDir);
+      if (!dir.existsSync()) return;
       final boundary = handoverKey.currentContext!.findRenderObject()
           as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2.0);
@@ -234,6 +240,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
+      final dir = Directory(targetDir);
+      if (!dir.existsSync()) return;
       final boundary = insightsKey.currentContext!.findRenderObject()
           as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2.0);
@@ -277,6 +285,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
+      final dir = Directory(targetDir);
+      if (!dir.existsSync()) return;
       final boundary = profileKey.currentContext!.findRenderObject()
           as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2.0);

@@ -9,18 +9,21 @@ class AnnaSutraTheme {
   // Brand Color Tokens
   static const Color primaryGreen = Color(0xFF0B3D2E); // Deep Bharat Emerald
   static const Color vibrantGreen = Color(0xFF059669); // Vibrant Harvest Green
-  static const Color lightGreenSurface = Color(0xFFECFDF5); // Soft Emerald Surface
+  static const Color lightGreenSurface =
+      Color(0xFFECFDF5); // Soft Emerald Surface
   static const Color brandSaffron = Color(0xFFE67E22); // Warm Saffron
   static const Color accentGold = Color(0xFFD97706); // Golden Grain
   static const Color slateDark = Color(0xFF0F172A); // Ultra-deep Slate Navy
-  static const Color surfaceColor = Color(0xFFF8FAFC); // Clean Modern Slate Surface
+  static const Color surfaceColor =
+      Color(0xFFF8FAFC); // Clean Modern Slate Surface
   static const Color surfaceCard = Color(0xFFFFFFFF); // Pure White Cards
   static const Color textHighContrast = Color(0xFF0F172A); // High Contrast Text
   static const Color textMuted = Color(0xFF64748B); // Slate Muted Text
   static const Color borderLight = Color(0xFFE2E8F0); // Subtle Border
   static const Color borderSubtle = Color(0xFFCBD5E1); // Defined Border
   static const Color alertRed = Color(0xFFDC2626); // Statutory Alert / Recall
-  static const Color verifiedTeal = Color(0xFF0D9488); // Cryptographic Seal Teal
+  static const Color verifiedTeal =
+      Color(0xFF0D9488); // Cryptographic Seal Teal
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -86,7 +89,8 @@ class AnnaSutraTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: borderLight, width: 1.2),
@@ -115,7 +119,9 @@ class AnnaSutraTheme {
         titleMedium: TextStyle(
             fontSize: 15, fontWeight: FontWeight.w600, color: textHighContrast),
         bodyLarge: TextStyle(
-            fontSize: 14.5, fontWeight: FontWeight.w400, color: textHighContrast),
+            fontSize: 14.5,
+            fontWeight: FontWeight.w400,
+            color: textHighContrast),
         bodyMedium: TextStyle(
             fontSize: 13.5, fontWeight: FontWeight.w400, color: textMuted),
         labelLarge: TextStyle(

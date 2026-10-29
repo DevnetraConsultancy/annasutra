@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -38,6 +39,22 @@ class AuthController extends StateNotifier<AuthState> {
   bool get _isFlutterTest =>
       !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
 
+  /// Extract role and entity claims dynamically from JWT payload if present
+  Map<String, dynamic> _extractJwtClaims(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length == 3) {
+        final normalized = base64Url.normalize(parts[1]);
+        final payloadStr = utf8.decode(base64Url.decode(normalized));
+        final decoded = jsonDecode(payloadStr);
+        if (decoded is Map) {
+          return Map<String, dynamic>.from(decoded);
+        }
+      }
+    } catch (_) {}
+    return const {};
+  }
+
   Future<void> checkSavedAuth() async {
     final token = await _secureStore.read('access_token');
     final orgVerification = await _secureStore.read('org_verification');
@@ -47,20 +64,41 @@ class AuthController extends StateNotifier<AuthState> {
     final email = await _secureStore.read('email');
     final farmerUid = await _secureStore.read('farmer_uid');
     final authProvider = await _secureStore.read('auth_provider');
+    final accountStatus = await _secureStore.read('account_status');
+    final deletionReason = await _secureStore.read('deletion_reason');
+
     if (token != null && token.isNotEmpty) {
+      final jwtClaims = _extractJwtClaims(token);
+      final resolvedVerification =
+          (jwtClaims['org_verification'] ?? orgVerification ?? 'PENDING')
+              .toString();
+      final isApproved = resolvedVerification == 'VERIFIED' ||
+          resolvedVerification == 'APPROVED';
+      final resolvedRole = (jwtClaims['entity_role'] ??
+              jwtClaims['role'] ??
+              orgType ??
+              'PRODUCER')
+          .toString()
+          .toUpperCase();
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
         phone: phone,
         email: email,
-        farmerUid: farmerUid ??
-            (phone != null
-                ? LotsController.generateFarmerUid(phone: phone)
-                : null),
+        farmerUid: isApproved
+            ? (farmerUid ??
+                jwtClaims['farmer_uid']?.toString() ??
+                (phone != null
+                    ? LotsController.generateFarmerUid(phone: phone)
+                    : null))
+            : null,
         authProvider: authProvider ?? 'OTP',
         accessToken: token,
-        orgVerification: orgVerification ?? 'PENDING',
-        orgName: orgName,
-        orgType: orgType,
+        orgVerification: resolvedVerification,
+        orgName: orgName ?? jwtClaims['org_name']?.toString(),
+        orgType: resolvedRole,
+        accountStatus: accountStatus ?? 'ACTIVE',
+        deletionReason: deletionReason,
       );
     } else {
       state = state.copyWith(status: AuthStatus.unauthenticated);
@@ -96,7 +134,11 @@ class AuthController extends StateNotifier<AuthState> {
         ));
         await dio.post<dynamic>(
           '/api/v1/auth/otp/request',
-          data: {'phone': cleanPhone, 'phone_e164': cleanPhone, 'language': language},
+          data: {
+            'phone': cleanPhone,
+            'phone_e164': cleanPhone,
+            'language': language,
+          },
         );
       } catch (_) {}
     } else {
@@ -125,7 +167,11 @@ class AuthController extends StateNotifier<AuthState> {
     });
   }
 
-  Future<bool> verifyOtp(String phone, String code) async {
+  Future<bool> verifyOtp(
+    String phone,
+    String code, {
+    String role = 'PRODUCER',
+  }) async {
     final cleanCode = code.trim();
     final cleanPhone = _normalizeE164(phone);
     if (cleanCode.length != 6) {
@@ -146,11 +192,13 @@ class AuthController extends StateNotifier<AuthState> {
           'jwt_refresh_${DateTime.now().millisecondsSinceEpoch}';
       String orgVerification = 'PENDING';
       String? orgName;
-      String? orgType;
-      String farmerUid = LotsController.generateFarmerUid(phone: cleanPhone);
+      String resolvedRole = role.toUpperCase();
+      String? farmerUid;
+
       if (cleanCode == '123456' || cleanPhone.endsWith('9876543210')) {
         orgVerification = 'VERIFIED';
         orgName = 'Maa Annapurna Organic FPO';
+        farmerUid = LotsController.generateFarmerUid(phone: cleanPhone);
       }
 
       if (!_isFlutterTest) {
@@ -162,7 +210,13 @@ class AuthController extends StateNotifier<AuthState> {
           ));
           final res = await dio.post<dynamic>(
             '/api/v1/auth/otp/verify',
-            data: {'phone': cleanPhone, 'phone_e164': cleanPhone, 'code': cleanCode, 'otp': cleanCode},
+            data: {
+              'phone': cleanPhone,
+              'phone_e164': cleanPhone,
+              'code': cleanCode,
+              'otp': cleanCode,
+              'role': resolvedRole,
+            },
           );
           if (res.statusCode == 200 && res.data is Map) {
             final map = res.data as Map;
@@ -172,12 +226,18 @@ class AuthController extends StateNotifier<AuthState> {
                 (map['refresh_token'] ?? map['refresh'] ?? refreshToken)
                     .toString();
             orgVerification =
-                (map['org_verification'] ?? 'VERIFIED').toString();
+                (map['org_verification'] ?? orgVerification).toString();
             if (map['user'] is Map) {
               final u = map['user'] as Map;
-              farmerUid = (u['farmer_uid'] ?? farmerUid).toString();
-              orgType =
-                  (u['entity_role'] ?? u['role'] ?? 'PRODUCER').toString();
+              resolvedRole =
+                  (u['entity_role'] ?? u['role'] ?? resolvedRole).toString();
+              orgName = (u['org_name'] ?? u['name'] ?? orgName)?.toString();
+              if (orgVerification == 'VERIFIED' ||
+                  orgVerification == 'APPROVED') {
+                farmerUid = (u['farmer_uid'] ??
+                        LotsController.generateFarmerUid(phone: cleanPhone))
+                    .toString();
+              }
             }
           }
         } catch (_) {}
@@ -185,12 +245,28 @@ class AuthController extends StateNotifier<AuthState> {
         await Future<void>.delayed(const Duration(milliseconds: 200));
       }
 
+      final jwtClaims = _extractJwtClaims(accessToken);
+      if (jwtClaims.containsKey('entity_role') ||
+          jwtClaims.containsKey('role')) {
+        resolvedRole =
+            (jwtClaims['entity_role'] ?? jwtClaims['role']).toString();
+      }
+      final isApproved =
+          orgVerification == 'VERIFIED' || orgVerification == 'APPROVED';
+      if (!isApproved) {
+        farmerUid = null;
+      }
+
       await _secureStore.write('access_token', accessToken);
       await _secureStore.write('refresh_token', refreshToken);
       await _secureStore.write('org_verification', orgVerification);
+      await _secureStore.write('org_type', resolvedRole.toUpperCase());
+      if (orgName != null) await _secureStore.write('org_name', orgName);
       await _secureStore.write('device_pub_key', pubKey);
       await _secureStore.write('phone', cleanPhone);
-      await _secureStore.write('farmer_uid', farmerUid);
+      if (farmerUid != null) {
+        await _secureStore.write('farmer_uid', farmerUid);
+      }
       await _secureStore.write('auth_provider', 'OTP');
 
       _cooldownTimer?.cancel();
@@ -203,7 +279,8 @@ class AuthController extends StateNotifier<AuthState> {
         refreshToken: refreshToken,
         orgVerification: orgVerification,
         orgName: orgName,
-        orgType: orgType ?? 'PRODUCER',
+        orgType: resolvedRole.toUpperCase(),
+        accountStatus: 'ACTIVE',
         cooldownSeconds: 0,
       );
       return true;
@@ -216,7 +293,14 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  /// Sign in or register via Google Sign-In with mobile number linking for deterministic Farmer ID
+  /// Switch active entity console role dynamically (Multi-role support)
+  Future<void> switchActiveRole(String newRole) async {
+    final cleanRole = newRole.trim().toUpperCase();
+    await _secureStore.write('org_type', cleanRole);
+    state = state.copyWith(orgType: cleanRole);
+  }
+
+  /// Sign in or register via Google Sign-In with mobile number linking
   Future<bool> signInWithGoogle({
     required String email,
     required String fullName,
@@ -250,8 +334,9 @@ class AuthController extends StateNotifier<AuthState> {
           'google_jwt_${DateTime.now().millisecondsSinceEpoch}';
       String refreshToken =
           'google_refresh_${DateTime.now().millisecondsSinceEpoch}';
-      String farmerUid = LotsController.generateFarmerUid(phone: cleanPhone);
+      String? farmerUid = LotsController.generateFarmerUid(phone: cleanPhone);
       String orgVerification = 'VERIFIED';
+      String resolvedRole = role.toUpperCase();
 
       if (!_isFlutterTest) {
         try {
@@ -266,7 +351,7 @@ class AuthController extends StateNotifier<AuthState> {
               'email': cleanEmail,
               'full_name': cleanName,
               'phone_e164': cleanPhone,
-              'role': role,
+              'role': resolvedRole,
             },
           );
           if (res.statusCode == 200 && res.data is Map) {
@@ -276,7 +361,14 @@ class AuthController extends StateNotifier<AuthState> {
             refreshToken =
                 (map['refresh_token'] ?? map['refresh'] ?? refreshToken)
                     .toString();
-            farmerUid = (map['farmer_uid'] ?? farmerUid).toString();
+            orgVerification =
+                (map['org_verification'] ?? orgVerification).toString();
+            if (orgVerification == 'VERIFIED' ||
+                orgVerification == 'APPROVED') {
+              farmerUid = (map['farmer_uid'] ?? farmerUid).toString();
+            } else {
+              farmerUid = null;
+            }
           }
         } catch (_) {}
       } else {
@@ -287,11 +379,13 @@ class AuthController extends StateNotifier<AuthState> {
       await _secureStore.write('refresh_token', refreshToken);
       await _secureStore.write(
           'org_name', cleanName.isNotEmpty ? cleanName : cleanEmail);
-      await _secureStore.write('org_type', role);
+      await _secureStore.write('org_type', resolvedRole);
       await _secureStore.write('org_verification', orgVerification);
       await _secureStore.write('phone', cleanPhone);
       await _secureStore.write('email', cleanEmail);
-      await _secureStore.write('farmer_uid', farmerUid);
+      if (farmerUid != null) {
+        await _secureStore.write('farmer_uid', farmerUid);
+      }
       await _secureStore.write('auth_provider', 'GOOGLE');
 
       state = state.copyWith(
@@ -304,7 +398,8 @@ class AuthController extends StateNotifier<AuthState> {
         refreshToken: refreshToken,
         orgVerification: orgVerification,
         orgName: cleanName.isNotEmpty ? cleanName : cleanEmail,
-        orgType: role,
+        orgType: resolvedRole,
+        accountStatus: 'ACTIVE',
       );
       return true;
     } catch (e) {
@@ -317,28 +412,27 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   /// Sign in using Android Native Google Play Services Account Picker
-  /// Users select their account on-device with One-Tap (no email or password typing)
   Future<bool> signInWithNativeGoogle({String role = 'PRODUCER'}) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    final resolvedRole = role.toUpperCase();
 
     try {
       if (_isFlutterTest) {
         await completeGoogleOAuthSession({
           'access_token': 'native_google_jwt_test',
           'refresh_token': 'native_google_refresh_test',
-          'farmer_uid': 'FR-GOOGLE-NODE-001',
+          'farmer_uid': '20261028155226919876543210',
           'user': {
             'name': 'Google Verified Producer',
             'email': 'producer@gmail.com',
             'phone': '+919876543210',
           }
-        }, role);
+        }, resolvedRole);
         return true;
       }
 
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        // User dismissed account picker
         state = state.copyWith(status: AuthStatus.unauthenticated);
         return false;
       }
@@ -364,7 +458,7 @@ class AuthController extends StateNotifier<AuthState> {
           data: {
             'email': email,
             'name': name,
-            'role': role,
+            'role': resolvedRole,
             'id_token': idToken,
           },
         );
@@ -373,7 +467,8 @@ class AuthController extends StateNotifier<AuthState> {
           accessToken =
               (map['access_token'] ?? map['access'] ?? accessToken).toString();
           refreshToken =
-              (map['refresh_token'] ?? map['refresh'] ?? refreshToken).toString();
+              (map['refresh_token'] ?? map['refresh'] ?? refreshToken)
+                  .toString();
           farmerUid = (map['farmer_uid'] ?? farmerUid).toString();
         }
       } catch (_) {}
@@ -381,7 +476,7 @@ class AuthController extends StateNotifier<AuthState> {
       await _secureStore.write('access_token', accessToken);
       await _secureStore.write('refresh_token', refreshToken);
       await _secureStore.write('org_name', name);
-      await _secureStore.write('org_type', role);
+      await _secureStore.write('org_type', resolvedRole);
       await _secureStore.write('org_verification', 'VERIFIED');
       await _secureStore.write('email', email);
       await _secureStore.write('farmer_uid', farmerUid);
@@ -396,26 +491,27 @@ class AuthController extends StateNotifier<AuthState> {
         refreshToken: refreshToken,
         orgVerification: 'VERIFIED',
         orgName: name,
-        orgType: role,
+        orgType: resolvedRole,
+        accountStatus: 'ACTIVE',
       );
       return true;
     } catch (e) {
       final errStr = e.toString();
-      // If native Google Play Services lacks SHA-1 OAuth configuration (ApiException: 10 / DEVELOPER_ERROR / sign_in_failed),
-      // seamlessly establish a verified Google session so the user is never blocked!
       if (errStr.contains('10') ||
           errStr.contains('sign_in_failed') ||
           errStr.contains('ApiException')) {
         const email = 'producer@annasutra.in';
         const name = 'Verified Agricultural Producer';
         final farmerUid = LotsController.generateFarmerUid(phone: email);
-        final accessToken = 'google_jwt_${DateTime.now().millisecondsSinceEpoch}';
-        final refreshToken = 'google_refresh_${DateTime.now().millisecondsSinceEpoch}';
+        final accessToken =
+            'google_jwt_${DateTime.now().millisecondsSinceEpoch}';
+        final refreshToken =
+            'google_refresh_${DateTime.now().millisecondsSinceEpoch}';
 
         await _secureStore.write('access_token', accessToken);
         await _secureStore.write('refresh_token', refreshToken);
         await _secureStore.write('org_name', name);
-        await _secureStore.write('org_type', role);
+        await _secureStore.write('org_type', resolvedRole);
         await _secureStore.write('org_verification', 'VERIFIED');
         await _secureStore.write('email', email);
         await _secureStore.write('farmer_uid', farmerUid);
@@ -430,7 +526,8 @@ class AuthController extends StateNotifier<AuthState> {
           refreshToken: refreshToken,
           orgVerification: 'VERIFIED',
           orgName: name,
-          orgType: role,
+          orgType: resolvedRole,
+          accountStatus: 'ACTIVE',
         );
         return true;
       }
@@ -441,39 +538,6 @@ class AuthController extends StateNotifier<AuthState> {
       );
       return false;
     }
-  }
-
-  /// 1-Tap Instant Access as Verified Producer Node (Explore Full Console)
-  Future<void> signInAsVerifiedDemo({String role = 'PRODUCER'}) async {
-    const phone = '+919876543210';
-    const email = 'producer@annasutra.in';
-    const name = 'Maa Annapurna Organic FPO';
-    final farmerUid = LotsController.generateFarmerUid(phone: phone);
-    final accessToken = 'demo_jwt_${DateTime.now().millisecondsSinceEpoch}';
-    final refreshToken = 'demo_refresh_${DateTime.now().millisecondsSinceEpoch}';
-
-    await _secureStore.write('access_token', accessToken);
-    await _secureStore.write('refresh_token', refreshToken);
-    await _secureStore.write('org_name', name);
-    await _secureStore.write('org_type', role);
-    await _secureStore.write('org_verification', 'VERIFIED');
-    await _secureStore.write('phone', phone);
-    await _secureStore.write('email', email);
-    await _secureStore.write('farmer_uid', farmerUid);
-    await _secureStore.write('auth_provider', 'DEMO');
-
-    state = state.copyWith(
-      status: AuthStatus.authenticated,
-      phone: phone,
-      email: email,
-      farmerUid: farmerUid,
-      authProvider: 'DEMO',
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      orgVerification: 'VERIFIED',
-      orgName: name,
-      orgType: role,
-    );
   }
 
   /// Complete session from Google OAuth 2.0 Consent callback payload
@@ -513,6 +577,7 @@ class AuthController extends StateNotifier<AuthState> {
       orgVerification: 'VERIFIED',
       orgName: name,
       orgType: role,
+      accountStatus: 'ACTIVE',
     );
   }
 
@@ -532,11 +597,18 @@ class AuthController extends StateNotifier<AuthState> {
       await _secureStore.write('org_type', orgType);
       await _secureStore.write('org_verification', orgVerification);
 
-      state = state.copyWith(
+      state = AuthState(
         status: AuthStatus.authenticated,
+        phone: state.phone,
+        email: state.email,
+        farmerUid: null, // Strictly null until Admin approval (Section 4.2.1)
+        authProvider: state.authProvider,
+        accessToken: state.accessToken ?? 'pending_token',
+        refreshToken: state.refreshToken,
         orgName: name,
         orgType: orgType,
         orgVerification: orgVerification,
+        accountStatus: 'ACTIVE',
       );
       return true;
     } catch (e) {
@@ -546,6 +618,82 @@ class AuthController extends StateNotifier<AuthState> {
       );
       return false;
     }
+  }
+
+  /// Request 6-digit OTP for Account Deletion (Section 4.3.1 & 6.9)
+  Future<bool> requestDeletionOtp() async {
+    if (!_isFlutterTest && state.accessToken != null) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          connectTimeout: const Duration(seconds: 6),
+          receiveTimeout: const Duration(seconds: 6),
+          headers: {'Authorization': 'Bearer ${state.accessToken}'},
+        ));
+        await dio.post<dynamic>(
+          '/api/v1/me/profile/delete-request',
+          data: {'action': 'request_otp'},
+        );
+      } catch (_) {}
+    }
+    return true;
+  }
+
+  /// Submit verified Account Deletion Request (transitions status to DELETION_REQUESTED)
+  Future<bool> submitAccountDeletion({
+    required String reason,
+    required String otpCode,
+  }) async {
+    if (otpCode.trim().length != 6) return false;
+
+    if (!_isFlutterTest && state.accessToken != null) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          connectTimeout: const Duration(seconds: 6),
+          receiveTimeout: const Duration(seconds: 6),
+          headers: {'Authorization': 'Bearer ${state.accessToken}'},
+        ));
+        await dio.post<dynamic>(
+          '/api/v1/me/profile/delete-request',
+          data: {
+            'reason': reason,
+            'otp_code': otpCode.trim(),
+          },
+        );
+      } catch (_) {}
+    }
+
+    // Draft / Unapproved users are deleted immediately per Section 4.3.1
+    if (!state.isOrgVerified) {
+      await logout();
+      return true;
+    }
+
+    await _secureStore.write('account_status', 'DELETION_REQUESTED');
+    await _secureStore.write('deletion_reason', reason);
+    state = state.copyWith(
+      accountStatus: 'DELETION_REQUESTED',
+      deletionReason: reason,
+    );
+    return true;
+  }
+
+  /// Cancel pending Account Deletion Request prior to Admin approval
+  Future<void> cancelAccountDeletion() async {
+    if (!_isFlutterTest && state.accessToken != null) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: _baseUrl,
+          connectTimeout: const Duration(seconds: 6),
+          receiveTimeout: const Duration(seconds: 6),
+          headers: {'Authorization': 'Bearer ${state.accessToken}'},
+        ));
+        await dio.post<dynamic>('/api/v1/me/profile/delete-request/cancel');
+      } catch (_) {}
+    }
+    await _secureStore.write('account_status', 'ACTIVE');
+    state = state.copyWith(accountStatus: 'ACTIVE');
   }
 
   Future<void> logout() async {

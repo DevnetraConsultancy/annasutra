@@ -15,9 +15,13 @@ class AuthState {
   final String? authProvider; // 'OTP', 'GOOGLE'
   final String? accessToken;
   final String? refreshToken;
-  final String? orgVerification; // 'PENDING', 'VERIFIED'
+  final String?
+      orgVerification; // 'PENDING', 'UNDER_REVIEW', 'VERIFIED', 'APPROVED'
   final String? orgName;
-  final String? orgType;
+  final String?
+      orgType; // 'PRODUCER', 'AGGREGATOR', 'PROCESSOR', 'WHOLESALER', 'DISTRIBUTOR', 'RETAILER', 'VERIFIER'
+  final String accountStatus; // 'ACTIVE', 'DELETION_REQUESTED'
+  final String? deletionReason;
   final String? errorMessage;
   final int cooldownSeconds;
 
@@ -32,13 +36,19 @@ class AuthState {
     this.orgVerification,
     this.orgName,
     this.orgType,
+    this.accountStatus = 'ACTIVE',
+    this.deletionReason,
     this.errorMessage,
     this.cooldownSeconds = 0,
   });
 
   bool get isAuthenticated =>
       status == AuthStatus.authenticated && accessToken != null;
-  bool get isOrgVerified => orgVerification == 'VERIFIED';
+
+  bool get isOrgVerified =>
+      orgVerification == 'VERIFIED' || orgVerification == 'APPROVED';
+
+  bool get isDeletionRequested => accountStatus == 'DELETION_REQUESTED';
 
   AuthState copyWith({
     AuthStatus? status,
@@ -51,6 +61,8 @@ class AuthState {
     String? orgVerification,
     String? orgName,
     String? orgType,
+    String? accountStatus,
+    String? deletionReason,
     String? errorMessage,
     int? cooldownSeconds,
   }) {
@@ -65,6 +77,8 @@ class AuthState {
       orgVerification: orgVerification ?? this.orgVerification,
       orgName: orgName ?? this.orgName,
       orgType: orgType ?? this.orgType,
+      accountStatus: accountStatus ?? this.accountStatus,
+      deletionReason: deletionReason ?? this.deletionReason,
       errorMessage: errorMessage ?? this.errorMessage,
       cooldownSeconds: cooldownSeconds ?? this.cooldownSeconds,
     );

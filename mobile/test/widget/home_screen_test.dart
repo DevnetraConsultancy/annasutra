@@ -7,7 +7,7 @@ import 'package:annasutra_mobile/features/home/presentation/home_screen.dart';
 
 void main() {
   testWidgets(
-      'HomeScreen renders brand navigation, role selection, and OTP sign-in in unauthenticated state',
+      'HomeScreen renders brand navigation, all 7 role options, and OTP sign-in in unauthenticated state',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
@@ -64,6 +64,60 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  testWidgets(
+      'HomeScreen hides Farmer ID and displays Under Admin Review before Admin approval',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider
+              .overrideWith((ref) => MockPendingAuthController()),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Under Admin Review'), findsWidgets);
+    expect(find.text('202628120000919876543210'), findsNothing);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
+  testWidgets(
+      'Profile Tab renders 5-Step Registration Tabs and Request Account Deletion',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider
+              .overrideWith((ref) => MockVerifiedAuthController()),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // Switch to Profile Tab
+    await tester.tap(find.byIcon(Icons.person_outline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1. Basic Info'), findsOneWidget);
+    expect(find.text('2. Farm Plots'), findsOneWidget);
+    expect(find.text('3. Cultivation'), findsOneWidget);
+    expect(find.text('4. Identity & Bank'), findsOneWidget);
+    expect(find.text('5. Consent & Review'), findsOneWidget);
+    expect(find.text('Request Account Deletion'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
 }
 
 class MockVerifiedAuthController extends StateNotifier<AuthState>
@@ -75,6 +129,21 @@ class MockVerifiedAuthController extends StateNotifier<AuthState>
           orgVerification: 'VERIFIED',
           orgName: 'Verified Producer Entity',
           farmerUid: '202628120000919876543210',
+        ));
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class MockPendingAuthController extends StateNotifier<AuthState>
+    implements AuthController {
+  MockPendingAuthController()
+      : super(const AuthState(
+          status: AuthStatus.authenticated,
+          accessToken: 'mock_token',
+          orgVerification: 'PENDING',
+          orgName: 'Pending Producer Entity',
+          farmerUid: null,
         ));
 
   @override

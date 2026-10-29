@@ -107,31 +107,44 @@ class LotCard extends StatelessWidget {
 
               // Custody Status Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                 decoration: BoxDecoration(
-                  color: isEditable ? const Color(0xFFECFDF5) : const Color(0xFFFFF7ED),
+                  color: isEditable
+                      ? const Color(0xFFECFDF5)
+                      : const Color(0xFFFFF7ED),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isEditable ? const Color(0xFF86EFAC) : const Color(0xFFFDBA74),
+                    color: isEditable
+                        ? const Color(0xFF86EFAC)
+                        : const Color(0xFFFDBA74),
                   ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      isEditable ? Icons.check_circle_outline : Icons.local_shipping_outlined,
+                      isEditable
+                          ? Icons.check_circle_outline
+                          : Icons.local_shipping_outlined,
                       size: 11.5,
-                      color: isEditable ? const Color(0xFF059669) : const Color(0xFFC2410C),
+                      color: isEditable
+                          ? const Color(0xFF059669)
+                          : const Color(0xFFC2410C),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       isEditable
                           ? 'Farm Custody'
-                          : (lot.state == 'IN_TRANSIT' ? 'In Transit' : 'Accepted'),
+                          : (lot.state == 'IN_TRANSIT'
+                              ? 'In Transit'
+                              : 'Accepted'),
                       style: TextStyle(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w700,
-                        color: isEditable ? const Color(0xFF065F46) : const Color(0xFF9A3412),
+                        color: isEditable
+                            ? const Color(0xFF065F46)
+                            : const Color(0xFF9A3412),
                       ),
                     ),
                   ],
@@ -165,7 +178,8 @@ class LotCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.qr_code_2, size: 14, color: Color(0xFF64748B)),
+                  const Icon(Icons.qr_code_2,
+                      size: 14, color: Color(0xFF64748B)),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -240,7 +254,9 @@ class LotCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 1.5),
                       Text(
-                        lot.qualityGrade.replaceAll('Grade ', 'Gr-').replaceAll(' (Super)', ''),
+                        lot.qualityGrade
+                            .replaceAll('Grade ', 'Gr-')
+                            .replaceAll(' (Super)', ''),
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -286,7 +302,8 @@ class LotCard extends StatelessWidget {
           // 4. FOOTER: Origin Plot, Harvest Date & Quick Action Buttons
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 12.5, color: Color(0xFF64748B)),
+              const Icon(Icons.location_on_outlined,
+                  size: 12.5, color: Color(0xFF64748B)),
               const SizedBox(width: 3),
               Expanded(
                 child: Text(
@@ -303,9 +320,11 @@ class LotCard extends StatelessWidget {
               // Edit icon
               if (isEditable && onEdit != null) ...[
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF047857)),
+                  icon: const Icon(Icons.edit_outlined,
+                      size: 16, color: Color(0xFF047857)),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                  constraints:
+                      const BoxConstraints(minWidth: 28, minHeight: 28),
                   tooltip: 'Edit Batch',
                   onPressed: onEdit,
                 ),
@@ -315,7 +334,8 @@ class LotCard extends StatelessWidget {
               // QR Labels Button (Compact 32dp height)
               OutlinedButton.icon(
                 onPressed: onShowQr,
-                icon: const Icon(Icons.qr_code, size: 13, color: Color(0xFF047857)),
+                icon: const Icon(Icons.qr_code,
+                    size: 13, color: Color(0xFF047857)),
                 label: const Text(
                   'QR',
                   style: TextStyle(
@@ -326,7 +346,8 @@ class LotCard extends StatelessWidget {
                 ),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(60, 32),
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                   side: const BorderSide(color: Color(0xFFA7F3D0), width: 1.2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -351,7 +372,8 @@ class LotCard extends StatelessWidget {
                     backgroundColor: const Color(0xFF0B3D2E),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(76, 32),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
