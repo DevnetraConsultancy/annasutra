@@ -1,7 +1,7 @@
 # AnnaSutra: Core Entity Console Architecture (Gold Standard — Locked)
 
 > [!IMPORTANT]
-> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) will be built. All 22 architectural decisions in Section 15 are finalized.
+> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 25 architectural decisions in Section 15 are finalized and synchronized with Web UI/UX.
 
 ---
 
@@ -25,6 +25,8 @@ AnnaSutra is a farm-to-fork trust ledger. A farmer logs in, sends one registrati
 | 8 | Standards-aligned | The event model follows GS1 EPCIS 2.0. Retail QR codes follow GS1 Digital Link. Lot labels use a Code128 barcode. |
 | 9 | Rural-first | Works offline, supports multiple languages, runs on low-end Android, and uses large touch targets. |
 | 10 | Premium UI | Uses one icon system (Lucide) and colour + icon + text status chips. No emojis anywhere: UI, labels, SMS or exports. |
+| 11 | Truthful telemetry & zero mock data | All scan metrics, telemetry, distances, and quantities reflect genuine database records. No hardcoded or synthetic data. |
+| 12 | Instant responsiveness & root modals | All modals pre-hydrate in 0ms from local cache, mount to root body/viewport level, and dismiss reliably via backdrop tap or Back/Escape key. |
 
 ---
 
@@ -194,80 +196,72 @@ flowchart LR
 
 ### 4.2.1 Unique Farmer ID Issuance Policy (First-Time Registration)
 
-- **Strict Pre-Approval Policy:** First-time producer registrations in status `DRAFT`, `SUBMITTED`, or `NEEDS_CHANGES` **MUST NOT** receive or display a Unique Farmer ID.
+- **Strict Pre-Approval Policy:** First-time producer registrations in status `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, or `CHANGES_REQUESTED` **MUST NOT** receive or display a Unique Farmer ID.
 - **Application Reference:** While review is pending, the producer interface and admin review displays an Application Reference code (`APP-XXXXXXXX`).
-- **Minting Upon Admin Approval:** The deterministic 24-digit Unique Farmer ID (`YYYYDDHHMMSS` + `91` + 10-digit mobile number) is minted and sealed into `EntityRoleDetails` exclusively at the moment of Admin approval (`approve_entity_registration`).
+- **Minting Exclusively Upon Admin Approval:** The deterministic 24-digit Unique Farmer ID (`YYYYMMDDHHMMSS` + `91` + 10-digit mobile number) is minted and sealed into `EntityRoleDetails` exclusively at the moment of Admin approval (`approve_entity_registration`).
+- **UI Guard:** Producer console headers, badges, and ID cards must strictly check for `farmer_uid`. If the entity is unverified or in draft status, the UI displays `Code: PR-PENDING` or `Application Ref` rather than a valid Farmer ID.
 
-### 4.3 A. Profile (5-Step Registration Form Inspection & Data Updation)
+### 4.3 A. Profile (5-Step Registration Form Inspection, Data Updation & Identity)
 
-The original 5-step registration data remains permanently accessible under **A. Profile** in the Producer Console for continuous inspection, self-service updates, and formal change requests:
+The original 5-step registration dataset remains permanently accessible under **A. Profile** in the Producer Console for continuous inspection, self-service updates, and formal change requests:
 
-1. **Step 1: Basic Info**
-   - Applicant Name, Legal Organisation, Primary Phone, Email, Address Lines 1 & 2, Village/Town, District, State, Pincode.
-   - *Self-Editable:* Alternate Phone, Email, Address Line 2, Preferred Language.
-   - *Locked (Admin Review):* Legal First/Last Name, Primary Phone, Legal Jurisdiction.
-2. **Step 2: Farm Plots & Cadastral Boundaries**
-   - Registered farm parcels, survey numbers, acreage, and GeoJSON boundary geometry.
-   - *Self-Editable:* Plot nickname, seasonal notes.
-   - *Locked (Admin Review):* Total registered land acreage, cadastral survey numbers, plot boundary polygon re-mapping.
-3. **Step 3: Cultivation Profile**
-   - Primary and secondary commodities (e.g. Potato, Paddy, Turmeric), irrigation infrastructure, farming practice (Conventional, Organic NPOP, Natural Farming).
-   - *Self-Editable:* Secondary seasonal crops, irrigation method, organic certification notes.
-4. **Step 4: Identity & Bank Settlement**
-   - Masked PAN (`•••• ••••`), voluntary Aadhaar last-4 digits, Bank name, masked Account number, IFSC, UPI handle.
-   - *Strictly Locked (Admin Review):* All financial settlement details and statutory KYC credentials require a Change Request with documentary proof.
-5. **Step 5: Consent, Change Requests & Account Review**
-   - Immutable DPDP Act 2023 statutory consent timestamp and agreement terms.
-   - Interactive tracking of all submitted Change Requests (`PENDING`, `APPROVED`, `REJECTED`).
-   - Access to **Danger Zone: Entity Account Deletion Request**.
+- **Instant 0ms Cache Hydration:** The profile view mounts and renders immediately using local storage cache (`annasutra_cached_profile`), performing non-blocking background server sync (`/api/v1/me/profile` and `/api/v1/me/sensitive`) without UI delay or spinners.
+- **Header:** Photo, applicant name, organisation name, `BadgeCheck` Verified badge, Unique Farmer ID (monospace, with copy button), and verified location summary.
+- **Digital ID Card:** Downloadable or printable card with verified QR code. Buyers scan this card to initiate handover.
+- **The 5 Registration Tabs Under Profile:**
+  1. **Step 1: Basic Info**
+     - Applicant Name, Legal Organisation, Primary Phone, Email, Address Lines 1 & 2, Village/Town, District, State, Pincode.
+     - *Self-Editable:* Alternate Phone, Email, Address Line 2, Preferred Language.
+     - *Locked (Admin Review):* Legal First/Last Name, Primary Phone, State/District Jurisdiction.
+  2. **Step 2: Farm Plots & Cadastral Boundaries**
+     - Registered farm parcels, survey numbers, acreage, and GeoJSON boundary geometry.
+     - *Self-Editable:* Plot nickname, seasonal notes.
+     - *Locked (Admin Review):* Total registered land acreage, cadastral survey numbers, plot boundary polygon re-mapping.
+  3. **Step 3: Cultivation Profile**
+     - Primary and secondary commodities (e.g. Potato, Paddy, Turmeric), irrigation infrastructure, farming practice (Conventional, Organic NPOP, Natural Farming).
+     - *Self-Editable:* Secondary seasonal crops, irrigation method, organic certification notes.
+  4. **Step 4: Identity & Bank Settlement**
+     - Masked PAN (`•••• ••••`), voluntary Aadhaar last-4 digits, Bank name, masked Account number, IFSC, UPI handle.
+     - *Strictly Locked (Admin Review):* All financial settlement details and KYC credentials require an explicit Change Request with documentary proof.
+  5. **Step 5: Consent, Change Requests & Account Review**
+     - Active privacy and traceability consent timestamp and agreement terms.
+     - Interactive tracking of all submitted Change Requests (`PENDING`, `APPROVED`, `REJECTED`).
+     - **Account Deletion Section:** Clean, non-exaggerated access to request account deactivation.
 
-### 4.3 A. Profile
+- **Field Lock & Change Request Rules:**
 
-- **Header:** photo, name, `BadgeCheck` Verified badge, Entity ID (masked, with a copy button), member since.
-- **Digital ID Card:** downloadable or printable card with a QR. Buyers scan this card to start a handover.
-- **Field lock rules:**
+| Change type | Fields | Flow |
+|---|---|---|
+| **Self-editable** | Alternate mobile, Email, Language, Notification preferences, Consumer visibility toggles | Directly saved via `PUT /api/v1/me/profile` |
+| **Locked (Admin Approval)** | Legal Name, DOB, Gender, KYC, Profile photo, Bank details, Land records, Certifications, Primary mobile | Creates a Change Request (`POST /api/v1/me/change-request`) with old value, new value, reason, and document proof. The old value stays active until Admin approves. |
 
-| Change type | Fields |
-|---|---|
-| **Locked, needs a change request + admin approval** | Name, DOB, Gender, KYC, Profile photo (shown to consumers), Bank, Land records, Certifications, Primary mobile (OTP on old and new number + admin) |
-| **Self-editable** | Alternate mobile, Email, Language, Notification preferences, Consumer visibility toggles |
+#### 4.3.1 Entity Account Deletion & Deactivation Workflow (Approved)
 
-- **Change Request flow:** old value next to new value, a reason, document upload, then status `PENDING`, `APPROVED` or `REJECTED`, plus a change history tab. The old value stays active until approval.
-
-#### 4.3.1 Delete Entity Profile & Account Deletion Request (Approved)
-
-- **UI Location & Visual Style:** At the bottom of the Profile tab, a dedicated red-accented container titled **"Danger Zone / Account Deletion"** (`UserX` / `Trash2`, outline in `#fecaca`, text in `#dc2626`).
-- **Farmer Initiation Flow:**
+- **UI Location & Style:** Located at the bottom of the Profile modal under a clean container titled **"Account & Profile Deletion"** with a **"Permanent Action"** badge (`UserX` / `Trash2`, outline in `#fecaca`, text in `#dc2626`).
+- **Initiation Flow:**
   1. The Producer taps **"Request Account Deletion"**.
-  2. An interactive **Account Deletion Request Modal** appears with full legal and operational disclosures.
-  3. **Mandatory Reason for Deletion:** The farmer must select a structured reason from a dropdown, with optional remarks:
-     - *Ceasing farming operations / retirement*
-     - *Sale, transfer, or lease termination of agricultural land*
-     - *Right to Erasure / Privacy Request under DPDP Act 2023*
+  2. An interactive **Request Account Deletion Modal** opens (mounted to `document.body` root level, dismissible via backdrop click or Escape).
+  3. **Pre-flight Check (`GET /api/v1/me/profile/delete-request`):**
+     - Audits active custody. If the entity has lots in `HANDOVER_REQUESTED` (in transit, pending recipient physical handshake) or open custody balances, deletion is blocked:
+       > *"Entities with active dispatches or lots in transit cannot be deleted. Please complete or settle the following active transactions first:"* (followed by itemized blocking reasons).
+     - **Draft / Unregistered Users:** If a user without an approved profile requests deletion, `can_request_deletion=True` is returned immediately without blocking.
+     - **Session Timeout / Unauthenticated Fallback:** If the session is expired (HTTP 401/403), the UI displays a clean "Session Not Authenticated" card with a direct **Clear Local Profile & Exit** option (`window.clearLocalEntityAccount`) to cleanly wipe local storage and return to home.
+  4. **Mandatory Structured Reason:** Selected from dropdown:
+     - *Ceasing agricultural / business operations*
+     - *Sale, transfer, or lease termination of land/premises*
+     - *Account deletion and data privacy request*
      - *Duplicate or accidental registration*
      - *Other (mandatory explanation required)*
-  4. **Active Custody & In-Transit Pre-flight Check:**
-     - The system automatically audits open lots. If the producer has any lots in `HANDOVER_REQUESTED` (in transit, pending recipient physical handshake) or active open discrepancies, the request is **blocked**:
-       > *"Cannot submit account deletion request while lots are in transit or pending handover. Please ensure all active lot handovers are completed or cancelled first."*
-  5. **Owner 2FA OTP Authentication:**
-     - A 6-digit OTP is sent to the Producer's verified primary registered mobile number.
-     - Entering the valid OTP digitally signs the deletion request.
-  6. **Status Transition to `DELETION_REQUESTED`:**
-     - The entity status transitions from `APPROVED` to `DELETION_REQUESTED`.
-     - Operations are frozen immediately: creating new plots, logging harvests, and creating/dispatching lots are disabled.
-     - A persistent notification banner appears on the Producer Console:
-       > *"Account Deletion Request submitted on [Date, Time]. Under review by Admin Authority. [Cancel Request]"*
-     - The producer may cancel the request at any time prior to Admin approval.
-
-- **Admin Decision & DPDP Act 2023 Execution:**
-  - The request routes directly to the **Admin Verification Queue > Deletion Requests**.
-  - **On Admin Approval:**
-    - Entity status transitions to `DEACTIVATED`.
-    - Active JWT tokens and login sessions are immediately revoked.
-    - **DPDP Act 2023 Compliance & Cryptographic Integrity:** In compliance with DPDP 2023, personal identifying data (selfie photo, live phone number, bank details, Aadhaar/DigiLocker documents) is purged from active operational storage. However, adhering to **Diamond Rule 2 (Append-Only Ledger)**, historical transaction blocks, past custody handshakes, hash chains, and consumer provenance timelines are preserved immutably using masked, cryptographically sealed references (e.g. `[Deactivated Producer #20261028-155226-91-98XXXXX210]`). Downstream batches and consumer scan integrity are never broken.
-  - **On Admin Rejection:**
-    - The Admin must enter a justification (e.g. active traceability inquiry or recall liability).
-    - Status reverts to `APPROVED` and the farmer is notified via SMS and in-app message.
+  5. **Mobile Verification Code (OTP):**
+     - A 6-digit confirmation code is sent to the primary registered mobile via `POST /api/v1/me/profile/delete-request` with `{ action: 'request_otp' }`.
+     - Entering the OTP digitally signs the deletion request.
+  6. **Submission & Execution (`POST /api/v1/me/profile/delete-request`):**
+     - **Immediate Deletion for Draft / Unregistered Users:** If the user has no approved profile, the backend immediately deactivates the `AppUser` (`status="DISABLED"`), returns `{ status: "DELETED" }`, and the client purges all local storage keys (`annasutra_*`) and redirects to `/`.
+     - **Active Approved Entities:** Transitions status to `DELETION_REQUESTED`. All operational capabilities (new lots, plot allocations, handovers) are frozen immediately. The user may withdraw or cancel the request at any time prior to Admin approval via `POST /api/v1/me/profile/delete-request/cancel`.
+  7. **Admin Review & Erasure Execution:**
+     - The request routes to **Admin Console > Tab 5: Entity Deletion Requests**.
+     - Upon Admin approval, the entity transitions to `DEACTIVATED`. Personal identifying data (photos, phone number, bank details, KYC documents) is purged and anonymized from active operational storage.
+     - Under **Diamond Rule 2 (Append-Only Ledger)**, historical transaction blocks, custody handshakes, hash chains, and consumer provenance timelines are preserved immutably using masked, cryptographically sealed references (e.g. `[Deactivated Producer #20261028-155226-91-98XXXXX210]`). Downstream batches and consumer scan integrity are never broken.
 
 ### 4.4 B. Land Management
 
@@ -362,7 +356,9 @@ The original 5-step registration data remains permanently accessible under **A. 
 +----------------------------------------------------------------------------------+
 ```
 
-- Four **big buttons** on the right, each with an icon, a label and a small hint (for example "1 change request pending").
+- Four **action rail buttons** on the right (A. Profile & Farmer ID, B. Land Management, C. Harvest Records, D. Batch / Lot Creation), each opening an interactive modal.
+- **Instant Modal Hydration & Dismissal:** All modals pre-hydrate in 0ms from local storage (`annasutra_cached_profile`), mount directly to `document.body` root level, and dismiss cleanly on backdrop click or Back/Escape key.
+- **Single Unified Sign-Out:** Authentication and Logout are handled strictly in the top navigation bar user menu across all roles. No redundant in-card logout buttons appear inside console headers.
 - Stats are tiles about 72 px tall. A click on a tile filters the ledger (for example a click on "In Transit" filters to in-transit lots).
 - **Mobile:** the action rail becomes a 2×2 grid at the top, stats scroll horizontally, and the ledger becomes cards.
 - The **Lot Ledger is one shared component**, used on both the Console Home and the Batch/Lot page, as you asked.
@@ -618,18 +614,19 @@ Statuses are the same as farmers: `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES
 
 ### 6.9 Account & Entity Deletion Option for All Business Entities (Approved)
 
-Every downstream business entity console (**Aggregator / FPO, Processor / Manufacturer, Wholesaler, Distributor, and Retailer**) must provide an identical **"Delete Entity Profile / Request Account Deletion"** option under **Profile and Premises** (`Building2`):
+Every downstream business entity console (**Aggregator / FPO, Processor / Manufacturer, Wholesaler, Distributor, and Retailer**) provides an identical **"Delete Entity Profile / Request Account Deletion"** option under **Profile and Premises** (`Building2`):
 
 - **Role Authorization:** Only users with the `OWNER` sub-role (Section 15 Decision 15) may trigger a deletion request. Staff/sub-users (`MANAGER`, `RECEIVING`, `DISPATCH`, `QC`, `VIEWER`) cannot access this action.
-- **Strict Zero-Active-Custody Pre-flight Checks:**
+- **Strict Zero-Active-Custody Pre-flight Checks (`GET /api/v1/me/profile/delete-request`):**
   - **Aggregator / Wholesaler / Distributor:** Must possess 0 active lots in custody. All inbound stock must either be fully dispatched, transferred, split/merged into zero residual balance, or marked closed.
   - **Processor / Manufacturer:** Must have no open or in-progress Production Runs. All produced batch lots must be handed over or marked closed.
   - **Retailer:** All shelf stock must be accounted for (marked `SOLD_OUT`, `WASTED`, or returned).
   - **Zero In-Transit Handovers:** No outgoing or incoming lots in `HANDOVER_REQUESTED` state.
-  - If any active inventory or transit remains, the deletion modal is blocked with a detailed breakdown of items that must be resolved first.
-- **Mandatory 2FA OTP Authentication:** The registered signatory's mobile number must verify an OTP to digitally authenticate the request.
-- **Entity Freezing:** Upon submission, the business transitions to `DELETION_REQUESTED`. All operational capabilities (accepting inbound handovers, initiating dispatches, starting production runs, or printing retail QRs) are locked.
-- **Admin Review & Anonymization:** Admin examines the request in the **Entity Deletion Queue**. Upon approval, business credentials are deactivated, commercial contact PII is expunged under DPDP Act 2023, while historical custody handovers and product transformation records remain cryptographically sealed and permanently intact.
+  - If any active inventory or transit remains, the deletion modal is blocked with a detailed itemized breakdown of transactions that must be settled first.
+  - **Session Timeout Fallback:** Unauthenticated or expired sessions offer a **Clear Local Profile & Exit** option to wipe local state cleanly.
+- **Mobile Verification Code (OTP):** The registered signatory's primary mobile must verify a 6-digit confirmation code (`action: 'request_otp'`) to authenticate the request.
+- **Entity Freezing:** Upon submission, the entity transitions to `DELETION_REQUESTED`. All operational capabilities (accepting inbound handovers, initiating dispatches, starting production runs, or printing retail QRs) are frozen. Can be cancelled by the owner at any time before Admin review.
+- **Admin Review & Anonymization:** Admin examines the request in the **Admin Console > Tab 5: Entity Deletion Requests Queue**. Upon approval, business credentials and user accounts are deactivated, commercial contact PII is expunged under DPDP Act 2023, while historical custody handovers and product transformation records remain cryptographically sealed and permanently intact.
 
 ---
 
@@ -665,20 +662,30 @@ Every downstream business entity console (**Aggregator / FPO, Processor / Manufa
 
 **Admin scan dashboard:** heatmap, scans over time, top products and regions, repeat scans, opt-in rate, counterfeit alerts, distance from retailer to scan location.
 
+### 8.1 Zero Fake Telemetry & Honest Analytics Standard
+
+- **Strict Authenticity:** All consumer telemetry and operational analytics must represent real, verifiable database records.
+- **Zero Mock / Hardcoded Data:** Hardcoded placeholder distances (such as "3.8 Km") or simulated scan counts are strictly forbidden in production Web UI and Android builds.
+- **Null / Empty State Handling:** If no scans have been recorded for a lot or region, the UI must display:
+  - *Total Consumer Scans:* `0 Scans (No Scans Recorded)`
+  - *Opt-in GPS Accuracy:* `- (Awaiting Telemetry)`
+  - *Avg Distance to Shelf:* `- (Awaiting Telemetry)`
+  - *Counterfeit Alerts:* `0 Anomalies Detected`
+- **Haversine Distance Computation:** Distances are computed mathematically using the Haversine formula between the physical coordinates of the dispensing retail premises and the GPS coordinates provided by the consenting consumer.
+
 ---
 
 ## 9. Admin Console
 
 | Module | Function |
 |---|---|
-| Verification Queue | Field-level approve/reject, document viewer, polygon review on satellite map, overlap alerts, SLA timer |
-| Change Requests | Old vs new values, approve/reject, history |
-| **Entity Deletion Requests** | Review submitted account deletion requests across all entity roles. Audits zero-custody compliance, reason, and owner OTP audit before final deactivation / PII erasure. |
+| **1. Verification Queue** | Field-level approve/reject, document viewer, polygon review on satellite map, overlap alerts, SLA timer |
+| **2. Profile Change Requests** | Old vs new values, approve/reject, document verification, audit history |
+| **3. Chain Explorer & Recall** | Search any batch code for full graph upstream and downstream; initiate multi-hop recall alerts |
+| **4. Consumer Scan GPS Analytics** | Verified consumer scan telemetry, opt-in GPS coordinates, calculated haversine distances, counterfeit alerts |
+| **5. Entity Deletion Requests** | Review submitted account deletion requests across all entity roles. Audits zero-custody compliance, reason, and owner mobile OTP audit before final deactivation / PII erasure. |
 | Entity Directory | All entities, filter by role / region / status, suspend / reactivate |
-| **Chain Explorer** | Search any code to get the full graph upstream (to farms) and downstream (to shelves and scans) |
-| **Recall Center** | Start a recall on any lot. The system finds every downstream lot, packet batch and retailer, notifies them, and the consumer page shows a red banner. It also traces back to the source farms. |
 | **Anomaly Center** | All system flags (table below), assign, resolve, add notes |
-| Consumer Analytics | Section 8 |
 | Master Data | Taxonomy, commodities, varieties, units, weight tolerance per commodity, conversion ratios, yield benchmarks, geofence radius, handover expiry |
 | Audit Log | Unchangeable log of who did what, when, from which device |
 | Reports | CSV, PDF lot certificates, EPCIS 2.0 export |
@@ -782,6 +789,36 @@ erDiagram
 | Temperature | `Thermometer` |
 | Photo | `Camera` |
 
+### 11.1 Clean Language & Anti-Buzzword Standard
+
+All user interfaces (Web UI, Android APK, SMS templates, and exports) must adhere to professional, truthful agricultural terminology. Exaggerated legalistic, cryptographic, or fake regulatory slogans are prohibited:
+
+| Prohibited Exaggeration | Approved Standard Terminology |
+| :--- | :--- |
+| `Right to Erasure • DPDP Act 2023` | **Account Settings** / **Request Account Deletion** |
+| `Failed to connect to verification ledger` | **Unable to connect to server. Please check network connection.** |
+| `Under the AnnaSutra Diamond Rules...` | **Entities with active dispatches or lots in transit cannot be deleted...** |
+| `Checking active dispatches and custody ledger...` | **Checking active dispatches and stock...** |
+| `Pre-flight Checks Clear: Zero active in-transit dispatches` | **Verification Check Clear: No active in-transit dispatches** |
+| `Statutory DPDP Act 2023 protected credentials` | **Sensitive identity and bank details. Masked for security.** |
+| `Cadastral Geo-Mapping • EUDR Ready` | **Farm Plot & Boundary Mapping** |
+| `Sovereign Custody Checkpoint` | **Custody Checkpoint & Handover Verification** |
+| `NATIONAL SOVEREIGN VALUE CHAIN` | **TRACEABILITY ECOSYSTEM** |
+| `C-DAC Sovereign Cloud Node` | **National Cloud Node** |
+| `C-DAC Sovereign Digital Mandate` | **Technical Standards & Mandate** |
+| `Data Leakage (DPDP)` | **Data Privacy & Security** |
+| `3. Owner 2FA OTP Verification` | **3. Mobile Verification Code** |
+| `SOVEREIGN VERIFIER AUTHORITY` | **Admin Verifier** |
+
+### 11.2 Modal Lifecycle & Universal Dismissal Standard
+
+- **Root Mounting:** All modal dialogs must attach directly to the root document (`document.body` in Web, full-screen Dialog in Android). Modals must never be nested inside components that have `display: none` or overflow clipping.
+- **Instant Pre-Hydration (0ms):** When an action modal is invoked, it must instantly render using the cached profile/state stored in local storage (`annasutra_cached_profile`), followed by a non-blocking background server sync.
+- **Universal Dismissal:**
+  - Tapping anywhere on the semi-transparent backdrop immediately closes the modal.
+  - Pressing the keyboard `Escape` key or Android hardware `Back` button immediately closes the modal.
+- **Session Expiry & Local Purge:** If a modal pre-flight returns HTTP 401/403, it must display a clean "Session Not Authenticated" state with an option to **Clear Local Profile & Exit**, wiping stored tokens (`localStorage` and `sessionStorage`) and redirecting to the login screen.
+
 ---
 
 ## 12. Notifications
@@ -840,4 +877,7 @@ In-app + SMS (+ WhatsApp later), plain text only. Triggers: registration status,
 | 19 | Exporter and HoReCa | Retailer (End Seller) sub-types for now | **Approved** |
 | 20 | Farmer on consumer page | Photo if the farmer consents, masked details only (first name + surname initial, district) | **Approved** |
 | 21 | Multi-Lot Truck Dispatch & Rapid-Scan Acceptance | Master Truck Gate-Pass QR + continuous camera loop to accept multi-lot shipments in one screen | **Approved** |
-| 22 | Entity Profile Deletion Option (Farmer and all business entities) | Every entity console provides a "Delete Entity Profile / Request Account Deletion" option under Profile & Premises. Requires owner 2FA OTP + zero active in-transit lots, transitions entity to `DELETION_REQUESTED`, and requires Admin approval. Upon approval, personal PII is scrubbed under DPDP Act 2023 while preserving immutable historical ledger hash chains. | **Approved** |
+| 22 | Entity Profile Deletion Option (Farmer and all business entities) | Every entity console provides a "Request Account Deletion" option under Profile & Premises. Requires owner mobile OTP + zero active dispatches, transitions entity to `DELETION_REQUESTED`, and requires Admin approval. Draft/unregistered users are deleted immediately. Upon approval, personal PII is scrubbed under DPDP Act 2023 while preserving immutable historical ledger hash chains. | **Approved** |
+| 23 | Zero Fake Data & Anti-Buzzword Standard | All telemetry, distances, scan counts, and lot records must be genuine database counts or mathematically calculated haversine distances. No simulated or mock data anywhere in production UI or consumer views. Elimination of exaggerated legal/crypto slogans. | **Approved** |
+| 24 | Root Modal Lifecycle, 0ms Cache Hydration & Universal Dismissal | All modals mount directly to the window root (`document.body`), pre-hydrate from local cached state in 0ms, and dismiss predictably on outside backdrop tap or Back/Escape key. | **Approved** |
+| 25 | Unified Navigation & Single Logout Architecture | Console headers must not contain duplicate in-card logout buttons. Authentication and session logout are strictly unified in the primary top navigation bar user profile menu across all roles. | **Approved** |
