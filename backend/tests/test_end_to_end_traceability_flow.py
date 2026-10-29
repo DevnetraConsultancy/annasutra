@@ -20,18 +20,33 @@ class TestEndToEndTraceabilityFlow:
         data = resp.json()
         assert data["authenticated"] is True
         assert data["auth_provider"] == "GOOGLE"
-        farmer_uid = data["farmer_uid"]
+        # REQUIREMENT 0: Unapproved producer must NOT have a farmer_uid upon initial sign-in
+        assert not data.get("farmer_uid")
+
+        # Check profile endpoint returns null / empty farmer_uid before admin approval
+        token = data["access_token"]
+        client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}", HTTP_X_ENTITY_PHONE="+919876543210")
+        prof_resp = client.get("/api/v1/me/profile")
+        assert prof_resp.status_code == 200
+        assert not prof_resp.json().get("farmer_uid")
+
+        # Admin approves the producer registration
+        from apps.identity.models import EntityProfile, AppUser
+        from apps.identity.services.entity_allocation import approve_entity_registration
+        profile = EntityProfile.objects.get(phone_e164="+919876543210")
+        admin_user = AppUser.objects.filter(role__in=["OWNER", "STAFF"]).first()
+        res = approve_entity_registration(entity=profile, admin_user=admin_user)
+        assert res["status"] == "VERIFIED"
+        farmer_uid = res["farmer_uid"]
         # Format: YYYYDDHHMMSS (12 digits) + 919876543210 (12 digits) = 24 digits
         assert farmer_uid.isdigit()
         assert farmer_uid.endswith("919876543210")
         assert len(farmer_uid) == 24
 
-        # Check profile endpoint returns the same deterministic farmer_uid
-        token = data["access_token"]
-        client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}", HTTP_X_ENTITY_PHONE="+919876543210")
-        prof_resp = client.get("/api/v1/me/profile")
-        assert prof_resp.status_code == 200
-        assert prof_resp.json()["farmer_uid"] == farmer_uid
+        # Now verified profile endpoint returns the minted deterministic farmer_uid
+        prof_resp2 = client.get("/api/v1/me/profile")
+        assert prof_resp2.status_code == 200
+        assert prof_resp2.json()["farmer_uid"] == farmer_uid
 
     def test_all_10_product_categories_and_full_custody_handover_to_retailer(self):
         farmer_client = APIClient()

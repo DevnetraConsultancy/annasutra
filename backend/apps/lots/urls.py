@@ -16,6 +16,8 @@ from .views import (
     LotWasteView,
     LotSaleView,
     LotLabelReissueView,
+    LotQrImageView,
+    LotStickerPdfView,
 )
 
 urlpatterns = [
@@ -41,4 +43,8 @@ urlpatterns = [
     path("<str:code>/waste", LotWasteView.as_view(), name="lot_waste"),
     path("<str:code>/sales", LotSaleView.as_view(), name="lot_sales"),
     path("<str:code>/label-reissue", LotLabelReissueView.as_view(), name="lot_label_reissue"),
+    path("<str:code>/qr-image", LotQrImageView.as_view(), name="lot_qr_image"),
+    path("<str:code>/qr-image/", LotQrImageView.as_view(), name="lot_qr_image_slash"),
+    path("<str:code>/sticker-pdf", LotStickerPdfView.as_view(), name="lot_sticker_pdf"),
+    path("<str:code>/sticker-pdf/", LotStickerPdfView.as_view(), name="lot_sticker_pdf_slash"),
 ]

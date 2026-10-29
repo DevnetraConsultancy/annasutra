@@ -286,6 +286,7 @@ def _build_lot_item(lot: Lot) -> dict:
 
     return {
         "lot_id": str(lot.lot_id),
+        "batch_id": lot.public_code,
         "public_code": lot.public_code,
         "farmer_uid": farmer_uid,
         "product_category_code": cat_code,
@@ -388,7 +389,7 @@ class LotListCreateView(APIView):
         event_id_str = data.get("event_id")
         label_serial = data.get("label_serial")
         product_data = data.get("product")
-        net_qty = data.get("net_qty_kg")
+        net_qty = data.get("net_qty_kg") if data.get("net_qty_kg") is not None else data.get("quantity_kg")
         event_time_str = data.get("event_time") or timezone.now().isoformat()
 
         # Handle simplified crop string in product_data if passed from simple form
@@ -398,7 +399,7 @@ class LotListCreateView(APIView):
             product_data = {"name": data.get("crop"), "variety": data.get("variety", "")}
 
         prod_name_hint = (product_data or {}).get("name", "") if isinstance(product_data, dict) else ""
-        raw_cat = data.get("product_category_code") or data.get("category") or "VG"
+        raw_cat = data.get("product_category_code") or data.get("crop_category") or data.get("category") or "VG"
         cat_code, cat_name = resolve_product_category(raw_cat, prod_name_hint)
 
         user_org = request.user.org
@@ -631,7 +632,7 @@ class LotDetailView(APIView):
         elif not prod_data and data.get("crop"):
             prod_data = {"name": data.get("crop"), "variety": data.get("variety", "")}
 
-        net_qty = data.get("net_qty_kg")
+        net_qty = data.get("net_qty_kg") if data.get("net_qty_kg") is not None else data.get("quantity_kg")
         if net_qty is not None:
             try:
                 net_qty = float(net_qty)
@@ -640,12 +641,15 @@ class LotDetailView(APIView):
 
         with transaction.atomic():
             # Update product if changed
-            if prod_data.get("name"):
+            if prod_data.get("name") or data.get("variety") or data.get("crop"):
+                cur_name = prod_data.get("name") or data.get("crop") or (lot.product.name if lot.product else "Produce")
+                cur_variety = prod_data.get("variety") or data.get("variety") or (lot.product.variety if lot.product else "")
                 product, _ = Product.objects.get_or_create(
-                    name=prod_data.get("name"),
-                    variety=prod_data.get("variety", ""),
+                    name=cur_name,
+                    variety=cur_variety,
                 )
                 lot.product = product
+                lot.save(update_fields=["product"])
 
             # Update origin plot if provided
             plot_id_val = data.get("plot_id") or data.get("origin_plot_id")
@@ -1300,3 +1304,43 @@ class LotLabelReissueView(APIView):
         from apps.ledger.services.correction_service import reissue_label
         result = reissue_label(request.user, code, request.data)
         return Response(result, status=status.HTTP_201_CREATED)
+
+
+class LotQrImageView(APIView):
+    """Return crisp PNG image bytes of QR code pointing to public lot URL."""
+
+    def get(self, request, code):
+        from apps.identity.services.pdf_sheet import generate_qr_image_bytes
+        from django.http import HttpResponse
+
+        url = f"https://annasutra.in/l/{code}"
+        buf = generate_qr_image_bytes(url)
+        return HttpResponse(buf.getvalue(), content_type="image/png")
+
+
+class LotStickerPdfView(APIView):
+    """Return printable A4 sticker sheet PDF for a lot."""
+
+    permission_classes = [IsVerifiedOrg]
+
+    def get(self, request, code):
+        from apps.identity.services.pdf_sheet import render_a4_sticker_sheet
+        from django.http import HttpResponse
+
+        lot = Lot.objects.select_related("created_by_org").filter(public_code=code).first()
+        if not lot:
+            raise exceptions.NotFound({"detail": "Lot not found.", "code": "NOT_FOUND"})
+
+        org_name = lot.created_by_org.name if lot.created_by_org else "AnnaSutra"
+        count = int(request.query_params.get("count", 24))
+        count = max(1, min(count, 96))
+        serials = [code] * count
+
+        pdf_bytes = render_a4_sticker_sheet(
+            serials=serials,
+            entity_code=code,
+            org_name=org_name,
+        )
+        response = HttpResponse(pdf_bytes, content_type="application/pdf")
+        response["Content-Disposition"] = f'inline; filename="lot_stickers_{code}.pdf"'
+        return response

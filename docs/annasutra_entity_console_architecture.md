@@ -192,6 +192,35 @@ flowchart LR
 | H. Bank (future payments) | Account holder, Account no., IFSC, Passbook / cancelled cheque | Optional now |
 | I. Consents | Terms, DPDP data consent, **Consumer visibility toggles** (show my first name / village / photo), OTP e-sign | Required |
 
+### 4.2.1 Unique Farmer ID Issuance Policy (First-Time Registration)
+
+- **Strict Pre-Approval Policy:** First-time producer registrations in status `DRAFT`, `SUBMITTED`, or `NEEDS_CHANGES` **MUST NOT** receive or display a Unique Farmer ID.
+- **Application Reference:** While review is pending, the producer interface and admin review displays an Application Reference code (`APP-XXXXXXXX`).
+- **Minting Upon Admin Approval:** The deterministic 24-digit Unique Farmer ID (`YYYYDDHHMMSS` + `91` + 10-digit mobile number) is minted and sealed into `EntityRoleDetails` exclusively at the moment of Admin approval (`approve_entity_registration`).
+
+### 4.3 A. Profile (5-Step Registration Form Inspection & Data Updation)
+
+The original 5-step registration data remains permanently accessible under **A. Profile** in the Producer Console for continuous inspection, self-service updates, and formal change requests:
+
+1. **Step 1: Basic Info**
+   - Applicant Name, Legal Organisation, Primary Phone, Email, Address Lines 1 & 2, Village/Town, District, State, Pincode.
+   - *Self-Editable:* Alternate Phone, Email, Address Line 2, Preferred Language.
+   - *Locked (Admin Review):* Legal First/Last Name, Primary Phone, Legal Jurisdiction.
+2. **Step 2: Farm Plots & Cadastral Boundaries**
+   - Registered farm parcels, survey numbers, acreage, and GeoJSON boundary geometry.
+   - *Self-Editable:* Plot nickname, seasonal notes.
+   - *Locked (Admin Review):* Total registered land acreage, cadastral survey numbers, plot boundary polygon re-mapping.
+3. **Step 3: Cultivation Profile**
+   - Primary and secondary commodities (e.g. Potato, Paddy, Turmeric), irrigation infrastructure, farming practice (Conventional, Organic NPOP, Natural Farming).
+   - *Self-Editable:* Secondary seasonal crops, irrigation method, organic certification notes.
+4. **Step 4: Identity & Bank Settlement**
+   - Masked PAN (`•••• ••••`), voluntary Aadhaar last-4 digits, Bank name, masked Account number, IFSC, UPI handle.
+   - *Strictly Locked (Admin Review):* All financial settlement details and statutory KYC credentials require a Change Request with documentary proof.
+5. **Step 5: Consent, Change Requests & Account Review**
+   - Immutable DPDP Act 2023 statutory consent timestamp and agreement terms.
+   - Interactive tracking of all submitted Change Requests (`PENDING`, `APPROVED`, `REJECTED`).
+   - Access to **Danger Zone: Entity Account Deletion Request**.
+
 ### 4.3 A. Profile
 
 - **Header:** photo, name, `BadgeCheck` Verified badge, Entity ID (masked, with a copy button), member since.

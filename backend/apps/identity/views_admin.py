@@ -842,9 +842,7 @@ class AdminConsumerScansView(APIView):
         from apps.alerts.models import Alert, ScanLog
 
         total_scans = ScanLog.objects.count()
-        alerts_count = Alert.objects.filter(
-            alert_type__in=["SUSPICIOUS_SCAN", "DUPLICATE_SCAN", "TAMPER_SUSPECT"]
-        ).count()
+        alerts_count = Alert.objects.filter(status="OPEN").count()
 
         if total_scans == 0:
             return Response({
@@ -855,7 +853,7 @@ class AdminConsumerScansView(APIView):
                 "scans": [],
             }, status=status.HTTP_200_OK)
 
-        gps_scans = ScanLog.objects.exclude(lat=None).exclude(lng=None)
+        gps_scans = ScanLog.objects.exclude(coarse_area=None)
         gps_count = gps_scans.count()
         opt_in_gps_pct = round((gps_count / total_scans) * 100, 1) if total_scans > 0 else 0.0
 
@@ -863,13 +861,12 @@ class AdminConsumerScansView(APIView):
         scans_data = []
         for s in recent_logs:
             scans_data.append({
-                "id": s.id,
+                "id": s.scan_id,
                 "serial": s.serial,
-                "lat": s.lat,
-                "lng": s.lng,
-                "city_coarse": s.city_coarse or "Undisclosed",
-                "region_coarse": s.region_coarse or "India",
-                "user_agent": s.user_agent or "Mobile Browser",
+                "city_coarse": s.coarse_area or "Undisclosed",
+                "region_coarse": s.coarse_area or "India",
+                "result": s.result,
+                "user_agent": "Mobile Browser",
                 "scanned_at": s.scanned_at.isoformat() if s.scanned_at else timezone.now().isoformat(),
             })
 
