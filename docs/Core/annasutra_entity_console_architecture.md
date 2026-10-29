@@ -1,7 +1,7 @@
 # AnnaSutra: Core Entity Console Architecture (Gold Standard — Locked)
 
 > [!IMPORTANT]
-> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 25 architectural decisions in Section 15 are finalized and synchronized with Web UI/UX.
+> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 26 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
 
 ---
 
@@ -27,6 +27,7 @@ AnnaSutra is a farm-to-fork trust ledger. A farmer logs in, sends one registrati
 | 10 | Premium UI | Uses one icon system (Lucide) and colour + icon + text status chips. No emojis anywhere: UI, labels, SMS or exports. |
 | 11 | Truthful telemetry & zero mock data | All scan metrics, telemetry, distances, and quantities reflect genuine database records. No hardcoded or synthetic data. |
 | 12 | Instant responsiveness & root modals | All modals pre-hydrate in 0ms from local cache, mount to root body/viewport level, and dismiss reliably via backdrop tap or Back/Escape key. |
+| 13 | Web-First Master & Android Platform Parity | Web UI/UX is built and verified first as the master design benchmark. Android mirrors every Web feature, button, and function 100% in its own native, idiomatic mobile UX (e.g. Bottom Sheets, native CameraX ML Kit scanning, Material 3, swipe actions). Android continuously follows and stays strictly synchronized with Web capabilities. |
 
 ---
 
@@ -819,6 +820,18 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
   - Pressing the keyboard `Escape` key or Android hardware `Back` button immediately closes the modal.
 - **Session Expiry & Local Purge:** If a modal pre-flight returns HTTP 401/403, it must display a clean "Session Not Authenticated" state with an option to **Clear Local Profile & Exit**, wiping stored tokens (`localStorage` and `sessionStorage`) and redirecting to the login screen.
 
+### 11.3 Web-First Master & Android Platform-Idiomatic Parity (Continuous Sync)
+
+- **Web UI/UX as the Master Design Benchmark:** The Web interface is developed and verified first as the source of truth for all workflows, entity console screens, action rail buttons, modal dialogs, status badges, and business rules. Whenever a new feature, functional button, tab, or verification rule is introduced on Web, Android must implement its synchronized equivalent.
+- **Platform-Idiomatic Parity ("Same feature, native mobile way"):** Android does not mechanically clone desktop web layouts (such as wide desktop data tables, mouse-hover tooltips, or popup browser windows). Instead, Android translates every Web capability into idiomatic, mobile-first Android UX:
+  * *Action Rails & Buttons:* Web right-hand action rail buttons (`A. Profile & Farmer ID`, `B. Land Management`, `C. Harvest Records`, `D. Batch / Lot Creation`) map to mobile bottom action bars, floating action cards, or 2×2 grid rails.
+  * *Modals:* Web centered modals map to native Android Modal Bottom Sheets (draggable/collapsible) or full-screen dialogs.
+  * *Lot Ledger:* Web desktop table rows map to native Material 3 cards with swipe actions, filter chips, and expandable details.
+  * *QR / Barcode Scanning:* Web browser camera scanning maps to native CameraX + Google ML Kit with zero-latency auto-focus, continuous rapid-scan loops, torch toggle, and haptic feedback.
+  * *Dismissal:* Web backdrop click and `Escape` key map natively to tapping the bottom sheet scrim or pressing the Android hardware/gesture `Back` button.
+  * *Data & Cache:* Instant 0ms pre-hydration uses Android Room / SharedPreferences (`annasutra_cached_profile`), followed by silent background network refresh.
+- **Zero Feature Drift:** Android must never omit a feature that exists in Web, nor invent unaligned divergence. If a button exists on Web (e.g., Request Account Deletion, Cancel Deletion, Batch Creation, Handover), it MUST exist in the Android APK with matching backend API endpoints, payload contracts, and error handling. Android always follows and stays synchronized with the Web version.
+
 ---
 
 ## 12. Notifications
@@ -881,3 +894,4 @@ In-app + SMS (+ WhatsApp later), plain text only. Triggers: registration status,
 | 23 | Zero Fake Data & Anti-Buzzword Standard | All telemetry, distances, scan counts, and lot records must be genuine database counts or mathematically calculated haversine distances. No simulated or mock data anywhere in production UI or consumer views. Elimination of exaggerated legal/crypto slogans. | **Approved** |
 | 24 | Root Modal Lifecycle, 0ms Cache Hydration & Universal Dismissal | All modals mount directly to the window root (`document.body`), pre-hydrate from local cached state in 0ms, and dismiss predictably on outside backdrop tap or Back/Escape key. | **Approved** |
 | 25 | Unified Navigation & Single Logout Architecture | Console headers must not contain duplicate in-card logout buttons. Authentication and session logout are strictly unified in the primary top navigation bar user profile menu across all roles. | **Approved** |
+| 26 | Web-First Master & Android Platform Parity Architecture | Web UI/UX is the primary design benchmark. Android continuously synchronizes and mirrors 100% of Web features, buttons, and workflows, implemented via idiomatic native mobile UX (Bottom Sheets, Material 3, CameraX, Haptics). Android always follows what the Web version has. | **Approved** |
