@@ -376,27 +376,22 @@ The original 5-step registration dataset remains permanently accessible under **
      - Upon Admin approval, the entity transitions to `DEACTIVATED`. Personal identifying data (photos, phone number, bank details, KYC documents) is purged and anonymized from active operational storage.
      - Under **Diamond Rule 2 (Append-Only Ledger)**, historical transaction blocks, custody handshakes, hash chains, and consumer provenance timelines are preserved immutably using masked, cryptographically sealed references (e.g. `[Deactivated Producer #20261028-155226-91-98XXXXX210]`). Downstream batches and consumer scan integrity are never broken.
 
-### 4.4 B. Land Management
+### 4.4 Unified Farm Plots & Crop Class Allocation
 
-**Structure:** Land Holding (total declared area), then Plots (polygons), then Season Allocations (crop on part of a plot)
+Crop Class Allocation is consolidated directly into Step 2 (`Farm Plots & Land Holdings`) table as an intuitive dropdown selector per plot parcel, eliminating duplicate land management screens and redundant button B from the console rail.
 
-**Plots**
-- Draw a polygon on a satellite map, or use **walk-the-boundary** mode (the phone records GPS while the farmer walks the field edge).
-- Area is calculated automatically from the polygon. If the declared area and the measured area differ by more than 10%, a **mismatch flag** is raised.
-- **Overlap detection:** the system flags any polygon that overlaps another farmer's plot (stops double registration and fraud).
-- Per plot: name, land record no., ownership, soil type, irrigation, plot photo.
-- Plot statuses: `PENDING_VERIFICATION`, `VERIFIED`, `REJECTED`.
+**Structure:** Land Holding (total declared area), then Plots & Parcels with inline Crop Class Allocation.
 
-**Season Allocation** (your "5 acres split across crops")
-- Choose Season (Kharif / Rabi / Zaid + year), then Plot, then acres, then Crop Class, Commodity and Variety. Also record sowing date, expected harvest date, seed source / seed lot, and an optional sub-polygon.
-- **Rule:** the sum of allocations cannot exceed the plot area in that season. The total across plots cannot exceed the total land.
-- **Visual:** a donut chart, for example "5.0 ac total: FG 2.0, VG 1.5, PU 1.0, Unallocated 0.5".
-- Allocations are stored per season, so history is never overwritten.
+**Plots & Crop Allocation:**
+- Each parcel records Plot Name, Survey / Khasra No., Area in Acres, and Crop Class Allocation (selected from the 10 agricultural categories: FG, VG, FR, PU, OS, SP, PL, FL, MD, LS).
+- Area is calculated and aggregated automatically.
+- Per plot: name, survey/khasra number, area, crop class allocation.
+- Direct self-editing in Step 2: Producers can add or remove plots and update crop allocations seamlessly.
 
 > [!TIP]
-> Plot polygons also make AnnaSutra ready for the **EU Deforestation Regulation (EUDR)**, which requires plot geolocation for coffee, rubber, soy and cattle exports. That is a premium selling point later.
+> Consolidating crop class allocation into the farm plots ledger eliminates redundant navigation loops, providing a single source of truth for plot yield baselines and harvest accounting.
 
-### 4.5 C. Harvest Records
+### 4.5 B. Harvest Records
 
 | Field | Notes |
 |---|---|
@@ -411,7 +406,7 @@ The original 5-step registration dataset remains permanently accessible under **
 - **Unlotted balance:** each harvest shows "42 q harvested, 36 q lotted, 6 q remaining". You cannot create more lots than you harvested.
 - **Forms change by category:** LS (dairy, honey, eggs, fish) uses a *Production Record* (herd or hive or pond, collection date, shift AM/PM, fat/SNF for milk) instead of plot harvest.
 
-### 4.6 D. Batch / Lot Creation
+### 4.6 C. Batch / Lot Creation
 
 **Create Lot**
 
@@ -452,28 +447,28 @@ The original 5-step registration dataset remains permanently accessible under **
 
 ```
 +----------------------------------------------------------------------------------+
-| [Logo]  Ramesh Kumar [BadgeCheck Verified]  ID 20261028-...-98XXXXX210  [Lang] [Bell] |
+| [Logo]  Ramesh Kumar [Green Verified Tickmark]  ID 20261028-...-98XXXXX210 [Lang] [Bell] |
 +--------------------------------------------------------------+-------------------+
 | STATS (compact KPI tiles, left)                              | ACTION RAIL       |
 | Total Land 5.0 ac | Allocated 4.5 ac | Active Crops 3        | [UserRound]       |
-| Harvest (season) 42 q | Unlotted 6 q | Lots 18               |  Profile          |
-| In Transit 2 | Custody Locked 14 | Pending Requests 1        | [LandPlot]        |
-| Avg Farm-to-Shelf 6.2 d | Consumer Scans 1,284               |  Land Management  |
-|                                                              | [Wheat]           |
-|                                                              |  Harvest Records  |
+| Harvest (season) 42 q | Unlotted 6 q | Lots 18               |  A. Profile       |
+| In Transit 2 | Custody Locked 14 | Pending Requests 1        | [Wheat]           |
+| Avg Farm-to-Shelf 6.2 d | Consumer Scans 1,284               |  B. Harvest       |
 |                                                              | [PackagePlus]     |
-|                                                              |  Batch / Lot      |
+|                                                              |  C. Batch / Lot   |
 +--------------------------------------------------------------+-------------------+
 | LOT LEDGER  [Search] [Status] [Crop] [Season] [Export CSV/PDF]                    |
 | Lot Code | Crop | Units | Net Wt | Price/kg | Status | Custodian | Days | Actions  |
 +----------------------------------------------------------------------------------+
 ```
 
-- Four **action rail buttons** on the right (A. Profile & Farmer ID, B. Land Management, C. Harvest Records, D. Batch / Lot Creation), each opening an interactive modal.
+- Three **action rail buttons** on the right (A. Profile & Farmer ID, B. Harvest Records, C. Batch / Lot Creation), each opening an interactive modal.
+- **Instagram-Style Verified Tickmark:** Admin-verified entities display a green circular verified tickmark directly beside their name, eliminating redundant text pills (`[✓] VERIFIED PRODUCER`) and status boxes (`STATUS: VERIFIED`).
+- **Edge-to-Edge Layout:** Viewport utilizes full-width edge-to-edge layout with tight whitespace, removing unnecessary container cards and border boxes.
 - **Instant Modal Hydration & Dismissal:** All modals pre-hydrate in 0ms from local storage (`annasutra_cached_profile`), mount directly to `document.body` root level, and dismiss cleanly on backdrop click or Back/Escape key.
 - **Single Unified Sign-Out:** Authentication and Logout are handled strictly in the top navigation bar user menu across all roles. No redundant in-card logout buttons appear inside console headers.
 - Stats are tiles about 72 px tall. A click on a tile filters the ledger (for example a click on "In Transit" filters to in-transit lots).
-- **Mobile:** the action rail becomes a 2×2 grid at the top, stats scroll horizontally, and the ledger becomes cards.
+- **Mobile:** the action rail becomes a compact mobile action bar, stats scroll horizontally, and the ledger becomes cards.
 - The **Lot Ledger is one shared component**, used on both the Console Home and the Batch/Lot page, as you asked.
 
 ### 4.8 Lot Ledger (shared component)
@@ -904,7 +899,8 @@ erDiagram
 ## 11. Premium UI System (no emojis)
 
 - **Icons:** Lucide only, 1.75 stroke, sizes 16 / 20 / 24.
-- **Status:** always icon + text + colour (accessible; never colour alone).
+- **Instagram-Style Verified Tickmark Standard:** Admin-verified entities receive an official green circular verified tickmark SVG placed directly beside their trade name across console headers and profile modals. All redundant text banners, pills, and status boxes (e.g. `[✓] VERIFIED PRODUCER` pill above the title, `Farmer Profile` subtitle, `AnnaSutra • Verified Producer` subtitle, and white `STATUS: VERIFIED` boxes) are eliminated.
+- **Edge-to-Edge Layout & Space Compaction:** Viewports utilize edge-to-edge full width with compact padding (`12px 16px`), eliminating heavy container cards and unnecessary vertical/horizontal whitespace waste.
 - **Density:** 40 px table rows, sticky headers, skeleton loaders, toast confirmations, empty-state illustrations (SVG, not emoji).
 - **Farmer-friendly:** 48 px touch targets, Hindi + regional languages, numbers shown in the local format, voice hints later.
 - **Maps:** satellite basemap, polygon draw / edit / snap tools, walk-the-boundary mode.
@@ -923,7 +919,7 @@ erDiagram
 | In Transit | `Truck` |
 | Accepted | `PackageCheck` |
 | QR / Scan | `QrCode` / `ScanLine` |
-| Verified | `BadgeCheck` |
+| Verified (Instagram-style) | Green circular `BadgeCheck` SVG beside name |
 | Pending | `Clock` |
 | Discrepancy | `TriangleAlert` |
 | Recall | `OctagonAlert` |
@@ -943,9 +939,11 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
 
 | Prohibited Exaggeration | Approved Standard Terminology |
 | :--- | :--- |
-| `AnnaSutra • Verified Producer Node` | **AnnaSutra • Verified Producer** |
+| `Mass Balance Anti-Laundering Check` | **C. Harvest Records & Plot Yield Accounting** |
+| `AnnaSutra • Verified Producer Node` | **AnnaSutra • Verified Producer** (or name with green tickmark) |
 | `Producer Profile & Identity` | **Farmer Profile** / **Producer Profile** |
 | `ACTIVE NODE` / `VERIFIED STATUS` | **ACTIVE** / **VERIFIED** |
+| `STATUS: VERIFIED` box | **Green Verified Tickmark beside name** |
 | `Step 4: Statutory Identity & Bank Settlement` | **Step 4: KYC Verification** / **4. KYC** |
 | `Danger Zone: Account & Profile Deletion` | **Account Deletion** |
 | `Right to Erasure • DPDP Act 2023` | **Account Settings** / **Request Account Deletion** |
@@ -1101,3 +1099,6 @@ In-app + email to the account Gmail (always) + SMS only if a verified mobile exi
 | 39 | Vercel & Cloned Local PC UI/UX Exact Parity | Any user cloning the GitHub repo on their computer gets the identical Web UI/UX as Vercel by running `run_local.bat` / `run_local.sh`, executing the exact same Django templates and static assets. | **Approved** |
 | 40 | Custodian-Only Lot Append Authorization Gate | Operational inspection and scan update appending (`POST /api/v1/lots/{id}/scan-update/`) is strictly restricted to the current custodian or creator. Unauthorized entities receive HTTP 403 Forbidden. | **Approved** |
 | 41 | Mandatory 28-Point Blueprint Test Suite Enforcement | A dedicated automated test suite (`test_blueprint_gold_standard.py`) enforces C1–C16, ASVS security headers, DPDP Act 2023 consent, UI emoji absence, and database integrity before deployment. | **Approved** |
+| 42 | Instagram-Style Verified Tickmark & Edge-to-Edge Compact Layout Standard | Admin-verified entities display an authentic green circular verified tickmark badge directly beside their trade name across console headers and modals. Redundant status boxes and text badges (`STATUS: VERIFIED`, `[✓] VERIFIED PRODUCER`) are abolished. Console viewports utilize edge-to-edge compact layout without nested container borders or wasted screen space. | **Approved** |
+| 43 | Consolidated Plot-Level Crop Class Allocation & Clean Harvest Logging | Producer action rail button `B. Land & Season Allocation` is retired. Crop class allocation is unified directly into the Farm Plots & Land Holdings table in Profile Step 2. Harvest logging interface is simplified by removing buzzwords like `Mass Balance Anti-Laundering Check` and aligning gross yield payload validation. | **Approved** |
+| 44 | Strict Zero Non-Admin Test Entity State (Clean Registration Pipeline) | Database initialization, migrations, and cold boots strictly purge any residual non-admin test entities, ensuring 100% fresh self-registration workflows for all incoming real-world participants across every role. | **Approved** |

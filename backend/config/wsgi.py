@@ -65,6 +65,37 @@ def _ensure_production_database_schema():
                         cursor.execute("ALTER TABLE entity_profile ADD UNIQUE KEY uq_user_role (user_id, role);")
                     except Exception:
                         pass
+
+                    # Purge any legacy non-admin entity data in cloud MySQL
+                    try:
+                        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+                        cursor.execute("DELETE FROM entity_plot;")
+                        cursor.execute("DELETE FROM entity_sensitive;")
+                        cursor.execute("DELETE FROM entity_role_details;")
+                        cursor.execute("DELETE FROM verification_review;")
+                        cursor.execute("DELETE FROM profile_change_log;")
+                        cursor.execute("DELETE FROM entity_deletion_request;")
+                        cursor.execute("DELETE FROM entity_consent_record;")
+                        cursor.execute("DELETE FROM lot_edge;")
+                        cursor.execute("DELETE FROM lot_balance;")
+                        cursor.execute("DELETE FROM handover;")
+                        cursor.execute("DELETE FROM inspection;")
+                        cursor.execute("DELETE FROM evidence;")
+                        cursor.execute("DELETE FROM lab_certificate;")
+                        cursor.execute("DELETE FROM scan_log;")
+                        cursor.execute("DELETE FROM alert;")
+                        cursor.execute("DELETE FROM recall;")
+                        cursor.execute("DELETE FROM public_view;")
+                        cursor.execute("DELETE FROM trace_event;")
+                        cursor.execute("DELETE FROM lot;")
+                        cursor.execute("DELETE FROM product;")
+                        cursor.execute("DELETE FROM entity_profile WHERE email != 'devnetraconsultancy@gmail.com';")
+                        cursor.execute("DELETE FROM app_user WHERE email != 'devnetraconsultancy@gmail.com';")
+                        cursor.execute("DELETE FROM organisation WHERE org_type != 'OPERATOR';")
+                        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+                    except Exception:
+                        pass
+
         except Exception as ddl_err:
             import logging
             logging.getLogger("annasutra.wsgi").warning("Schema safeguard notice: %s", ddl_err)

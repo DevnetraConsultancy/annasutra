@@ -6,6 +6,31 @@
 
 (function () {
   'use strict';
+  // Instagram-style green tickmark verified badge
+  function getVerifiedInstagramTickHtml(isVerified) {
+    if (!isVerified) return '';
+    return '<span class="annasutra-verified-tick" title="Admin Verified" style="display: inline-flex; align-items: center; justify-content: center; width: 19px; height: 19px; border-radius: 50%; background: #10b981; color: #ffffff; flex-shrink: 0; margin-left: 6px; vertical-align: middle; box-shadow: 0 1px 3px rgba(16,185,129,0.35);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
+  }
+  window.getVerifiedInstagramTickHtml = getVerifiedInstagramTickHtml;
+
+  // Client-side purge of stale test profiles (e.g. MS Biswas Agro Ltd.)
+  (function purgeStaleTestProfiles() {
+    try {
+      const raw = localStorage.getItem('annasutra_cached_profile') || '';
+      const phone = localStorage.getItem('annasutra_phone') || '';
+      if (raw.includes('Biswas') || raw.includes('8444997803') || phone.includes('8444997803')) {
+        localStorage.removeItem('annasutra_cached_profile');
+        localStorage.removeItem('annasutra_farmer_uid');
+        localStorage.removeItem('annasutra_cached_plots');
+        localStorage.removeItem('annasutra_cached_lots');
+        localStorage.removeItem('annasutra_access_token');
+        localStorage.removeItem('annasutra_phone');
+        localStorage.removeItem('annasutra_email');
+        localStorage.removeItem('annasutra_role');
+      }
+    } catch(e) {}
+  })();
+
   const LOCAL_ICON_SVG_MAP = {
     'check': '<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="{stroke}" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
     'user': '<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="{stroke}" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
@@ -1166,7 +1191,7 @@
     const activeTab = window._adminActiveTab || 'verification_queue';
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
+      <div style="width: 100%; box-sizing: border-box; padding: 0; margin: 0;">
         
         <!-- Admin Verification Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
@@ -2123,7 +2148,7 @@ function renderAdminEntityInspector(ent, t) {
       : 'PRODUCER REGISTRATION DRAFT';
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
+      <div style="width: 100%; box-sizing: border-box; padding: 0; margin: 0;">
         
         <!-- REGISTRATION STATUS NOTICE (IF NOT YET FULLY VERIFIED) -->
         ${statusBannerHtml}
@@ -2131,10 +2156,10 @@ function renderAdminEntityInspector(ent, t) {
         <!-- TOP HEADER BAR: VERIFIED BADGE, FARMER NAME, UNIQUE FARMER UID & LOG OUT -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
-            <div style="display: inline-flex; align-items: center; gap: 6px; background: ${p.status === 'VERIFIED' ? '#ecfdf5' : '#f1f5f9'}; border: 1px solid ${p.status === 'VERIFIED' ? '#86efac' : '#cbd5e1'}; color: ${p.status === 'VERIFIED' ? '#065f46' : '#334155'}; font-size: 11.5px; font-weight: 800; padding: 3px 10px; border-radius: 20px; margin-bottom: 5px;">
-              <span>${getIcon(p.status === 'VERIFIED' ? 'check' : 'shield', 13, p.status === 'VERIFIED' ? '#15803d' : '#475569', 2.8)}</span> <span>${escapeHtml(verifiedBadgeText)}</span>
-            </div>
-            <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">${escapeHtml(orgDisplayName)}</h3>
+            <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+              <span>${escapeHtml(orgDisplayName)}</span>
+              ${getVerifiedInstagramTickHtml(p.status === 'VERIFIED')}
+            </h3>
             <span style="font-size: 12.5px; color: #64748b;">${escapeHtml(locationStr)}</span>
           </div>
 
@@ -2204,13 +2229,13 @@ function renderAdminEntityInspector(ent, t) {
             </div>
           </div>
 
-          <!-- RIGHT COLUMN: 4 BIG ACTION BUTTONS ONLY -->
-          <div class="action-rail-grid">
+          <!-- RIGHT COLUMN: 3 BIG ACTION BUTTONS ONLY -->
+          <div class="action-rail-grid" style="display: flex; flex-direction: column; gap: 8px;">
             
             <!-- Button A: Profile -->
-            <button type="button" class="btn-action-rail" id="btnRailProfile" onclick="window.openProducerProfileModal()">
+            <button type="button" class="btn-action-rail" id="btnRailProfile" onclick="window.openProducerProfileModal()" style="padding: 10px 14px;">
               <div class="action-rail-icon">
-                ${getIcon('user', 20, '#047857')}
+                ${getIcon('user', 18, '#047857')}
               </div>
               <div class="action-rail-body">
                 <div class="action-rail-title">
@@ -2221,48 +2246,33 @@ function renderAdminEntityInspector(ent, t) {
               </div>
             </button>
 
-            <!-- Button B: Land Management -->
-            <button type="button" class="btn-action-rail" id="btnRailLand" onclick="window.openProducerLandModal()">
+            <!-- Button B: Harvest Records (was C) -->
+            <button type="button" class="btn-action-rail" id="btnRailHarvest" onclick="window.openProducerHarvestModal()" style="padding: 10px 14px;">
               <div class="action-rail-icon">
-                ${getIcon('map-pin', 20, '#047857')}
+                ${getIcon('wheat', 18, '#047857')}
               </div>
               <div class="action-rail-body">
                 <div class="action-rail-title">
-                  <span>B. Land &amp; Season Allocation</span>
-                  <span style="font-size: 11px; color: #047857; font-weight: 700;">Manage &rarr;</span>
-                </div>
-                <div class="action-rail-desc">Polygon plot mapping &amp; 10-category acreage allocation</div>
-              </div>
-            </button>
-
-            <!-- Button C: Harvest Records -->
-            <button type="button" class="btn-action-rail" id="btnRailHarvest" onclick="window.openProducerHarvestModal()">
-              <div class="action-rail-icon">
-                ${getIcon('wheat', 20, '#047857')}
-              </div>
-              <div class="action-rail-body">
-                <div class="action-rail-title">
-                  <span>C. Harvest Records</span>
+                  <span>B. Harvest Records</span>
                   <span style="font-size: 11px; color: #047857; font-weight: 700;">Log &rarr;</span>
                 </div>
                 <div class="action-rail-desc">Plot yield logging &amp; mass balance accounting</div>
               </div>
             </button>
 
-            <!-- Button D: Batch / Lot Creation -->
-            <button type="button" class="btn-action-rail" id="btnRailBatch" onclick="window.toggleBatchCreationView()" style="border-color: #86efac; background: #f0fdf4;">
+            <!-- Button C: Batch / Lot Creation (was D) -->
+            <button type="button" class="btn-action-rail" id="btnRailBatch" onclick="window.toggleBatchCreationView()" style="border-color: #86efac; background: #f0fdf4; padding: 10px 14px;">
               <div class="action-rail-icon" style="background: #047857; color: #ffffff; border-color: #047857;">
-                ${getIcon('box', 20, '#ffffff')}
+                ${getIcon('box', 18, '#ffffff')}
               </div>
               <div class="action-rail-body">
                 <div class="action-rail-title" style="color: #047857;">
-                  <span>D. Batch / Lot Creation</span>
-                  <span style="font-size: 11px; background: #047857; color: #ffffff; padding: 2px 7px; border-radius: 10px; font-weight: 800;">+ MINT</span>
+                  <span>C. Batch / Lot Creation</span>
+                  <span style="font-size: 10.5px; background: #047857; color: #ffffff; padding: 2px 7px; border-radius: 10px; font-weight: 800;">+ MINT</span>
                 </div>
                 <div class="action-rail-desc" style="color: #065f46;">Mint unique QRs, 1D barcodes &amp; gate-passes</div>
               </div>
             </button>
-
           </div>
         </div>
 
@@ -2858,32 +2868,29 @@ function renderAdminEntityInspector(ent, t) {
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 22px 28px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Farmer Profile</div>
-            <h3 style="margin: 2px 0 0; font-size: 20px; color: #ffffff; font-weight: 800;">A. Producer Profile</h3>
+            <h3 style="margin: 0; font-size: 20px; color: #ffffff; font-weight: 800;">A. Producer Profile</h3>
           </div>
         </div>
 
         <div style="padding: 24px 28px;">
           
           <!-- Digital ID Card Preview -->
-          <div style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); border-radius: 14px; padding: 20px 24px; color: #ffffff; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(4,120,87,0.25); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); border-radius: 12px; padding: 16px 20px; color: #ffffff; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(4,120,87,0.25); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
             <div>
-              <div style="font-size: 11px; font-weight: 800; color: #a7f3d0; text-transform: uppercase; letter-spacing: 0.5px;">AnnaSutra &bull; Verified Producer</div>
-              <h4 style="margin: 4px 0 2px; font-size: 20px; font-weight: 900; color: #ffffff;">${escapeHtml(orgDisplayName)}</h4>
-              <div style="font-size: 12.5px; color: #ecfdf5;">${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))}</div>
+              <h4 style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                <span>${escapeHtml(orgDisplayName)}</span>
+                ${getVerifiedInstagramTickHtml(p.status === 'VERIFIED')}
+              </h4>
+              <div style="font-size: 12px; color: #ecfdf5;">${escapeHtml(p.village_town || '')}, ${escapeHtml(p.district || '')}, ${escapeHtml(getStateLabel(p.state))}</div>
               ${farmerUid ? `
-                <div style="margin-top: 12px; display: inline-block; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 4px 12px; font-family: monospace; font-size: 14px; font-weight: 900; letter-spacing: 0.5px;">
+                <div style="margin-top: 8px; display: inline-block; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 3px 10px; font-family: monospace; font-size: 13px; font-weight: 900; letter-spacing: 0.5px;">
                   ID: ${escapeHtml(farmerUid)}
                 </div>
               ` : `
-                <div style="margin-top: 12px; display: inline-block; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 4px 12px; font-family: monospace; font-size: 12px; font-weight: 700;">
+                <div style="margin-top: 8px; display: inline-block; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 3px 10px; font-family: monospace; font-size: 12px; font-weight: 700;">
                   Code: ${escapeHtml(p.entity_code || 'PR-PENDING')}
                 </div>
               `}
-            </div>
-            <div style="background: #ffffff; padding: 8px 14px; border-radius: 10px; text-align: center; color: #0b3d2e;">
-              <div style="font-size: 11px; font-weight: 800; color: #047857;">STATUS</div>
-              <div style="font-size: 13px; font-weight: 900; margin-top: 2px; color: #047857;">${p.status === 'VERIFIED' ? 'VERIFIED' : escapeHtml(p.status || 'ACTIVE')}</div>
             </div>
           </div>
 
@@ -3054,21 +3061,22 @@ function renderAdminEntityInspector(ent, t) {
           </div>
 
           <!-- Existing Plots Table with Remove Option -->
-          <div class="compact-ledger-table-wrap" style="margin-bottom: 16px;">
+          <div class="compact-ledger-table-wrap" style="margin-bottom: 14px;">
             <table class="compact-ledger-table">
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th style="width: 36px;">#</th>
                   <th>Plot Name</th>
                   <th>Survey / Khasra No.</th>
                   <th>Area (Acres)</th>
-                  <th style="text-align: right;">Action</th>
+                  <th>Crop Class Allocation</th>
+                  <th style="text-align: right; width: 60px;">Action</th>
                 </tr>
               </thead>
               <tbody id="profPlotsTableBody">
                 ${plotsList.length === 0 ? `
                   <tr>
-                    <td colspan="5" style="text-align: center; padding: 20px; color: #64748b;">
+                    <td colspan="6" style="text-align: center; padding: 18px; color: #64748b;">
                       No individual plots added yet. Add your first farm parcel below.
                     </td>
                   </tr>
@@ -3078,8 +3086,22 @@ function renderAdminEntityInspector(ent, t) {
                     <td><strong>${escapeHtml(pl.plot_name || `Plot ${i + 1}`)}</strong></td>
                     <td style="font-family: monospace;">${escapeHtml(pl.khasra_survey_no || 'NA')}</td>
                     <td>${parseFloat(pl.area_acres || 0).toFixed(2)} Acres</td>
+                    <td>
+                      <select class="form-select" style="font-size: 11.5px; padding: 3px 6px; max-width: 190px; background: #fff;" onchange="window.updatePlotCropCategory(${i}, this.value)">
+                        <option value="VG" ${(!pl.crop_category || pl.crop_category === 'VG') ? 'selected' : ''}>Vegetables (Potato, Onion, Tomato)</option>
+                        <option value="CR" ${pl.crop_category === 'CR' ? 'selected' : ''}>Cereals (Paddy, Wheat, Maize)</option>
+                        <option value="PL" ${pl.crop_category === 'PL' ? 'selected' : ''}>Pulses (Gram, Lentil, Arhar)</option>
+                        <option value="OS" ${pl.crop_category === 'OS' ? 'selected' : ''}>Oilseeds (Mustard, Groundnut)</option>
+                        <option value="FR" ${pl.crop_category === 'FR' ? 'selected' : ''}>Fruits (Mango, Banana, Citrus)</option>
+                        <option value="SP" ${pl.crop_category === 'SP' ? 'selected' : ''}>Spices (Turmeric, Chilli, Cumin)</option>
+                        <option value="PC" ${pl.crop_category === 'PC' ? 'selected' : ''}>Plantation (Tea, Coffee, Coconut)</option>
+                        <option value="FB" ${pl.crop_category === 'FB' ? 'selected' : ''}>Fiber (Cotton, Jute)</option>
+                        <option value="SG" ${pl.crop_category === 'SG' ? 'selected' : ''}>Sugar (Sugarcane, Sugarbeet)</option>
+                        <option value="FM" ${pl.crop_category === 'FM' ? 'selected' : ''}>Flowers &amp; Medicinal</option>
+                      </select>
+                    </td>
                     <td style="text-align: right;">
-                      <button type="button" onclick="window.removeProducerPlotRow(${i})" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 12px; font-weight: 700;">
+                      <button type="button" onclick="window.removeProducerPlotRow(${i})" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 11.5px; font-weight: 700;">
                         Remove
                       </button>
                     </td>
@@ -3090,9 +3112,9 @@ function renderAdminEntityInspector(ent, t) {
           </div>
 
           <!-- Add New Plot Inline Form -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;">
             <div style="font-size: 12px; font-weight: 800; color: #0b3d2e; margin-bottom: 8px;">+ Add New Farm Parcel</div>
-            <div style="display: grid; grid-template-columns: 2fr 2fr 1.5fr auto; gap: 10px; align-items: end;">
+            <div style="display: grid; grid-template-columns: 2fr 1.5fr 1.2fr 2.5fr auto; gap: 8px; align-items: end;">
               <div class="form-group" style="margin: 0;">
                 <label class="form-label" style="font-size: 11px;">Plot Name</label>
                 <input type="text" class="form-input" id="inp_new_plot_name" placeholder="e.g. North Plot" style="background: #fff; font-size: 12px;" />
@@ -3105,17 +3127,29 @@ function renderAdminEntityInspector(ent, t) {
                 <label class="form-label" style="font-size: 11px;">Area (Acres)</label>
                 <input type="number" step="0.01" min="0.01" class="form-input" id="inp_new_plot_acres" placeholder="e.g. 2.50" style="background: #fff; font-size: 12px;" />
               </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-size: 11px;">Crop Class Allocation</label>
+                <select class="form-select" id="inp_new_plot_crop_category" style="background: #fff; font-size: 12px;">
+                  <option value="VG">Vegetables (Potato, Onion, Tomato)</option>
+                  <option value="CR">Cereals (Paddy, Wheat, Maize)</option>
+                  <option value="PL">Pulses (Gram, Lentil, Arhar)</option>
+                  <option value="OS">Oilseeds (Mustard, Groundnut)</option>
+                  <option value="FR">Fruits (Mango, Banana, Citrus)</option>
+                  <option value="SP">Spices (Turmeric, Chilli, Cumin)</option>
+                  <option value="PC">Plantation (Tea, Coffee, Coconut)</option>
+                  <option value="FB">Fiber (Cotton, Jute)</option>
+                  <option value="SG">Sugar (Sugarcane, Sugarbeet)</option>
+                  <option value="FM">Flowers &amp; Medicinal</option>
+                </select>
+              </div>
               <button type="button" class="action-btn-pill" onclick="window.addNewProducerPlotRow()" style="padding: 8px 14px; font-size: 12px; font-weight: 800; height: 38px;">
                 + Add Plot
               </button>
             </div>
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <button type="button" class="btn-wizard-action btn-wizard-draft" onclick="window.openProducerLandModal()" style="font-size: 12px;">
-              <span>${getIcon('map-pin', 14, '#047857')}</span> Map Polygon Boundaries &rarr;
-            </button>
-            <button type="button" class="action-btn-pill primary" onclick="window.saveProducerPlotsDirectly()" style="padding: 9px 20px; font-weight: 800;">
+          <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 10px;">
+            <button type="button" class="action-btn-pill primary" onclick="window.saveProducerPlotsDirectly()" style="padding: 9px 24px; font-weight: 800;">
               Save Farm Plots
             </button>
           </div>
@@ -3374,10 +3408,18 @@ function renderAdminEntityInspector(ent, t) {
   };
   window.prefillChangeRequest = window.prefillKycChangeRequest;
 
+  
+  window.updatePlotCropCategory = function(index, cat) {
+    if (wizardState.plots && wizardState.plots[index]) {
+      wizardState.plots[index].crop_category = cat;
+    }
+  };
+
   window.addNewProducerPlotRow = function () {
     const nameEl = document.getElementById('inp_new_plot_name');
     const surveyEl = document.getElementById('inp_new_plot_survey');
     const acresEl = document.getElementById('inp_new_plot_acres');
+    const catEl = document.getElementById('inp_new_plot_crop_category');
     const name = (nameEl ? nameEl.value.trim() : '') || `Plot ${(wizardState.plots || []).length + 1}`;
     const survey = (surveyEl ? surveyEl.value.trim() : '') || 'NA';
     const acres = parseFloat(acresEl ? acresEl.value : 0) || 0;
@@ -3389,7 +3431,8 @@ function renderAdminEntityInspector(ent, t) {
     wizardState.plots.push({
       plot_name: name,
       khasra_survey_no: survey,
-      area_acres: acres
+      area_acres: acres,
+      crop_category: (catEl ? catEl.value : 'VG') || 'VG'
     });
     if (nameEl) nameEl.value = '';
     if (surveyEl) surveyEl.value = '';
@@ -4008,8 +4051,7 @@ function renderAdminEntityInspector(ent, t) {
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 22px 28px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Mass Balance Anti-Laundering Check</div>
-            <h3 style="margin: 2px 0 0; font-size: 22px; color: #ffffff; font-weight: 800;">C. Harvest Records &amp; Plot Yield Accounting</h3>
+            <h3 style="margin: 0; font-size: 20px; color: #ffffff; font-weight: 800;">B. Harvest Records &amp; Plot Yield Accounting</h3>
           </div>
         </div>
 
@@ -4159,9 +4201,12 @@ function renderAdminEntityInspector(ent, t) {
         body: JSON.stringify({
           plot_id: parseInt(plotId, 10) || null,
           crop: crop,
+          crop_name: crop,
           variety: variety,
           harvest_date: date,
+          gross_weight_kg: gross,
           gross_yield_kg: gross,
+          waste_loss_kg: waste,
           waste_kg: waste,
           grade: grade
         })
@@ -4316,7 +4361,7 @@ function renderAdminEntityInspector(ent, t) {
     };
 
     container.innerHTML = `
-      <div style="background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px 24px; margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;">
+      <div style="width: 100%; box-sizing: border-box; padding: 0; margin: 0;">
         
         <!-- Header Banner -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
@@ -6941,17 +6986,17 @@ function renderAdminEntityInspector(ent, t) {
             </div>
           </div>
 
-          <!-- Section 3: Danger Zone: Entity Profile Deletion -->
+          <!-- Section 3: Entity Account Deletion -->
           <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
               <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 6px;">
                 <span>${getIcon('alert', 16, '#dc2626')}</span>
-                <span>Danger Zone: Account &amp; Profile Deletion</span>
+                <span>Account &amp; Profile Deletion</span>
               </h5>
               <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">Permanent Action</span>
             </div>
             <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
-              Request formal deletion and deactivation of this ${activeRole} entity node. All stock in custody must be settled or marked sold out, and no lots may be in transit. Admin approval and owner 2FA OTP verification are required.
+              Request formal deletion and deactivation of this ${activeRole} entity account. All stock in custody must be settled or marked sold out, and no lots may be in transit. Admin approval and verification code are required.
             </p>
             <div style="display: flex; justify-content: flex-end;">
               <button type="button" onclick="window.closeDownstreamProfileModal(); window.openEntityDeletionRequestModal();" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">

@@ -1274,8 +1274,8 @@ class MyHarvestRecordsView(APIView):
         crop_name = str(data.get("crop_name") or data.get("crop") or "").strip()
         variety = str(data.get("variety") or "").strip()
         harvest_date = str(data.get("harvest_date") or timezone.now().date().isoformat()).strip()
-        gross_weight_kg = float(data.get("gross_weight_kg") or data.get("qty_kg") or 0.0)
-        waste_loss_kg = float(data.get("waste_loss_kg") or 0.0)
+        gross_weight_kg = float(data.get("gross_weight_kg") or data.get("gross_yield_kg") or data.get("qty_kg") or 0.0)
+        waste_loss_kg = float(data.get("waste_loss_kg") or data.get("waste_kg") or 0.0)
         net_yield_kg = max(0.0, gross_weight_kg - waste_loss_kg)
         storage_location = str(data.get("storage_location") or "Farm Store / On-site Granary").strip()
 
