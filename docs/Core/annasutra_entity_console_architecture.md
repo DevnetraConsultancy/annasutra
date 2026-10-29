@@ -1,13 +1,15 @@
 # AnnaSutra: Core Entity Console Architecture (Gold Standard — Locked)
 
 > [!IMPORTANT]
-> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 27 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
+> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 35 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
+>
+> This file is the **only** document under `/docs`. Every other spec has been retired into it.
 
 ---
 
 ## 0. The Concept in One Paragraph
 
-AnnaSutra is a farm-to-fork trust ledger. A farmer logs in, sends one registration request, and gets the console only after the admin checks every document. Inside the console the farmer maps each plot on a map, splits land between crops season by season, records every harvest from a plot, and turns harvests into lots. Each lot gets a unique QR and barcode label. Every time a lot moves, both sides do a handshake: the sender dispatches, and the receiver must prove they physically have the lot (label scan, live photo, weight, GPS) before custody passes to them. Once that happens, the sender's record is locked forever. Lots can be merged (aggregator), split (wholesaler) or turned into new products (manufacturer, for example potatoes into chip packets), and each new lot always keeps a link back to the lots it came from. Quantities must balance at every step, so nobody can quietly add produce that has no traceable source. Nothing is ever deleted. Changes are only added on top, and each record is hash-chained so tampering shows. At the shop, the customer scans one code and sees a true story that protects everyone's privacy: where the food came from, who handled it, how fresh it is, and whether it is genuine. The admin sees the whole chain, all flagged problems, recalls, and scan analytics collected with consent.
+AnnaSutra is a farm-to-fork trust ledger. Every person signs in with their Gmail account, which is their permanent identity (mobile number is optional). A farmer logs in, sends one registration request, and gets the console only after the admin checks every document. Inside the console the farmer maps each plot on a map, splits land between crops season by season, records every harvest from a plot, and turns harvests into lots. Each lot gets a unique QR and barcode label. Every time a lot moves, both sides do a handshake: the sender dispatches, and the receiver must prove they physically have the lot (label scan, live photo, weight, GPS) before custody passes to them. Once that happens, the sender's record is locked forever. Lots can be merged (aggregator), split (wholesaler) or turned into new products (manufacturer, for example potatoes into chip packets), and each new lot always keeps a link back to the lots it came from. Quantities must balance at every step, so nobody can quietly add produce that has no traceable source. Nothing is ever deleted. Changes are only added on top, and each record is hash-chained so tampering shows. At the shop, the customer scans one code and sees a true story that protects everyone's privacy: where the food came from, who handled it, how fresh it is, and whether it is genuine. The admin sees the whole chain, all flagged problems, recalls, and scan analytics collected with consent.
 
 ---
 
@@ -29,6 +31,34 @@ AnnaSutra is a farm-to-fork trust ledger. A farmer logs in, sends one registrati
 | 12 | Instant responsiveness & root modals | All modals pre-hydrate in 0ms from local cache, mount to root body/viewport level, and dismiss reliably via backdrop tap or Back/Escape key. |
 | 13 | Web-First Master & Android Platform Parity | Web UI/UX is built and verified first as the master design benchmark. Android mirrors every Web feature, button, and function 100% in its own native, idiomatic mobile UX (e.g. Bottom Sheets, native CameraX ML Kit scanning, Material 3, swipe actions). Android continuously follows and stays strictly synchronized with Web capabilities. |
 | 14 | 100% Pure Native Flutter/Dart (Zero-WebView) & Universal APK | The Android application is 100% written in native Flutter/Dart widgets (Material 3). It must NEVER be an Android WebView wrapper or hybrid iframe shell. A single universal fat APK (`AnnaSutra_latest.apk`) serves all 7 entity roles dynamically with multi-ABI binary support for Indian smartphones. |
+| 15 | Gmail is the identity | A Gmail address is the primary key of every user account. Gmail is mandatory, mobile is optional. One Gmail can file several entity registrations (Producer, Aggregator, Processor, Wholesaler, Distributor, Retailer), and each one is approved separately. |
+| 16 | Single Admin identity | Only `devnetraconsultancy@gmail.com` can sign in to the Admin Console. Any other Gmail is refused, on Web and Android. |
+| 17 | Print anywhere | Lot / batch QR and barcode labels can be printed from both the Web console and the Android APK. |
+
+### 1.1 End-to-End Flow (canonical, how AnnaSutra is always explained)
+
+> [!IMPORTANT]
+> Whenever the end-to-end flow is described (in docs, demos, or answers), it is told in this order and in this style.
+
+**Sign in with Gmail** > **Entity registers with their details** (the login portal first shows every registration this Gmail already has and its status) > **Admin approves** (only after approval is the Unique ID minted) > **Entity gets its console** > **Entity can update more details, except KYC** (KYC changes need an Admin Change Request) > **Farmer creates a batch** with all required details (harvest, crop, weight, units, photos) > **Mints the batch QR / barcode** > **Prints the label** (Web or APK) and **sticks it on the delivery lot** > **Sends a dispatch request to the next party** (lot becomes In Transit) > **Next party scans the lot QR to accept** (with live photo, weight, GPS), and custody passes to them (farmer's record is locked forever) > **Next party appends more data** to that lot (weight check, grade, storage, quality test) > **The relevant entity (Aggregator, Processor, Wholesaler, Distributor or Retailer) makes small packet batches** from that lot, each with its own **child batch QR** linked to the parent lot > **Packets reach the retailer shop** > **A customer scans the packet QR** with the AnnaSutra APK (or any phone camera). If they grant location permission, AnnaSutra records the scan location for Admin analytics > **The customer sees** product origin, a short summary, and the journey in short bites.
+
+```mermaid
+flowchart LR
+  G["Sign in with Gmail"] --> P["Login portal: existing registrations + status"]
+  P --> R["Entity registration form"]
+  R --> A{"Admin review (devnetraconsultancy@gmail.com)"}
+  A -->|"Approved: Unique ID minted"| C["Entity console"]
+  C --> U["Update details (KYC via Change Request)"]
+  C --> B["Farmer creates batch"]
+  B --> Q["Mint QR / barcode, print on Web or APK"]
+  Q --> D["Dispatch request to next party"]
+  D --> S["Next party scans lot QR, accepts custody"]
+  S --> AP["Append data to lot"]
+  AP --> K["Small packet batches with child batch QR"]
+  K --> RT["Retailer shop"]
+  RT --> CS["Customer scans (optional location)"]
+  CS --> V["Origin, summary, journey"]
+```
 
 ---
 
@@ -45,7 +75,7 @@ AnnaSutra is a farm-to-fork trust ledger. A farmer logs in, sends one registrati
 | Distributor | Regional or brand distributor, warehouse, cold storage operator | Existing |
 | Retailer | Kirana, supermarket, online store | Existing |
 | Consumer | Public user who scans a code. No login. | Existing (public page) |
-| Admin | Sub-roles: Super Admin, Verifier, Support, Analyst (read-only) | Existing, sub-roles new |
+| Admin | Single account: `devnetraconsultancy@gmail.com` only. No sub-roles. | Existing (locked to one Gmail) |
 
 ### 2.2 Your Manufacturer doubt: my answer
 
@@ -86,11 +116,45 @@ flowchart LR
   R2 --> C2(("Consumer scan"))
 ```
 
+### 2.5 Gmail Identity, Multi-Registration and Login Portal (Approved)
+
+**Identity rules**
+
+| Rule | Detail |
+|---|---|
+| Primary key | The **Gmail address** (verified through Google Sign-In) is the primary key of the user account (`AppUser.email`, unique, lower-cased). It can never be changed after the first sign-in. |
+| Gmail | **Mandatory** for every entity and for Admin. |
+| Mobile number | **Optional.** If added, it is verified by OTP. It is used for SMS alerts and as a second way to sign in. |
+| First sign-in | Always **Google Sign-In** (Web: Google button, Android: native Google Sign-In). |
+| Later sign-ins | Google Sign-In, or mobile OTP **only if** a verified mobile is already linked to that Gmail account. A mobile OTP can never create a new account. |
+| Verification codes | Codes for consent e-sign, account deletion and sensitive actions go to the **Gmail address** by default, and to the verified mobile as well if one exists. |
+| Admin | Only `devnetraconsultancy@gmail.com`. The server checks the Gmail against this single allow-listed address on every Admin API call. Any other Gmail gets HTTP 403 and the Admin Console is hidden. |
+
+**One Gmail, many registrations**
+- One Gmail = one person / account. Under it, the user can file a separate registration for each role: Producer, Aggregator, Processor, Wholesaler, Distributor, Retailer.
+- Each role registration has **its own form, its own status, its own Admin review** and, once approved, **its own Unique Role ID** (Section 3.1). Approval of one role never approves another.
+- The console **role switcher** in the top bar lists **only APPROVED roles**. Roles that are pending, changes-requested or rejected are shown in the login portal, not in the switcher.
+- A Gmail can hold only one registration per role. A second Producer registration from the same Gmail is blocked, and the portal points to the existing one.
+
+**Login portal (shown after Google Sign-In, before any registration form)**
+
+| Role | Status chip | Action |
+|---|---|---|
+| Producer / Farmer | `BadgeCheck` Approved (ID shown) | Open Console |
+| Aggregator | `Clock` Under Review (Application Ref `APP-XXXXXXXX`) | View Status |
+| Retailer | `TriangleAlert` Changes Requested | Fix and Resubmit |
+| Processor | `XCircle` Rejected (Admin remark) | View Remark |
+| Wholesaler / Distributor | Not registered | Register |
+
+- The portal always lists **every role**, with the current status of this Gmail for each one: `Not registered`, `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES_REQUESTED`, `APPROVED`, `REJECTED`, `SUSPENDED`, `DELETION_REQUESTED`, `DEACTIVATED`.
+- Starting a new registration from any "Register as..." button first shows this summary, so the user always knows what their Gmail has already filed.
+- Android shows the same portal as a native Material 3 list of role cards (Rule 13).
+
 ---
 
 ## 3. Identity and Code System
 
-### 3.1 Entity ID (Farmer ID, also used for every entity)
+### 3.1 Entity ID / Role ID (Farmer ID, also used for every entity role)
 
 **Your format:** `YYYYMMHHMMSS + CountryCode + MobileNumber`
 
@@ -104,6 +168,12 @@ Example (registered 28 Oct 2026, 15:52:26, India, 9876543210):
 - As written by you: `202610155226919876543210` (24 digits)
 - With day added: `20261028155226919876543210` (26 digits)
 
+**Identity segment when no mobile is given (Approved, Decision 29):** because mobile is optional, the last 10 digits are the **Identity Segment**:
+- If the user has a verified mobile at the moment of approval: the 10-digit mobile (as above).
+- If not: a **10-digit system serial** issued by the server (unique, never reused, never a phone number), for example `20261028155226` + `91` + `0000004817`.
+- Both forms are 26 digits, so every screen, label and parser handles one length. The ID is minted only at Admin approval and is **frozen forever**. Adding or changing a mobile later never changes the ID.
+- Each approved role registration gets its own Role ID in this format (Section 2.5).
+
 ### 3.2 Batch / Lot Code
 
 **Your format:** `YYYYMMHHMMSS + CountryCode + MobileNumber + CropClassInitials`
@@ -114,10 +184,10 @@ Example (registered 28 Oct 2026, 15:52:26, India, 9876543210):
 | A typing mistake when someone enters the code by hand is not caught | Add **1 check character** (ISO 7064 Mod 37,2) |
 | Missing day | Same fix as the Entity ID |
 
-**Proposed:** `YYYYMMDDHHMMSS + CC + Mobile + CropClass(2) + Seq(3) + Check(1)`
+**Proposed:** `YYYYMMDDHHMMSS + CC + IdentitySegment(10) + CropClass(2) + Seq(3) + Check(1)`
 Printed as: `20261028160510-91-9876543210-FG-001-K` (32 characters)
 
-The same pattern is used for lots that next parties create (merged, split or processed lots). The code carries *that* entity's mobile, and the system stores the parent links.
+The Identity Segment is the same 10 digits used in the creator's Role ID (mobile or system serial, Section 3.1). The same pattern is used for lots that next parties create (merged, split or processed lots). The code carries *that* entity's Identity Segment, and the system stores the parent links.
 
 ### 3.3 Product Code Taxonomy (your 10 categories, kept exactly)
 
@@ -158,6 +228,17 @@ A lot is the parent, and each bag or crate is a child unit: `...-FG-001-K/U0001`
 ### 3.6 Label print formats
 Thermal 50×25 mm, thermal 75×50 mm, A4 sticker sheet (24 per sheet), and PDF download. Bulk print by lot or by a range of units.
 
+**Print on both platforms (Approved, Decision 33):**
+- **Web:** `Printer` Print Label opens a print-ready view (browser print dialog) plus PDF download.
+- **Android APK:** native `Printer` Print Label using the Android print framework (system print / PDF), share-as-PDF, and Bluetooth thermal printers. No WebView is used for printing (Rule 14).
+- The printed label is the one the farmer **sticks on the delivery lot** before dispatch.
+
+### 3.7 Small Packet Batches with Child Batch QR (Approved, Decision 34)
+- After accepting custody, the relevant downstream entity (**Aggregator, Processor, Wholesaler, Distributor or Retailer**, matching the Split / Transform rows of the capability matrix) can turn a lot into one or more **small packet batches** (for example 1,000 kg of rice into 2,000 packets of 500 g).
+- Each packet batch is a **child lot** with its own code (Section 3.2) and **one batch-level child QR**. The same QR is printed on every packet of that batch (one QR per packet batch, not one per packet).
+- The child batch always keeps its **parent link** to the source lot(s) (Rule 5), and mass balance applies: total packet weight cannot exceed the parent lot's remaining quantity.
+- The customer who scans any packet sees the child batch story **plus** the full upstream journey back to the farm.
+
 ---
 
 ## 4. Producer / Farmer
@@ -166,7 +247,8 @@ Thermal 50×25 mm, thermal 75×50 mm, A4 sticker sheet (24 per sheet), and PDF d
 
 ```mermaid
 flowchart LR
-  L["Login: Google or Mobile OTP"] --> RF["Registration Request Form - multi-step, save draft"]
+  L["Sign in with Gmail (Google Sign-In)"] --> LP["Login portal: existing registrations + status"]
+  LP --> RF["Registration Request Form - multi-step, save draft"]
   RF --> SUB["Submit"]
   SUB --> ST["Status Page only"]
   ST --> REV{"Admin field-level review"}
@@ -186,7 +268,7 @@ flowchart LR
 
 | Section | Fields | Required |
 |---|---|---|
-| A. Personal | Full name (as on ID), Father/Spouse name, Gender, DOB, Live selfie photo, Verified mobile, Alternate mobile, Email, Preferred language | Name, DOB, Gender, Photo, Mobile |
+| A. Personal | Full name (as on ID), Father/Spouse name, Gender, DOB, Live selfie photo, **Gmail (from Google Sign-In, primary key, read-only)**, Mobile (optional, OTP-verified), Alternate mobile, Preferred language | Name, DOB, Gender, Photo, Gmail |
 | B. KYC | ID type (Aadhaar via DigiLocker, Voter ID, PAN, Kisan card), ID number (stored masked), Front/back upload | One ID |
 | C. Address | State, District, Sub-district/Tehsil, Block, Village (LGD codes), Pincode, Home pin on map | All except map pin |
 | D. Farmer registries | **AgriStack Farmer ID**, PM-KISAN ID, Kisan Credit Card no., Soil Health Card no. | Optional (AgriStack strongly recommended) |
@@ -194,13 +276,13 @@ flowchart LR
 | F. Farming profile | Practice (Conventional / Organic / Natural / In-conversion), Certifications (NPOP, PGS-India, GlobalG.A.P., others: number, validity, upload), Irrigation source, Years of farming, Main crops | Practice |
 | G. Group membership | FPO / Co-op name, Member ID | Optional |
 | H. Bank (future payments) | Account holder, Account no., IFSC, Passbook / cancelled cheque | Optional now |
-| I. Consents | Terms, DPDP data consent, **Consumer visibility toggles** (show my first name / village / photo), OTP e-sign | Required |
+| I. Consents | Terms, DPDP data consent, **Consumer visibility toggles** (show my first name / village / photo), e-sign with a verification code (sent to Gmail, and to the mobile if verified) | Required |
 
 ### 4.2.1 Unique Farmer ID Issuance Policy (First-Time Registration)
 
 - **Strict Pre-Approval Policy:** First-time producer registrations in status `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, or `CHANGES_REQUESTED` **MUST NOT** receive or display a Unique Farmer ID.
 - **Application Reference:** While review is pending, the producer interface and admin review displays an Application Reference code (`APP-XXXXXXXX`).
-- **Minting Exclusively Upon Admin Approval:** The deterministic 24-digit Unique Farmer ID (`YYYYMMDDHHMMSS` + `91` + 10-digit mobile number) is minted and sealed into `EntityRoleDetails` exclusively at the moment of Admin approval (`approve_entity_registration`).
+- **Minting Exclusively Upon Admin Approval:** The 26-digit Unique Farmer ID (`YYYYMMDDHHMMSS` + `91` + 10-digit Identity Segment: verified mobile if present, otherwise system serial, Section 3.1) is minted and sealed into `EntityRoleDetails` exclusively at the moment of Admin approval (`approve_entity_registration`).
 - **UI Guard:** Producer console headers, badges, and ID cards must strictly check for `farmer_uid`. If the entity is unverified or in draft status, the UI displays `Code: PR-PENDING` or `Application Ref` rather than a valid Farmer ID.
 
 ### 4.3 A. Profile (Unified 5-Step Registration Dataset & Self-Service Management)
@@ -214,7 +296,7 @@ The original 5-step registration dataset remains permanently accessible under **
   1. **Step 1: Basic Info**
      - First Name, Last Name, Registered Enterprise/Farm Name, Alternate Phone, Contact Email, Address Line 1, Village/Town, District, State, Pincode.
      - *Fully Self-Editable:* All personal, organisation, and geographical contact fields are directly editable and saved via `PUT /api/v1/me/profile` without requiring Admin approval.
-     - *Locked (Account ID Handle):* Primary Login Mobile (`phone_e164`) is frozen at initial registration.
+     - *Locked (Account ID Handle):* Primary Gmail (`email`) is frozen at first sign-in and can never change. Mobile is optional: adding a first mobile is self-service with OTP; changing an already verified mobile needs an Admin Change Request.
   2. **Step 2: Farm Plots & Land Holdings**
      - Registered farm parcels, survey/khasra numbers, acreage, and GeoJSON boundary geometry.
      - *Fully Self-Editable:* Direct self-service addition, modification, and removal of farm parcels and acreages via `PUT /api/v1/me/plots`. Total land updates automatically. Satellite boundary mapping via Modal B.
@@ -233,8 +315,9 @@ The original 5-step registration dataset remains permanently accessible under **
 
 | Change type | Fields | Flow |
 |---|---|---|
-| **Self-editable** | First Name, Last Name, Enterprise Name, Alternate mobile, Email, Address, Village, District, State, Pincode, Farm Plots, Acreage, Commodities/Crops, Farming Practice, Irrigation, Consumer transparency toggles | Directly saved via `PUT /api/v1/me/profile` and `PUT /api/v1/me/plots` with `override_lock: true` |
-| **Locked (Admin Approval)** | KYC (PAN, Voluntary Aadhaar), Bank settlement account, IFSC, Primary registered login mobile | Creates an Admin Change Request (`POST /api/v1/me/change-requests`) with old value, new value, reason, and document proof. The old value stays active until Admin approves. |
+| **Self-editable** | First Name, Last Name, Enterprise Name, Alternate mobile, Contact details, Address, Village, District, State, Pincode, Farm Plots, Acreage, Commodities/Crops, Farming Practice, Irrigation, Consumer transparency toggles, first mobile number (OTP-verified) | Directly saved via `PUT /api/v1/me/profile` and `PUT /api/v1/me/plots` with `override_lock: true` |
+| **Locked (Admin Approval)** | KYC (PAN, Voluntary Aadhaar), Bank settlement account, IFSC, change of an already verified mobile | Creates an Admin Change Request (`POST /api/v1/me/change-requests`) with old value, new value, reason, and document proof. The old value stays active until Admin approves. |
+| **Never changeable** | Primary Gmail, Unique Role ID | Permanent account identity |
 
 #### 4.3.1 Entity Account Deletion & Deactivation Workflow (Approved)
 
@@ -253,8 +336,8 @@ The original 5-step registration dataset remains permanently accessible under **
      - *Account deletion and data privacy request*
      - *Duplicate or accidental registration*
      - *Other (mandatory explanation required)*
-  5. **Mobile Verification Code (OTP):**
-     - A 6-digit confirmation code is sent to the primary registered mobile via `POST /api/v1/me/profile/delete-request` with `{ action: 'request_otp' }`.
+  5. **Verification Code:**
+     - A 6-digit confirmation code is sent to the account **Gmail** (and to the verified mobile, if one exists) via `POST /api/v1/me/profile/delete-request` with `{ action: 'request_otp' }`.
      - Entering the OTP digitally signs the deletion request.
   6. **Submission & Execution (`POST /api/v1/me/profile/delete-request`):**
      - **Immediate Deletion for Draft / Unregistered Users:** If the user has no approved profile, the backend immediately deactivates the `AppUser` (`status="DISABLED"`), returns `{ status: "DELETED" }`, and the client purges all local storage keys (`annasutra_*`) and redirects to `/`.
@@ -316,11 +399,11 @@ The original 5-step registration dataset remains permanently accessible under **
 | Photos | Live camera |
 
 - **Unlimited lots**, plus **Bulk Generate** (for example 10 lots of 50 kg each from one harvest).
-- **Generate Labels:** QR + Code128 + PIN in the formats from 3.6.
+- **Generate Labels:** QR + Code128 + PIN in the formats from 3.6. **Print Label** is available on both Web and the Android APK; the label is stuck on the delivery lot.
 
 **Handover (Dispatch)**
 1. Select the lot (or some units).
-2. Enter the next party's mobile / Entity ID, **or scan their Digital ID Card**.
+2. Enter the next party's Gmail / Role ID, **or scan their Digital ID Card**.
 3. The system shows the receiver's **verified name, role and premises** so the farmer can confirm the right buyer.
 4. Capture the dispatch weight, a dispatch photo, the agreed price per kg, and optionally vehicle no., driver mobile and invoice / e-way bill no.
 5. Dispatch. The lot becomes `HANDOVER_REQUESTED` (In Transit).
@@ -434,7 +517,7 @@ sequenceDiagram
   A-->>S: Show receiver verified name, role, premises
   S->>A: Confirm dispatch with weight, photo, price, vehicle
   Note over A: Lot = HANDOVER_REQUESTED (In Transit)
-  A->>R: Pending Custody Approval via app and SMS
+  A->>R: Pending Custody Approval via app, email (and SMS if a mobile is verified)
   R->>A: Scan physical QR or enter label PIN
   R->>A: Live arrival photo, current weight, GPS
   A->>A: Check code match, geofence, weight variance, time
@@ -505,13 +588,14 @@ A discrepancy is a **flag** on the lot, not a separate state. Custody still move
 ## 6. Next Party Consoles (Aggregator, Processor, Wholesaler, Distributor, Retailer)
 
 > [!IMPORTANT]
-> **Every business entity gets its own console**: Aggregator, Processor / Manufacturer, Wholesaler, Distributor and Retailer. They follow the same rule as farmers: Login, then one Registration Request Form, then a Status Page only, then admin field-level approval, then the Console. The only parties without a console are the **Consumer** (public scan page) and the **Admin** (separate Admin Console).
+> **Every business entity gets its own console**: Aggregator, Processor / Manufacturer, Wholesaler, Distributor and Retailer. They follow the same rule as farmers: Gmail sign-in, then the login portal (existing registrations + status), then one Registration Request Form, then a Status Page only, then admin field-level approval, then the Console. The only parties without a console are the **Consumer** (public scan page) and the **Admin** (separate Admin Console).
 
 ### 6.1 Registration flow for business entities
 
 ```mermaid
 flowchart LR
-  L["Login: Google or Mobile OTP"] --> RS["Select role(s)"]
+  L["Sign in with Gmail (Google Sign-In)"] --> LP["Login portal: existing registrations + status"]
+  LP --> RS["Select role to register"]
   RS --> RF["Business Registration Form - common core + role module"]
   RF --> SUB["Submit"]
   SUB --> ST["Status Page only"]
@@ -520,17 +604,17 @@ flowchart LR
   REV -->|"Approved"| CON["Role Console unlocked"]
 ```
 
-**Entity ID:** the same format as farmers, `YYYYMMDDHHMMSS + CC + Mobile` (the authorised signatory's mobile at registration). It is **frozen forever**, even if the owner or the mobile changes later.
+**Role ID:** the same format as farmers, `YYYYMMDDHHMMSS + CC + IdentitySegment(10)` (the signatory's verified mobile if present at approval, otherwise a system serial, Section 3.1). It is minted only at Admin approval and is **frozen forever**, even if the owner or the mobile changes later.
 
-**Multi-role (approved):** one business can hold several roles (for example an FPO that is both Aggregator and Processor). Each role module is filled and approved separately, and the console shows a **role switcher** in the top bar. All roles share one Entity ID, one team and one set of premises.
+**Multi-role (approved, updated by Decision 31):** one Gmail account can register several roles (for example an FPO that is both Aggregator and Processor). Each role registration is filled, reviewed and approved separately, and each approved role gets its own Role ID. The console **role switcher** in the top bar shows **only approved roles**. Approved roles of the same Gmail share one team and one set of premises.
 
-**Team users (approved):** the Owner adds staff with OTP login and permissions: Owner, Manager, Receiving Operator, Dispatch Operator, QC Inspector, Viewer. Every event records *which staff member* did it.
+**Team users (approved):** the Owner adds staff by their **Gmail** (mobile optional) with permissions: Owner, Manager, Receiving Operator, Dispatch Operator, QC Inspector, Viewer. Staff sign in with Google Sign-In. Every event records *which staff member* did it.
 
 ### 6.2 Common Core Form (every business role fills this)
 
 | Section | Fields | Required |
 |---|---|---|
-| **A. Authorised Signatory** | Full name, Designation, Verified mobile, Email, Live selfie, ID proof (PAN / Aadhaar via DigiLocker, masked / Voter ID), **Authorisation letter or board resolution** (if not the proprietor) | All, except the letter for proprietors |
+| **A. Authorised Signatory** | Full name, Designation, **Gmail (from Google Sign-In, read-only)**, Mobile (optional, OTP-verified), Live selfie, ID proof (PAN / Aadhaar via DigiLocker, masked / Voter ID), **Authorisation letter or board resolution** (if not the proprietor) | All except mobile, and except the letter for proprietors |
 | **B. Business Identity** | Legal name, Trade / brand name, Constitution (Proprietorship / Partnership / LLP / Pvt Ltd / Public Ltd / Co-operative / FPO-FPC / Trust / Govt body), Registration no. (CIN / LLPIN / Co-op / FPC no.), Date of establishment, Business PAN, Logo (shown to consumers), Website | Legal name, Constitution, PAN |
 | **C. Tax** | GSTIN + GST certificate (the state code must match the premises state), Udyam (MSME) no. | GSTIN (see Basic tier, 6.5) |
 | **D. Food Licensing** | **FSSAI licence / registration no.**, type (Basic / State / Central), licensed categories, validity, upload. *FSSAI is issued per premises, so it is captured per premises in section E.* | Yes, for every food business |
@@ -541,8 +625,8 @@ flowchart LR
 | **I. Logistics** | Own vehicles (registration no., type, refrigerated yes/no) or transport partners | Optional |
 | **J. Certifications** | ISO 22000 / FSSC 22000 / HACCP / BRCGS / NPOP organic (trader or processor) / APEDA RCMC / Halal / Kosher / GlobalG.A.P. CoC: number, validity, upload | Optional, **expiry reminders** |
 | **K. Bank** | Account holder (must match the legal name), Account no., IFSC, cancelled cheque | Optional now, required before payments |
-| **L. Team (Staff Users)** | Add members with OTP: Owner, Manager, Receiving Operator, Dispatch Operator, QC Inspector, Viewer | Optional at registration |
-| **M. Consents and Declarations** | Terms, DPDP consent, public visibility (business name, city and logo are shown on the consumer page), data-accuracy declaration, OTP e-sign | Yes |
+| **L. Team (Staff Users)** | Add members by Gmail (mobile optional): Owner, Manager, Receiving Operator, Dispatch Operator, QC Inspector, Viewer | Optional at registration |
+| **M. Consents and Declarations** | Terms, DPDP consent, public visibility (business name, city and logo are shown on the consumer page), data-accuracy declaration, e-sign with a verification code (Gmail, plus mobile if verified) | Yes |
 
 ### 6.3 Role-specific Modules (added after the common core)
 
@@ -608,10 +692,10 @@ Statuses are the same as farmers: `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES
 
 | Role | Special functions |
 |---|---|
-| **Aggregator** | Merge many farmer lots into one aggregated lot (new code, all parents linked). Grade or sort into grade lots (split). |
-| **Processor** | **Production Run:** choose input lots and the quantity used from each, add non-farm ingredients (salt, oil: supplier + batch), recipe, expected vs actual conversion ratio (mass balance), output product (name, brand, pack size, GTIN optional), production batch code, mfg date, best-before, output count, print packet QR (batch level). |
-| **Wholesaler / Distributor** | Split and dispatch to many buyers, cold-chain readings, transport details |
-| **Retailer** | Accept, **Place on Shelf** (freezes the Farm-to-Shelf days), print a shelf QR for loose produce, mark Sold Out / Wasted / Returned with quantity |
+| **Aggregator** | Merge many farmer lots into one aggregated lot (new code, all parents linked). Grade or sort into grade lots (split). Make small packet batches with a child batch QR (Section 3.7). |
+| **Processor** | **Production Run:** choose input lots and the quantity used from each, add non-farm ingredients (salt, oil: supplier + batch), recipe, expected vs actual conversion ratio (mass balance), output product (name, brand, pack size, GTIN optional), production batch code, mfg date, best-before, output count, print packet QR (batch level, Web or APK). |
+| **Wholesaler / Distributor** | Split and dispatch to many buyers, make small packet batches with a child batch QR (Section 3.7), cold-chain readings, transport details |
+| **Retailer** | Accept, **Place on Shelf** (freezes the Farm-to-Shelf days), repack loose produce into small packet batches with a child batch QR or print a shelf QR, mark Sold Out / Wasted / Returned with quantity |
 
 ### 6.9 Account & Entity Deletion Option for All Business Entities (Approved)
 
@@ -625,13 +709,15 @@ Every downstream business entity console (**Aggregator / FPO, Processor / Manufa
   - **Zero In-Transit Handovers:** No outgoing or incoming lots in `HANDOVER_REQUESTED` state.
   - If any active inventory or transit remains, the deletion modal is blocked with a detailed itemized breakdown of transactions that must be settled first.
   - **Session Timeout Fallback:** Unauthenticated or expired sessions offer a **Clear Local Profile & Exit** option to wipe local state cleanly.
-- **Mobile Verification Code (OTP):** The registered signatory's primary mobile must verify a 6-digit confirmation code (`action: 'request_otp'`) to authenticate the request.
+- **Verification Code:** A 6-digit confirmation code (`action: 'request_otp'`) is sent to the owner's Gmail (and verified mobile, if any) to authenticate the request.
 - **Entity Freezing:** Upon submission, the entity transitions to `DELETION_REQUESTED`. All operational capabilities (accepting inbound handovers, initiating dispatches, starting production runs, or printing retail QRs) are frozen. Can be cancelled by the owner at any time before Admin review.
 - **Admin Review & Anonymization:** Admin examines the request in the **Admin Console > Tab 5: Entity Deletion Requests Queue**. Upon approval, business credentials and user accounts are deactivated, commercial contact PII is expunged under DPDP Act 2023, while historical custody handovers and product transformation records remain cryptographically sealed and permanently intact.
 
 ---
 
 ## 7. Consumer Scan Page (public, no login, mobile-first)
+
+**How the customer scans:** with the **AnnaSutra Android APK** (native scanner, Consumer mode, no login) or with any phone camera that opens the public web page. The page shows the product origin, a short summary and the journey in short bites.
 
 | Block | Content |
 |---|---|
@@ -657,7 +743,7 @@ Every downstream business entity console (**Aggregator / FPO, Processor / Manufa
 | Level | What | How |
 |---|---|---|
 | Always (no prompt) | City / pincode (approx. from IP), device type, time, product, lot, retailer | Server-side |
-| Opt-in | **Precise GPS** | Browser location prompt with a clear purpose. Incentive: "See how far this food travelled to reach you." |
+| Opt-in | **Precise GPS** | Browser location prompt (web) or Android runtime location permission (APK), with a clear purpose. Incentive: "See how far this food travelled to reach you." If granted, AnnaSutra records the coordinates against that scan for the Admin Console. If refused, the scan still works. |
 | Retention | Raw data for 12 months, then aggregated | Automatic job |
 | Monetisation | Sell only **aggregated, anonymised insights**: demand heatmaps, freshness at purchase, regional preferences, scans per retailer | Never raw personal data |
 
@@ -678,14 +764,17 @@ Every downstream business entity console (**Aggregator / FPO, Processor / Manufa
 
 ## 9. Admin Console
 
+> [!IMPORTANT]
+> **Access:** only `devnetraconsultancy@gmail.com` can sign in (Google Sign-In). The backend checks this single allow-listed Gmail on every Admin API call and returns HTTP 403 for anyone else. There are no admin sub-roles.
+
 | Module | Function |
 |---|---|
-| **1. Verification Queue** | Field-level approve/reject, document viewer, polygon review on satellite map, overlap alerts, SLA timer |
+| **1. Verification Queue** | Field-level approve/reject per role registration (one Gmail can have several), document viewer, polygon review on satellite map, overlap alerts, SLA timer. Approval mints the Role ID. |
 | **2. Profile Change Requests** | Old vs new values, approve/reject, document verification, audit history |
 | **3. Chain Explorer & Recall** | Search any batch code for full graph upstream and downstream; initiate multi-hop recall alerts |
 | **4. Consumer Scan GPS Analytics** | Verified consumer scan telemetry, opt-in GPS coordinates, calculated haversine distances, counterfeit alerts |
-| **5. Entity Deletion Requests** | Review submitted account deletion requests across all entity roles. Audits zero-custody compliance, reason, and owner mobile OTP audit before final deactivation / PII erasure. |
-| Entity Directory | All entities, filter by role / region / status, suspend / reactivate |
+| **5. Entity Deletion Requests** | Review submitted account deletion requests across all entity roles. Audits zero-custody compliance, reason, and verification code audit before final deactivation / PII erasure. |
+| Entity Directory | All Gmail accounts and their role registrations, filter by role / region / status, suspend / reactivate |
 | **Anomaly Center** | All system flags (table below), assign, resolve, add notes |
 | Master Data | Taxonomy, commodities, varieties, units, weight tolerance per commodity, conversion ratios, yield benchmarks, geofence radius, handover expiry |
 | Audit Log | Unchangeable log of who did what, when, from which device |
@@ -714,7 +803,8 @@ Every downstream business entity console (**Aggregator / FPO, Processor / Manufa
 
 ```mermaid
 erDiagram
-  USER ||--|| ENTITY : operates
+  USER ||--o{ ROLE_REGISTRATION : files
+  ROLE_REGISTRATION ||--|| ENTITY : approved_as
   ENTITY ||--o{ VERIFICATION : reviewed_by
   ENTITY ||--o{ CHANGE_REQUEST : raises
   ENTITY ||--o{ PREMISES : has
@@ -733,6 +823,9 @@ erDiagram
   LOT ||--o{ CONSUMER_SCAN : scanned_as
   RECALL ||--o{ LOT : affects
 ```
+
+**USER (identity):** email (Gmail, unique primary key, immutable), phone_e164 (optional, verified), status.
+**ROLE_REGISTRATION:** user_id, role, status, application_ref, role_id (null until Admin approval), unique on (user_id, role).
 
 **TRACE_EVENT (core record):** id, lot_id, unit_ids, event_type, actor_entity_id, actor_user_id, device_id, gps, captured_at (device), received_at (server), offline_flag, payload (JSON), evidence_ids, **prev_hash, hash**
 
@@ -813,7 +906,7 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
 | `C-DAC Sovereign Cloud Node` | **National Cloud Node** |
 | `C-DAC Sovereign Digital Mandate` | **Technical Standards & Mandate** |
 | `Data Leakage (DPDP)` | **Data Privacy & Security** |
-| `3. Owner 2FA OTP Verification` | **3. Mobile Verification Code** |
+| `3. Owner 2FA OTP Verification` | **3. Verification Code** |
 | `SOVEREIGN VERIFIER AUTHORITY` | **Admin Verifier** |
 
 ### 11.2 Modal Lifecycle & Universal Dismissal Standard
@@ -833,6 +926,7 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
   * *Modals:* Web centered modals map to native Android Modal Bottom Sheets (draggable/collapsible) or full-screen dialogs.
   * *Lot Ledger:* Web desktop table rows map to native Material 3 cards with swipe actions, filter chips, and expandable details.
   * *QR / Barcode Scanning:* Web browser camera scanning maps to native CameraX + Google ML Kit with zero-latency auto-focus, continuous rapid-scan loops, torch toggle, and haptic feedback.
+  * *Printing:* Web `Printer` Print Label (browser print / PDF) maps to native Android print, share-as-PDF and Bluetooth thermal printing.
   * *Dismissal:* Web backdrop click and `Escape` key map natively to tapping the bottom sheet scrim or pressing the Android hardware/gesture `Back` button.
   * *Data & Cache:* Instant 0ms pre-hydration uses Android Room / SharedPreferences (`annasutra_cached_profile`), followed by silent background network refresh.
 - **Zero Feature Drift:** Android must never omit a feature that exists in Web, nor invent unaligned divergence. If a button exists on Web (e.g., Request Account Deletion, Cancel Deletion, Batch Creation, Handover), it MUST exist in the Android APK with matching backend API endpoints, payload contracts, and error handling. Android always follows and stays synchronized with the Web version.
@@ -844,11 +938,14 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
   * **Strict Prohibition of WebView Wrappers:** The production APK must NEVER wrap the web application (`https://annasutra.vercel.app/` or local webviews) as its primary UI. Every screen, form, chart, bottom sheet, and action button must be rendered as native Flutter widgets.
   * **Native Hardware Integrations:**
     - Camera & QR: Direct integration via `mobile_scanner` (CameraX + Google ML Kit) with continuous scan loops, torch toggle, and haptic feedback.
+    - Label Printing: native print of lot / batch QR and barcode labels (Android print framework, share-as-PDF, Bluetooth thermal printers), matching the Web `Printer` Print Label action.
+    - Consumer Location: Android runtime location permission requested at consumer scan time, opt-in only (Section 8).
+    - Sign-In: native Google Sign-In (Gmail is the account primary key, Section 2.5).
     - Security & Auth: Encrypted on-device credential storage via `flutter_secure_storage` (Android Keystore / EncryptedSharedPreferences) and biometric unlock via `local_auth`.
     - Networking & Resiliency: High-performance HTTP client via `dio` with automated token refresh interceptors and offline sync queuing via `connectivity_plus`.
 - **Universal Single APK (One App for All 7 Roles):**
   * **Single Unified Binary:** Rather than publishing fragmented individual apps for farmers, mandis, processors, and retailers, AnnaSutra delivers **One Single Universal APK** (`AnnaSutra_latest.apk`).
-  * **Dynamic Role Adaptation:** Upon authentication (via Phone OTP or Google Sign-In), the app inspects the active entity profile from the JWT payload and dynamically renders the corresponding native console:
+  * **Dynamic Role Adaptation:** After sign-in (native Google Sign-In with the Gmail account on first use, then Google Sign-In or OTP on a verified mobile already linked to that Gmail), the app shows the native login portal (Section 2.5). It then renders the native console for the selected **approved** role:
     1. Producer / Farmer Console (Land allocation, harvest batches, crate QR minting, dispatch).
     2. Aggregator / Mandi Console (Inward receiving, grading, weighing, lot aggregation).
     3. Processor / Mill Console (Transformation, input-to-output conversion, production runs).
@@ -863,13 +960,15 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
 
 ## 12. Notifications
 
-In-app + SMS (+ WhatsApp later), plain text only. Triggers: registration status, change request outcome, handover request, accepted / rejected / partial, discrepancy, request expiring, recall, anomaly assigned (admin).
+In-app + email to the account Gmail (always) + SMS only if a verified mobile exists (+ WhatsApp later), plain text only. Triggers: registration status, change request outcome, handover request, accepted / rejected / partial, discrepancy, request expiring, recall, anomaly assigned (admin).
 
 ---
 
 ## 13. Security and Compliance
 
 - Role-based access + record-level ownership (an entity sees only its own lots plus the lots in its custody chain).
+- **Identity:** Gmail (Google Sign-In) is the account primary key. Mobile OTP sign-in works only for a mobile already verified and linked to that Gmail.
+- **Admin allow-list:** Admin APIs and the Admin Console accept only `devnetraconsultancy@gmail.com`; every other Gmail gets HTTP 403.
 - KYC encrypted at rest. **Aadhaar is never stored in full** (masked, or fetched via DigiLocker).
 - Photos are served through short-lived links. GPS metadata is removed from photos shown publicly.
 - A consent ledger (who agreed to what, when, which version), for DPDP.
@@ -924,3 +1023,10 @@ In-app + SMS (+ WhatsApp later), plain text only. Triggers: registration status,
 | 26 | Web-First Master & Android Platform Parity Architecture | Web UI/UX is the primary design benchmark. Android continuously synchronizes and mirrors 100% of Web features, buttons, and workflows, implemented via idiomatic native mobile UX (Bottom Sheets, Material 3, CameraX, Haptics). Android always follows what the Web version has. | **Approved** |
 | 27 | 100% Pure Native Flutter/Dart & Universal Single APK Architecture | The Android mobile application is strictly implemented in 100% pure native Flutter/Dart (Zero-WebView wrapper). A single universal APK serves all 7 entity roles with dynamic role-based rendering and universal multi-ABI support. | **Approved** |
 | 28 | Unified 5-Step Model, KYC Locking & Universal Self-Service Profile Editing | Both 1st-time registration and post-approval Profile modal share the exact same 5-step model (1. Basic Info, 2. Farm Plots, 3. Cultivation, 4. KYC, 5. Consent & Review). Steps 1-3 are directly self-editable by the producer. Step 4 (KYC: PAN, Aadhaar, Bank) is permanently locked and strictly requires an Admin Change Request. Step 5 houses consumer transparency toggles, KYC update requests, and clean account deletion. | **Approved** |
+| 29 | Optional mobile in IDs | Role ID and lot code use a 10-digit Identity Segment: the verified mobile if present at approval, otherwise a 10-digit system serial. Same 26-digit length, frozen forever. Updates Decisions 2 and 3. | **Approved** |
+| 30 | Gmail as primary identity | Gmail (Google Sign-In) is mandatory and is the account primary key. Mobile is optional. First sign-in is always Google; mobile OTP sign-in works only for a mobile already verified on that Gmail. | **Approved** |
+| 31 | One Gmail, many role registrations | Each role registration is reviewed and approved separately and gets its own Role ID. The role switcher shows only approved roles. One registration per role per Gmail. Updates Decision 14. | **Approved** |
+| 32 | Single Admin account | Only `devnetraconsultancy@gmail.com` can access the Admin Console. Admin sub-roles are dropped. | **Approved** |
+| 33 | Print labels on Web and APK | Lot / batch QR and barcode labels are printable from the Web console and natively from the Android APK. | **Approved** |
+| 34 | Small packet batches with child batch QR | Aggregator, Processor, Wholesaler, Distributor and Retailer can split a lot into packet batches. Each packet batch is a child lot with one batch-level QR printed on all its packets, linked to the parent lot, under mass balance. | **Approved** |
+| 35 | Login portal and verification codes | After Google Sign-In, the portal lists every role with this Gmail's registration status. Verification codes (consent e-sign, deletion) go to the Gmail, plus the mobile if verified. Customer scans via APK or web; opt-in location is recorded for Admin. | **Approved** |

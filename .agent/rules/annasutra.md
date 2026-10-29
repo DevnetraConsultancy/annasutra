@@ -1,6 +1,8 @@
 # AnnaSutra: agent rules
 
-Read `docs/00_MASTER_BRIEF.md` before any task. Then read the docs it points to for your task.
+Read `docs/Core/annasutra_entity_console_architecture.md` (the locked Gold Standard blueprint, the only doc under `docs/`) before any task. Keep it updated whenever the Web UI/UX changes.
+
+When asked for the end-to-end flow, explain it in the order and style of blueprint Section 1.1 (Gmail sign-in > registration > Admin approval > console > batch + QR + print > dispatch > scan-accept > append > child packet batches > retailer > customer scan).
 
 ## Always
 - Plan first. Wait for the human's approval before writing code for a phase.
@@ -13,11 +15,11 @@ Read `docs/00_MASTER_BRIEF.md` before any task. Then read the docs it points to 
 - No secrets, keys or real data in the repo. Use `.env.example` with fake values.
 - Strings live in resource files: Bengali, Hindi, English. Large buttons, few taps.
 - Ask before adding any dependency. Explain why, size, licence, risk.
-- Check [verify] items against official docs and record them in `docs/VERIFIED_FACTS.md`.
+- Check [verify] items against official docs and record what was verified in the blueprint (or the commit message).
 - Every feature ships with tests. Run linters and tests before saying you are done.
 
 ## Stack
-- Targets: Android (primary for field staff) and Web (installable PWA for office users) from ONE Flutter codebase. iOS later, optional. Read docs/16_platform_web_android.md. Never weaken signing or storage rules to make a platform work; stop and report instead.
+- Targets: Android (primary for field staff) and Web (installable PWA for office users) from ONE Flutter codebase. iOS later, optional. Read blueprint Sections 11.3 and 11.4 (Web-first master, 100% native Flutter Android, no WebView). Never weaken signing or storage rules to make a platform work; stop and report instead.
 - App: Flutter (Dart), Riverpod, go_router, Drift + SQLCipher, Dio, mobile_scanner, flutter_secure_storage, local_auth, a passkey plugin, workmanager. Check pub.dev for current maintained versions before choosing.
 - Backend: Python, Django, Django REST Framework, MySQL 8.0+ (Aiven Cloud MySQL via PyMySQL).
 - Public page: Django template, no JavaScript framework.

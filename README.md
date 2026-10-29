@@ -2,7 +2,7 @@
 
 A complete design package for building AnnaSutra, a farm-to-consumer traceability app (one Flutter codebase for Android and Web, iOS later) with a Django backend, ready to hand to Google Antigravity.
 
-**Start here:** `HANDOVER_GUIDE.md` (for you, the human), then `docs/00_MASTER_BRIEF.md` (for the agent).
+**Start here:** `HANDOVER_GUIDE.md` (for you, the human), then `docs/Core/annasutra_entity_console_architecture.md` (the locked Gold Standard blueprint, for every agent).
 
 ## Contents
 
@@ -12,24 +12,7 @@ HANDOVER_GUIDE.md          how to give this to Antigravity, settings, prompts, r
 AGENTS.md                  rules the agent must follow (copy in .agent/rules/)
 .agent/rules/              workspace rules
 .agent/workflows/          /plan-phase, /implement-phase, /write-tests, /security-review, /release-checklist
-docs/00_MASTER_BRIEF.md    what to build, decisions, non-negotiables
-docs/01_product_and_scope.md
-docs/02_architecture.md
-docs/03_user_flows.md
-docs/04_data_model.md
-docs/05_events_custody_quantity.md
-docs/06_qr_identity.md
-docs/07_security_privacy_compliance.md
-docs/08_offline_sync.md
-docs/09_api.md
-docs/10_mobile_app_spec.md
-docs/11_backend_spec.md
-docs/12_infra_deployment.md
-docs/13_testing.md
-docs/14_phases_and_prompts.md
-docs/15_risks_open_questions.md
-docs/16_platform_web_android.md   Android + Web from one codebase, platform differences
-docs/VERIFIED_FACTS.md    the agent logs what it verified
+docs/Core/annasutra_entity_console_architecture.md   the ONLY spec under docs/ (Gold Standard, locked)
 db/schema.sql              PostgreSQL schema (loaded and constraint-tested on PostgreSQL 16)
 api/openapi.yaml           API contract, 35 paths (validated as OpenAPI 3.0.3)
 assets/diagrams/           12 diagrams as SVG and PNG

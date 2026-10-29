@@ -51,24 +51,24 @@ Android and Flutter help: Google announced an Android command-line tool and open
 
 ```
 You are building AnnaSutra, a traceability app for Android and Web (one Flutter codebase) with a Django backend. Read AGENTS.md and every file
-in docs/ (start with docs/00_MASTER_BRIEF.md), plus api/openapi.yaml and db/schema.sql.
+in docs/Core/annasutra_entity_console_architecture.md, plus api/openapi.yaml and db/schema.sql.
 Do not write code yet.
-Run /plan-phase for Phase 0 (see docs/14_phases_and_prompts.md). List every dependency
+Run /plan-phase for Phase 0 (see docs/Core/annasutra_entity_console_architecture.md). List every dependency
 with reason, size, licence and risk. List questions and anything you must verify.
 Stop and wait for my approval.
 ```
 
-Then approve or correct the plan, and run `/implement-phase` for Phase 0. Repeat for Phases 1 to 4 using the prompts in `docs/14_phases_and_prompts.md`.
+Then approve or correct the plan, and run `/implement-phase` for Phase 0. Repeat for Phases 1 to 4 using the prompts in `docs/Core/annasutra_entity_console_architecture.md`.
 
 **4B. "In one go" mode (continuous run with four mandatory stops).** If you want Antigravity to build everything in one continuous run, paste this once. Do not remove the stops. Security-critical code cannot be verified without a human and real phones.
 
 ```
 Build AnnaSutra end to end in one continuous run, following the docs exactly.
 Targets: Flutter for Android and Web from ONE codebase, Django backend, tiny public page.
-Read AGENTS.md, docs/00_MASTER_BRIEF.md and every file in docs/, plus api/openapi.yaml
+Read AGENTS.md, docs/Core/annasutra_entity_console_architecture.md, plus api/openapi.yaml
 and db/schema.sql. Never invent endpoints, fields, standards or legal duties.
 
-Work phase by phase (docs/14). Each phase on its own branch, all tests green before the
+Work phase by phase (docs/Core/annasutra_entity_console_architecture.md). Each phase on its own branch, all tests green before the
 next phase starts. After each phase write reports/phase-N.md (what changed, what was
 tested with results, what is uncertain, questions). Treat these reports as your memory if
 your context gets long.
@@ -94,7 +94,7 @@ then stop and ask. Never weaken a security rule to make a test or a platform wor
 3. **Review.** You (or a developer you trust) read the diff. Pay extra attention to anything about login, keys, permissions, sync, hashing, and the public page.
 4. **Test.** Run it on a real low-cost phone. Try airplane mode. Try a second phone as the receiver.
 5. **Security check** (`/security-review`) at the end of Phases 2, 3 and 4.
-6. **Merge** only when the phase gate checklist in `docs/14` is ticked.
+6. **Merge** only when the phase gate checklist in `docs/Core/annasutra_entity_console_architecture.md` is ticked.
 
 ## Step 6. What you must do yourself (do not delegate)
 
@@ -104,7 +104,7 @@ then stop and ask. Never weaken a security rule to make a test or a platform wor
 - External penetration test before the pilot.
 - Store submissions, privacy forms and developer accounts.
 - Field testing and training with real farmers, in Bengali.
-- Decisions listed in `docs/15_risks_open_questions.md`.
+- Decisions listed in `docs/Core/annasutra_entity_console_architecture.md`.
 
 ## Step 7. When the agent goes wrong
 
@@ -119,7 +119,7 @@ then stop and ask. Never weaken a security rule to make a test or a platform wor
 
 ## Step 8. Suggested order of the human work
 
-Week 0: accounts, domain, lawyer, device phones. Phase 0 and 1: backend and app foundations. Phase 2: first end-to-end handover on real phones. Phase 3: split, merge, recall. Phase 4: security, pen test, pilot readiness. Then the pilot described in `docs/01_product_and_scope.md`.
+Week 0: accounts, domain, lawyer, device phones. Phase 0 and 1: backend and app foundations. Phase 2: first end-to-end handover on real phones. Phase 3: split, merge, recall. Phase 4: security, pen test, pilot readiness. Then the pilot described in `docs/Core/annasutra_entity_console_architecture.md`.
 
 ## Honest limits
 
