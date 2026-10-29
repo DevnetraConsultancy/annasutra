@@ -335,7 +335,7 @@ class EntityDeletionRequest(models.Model):
     REASON_CHOICES = [
         ("CEASING_OPERATIONS", "Ceasing agricultural / business operations"),
         ("LAND_TRANSFER", "Sale, transfer, or lease termination of land/premises"),
-        ("DPDP_ERASURE", "Right to Erasure / Privacy request under DPDP Act 2023"),
+        ("DPDP_ERASURE", "Account deletion and data privacy request"),
         ("DUPLICATE", "Duplicate or accidental registration"),
         ("OTHER", "Other"),
     ]

@@ -1231,197 +1231,448 @@ class MyChangeRequestsView(APIView):
 
 
 class MyProfileDeleteRequestView(APIView):
+
     """Handles entity profile deletion requests (Right to Erasure / Deactivation).
+
     Supports GET (pre-flight status and checks) and POST (OTP request or final submission).
+
     """
+
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
-        if not profile:
-            raise exceptions.NotFound({"detail": "Entity profile not found.", "code": "PROFILE_NOT_FOUND"})
 
-        del_req = EntityDeletionRequest.objects.filter(entity=profile, status="PENDING").first()
+
+    def get(self, request):
+
+        profile = _get_entity_profile_for_user(request.user, auto_create=False)
+
+        del_req = None
+
+        if profile:
+
+            try:
+
+                del_req = EntityDeletionRequest.objects.filter(entity=profile, status="PENDING").first()
+
+            except Exception:
+
+                del_req = None
+
+
 
         org = getattr(request.user, "org", None)
+
         in_transit_count = 0
+
         active_custody_count = 0
+
         blocking_reasons = []
 
+
+
         try:
+
             from apps.custody.models import Handover
+
             from apps.lots.models import Lot
 
+
+
             if org:
+
                 in_transit_count = Lot.objects.filter(
+
                     Q(custodian_org=org) | Q(created_by_org=org),
+
                     state__in=["IN_TRANSIT", "HANDOVER_REQUESTED", "DISPUTED"]
+
                 ).count()
+
                 open_handovers = Handover.objects.filter(from_org=org, state="INITIATED").count()
+
                 if open_handovers > 0:
+
                     in_transit_count += open_handovers
+
+
 
                 active_custody_count = Lot.objects.filter(custodian_org=org, state="IN_CUSTODY").count()
 
+
+
             if in_transit_count > 0:
+
                 blocking_reasons.append(
+
                     f"You have {in_transit_count} lot(s) currently in transit or pending handover. Complete or cancel open dispatches first."
+
                 )
 
-            if profile.role in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER") and active_custody_count > 0:
+
+
+            if profile and profile.role in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER") and active_custody_count > 0:
+
                 blocking_reasons.append(
+
                     f"You currently have {active_custody_count} active lot(s) in custody. All stock must be dispatched, closed, or marked sold out before account deletion."
+
                 )
+
         except Exception:
+
             pass
 
+
+
         return Response({
+
             "has_pending_request": del_req is not None,
-            "entity_status": profile.status,
+
+            "entity_status": profile.status if profile else "NEW",
+
             "can_request_deletion": len(blocking_reasons) == 0,
+
             "blocking_reasons": blocking_reasons,
+
             "active_in_transit_count": in_transit_count,
+
             "active_custody_count": active_custody_count,
-            "registered_phone": profile.phone_e164,
+
+            "registered_phone": profile.phone_e164 if profile else getattr(request.user, "phone_e164", ""),
+
             "pending_request": {
+
                 "request_id": str(del_req.request_id),
+
                 "reason": del_req.reason,
+
                 "reason_display": del_req.get_reason_display(),
+
                 "remarks": del_req.remarks,
+
                 "created_at": del_req.created_at.isoformat(),
+
                 "status": del_req.status,
+
             } if del_req else None,
+
         })
 
+
+
     def post(self, request):
+
         profile = _get_entity_profile_for_user(request.user, auto_create=False)
-        if not profile:
-            raise exceptions.NotFound({"detail": "Entity profile not found.", "code": "PROFILE_NOT_FOUND"})
 
         user_role = getattr(request.user, "role", "OWNER")
+
         if user_role not in ("OWNER",):
-            raise exceptions.PermissionDenied({"detail": "Only the registered account owner can request profile deletion.", "code": "OWNER_ONLY"})
+
+            raise exceptions.PermissionDenied({"detail": "Only the registered account owner can request account deletion.", "code": "OWNER_ONLY"})
+
+
 
         data = request.data or {}
+
         action = data.get("action")
 
+        phone_e164 = profile.phone_e164 if profile else getattr(request.user, "phone_e164", "")
+
+
+
         if action == "request_otp":
+
             from .services.otp import OtpService
-            otp_res = OtpService.request_otp(profile.phone_e164, language=data.get("language", "en"))
+
+            otp_res = OtpService.request_otp(phone_e164, language=data.get("language", "en"))
+
             res_payload = {
+
                 "status": "OTP_SENT",
-                "message": f"Verification OTP sent to registered mobile {profile.phone_e164[-4:].rjust(len(profile.phone_e164), '*')}.",
+
+                "message": f"Verification OTP sent to registered mobile {phone_e164[-4:].rjust(len(phone_e164), '*') if phone_e164 else 'on file'}.",
+
                 "expires_in": otp_res.get("expires_in", 300),
+
             }
+
             if "debug_code" in otp_res:
+
                 res_payload["debug_code"] = otp_res["debug_code"]
+
             return Response(res_payload, status=status.HTTP_202_ACCEPTED)
 
+
+
+        # If user has no saved profile yet, delete/deactivate user directly
+
+        if not profile:
+
+            otp_code = str(data.get("otp_code", "")).strip()
+
+            from .services.otp import OtpService
+
+            otp_valid = False
+
+            if (getattr(settings, "OTP_DEBUG", False) or getattr(settings, "DEBUG", False)) and otp_code in ("123456", data.get("debug_code")):
+
+                otp_valid = True
+
+            elif phone_e164 and otp_code:
+
+                otp_valid = OtpService.verify_otp(phone_e164, otp_code)
+
+            elif not otp_code:
+
+                raise exceptions.ValidationError({"detail": "Verification code is required to delete account.", "code": "OTP_REQUIRED"})
+
+
+
+            if not otp_valid:
+
+                raise exceptions.ValidationError({"detail": "Invalid or expired verification code.", "code": "INVALID_OTP"})
+
+
+
+            user = request.user
+
+            user.status = "DISABLED"
+
+            user.save(update_fields=["status"])
+
+            return Response({
+
+                "status": "DELETED",
+
+                "message": "Account successfully deleted.",
+
+            }, status=status.HTTP_200_OK)
+
+
+
         reason = str(data.get("reason", "")).strip()
+
         remarks = str(data.get("remarks", "")).strip()
+
         otp_code = str(data.get("otp_code", "")).strip()
 
+
+
         valid_reasons = dict(EntityDeletionRequest.REASON_CHOICES)
+
         if not reason or reason not in valid_reasons:
+
             raise exceptions.ValidationError({"detail": f"Valid reason required. Choices: {list(valid_reasons.keys())}", "code": "INVALID_REASON"})
 
+
+
         if not otp_code:
+
             raise exceptions.ValidationError({"detail": "OTP code is required to authenticate deletion request.", "code": "OTP_REQUIRED"})
 
+
+
         from .services.otp import OtpService
+
         otp_valid = False
+
         if (getattr(settings, "OTP_DEBUG", False) or getattr(settings, "DEBUG", False)) and otp_code in ("123456", data.get("debug_code")):
+
             otp_valid = True
+
         else:
+
             otp_valid = OtpService.verify_otp(profile.phone_e164, otp_code)
 
+
+
         if not otp_valid:
+
             raise exceptions.ValidationError({"detail": "Invalid or expired OTP code.", "code": "INVALID_OTP"})
 
+
+
         org = getattr(request.user, "org", None)
+
         try:
+
             from apps.custody.models import Handover
+
             from apps.lots.models import Lot
 
+
+
             if org:
+
                 in_transit = Lot.objects.filter(
+
                     Q(custodian_org=org) | Q(created_by_org=org),
+
                     state__in=["IN_TRANSIT", "HANDOVER_REQUESTED", "DISPUTED"]
+
                 ).count()
+
                 open_handovers = Handover.objects.filter(from_org=org, state="INITIATED").count()
+
                 if (in_transit + open_handovers) > 0:
+
                     raise exceptions.ValidationError({
+
                         "detail": "Cannot submit account deletion request while lots are in transit. Complete or cancel open dispatches first.",
+
                         "code": "IN_TRANSIT_BLOCK"
+
                     })
 
+
+
                 if profile.role in ("AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"):
+
                     active_stock = Lot.objects.filter(custodian_org=org, state="IN_CUSTODY").count()
+
                     if active_stock > 0:
+
                         raise exceptions.ValidationError({
+
                             "detail": f"You currently have {active_stock} active lot(s) in custody. All stock must be dispatched, closed, or marked sold out before account deletion.",
+
                             "code": "ACTIVE_STOCK_BLOCK"
+
                         })
+
         except exceptions.ValidationError:
+
             raise
+
         except Exception:
+
             pass
 
+
+
         del_req, _ = EntityDeletionRequest.objects.update_or_create(
+
             entity=profile,
+
             status="PENDING",
+
             defaults={
+
                 "requested_by_user_id": request.user.user_id,
+
                 "reason": reason,
+
                 "remarks": remarks,
+
                 "created_at": timezone.now(),
+
             }
+
         )
+
+
 
         profile.status = "DELETION_REQUESTED"
+
         profile.save(update_fields=["status", "updated_at"])
 
+
+
         VerificationReview.objects.create(
+
             entity=profile,
+
             reviewer_id=request.user.user_id,
+
             decision="DELETION_REQUESTED",
+
             reason=f"Account deletion requested by registered owner. Reason: {valid_reasons.get(reason)}. Remarks: {remarks}".strip(),
+
         )
 
+
+
         return Response({
+
             "status": "DELETION_REQUESTED",
+
             "request_id": str(del_req.request_id),
+
             "message": "Account deletion request submitted. Operations are now frozen pending administrative review.",
+
         }, status=status.HTTP_201_CREATED)
 
 
+
+
+
 class MyProfileDeleteRequestCancelView(APIView):
+
     """Allows an entity owner to withdraw/cancel a pending account deletion request."""
+
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        profile = _get_entity_profile_for_user(request.user, auto_create=False)
-        if not profile:
-            raise exceptions.NotFound({"detail": "Entity profile not found.", "code": "PROFILE_NOT_FOUND"})
 
-        del_req = EntityDeletionRequest.objects.filter(entity=profile, status="PENDING").first()
+
+    def post(self, request):
+
+        profile = _get_entity_profile_for_user(request.user, auto_create=False)
+
+        if not profile:
+
+            return Response({"status": "CANCELLED", "message": "No pending deletion request found."})
+
+
+
+        del_req = None
+
+        try:
+
+            del_req = EntityDeletionRequest.objects.filter(entity=profile, status="PENDING").first()
+
+        except Exception:
+
+            del_req = None
+
+
+
         if not del_req:
-            raise exceptions.ValidationError({"detail": "No pending account deletion request found.", "code": "NO_PENDING_REQUEST"})
+
+            return Response({"status": "CANCELLED", "message": "No pending account deletion request found."})
+
+
 
         del_req.status = "CANCELLED"
+
         del_req.save(update_fields=["status", "updated_at"])
 
+
+
         profile.status = "VERIFIED"
+
         profile.save(update_fields=["status", "updated_at"])
 
+
+
         VerificationReview.objects.create(
+
             entity=profile,
+
             reviewer_id=request.user.user_id,
+
             decision="RESTORED",
+
             reason="Account deletion request cancelled by entity owner.",
+
         )
 
+
+
         return Response({
+
             "status": "VERIFIED",
-            "message": "Account deletion request cancelled successfully. Full console access restored.",
-        })
+
+            "message": "Account deletion request successfully withdrawn. Normal operations restored.",
+
+        }, status=status.HTTP_200_OK)
+

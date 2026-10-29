@@ -311,3 +311,41 @@ def test_admin_deletion_approval_and_rejection_workflow(api_client, test_setup, 
     assert sens.bank_name == ""
     assert sens.account_last4 == ""
     assert sens.aadhaar_last4 == ""
+
+
+@pytest.mark.django_db
+def test_deletion_for_unregistered_or_new_user(api_client, settings):
+    """GET and POST /v1/me/profile/delete-request succeed for new users without EntityProfile."""
+    settings.OTP_DEBUG = True
+    org = Organisation.objects.create(
+        org_id=uuid.uuid4(),
+        name="Temporary Farm Node",
+        org_type="FARMER",
+        verification="PENDING",
+    )
+    user = AppUser.objects.create(
+        user_id=uuid.uuid4(),
+        org=org,
+        phone_e164="+919111222333",
+        role="OWNER",
+        status="ACTIVE",
+    )
+    token = TokenService.issue_token_pair(user)["access_token"]
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+    # 1. Preflight check returns can_request_deletion=True
+    resp = api_client.get("/v1/me/profile/delete-request")
+    assert resp.status_code == 200
+    assert resp.data["can_request_deletion"] is True
+    assert resp.data["has_pending_request"] is False
+
+    # 2. Deletion action deactivates the user immediately
+    post_resp = api_client.post(
+        "/v1/me/profile/delete-request",
+        {"otp_code": "123456"},
+    )
+    assert post_resp.status_code == 200
+    assert post_resp.data["status"] == "DELETED"
+
+    user.refresh_from_db()
+    assert user.status == "DISABLED"
