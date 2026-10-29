@@ -1,9 +1,14 @@
 build_artifacts/
 mobile/
 backend/venv/
+.venv/
+*.sqlite3
+*.sqlite3-journal
 .git/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 *.apk
 *.zip
+run_local.bat
+run_local.sh
