@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js" defer></script>
   <link rel="stylesheet" href="/static/publicview/css/producer_wizard.css?v=20261029v3" />
-  <script src="/static/publicview/js/producer_wizard.js?v=20261029v6" defer></script>
+  <script src="/static/publicview/js/producer_wizard.js?v=20261029v7" defer></script>
   <style>
     :root {
       --primary: #0b3d2e;
@@ -3431,17 +3431,7 @@
         <h3 id="helpModalTitle" style="margin: 0 0 4px; font-size: 20px; font-weight: 900; color: var(--primary);">AnnaSutra — Help &amp; User Guide</h3>
         <p id="helpModalSubtitle" style="margin: 0; font-size: 13px; color: var(--text-muted);">National Agri-Produce Traceability &amp; Verification Assistance</p>
       </div>
-
-  <!-- 18. PRODUCER PROFILE MODAL -->
-  <div class="modal-overlay" id="producerProfileModal" onclick="closeModalOnBackdrop(event)"></div>
-
-  <!-- 19. DOWNSTREAM ENTITY PROFILE MODAL -->
-  <div class="modal-overlay" id="downstreamProfileModal" onclick="closeModalOnBackdrop(event)"></div>
-
-  <!-- 20. ENTITY DELETION REQUEST MODAL -->
-  <div class="modal-overlay" id="entityDeletionRequestModal" onclick="closeModalOnBackdrop(event)"></div>
-
-      <div class="help-section-card">
+<div class="help-section-card">
         <h4 id="helpSec1Title">1. Consumer Produce Lot Verification</h4>
         <p id="helpSec1Desc">Enter any 12-character alphanumeric batch code into the top search bar or click 'Scan QR' to view authenticated farm origin, harvest date, and certified quality grade.</p>
       </div>
@@ -3461,6 +3451,16 @@
       </div>
     </div>
   </div>
+
+  <!-- 18. PRODUCER PROFILE MODAL -->
+  <div class="modal-overlay" id="producerProfileModal" onclick="closeModalOnBackdrop(event)"></div>
+
+  <!-- 19. DOWNSTREAM ENTITY PROFILE MODAL -->
+  <div class="modal-overlay" id="downstreamProfileModal" onclick="closeModalOnBackdrop(event)"></div>
+
+  <!-- 20. ENTITY DELETION REQUEST MODAL -->
+  <div class="modal-overlay" id="entityDeletionRequestModal" onclick="closeModalOnBackdrop(event)"></div>
+
 
   <!-- TRANSLATION & CLIENT WORKSPACE ENGINE -->
   <script>

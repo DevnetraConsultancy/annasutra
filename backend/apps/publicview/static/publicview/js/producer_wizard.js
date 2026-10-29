@@ -2811,8 +2811,18 @@ function renderAdminEntityInspector(ent, t) {
   };
 
   window.openProducerProfileModal = function () {
+    if (!wizardState.profile || !wizardState.profile.first_name) {
+      try {
+        const cached = JSON.parse(localStorage.getItem('annasutra_cached_profile') || '{}');
+        if (cached && (cached.first_name || cached.organisation_name)) {
+          wizardState.profile = Object.assign({}, cached, wizardState.profile || {});
+        }
+      } catch (_) {}
+    }
+
     let modal = document.getElementById('producerProfileModal');
-    if (!modal) {
+    if (!modal || modal.parentElement !== document.body) {
+      if (modal && modal.parentElement) modal.parentElement.removeChild(modal);
       modal = document.createElement('div');
       modal.id = 'producerProfileModal';
       modal.className = 'modal-overlay';
@@ -6487,11 +6497,12 @@ function renderAdminEntityInspector(ent, t) {
   window.openDownstreamProfileModal = async function (role) {
     const activeRole = String(role || currentRole || 'AGGREGATOR').toUpperCase();
     let modal = document.getElementById('downstreamProfileModal');
-    if (!modal) {
+    if (!modal || modal.parentElement !== document.body) {
+      if (modal && modal.parentElement) modal.parentElement.removeChild(modal);
       modal = document.createElement('div');
       modal.id = 'downstreamProfileModal';
       modal.className = 'modal-overlay';
-      modal.onclick = (e) => { if (e.target === modal) window.closeDownstreamProfileModal(); };
+      modal.onclick = (e) => { if (e.target === modal || e.target.classList.contains('modal-overlay')) window.closeDownstreamProfileModal(); };
       document.body.appendChild(modal);
     }
 
@@ -6594,7 +6605,8 @@ function renderAdminEntityInspector(ent, t) {
 
   window.openEntityDeletionRequestModal = async function () {
     let modal = document.getElementById('entityDeletionRequestModal');
-    if (!modal) {
+    if (!modal || modal.parentElement !== document.body) {
+      if (modal && modal.parentElement) modal.parentElement.removeChild(modal);
       modal = document.createElement('div');
       modal.id = 'entityDeletionRequestModal';
       modal.className = 'modal-overlay';
