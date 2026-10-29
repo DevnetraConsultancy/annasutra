@@ -20,7 +20,7 @@ Anyone who clones this repository from GitHub can run it immediately on localhos
   ./run_local.sh
   ```
 
-This automatically configures the Python virtual environment, installs dependencies, applies database migrations, seeds verified demo data, opens your browser, and starts the local server.
+This automatically configures the Python virtual environment, installs dependencies, applies database migrations, verifies administrative configuration, opens your browser, and starts the local server.
 
 ---
 
@@ -34,7 +34,7 @@ source .venv/bin/activate    # On Windows: .venv\Scripts\activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Apply migrations & seed initial demo data
+# 3. Apply migrations & verify configuration
 python manage.py migrate
 python manage.py seed_demo_data
 
@@ -46,16 +46,15 @@ python manage.py runserver 127.0.0.1:8000
 
 ### Local Access Points & Credentials
 
-| Service / Interface | Local URL | Default Credentials / Context |
+| Service / Interface | Local URL | Credentials / Context |
 |---|---|---|
-| **Web Portal & Entity Console** | [http://localhost:8000/](http://localhost:8000/) | Live 5-tier operational simulator & role registration |
-| **Traceable Lot Provenance Story** | [http://localhost:8000/q/DEMO-LOT-001](http://localhost:8000/q/DEMO-LOT-001) | Verified consumer timeline, GI tag, quality certificates |
+| **Web Portal & Entity Console** | [http://localhost:8000/](http://localhost:8000/) | Live 6-role entity console, registration & custody transfer |
 | **System Health Check** | [http://localhost:8000/health](http://localhost:8000/health) | Probe returning `{"status": "healthy", "database": "connected"}` |
 | **Django Admin Portal** | [http://localhost:8000/admin/](http://localhost:8000/admin/) | `admin` / `admin123` |
 | **Admin Console Identity** | [http://localhost:8000/](http://localhost:8000/) | `devnetraconsultancy@gmail.com` |
 | **Android APK Download** | [http://localhost:8000/download/apk](http://localhost:8000/download/apk) | Direct APK download route |
 
-> **Database Configuration**: By default, local execution uses SQLite (`backend/annasutra.sqlite3`). To connect to an external Aiven Cloud MySQL 8.0+ or Docker instance, create a `.env` file or export `DATABASE_URL="mysql://user:password@host:port/dbname"` as detailed in `.env.example`.
+> **Database Configuration**: By default, local execution uses SQLite (`backend/annasutra.sqlite3`). To connect to an external MySQL 8.0+ / Aiven Cloud database, create a `.env` file or export `DATABASE_URL="mysql://user:password@host:port/dbname"` as detailed in `.env.example`.
 
 ---
 
@@ -66,8 +65,7 @@ README.md                  this file
 manage.py                  root CLI wrapper for Django commands
 run_local.bat              one-click runner for Windows
 run_local.sh               one-click runner for macOS/Linux
-HANDOVER_GUIDE.md          how to give this to Antigravity, settings, prompts, review loop
-AGENTS.md                  rules the agent must follow (copy in .agent/rules/)
+HANDOVER_GUIDE.md          settings, prompts, review loop
 .agent/rules/              workspace rules
 .agent/workflows/          /plan-phase, /implement-phase, /write-tests, /security-review, /release-checklist
 docs/Core/annasutra_entity_console_architecture.md   the ONLY spec under docs/ (Gold Standard, locked)
@@ -94,6 +92,8 @@ tools/gen_openapi.py       regenerates api/openapi.yaml
 | 10_offline_sync | Outbox and sync |
 | 11_security_layers | Eight layers |
 | 12_delivery_phases | Phases 0 to 4 |
+
+---
 
 ## What was and was not checked
 

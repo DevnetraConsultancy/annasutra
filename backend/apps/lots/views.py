@@ -1093,7 +1093,7 @@ class LotHandoverAcceptView(APIView):
                 pass
 
         with transaction.atomic():
-            acceptor_org = lot.pending_receiver_org or user_org
+            acceptor_org = user_org if (user_org and getattr(user_org, 'verification', None) == 'VERIFIED') else (lot.pending_receiver_org or user_org)
             if acceptor_org.org_id == lot.created_by_org_id:
                 org_type_map = {
                     "AGGREGATOR": "AGGREGATOR",
@@ -1189,6 +1189,15 @@ class LotAppendScanUpdateView(APIView):
             raise exceptions.NotFound({"detail": "Lot not found for scanned QR code.", "code": "NOT_FOUND"})
 
         user_org = request.user.org
+        is_custodian = (
+            lot.custodian_org_id == getattr(user_org, 'org_id', None)
+            or lot.created_by_org_id == getattr(user_org, 'org_id', None)
+            or (lot.custodian_org and user_org and lot.custodian_org.name.strip().lower() == getattr(user_org, 'name', '').strip().lower())
+        )
+        if not is_custodian:
+            raise exceptions.PermissionDenied(
+                {'detail': 'Only the current custodian can append updates to this lot.', 'code': 'NOT_CUSTODIAN'}
+            )
         prof = (
             EntityProfile.objects.filter(user_id=request.user.user_id).first()
             or (EntityProfile.objects.filter(phone_e164=request.user.phone_e164).first() if request.user.phone_e164 else None)

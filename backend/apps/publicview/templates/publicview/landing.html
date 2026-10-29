@@ -2761,7 +2761,7 @@
             <span id="previewRoleIcon" style="display:inline-flex;align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c0-4 3-7 8-7 0 5-3 8-7 8Z"/><path d="M12 15c0-3-2-5-5-5 0 3 2 5 5 5Z"/></svg></span>
             <div>
               <strong style="font-size: 14.5px; color: #0f172a;" id="previewOrgTitle">Producer Operations Console</strong>
-              <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Tier 1 • Primary Agricultural Producer Node</div>
+              <div style="font-size: 12px; color: #64748b;" id="previewOrgSub">Tier 1 • Primary Agricultural Producer</div>
             </div>
           </div>
           <span class="preview-org-badge" id="previewBadgeText">SIMULATED LIVE NODE</span>
@@ -3085,45 +3085,18 @@
     </div>
   </footer>
 
-  <!-- 11. ENTITY LOGIN MODAL (FAST OTP AUTHENTICATION) -->
+  <!-- 11. ENTITY LOGIN MODAL (GMAIL & GOOGLE AUTHENTICATION) -->
   <div class="modal-overlay" id="loginModal" onclick="closeModalOnBackdrop(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeLoginModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       <div class="modal-head">
-        <h3 id="modalRoleTitle">Entity Login</h3>
-        <p id="modalSubtitle">Role-Confined Authentication on AnnaSutra</p>
+        <h3 id="modalRoleTitle">Sign In with Gmail</h3>
+        <p id="modalSubtitle">Permanent Gmail Identity &bull; Multi-Role Access</p>
       </div>
 
       <div id="otpPhoneStep">
-        <label style="display: block; font-size: 11.5px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px;" id="phoneStepLabel">
-          Official Mobile Authentication
-        </label>
-        <div class="phone-input-row">
-          <div class="country-code-wrapper">
-            <span class="country-flag-badge" id="countryFlagBadge"></span>
-            <select id="countryCodeSelect" class="country-code-select" onchange="if(window.updateCountryFlag) window.updateCountryFlag(this.value);">
-              <option value="+91" selected>+91</option>
-              <option value="+1">+1</option>
-              <option value="+44">+44</option>
-              <option value="+880">+880</option>
-              <option value="+971">+971</option>
-              <option value="+65">+65</option>
-              <option value="+977">+977</option>
-            </select>
-          </div>
-          <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="10-Digit Mobile Number" maxlength="15" />
-        </div>
-        <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()">
-          Send Verification OTP
-        </button>
-
-        <div style="display: flex; align-items: center; gap: 10px; margin: 14px 0;">
-          <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-          <span style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">OR</span>
-          <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-        </div>
-
-        <button type="button" id="btnGoogleAuthToggle" onclick="startGoogleOAuthLogin()" style="width: 100%; background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; padding: 11px 14px; border-radius: 8px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.15s;">
+        <!-- Google Sign-In Primary -->
+        <button type="button" id="btnGoogleAuthToggle" onclick="startGoogleOAuthLogin()" style="width: 100%; background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; padding: 11px 14px; border-radius: 8px; font-weight: 800; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.15s; margin-bottom: 12px;">
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
@@ -3133,9 +3106,45 @@
           <span id="btnGoogleSignInText">Continue with Google</span>
         </button>
 
-        <p style="font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 12px 0 0 0;" id="otpGatewayHint">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> An OTP will be dispatched via official SMS Gateway to your device.
-        </p>
+        <div style="display: flex; align-items: center; gap: 10px; margin: 12px 0;">
+          <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+          <span style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">OR ENTER GMAIL</span>
+          <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <input type="email" class="modal-input" id="gmailDirectInput" placeholder="name@gmail.com" style="width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 13.5px; border-radius: 8px;" onkeydown="if(event.key==='Enter') window.signInWithGmail(this.value);" />
+          <button type="button" class="btn-otp-submit" id="btnDirectGmailSubmit" onclick="window.signInWithGmail(document.getElementById('gmailDirectInput').value)" style="margin-top: 8px; width: 100%;">
+            Continue with Gmail &rarr;
+          </button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 11px; color: #64748b;">
+            <span>Admin account: <a href="javascript:void(0)" onclick="document.getElementById('gmailDirectInput').value='devnetraconsultancy@gmail.com'; window.signInWithGmail('devnetraconsultancy@gmail.com');" style="color: #047857; font-weight: 700; text-decoration: underline;">devnetraconsultancy@gmail.com</a></span>
+          </div>
+        </div>
+
+        <details style="margin-top: 14px; font-size: 12px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 10px;">
+          <summary style="cursor: pointer; font-weight: 700; color: #0b3d2e;">Sign in with linked Mobile OTP</summary>
+          <div style="margin-top: 10px;">
+            <div class="phone-input-row">
+              <div class="country-code-wrapper">
+                <span class="country-flag-badge" id="countryFlagBadge"></span>
+                <select id="countryCodeSelect" class="country-code-select" onchange="if(window.updateCountryFlag) window.updateCountryFlag(this.value);">
+                  <option value="+91" selected>+91</option>
+                  <option value="+1">+1</option>
+                  <option value="+44">+44</option>
+                  <option value="+880">+880</option>
+                  <option value="+971">+971</option>
+                  <option value="+65">+65</option>
+                  <option value="+977">+977</option>
+                </select>
+              </div>
+              <input type="tel" class="modal-input phone-number-input" id="phoneInput" placeholder="10-Digit Mobile Number" maxlength="15" />
+            </div>
+            <button class="btn-otp-submit" id="btnSendOtp" onclick="requestOtpLogin()" style="margin-top: 8px; width: 100%;">
+              Send Verification OTP
+            </button>
+          </div>
+        </details>
       </div>
 
       <div id="otpVerifyStep" style="display: none; margin-top: 10px;">
@@ -3165,7 +3174,7 @@
       <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 24px 32px;">
         <h3 class="portal-modal-title" id="portalModalTitle" style="font-size: 24px;">Who Are You?</h3>
         <p class="portal-modal-subtitle" id="portalModalSubtitle" style="font-size: 13.5px; color: #cbd5e1; margin-top: 4px;">
-          Select your authorized role to access your operational node.
+          Select your authorized role to access your operational console.
         </p>
       </div>
 
@@ -3531,7 +3540,7 @@
         footerLinkHealth: "System Health & Live Uptime",
         footerLinkSecurity: "Security Audit & CERT-In Policy",
         footerLinkGrievance: "Grievance Redressal Officer",
-        footerLinkCdac: "C-DAC Sovereign Digital Mandate",
+        footerLinkCdac: "Technical Standards & Mandate",
         footerOrgTitle: "Centre for Development of Advanced Computing (C-DAC)",
         footerGovTitle: "Ministry of Electronics & Information Technology, Government of India",
         footerLegalNotice: "© 2026 AnnaSutra • Developed & Maintained by C-DAC, Ministry of Electronics & IT (MeitY), Government of India.",
@@ -3568,16 +3577,16 @@
         previewActionHint: "Want to operate this console live? Click below to access the role workspace.",
         previewSimBadge: "SIMULATED LIVE NODE",
         navQrBtnLabel: "Scan QR",
-        portalBadgeText: "NATIONAL SOVEREIGN VALUE CHAIN",
+        portalBadgeText: "TRACEABILITY ECOSYSTEM",
         portalModalTitle: "Who Are You?",
-        portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational node.",
+        portalModalSubtitle: "Select your authorized role in the agricultural value chain to access your confined operational console.",
         portalSecurityNote: "Cryptographic role confinement active. Unauthorized access attempts logged to immutable audit ledger.",
         trustTitle: "National Trust & Verification Standards",
         trustSubtitle: "Cryptographic verification upholding food safety, farmer privacy, and tamper-evident trade across Bharat.",
         trustRibbonLedger: "Append-Only SHA-256 Ledger",
         trustRibbonDpdp: "DPDP Act 2023 Certified",
         trustRibbonAgmark: "Certified Quality Grading",
-        trustRibbonCdac: "C-DAC Sovereign Cloud Node",
+        trustRibbonCdac: "National Cloud Node",
         portalRoleTitleProducer: "Producer",
         portalRoleSubProducer: "Farmer / FPO / Cultivator",
         portalRoleDescProducer: "Register harvest lots, generate tamper-evident crate QR tags, and dispatch to Mandi.",
@@ -3602,7 +3611,6 @@
         qrModalSubtitle: "Point your device camera at any produce crate QR tag or upload an image.",
         btnSwitchCameraText: "Toggle Camera",
         btnUploadQrText: "Upload QR Photo",
-        qrSampleCodesLabel: "Or test with verified lots:",
         btnGovModalClose: "I Understand & Continue"
       },
       hi: {
@@ -3720,7 +3728,6 @@
         qrModalSubtitle: "क्रेट क्यूआर टैग पर अपना कैमरा केंद्रित करें अथवा चित्र अपलोड करें।",
         btnSwitchCameraText: "कैमरा बदलें",
         btnUploadQrText: "क्यूआर फोटो अपलोड करें",
-        qrSampleCodesLabel: "अथवा सत्यापित लॉट से जांचें:",
         btnGovModalClose: "मैं समझ गया और आगे बढ़ें"
       },
       bn: {
@@ -3838,7 +3845,6 @@
         qrModalSubtitle: "ক্রেট কিউআর ট্যাগে আপনার ক্যামেরা রাখুন অথবা ছবি আপলোড করুন।",
         btnSwitchCameraText: "ক্যামেরা পরিবর্তন",
         btnUploadQrText: "কিউআর ছবি আপলোড",
-        qrSampleCodesLabel: "অথবা পরীক্ষিত লট দিয়ে পরীক্ষা করুন:",
         btnGovModalClose: "আমি বুঝতে পেরেছি ও এগিয়ে যান"
       }
     };
@@ -5622,6 +5628,10 @@
     }
 
     function openEntityPortalModal() {
+      if (localStorage.getItem('annasutra_access_token') && window.openLoginRegistrationsPortalModal) {
+        window.openLoginRegistrationsPortalModal();
+        return;
+      }
       const modal = document.getElementById('entityPortalModal');
       if (modal) modal.style.display = 'flex';
     }
@@ -6227,6 +6237,41 @@
         } catch(e) {}
       }, 400);
     }
+
+    async function signInWithGmail(rawEmail) {
+      const email = String(rawEmail || '').trim().toLowerCase();
+      if (!email || !email.includes('@')) {
+        showToast('Please enter a valid Gmail address.', 'warning');
+        return;
+      }
+      const btn = document.getElementById('btnDirectGmailSubmit');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Signing in...';
+      }
+      try {
+        const res = await fetch('/api/v1/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, role: currentRole || 'PRODUCER' })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          closeLoginModal();
+          _handleGoogleOAuthCompletion(data, currentRole || 'PRODUCER');
+        } else {
+          showToast(data.detail || 'Sign-in failed.', 'error');
+        }
+      } catch (e) {
+        showToast('Network error connecting to auth server.', 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Continue with Gmail →';
+        }
+      }
+    }
+    window.signInWithGmail = signInWithGmail;
 
     function _handleGoogleOAuthCompletion(data, role) {
       if (!data) return;

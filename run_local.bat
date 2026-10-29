@@ -53,14 +53,13 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-echo [4/4] Ensuring demo seed data and admin account exist...
+echo [4/4] Verifying administrative configuration...
 !VENV_PY! manage.py seed_demo_data
 
 echo.
 echo ========================================================
 echo   AnnaSutra is starting on http://localhost:8000/
 echo   - Web Console:       http://localhost:8000/
-echo   - Traceable Lot:     http://localhost:8000/q/DEMO-LOT-001
 echo   - Admin Panel:       http://localhost:8000/admin/ (admin / admin123)
 echo   - Admin Gmail:       devnetraconsultancy@gmail.com
 echo ========================================================

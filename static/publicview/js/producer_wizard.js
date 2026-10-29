@@ -6941,17 +6941,17 @@ function renderAdminEntityInspector(ent, t) {
             </div>
           </div>
 
-          <!-- Section 3: Danger Zone: Entity Profile Deletion -->
+          <!-- Section 3: Entity Account Deletion -->
           <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
               <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 6px;">
                 <span>${getIcon('alert', 16, '#dc2626')}</span>
-                <span>Danger Zone: Account &amp; Profile Deletion</span>
+                <span>Account &amp; Profile Deletion</span>
               </h5>
               <span style="font-size: 11px; font-weight: 700; color: #b91c1c; background: #fee2e2; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 6px;">Permanent Action</span>
             </div>
             <p style="margin: 0 0 14px; font-size: 12px; color: #7f1d1d; line-height: 1.5;">
-              Request formal deletion and deactivation of this ${activeRole} entity node. All stock in custody must be settled or marked sold out, and no lots may be in transit. Admin approval and owner 2FA OTP verification are required.
+              Request formal deletion and deactivation of this ${activeRole} entity account. All stock in custody must be settled or marked sold out, and no lots may be in transit. Admin approval and verification code are required.
             </p>
             <div style="display: flex; justify-content: flex-end;">
               <button type="button" onclick="window.closeDownstreamProfileModal(); window.openEntityDeletionRequestModal();" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">
