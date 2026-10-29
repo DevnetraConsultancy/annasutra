@@ -437,6 +437,37 @@ class DeviceDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+def _ensure_identity_mysql_schema():
+    """Idempotently add any missing columns in MySQL to match Decision 30."""
+    from django.db import connection
+    try:
+        if connection.vendor == "mysql":
+            with connection.cursor() as cursor:
+                try:
+                    cursor.execute("ALTER TABLE app_user ADD COLUMN email VARCHAR(190) NULL UNIQUE;")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE app_user MODIFY COLUMN phone_e164 VARCHAR(32) NULL;")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE entity_profile MODIFY COLUMN phone_e164 VARCHAR(20) NULL;")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE entity_profile MODIFY COLUMN entity_code VARCHAR(32) NULL;")
+                except Exception:
+                    pass
+                try:
+                    cursor.execute("ALTER TABLE entity_profile ADD UNIQUE KEY uq_user_role (user_id, role);")
+                except Exception:
+                    pass
+    except Exception as e:
+        import logging
+        logging.getLogger("annasutra.identity").warning("Schema check notice: %s", e)
+
+
 def _complete_google_user_session(email: str, name: str, raw_phone: str = "", requested_role: str = "PRODUCER", create_draft: bool = True):
     """Create or link AppUser + EntityProfile for a verified Google account and issue JWT pair.
     Decisions 29, 30, 31, 32, 35:
@@ -462,8 +493,17 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
         elif len(digits) >= 11:
             phone_e164 = f"+{digits}"
 
+    _ensure_identity_mysql_schema()
+
     with transaction.atomic():
-        user = AppUser.objects.select_related("org").filter(email__iexact=email).first()
+        try:
+            user = AppUser.objects.select_related("org").filter(email__iexact=email).first()
+        except Exception as e:
+            if "Unknown column 'app_user.email'" in str(e) or "1054" in str(e):
+                _ensure_identity_mysql_schema()
+                user = AppUser.objects.select_related("org").filter(email__iexact=email).first()
+            else:
+                raise
         existing_profile_by_email = EntityProfile.objects.filter(email__iexact=email).first()
 
         if not user and existing_profile_by_email:
@@ -750,16 +790,40 @@ class GoogleOAuthCallbackView(APIView):
         except Exception as exc:
             return HttpResponse(f"Google OAuth verification failed: {exc}", status=400)
 
-        existing_profile = EntityProfile.objects.filter(email__iexact=email).first()
-        resolved_phone = phone or (existing_profile.phone_e164 if existing_profile else "")
+        try:
+            existing_profile = EntityProfile.objects.filter(email__iexact=email).first()
+            resolved_phone = phone or (existing_profile.phone_e164 if existing_profile else "")
 
-        token_pair = _complete_google_user_session(
-            email=email,
-            name=name,
-            raw_phone=resolved_phone,
-            requested_role=role,
-            create_draft=(not portal_only),
-        )
+            token_pair = _complete_google_user_session(
+                email=email,
+                name=name,
+                raw_phone=resolved_phone,
+                requested_role=role,
+                create_draft=(not portal_only),
+            )
+        except Exception as auth_exc:
+            _ensure_identity_mysql_schema()
+            try:
+                existing_profile = EntityProfile.objects.filter(email__iexact=email).first()
+                resolved_phone = phone or (existing_profile.phone_e164 if existing_profile else "")
+                token_pair = _complete_google_user_session(
+                    email=email,
+                    name=name,
+                    raw_phone=resolved_phone,
+                    requested_role=role,
+                    create_draft=(not portal_only),
+                )
+            except Exception as final_exc:
+                return HttpResponse(
+                    f"<!DOCTYPE html><html><body style='background:#062419;color:#fff;font-family:system-ui,sans-serif;padding:32px;text-align:center;'>"
+                    f"<div style='background:#0c3527;border:1.5px solid #ef4444;border-radius:18px;padding:28px 24px;max-width:380px;margin:40px auto;'>"
+                    f"<h3 style='color:#f87171;margin-top:0;'>Authentication Processing Error</h3>"
+                    f"<p style='color:#fca5a5;font-size:13px;'>{final_exc}</p>"
+                    f"<a href='/' style='display:inline-block;margin-top:16px;background:#10b981;color:#041c14;padding:10px 20px;border-radius:8px;font-weight:700;text-decoration:none;'>Return to AnnaSutra</a>"
+                    f"</div></body></html>",
+                    status=500,
+                    content_type="text/html",
+                )
         payload_json = json.dumps(token_pair)
         html = f"""<!DOCTYPE html>
 <html>
