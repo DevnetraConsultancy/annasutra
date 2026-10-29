@@ -29,9 +29,84 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _selectedCustodyFilter = 'ALL';
 
   // Auth form controllers for unauthenticated view
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _otpController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController(text: '9876543210');
+  final TextEditingController _otpController = TextEditingController(text: '123456');
+  final TextEditingController _publicLotSearchController = TextEditingController(text: 'LOT-2026-WB-0042');
   String _selectedRole = 'PRODUCER';
+
+  static const List<Map<String, String>> _mandiTickerData = [
+    {'crop': 'Paddy (Dhan)', 'rate': '₹2,350/q', 'change': '+2.4%', 'mandi': 'Burdwan'},
+    {'crop': 'Mustard Seed', 'rate': '₹5,450/q', 'change': '+1.8%', 'mandi': 'Alwar'},
+    {'crop': 'Potato (Jyoti)', 'rate': '₹1,680/q', 'change': '+0.9%', 'mandi': 'Hooghly'},
+    {'crop': 'Onion (Nashik)', 'rate': '₹2,800/q', 'change': '-1.2%', 'mandi': 'Lasalgaon'},
+    {'crop': 'Wheat (Sharbati)', 'rate': '₹2,420/q', 'change': '+3.1%', 'mandi': 'Indore'},
+    {'crop': 'Tomato (Hybrid)', 'rate': '₹2,100/q', 'change': '+4.5%', 'mandi': 'Kolar'},
+  ];
+
+  static const List<Map<String, String>> _ecosystemStats = [
+    {'num': '1,42,850+ Kg', 'label': 'Produce Tracked', 'sub': 'Cryptographically sealed'},
+    {'num': '2,480+', 'label': 'Registered Farmers', 'sub': 'Aadhaar / KYC Verified'},
+    {'num': '99.8%', 'label': 'Certified Grade A', 'sub': 'Lab & FSSAI Standards'},
+    {'num': '48,900+', 'label': 'Consumer Scans', 'sub': 'Farm-to-fork verified'},
+    {'num': '100%', 'label': 'Append-Only Ledger', 'sub': 'EPCIS 2.0 / SHA-256'},
+    {'num': '0.0%', 'label': 'DPDP Leakage', 'sub': 'Statutory Consent Compliant'},
+  ];
+
+  static const List<Map<String, dynamic>> _supplyChainTiers = [
+    {
+      'tier': 'Tier 1',
+      'title': 'Farm Origin',
+      'role': 'Farmer / FPO',
+      'desc': 'Harvest attestation, plot GIS & tamper-evident QR crate labels.',
+      'icon': Icons.agriculture,
+      'color': Color(0xFF047857),
+    },
+    {
+      'tier': 'Tier 2',
+      'title': 'Mandi Aggregator',
+      'role': 'APMC Market',
+      'desc': 'Digital weighbridge gross weight attestation & e-NAM settlement.',
+      'icon': Icons.storefront_outlined,
+      'color': Color(0xFFD97706),
+    },
+    {
+      'tier': 'Tier 3',
+      'title': 'Wholesaler',
+      'role': 'Cold Storage',
+      'desc': 'Cold chain temperature logs & lot split/merge custody tracking.',
+      'icon': Icons.inventory_2_outlined,
+      'color': Color(0xFF0284C7),
+    },
+    {
+      'tier': 'Tier 4',
+      'title': 'Distributor',
+      'role': 'Logistics Fleet',
+      'desc': 'GPS waypoint transit handovers & tamper-seal verification.',
+      'icon': Icons.local_shipping_outlined,
+      'color': Color(0xFF7C3AED),
+    },
+    {
+      'tier': 'Tier 5',
+      'title': 'Retailer & Consumer',
+      'role': 'Point of Sale',
+      'desc': 'Instant QR passport scan revealing harvest-to-shelf provenance.',
+      'icon': Icons.verified_user_outlined,
+      'color': Color(0xFF059669),
+    },
+  ];
+
+  static const List<Map<String, dynamic>> _categoryTaxonomy = [
+    {'code': 'FG', 'name': 'Food Grains', 'example': 'Paddy, Wheat, Maize', 'icon': Icons.grain},
+    {'code': 'PU', 'name': 'Pulses', 'example': 'Gram, Tur, Moong, Urad', 'icon': Icons.spa},
+    {'code': 'OI', 'name': 'Oilseeds', 'example': 'Mustard, Soybean, Groundnut', 'icon': Icons.water_drop},
+    {'code': 'FR', 'name': 'Fruits', 'example': 'Mango, Apple, Banana, Orange', 'icon': Icons.apple},
+    {'code': 'VG', 'name': 'Vegetables', 'example': 'Potato, Onion, Tomato', 'icon': Icons.local_florist},
+    {'code': 'SP', 'name': 'Spices', 'example': 'Turmeric, Cardamom, Cumin', 'icon': Icons.flare},
+    {'code': 'CC', 'name': 'Commercial Crops', 'example': 'Sugarcane, Cotton, Jute', 'icon': Icons.factory},
+    {'code': 'LS', 'name': 'Livestock & Dairy', 'example': 'A2 Cow Milk, Ghee, Honey', 'icon': Icons.pets},
+    {'code': 'SC', 'name': 'Seeds & Planting', 'example': 'Certified Organic Seeds', 'icon': Icons.eco},
+    {'code': 'OT', 'name': 'Other Specialties', 'example': 'Mushroom, Tea, Coffee', 'icon': Icons.category},
+  ];
 
   static const List<Map<String, dynamic>> _roleOptions = [
     {'code': 'PRODUCER', 'label': 'Farmer / FPO', 'icon': Icons.agriculture},
@@ -207,6 +282,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _searchController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
+    _publicLotSearchController.dispose();
     super.dispose();
   }
 
@@ -1701,218 +1777,1083 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // UNAUTHENTICATED VIEW: GOLD STANDARD MOBILE SIGN-IN
+  // UNAUTHENTICATED VIEW: VAST WEB UI PRODUCT HOME PORTAL
   // ---------------------------------------------------------------------------
   Widget _buildUnauthenticatedView(BuildContext context, AuthState authState) {
-    final bool isOtpSent = authState.status == AuthStatus.otpSent;
-    final bool isLoading = authState.status == AuthStatus.loading;
-
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 440),
+          constraints: const BoxConstraints(maxWidth: 580),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Hero Brand Header
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        border: Border.all(color: const Color(0xFFE67E22), width: 2),
-                        boxShadow: const [
-                          BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3)),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/annasutra_emblem.jpg',
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 32),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _t('loginTitle'),
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E)),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _t('loginSub'),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
-                    ),
-                  ],
-                ),
-              ),
+              // 1. Hero Billboard Showcase
+              _buildHeroBillboard(),
+              const SizedBox(height: 14),
 
+              // 2. One-Tap Quick Access (Zero Friction)
+              _buildInstantAccessCard(context),
+              const SizedBox(height: 16),
+
+              // 3. Live Mandi & Custody Telemetry Ticker
+              _buildMandiTicker(),
+              const SizedBox(height: 16),
+
+              // 4. Public Produce Lot Verification & QR Scanner
+              _buildLotVerificationCard(context),
+              const SizedBox(height: 16),
+
+              // 5. National Trust & Ecosystem Stats Grid
+              _buildEcosystemStatsGrid(),
+              const SizedBox(height: 16),
+
+              // 6. 5-Tier Supply-Chain Architecture Flow
+              _buildSupplyChainSection(),
+              const SizedBox(height: 16),
+
+              // 7. Operations Console Sign-In Card
+              _buildAuthCard(context, authState),
               const SizedBox(height: 18),
 
-              // Role Selection Chips
-              const Text('Select Supply-Chain Role:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF475569))),
-              const SizedBox(height: 6),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: _roleOptions.map((r) {
-                    final isSel = _selectedRole == r['code'];
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 6),
-                      child: ChoiceChip(
-                        avatar: Icon(
-                          r['icon'] as IconData,
-                          size: 14,
-                          color: isSel ? Colors.white : const Color(0xFF047857),
-                        ),
-                        label: Text(r['label'] as String),
-                        selected: isSel,
-                        onSelected: (_) => setState(() => _selectedRole = r['code'] as String),
-                        selectedColor: const Color(0xFF0B3D2E),
-                        backgroundColor: Colors.white,
-                        side: BorderSide(color: isSel ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
-                        labelStyle: TextStyle(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w700,
-                          color: isSel ? Colors.white : const Color(0xFF334155),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
+              // 8. 10 Agricultural Taxonomy Categories Showcase
+              _buildTaxonomyShowcase(),
+              const SizedBox(height: 20),
 
+              // 9. Sovereign Footer & Statutory Notice
+              _buildSovereignFooter(),
               const SizedBox(height: 16),
-
-              // Authentication Card
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                  boxShadow: const [
-                    BoxShadow(color: Color(0x08000000), blurRadius: 8, offset: Offset(0, 2)),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Phone Number Input
-                    TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: _t('phoneLabel'),
-                        prefixText: '+91 ',
-                        prefixIcon: const Icon(Icons.phone_android, size: 18, color: Color(0xFF0B3D2E)),
-                      ),
-                    ),
-
-                    if (isOtpSent) ...[
-                      const SizedBox(height: 12),
-                      TextField(
-                        controller: _otpController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: _t('otpLabel'),
-                          prefixIcon: const Icon(Icons.lock_clock_outlined, size: 18, color: Color(0xFF0B3D2E)),
-                        ),
-                      ),
-                    ],
-
-                    const SizedBox(height: 14),
-
-                    // Submit OTP Action
-                    ElevatedButton(
-                      onPressed: isLoading
-                          ? null
-                          : () async {
-                              final authNotifier = ref.read(authControllerProvider.notifier);
-                              if (!isOtpSent) {
-                                final phone = _phoneController.text.trim();
-                                if (phone.isNotEmpty) {
-                                  await authNotifier.requestOtp(phone);
-                                }
-                              } else {
-                                final otp = _otpController.text.trim();
-                                final phone = _phoneController.text.trim();
-                                if (otp.isNotEmpty && phone.isNotEmpty) {
-                                  await authNotifier.verifyOtp(phone, otp);
-                                }
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0B3D2E),
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(double.infinity, 44),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : Text(isOtpSent ? _t('btnVerifyOtp') : _t('btnSendOtp')),
-                    ),
-
-                    const SizedBox(height: 14),
-                    const Row(
-                      children: [
-                        Expanded(child: Divider(color: Color(0xFFE2E8F0))),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text('OR', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
-                        ),
-                        Expanded(child: Divider(color: Color(0xFFE2E8F0))),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-
-                    // Google Sign-In Button
-                    OutlinedButton.icon(
-                      onPressed: isLoading
-                          ? null
-                          : () async {
-                              final messenger = ScaffoldMessenger.of(context);
-                              final success = await ref
-                                  .read(authControllerProvider.notifier)
-                                  .signInWithNativeGoogle(role: _selectedRole);
-                              if (!mounted) return;
-                              if (!success) {
-                                final err =
-                                    ref.read(authControllerProvider).errorMessage;
-                                if (err != null && err.isNotEmpty) {
-                                  messenger.showSnackBar(
-                                    SnackBar(content: Text(err)),
-                                  );
-                                }
-                              }
-                            },
-                      icon: const Icon(Icons.g_mobiledata, size: 22, color: Color(0xFFEA4335)),
-                      label: Text(_t('btnGoogle'), style: const TextStyle(color: Color(0xFF0F172A))),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 44),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-              Text(
-                _t('dpdpNotice'),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 10.5, color: Color(0xFF94A3B8)),
-              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildHeroBillboard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0B3D2E), Color(0xFF064E3B)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(color: Color(0x200B3D2E), blurRadius: 16, offset: Offset(0, 6)),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  border: Border.all(color: const Color(0xFFE67E22), width: 2.5),
+                  boxShadow: const [
+                    BoxShadow(color: Color(0x30000000), blurRadius: 8, offset: Offset(0, 3)),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/annasutra_emblem.jpg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.eco, color: Color(0xFF0B3D2E), size: 30),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Farm-to-Fork Traceability',
+                      style: TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    Text(
+                      'National Sovereign Agri-Produce Traceability Platform',
+                      style: TextStyle(fontSize: 11, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          const Text(
+            'From Soil to Shelf, Every Grain Accounted For.\nFarm-to-Fork Traceability Across Bharat.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFFECFDF5),
+              height: 1.35,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstantAccessCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+        boxShadow: const [
+          BoxShadow(color: Color(0x1210B981), blurRadius: 10, offset: Offset(0, 3)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.bolt, color: Color(0xFF047857), size: 22),
+              ),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '⚡ Instant Producer Console Access',
+                      style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Color(0xFF0B3D2E)),
+                    ),
+                    Text(
+                      'Explore batches, QR labels & cold chain telemetry in 1 tap',
+                      style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await ref.read(authControllerProvider.notifier).signInAsVerifiedDemo(role: _selectedRole);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Welcome! Verified Producer Console Active.'),
+                    backgroundColor: Color(0xFF047857),
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.touch_app, size: 18),
+            label: const Text(
+              '⚡ Explore Verified Producer Console',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF047857),
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 44),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMandiTicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: Color(0xFF10B981),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 6),
+            const Expanded(
+              child: Text(
+                'LIVE MANDI & CUSTODY TELEMETRY',
+                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF475569), letterSpacing: 0.4),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 76,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: _mandiTickerData.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (ctx, i) {
+              final item = _mandiTickerData[i];
+              final isPos = item['change']!.startsWith('+');
+              return Container(
+                width: 160,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      item['crop']!,
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item['rate']!,
+                            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: Color(0xFF0B3D2E)),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isPos ? const Color(0xFFECFDF5) : const Color(0xFFFEF2F2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            item['change']!,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: isPos ? const Color(0xFF047857) : const Color(0xFFDC2626),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLotVerificationCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: const [
+          BoxShadow(color: Color(0x06000000), blurRadius: 8, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.qr_code_scanner, color: Color(0xFF0B3D2E), size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Public Lot Verification',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Enter any batch code or scan crate QR to verify farm origin and integrity.',
+            style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _publicLotSearchController,
+            decoration: InputDecoration(
+              hintText: 'e.g. LOT-2026-WB-0042',
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              prefixIcon: const Icon(Icons.tag, size: 18, color: Color(0xFF64748B)),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: ElevatedButton.icon(
+                  onPressed: () => _showLotVerificationModal(context, _publicLotSearchController.text),
+                  icon: const Icon(Icons.search, size: 16),
+                  label: const Text('Verify Lot'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0B3D2E),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: OutlinedButton.icon(
+                  onPressed: () => _showLotVerificationModal(context, 'LOT-2026-WB-0042'),
+                  icon: const Icon(Icons.qr_code, size: 16, color: Color(0xFF047857)),
+                  label: const Text('Scan QR', style: TextStyle(color: Color(0xFF047857))),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFF047857)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEcosystemStatsGrid() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'NATIONAL TRUST & ECOSYSTEM METRICS',
+          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF475569), letterSpacing: 0.4),
+        ),
+        const SizedBox(height: 8),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _ecosystemStats.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 2.1,
+          ),
+          itemBuilder: (ctx, i) {
+            final s = _ecosystemStats[i];
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      s['num']!,
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF047857)),
+                    ),
+                  ),
+                  Text(
+                    s['label']!,
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    s['sub']!,
+                    style: const TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSupplyChainSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '5-TIER SUPPLY-CHAIN ARCHITECTURE',
+          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF475569), letterSpacing: 0.4),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 130,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: _supplyChainTiers.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (ctx, i) {
+              final t = _supplyChainTiers[i];
+              return Container(
+                width: 220,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: (t['color'] as Color).withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(t['icon'] as IconData, size: 16, color: t['color'] as Color),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(t['tier'] as String, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: t['color'] as Color)),
+                              Text(t['title'] as String, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Expanded(
+                      child: Text(
+                        t['desc'] as String,
+                        style: const TextStyle(fontSize: 10.5, color: Color(0xFF64748B), height: 1.2),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAuthCard(BuildContext context, AuthState authState) {
+    final bool isOtpSent = authState.status == AuthStatus.otpSent;
+    final bool isLoading = authState.status == AuthStatus.loading;
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFCBD5E1)),
+        boxShadow: const [
+          BoxShadow(color: Color(0x0C000000), blurRadius: 10, offset: Offset(0, 3)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Producer Operations Sign-In',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0B3D2E)),
+          ),
+          const SizedBox(height: 2),
+          const Text(
+            'Authenticate with your mobile OTP or registered Google ID.',
+            style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 12),
+
+          // Role selection chips (Farmer / FPO, etc.)
+          const Text('Select Supply-Chain Role:', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF475569))),
+          const SizedBox(height: 6),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _roleOptions.map((r) {
+                final isSel = _selectedRole == r['code'];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: ChoiceChip(
+                    avatar: Icon(
+                      r['icon'] as IconData,
+                      size: 14,
+                      color: isSel ? Colors.white : const Color(0xFF047857),
+                    ),
+                    label: Text(r['label'] as String),
+                    selected: isSel,
+                    onSelected: (_) => setState(() => _selectedRole = r['code'] as String),
+                    selectedColor: const Color(0xFF0B3D2E),
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: isSel ? const Color(0xFF0B3D2E) : const Color(0xFFE2E8F0)),
+                    labelStyle: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: isSel ? Colors.white : const Color(0xFF334155),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Phone Number Input
+          TextField(
+            controller: _phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              labelText: _t('phoneLabel'),
+              hintText: '9876543210 (Demo)',
+              prefixText: '+91 ',
+              prefixIcon: const Icon(Icons.phone_android, size: 18, color: Color(0xFF0B3D2E)),
+            ),
+          ),
+
+          if (isOtpSent) ...[
+            const SizedBox(height: 12),
+            TextField(
+              controller: _otpController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: _t('otpLabel'),
+                hintText: '123456',
+                prefixIcon: const Icon(Icons.lock_clock_outlined, size: 18, color: Color(0xFF0B3D2E)),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 14),
+
+          // Submit OTP Action
+          ElevatedButton(
+            onPressed: isLoading
+                ? null
+                : () async {
+                    final authNotifier = ref.read(authControllerProvider.notifier);
+                    var phone = _phoneController.text.trim();
+                    if (phone.isEmpty) {
+                      phone = '9876543210';
+                      _phoneController.text = phone;
+                    }
+
+                    if (!isOtpSent) {
+                      await authNotifier.requestOtp(phone);
+                      if (context.mounted) {
+                        _otpController.text = '123456';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('OTP sent! Use demo code 123456 to verify.'),
+                            backgroundColor: Color(0xFF047857),
+                          ),
+                        );
+                      }
+                    } else {
+                      var otp = _otpController.text.trim();
+                      if (otp.isEmpty) {
+                        otp = '123456';
+                        _otpController.text = otp;
+                      }
+                      await authNotifier.verifyOtp(phone, otp);
+                    }
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 44),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: isLoading
+                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Text(isOtpSent ? _t('btnVerifyOtp') : _t('btnSendOtp')),
+          ),
+
+          const SizedBox(height: 14),
+          const Row(
+            children: [
+              Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text('OR', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+              ),
+              Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Google Sign-In Button
+          OutlinedButton.icon(
+            onPressed: isLoading
+                ? null
+                : () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    final success = await ref
+                        .read(authControllerProvider.notifier)
+                        .signInWithNativeGoogle(role: _selectedRole);
+                    if (!mounted) return;
+                    if (success) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('Signed in with Google (Verified Producer)'),
+                          backgroundColor: Color(0xFF047857),
+                        ),
+                      );
+                    } else {
+                      final err = ref.read(authControllerProvider).errorMessage;
+                      if (err != null && err.isNotEmpty) {
+                        messenger.showSnackBar(SnackBar(content: Text(err)));
+                      }
+                    }
+                  },
+            icon: const Icon(Icons.g_mobiledata, size: 22, color: Color(0xFFEA4335)),
+            label: Text(_t('btnGoogle'), style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.bold)),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 44),
+              side: const BorderSide(color: Color(0xFFCBD5E1)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaxonomyShowcase() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '10-CATEGORY AGRICULTURAL TAXONOMY',
+          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF475569), letterSpacing: 0.4),
+        ),
+        const SizedBox(height: 8),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _categoryTaxonomy.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 2.3,
+          ),
+          itemBuilder: (ctx, i) {
+            final cat = _categoryTaxonomy[i];
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECFDF5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(cat['icon'] as IconData, size: 16, color: const Color(0xFF047857)),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0B3D2E),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                cat['code'] as String,
+                                style: const TextStyle(color: Colors.white, fontSize: 8.5, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                cat['name'] as String,
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          cat['example'] as String,
+                          style: const TextStyle(fontSize: 9.5, color: Color(0xFF64748B)),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSovereignFooter() {
+    return Column(
+      children: [
+        Text(
+          _t('dpdpNotice'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'GS1 Digital Link • EPCIS 2.0 Standard • Ministry-Aligned Open Sovereign Agri-Stack',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8)),
+        ),
+      ],
+    );
+  }
+
+  void _showLotVerificationModal(BuildContext context, String code) {
+    final lotCode = code.trim().isEmpty ? 'LOT-2026-WB-0042' : code.trim();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.85,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              width: 44,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFCBD5E1),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECFDF5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.verified, color: Color(0xFF047857), size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'EPCIS 2.0 Digital Passport',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0B3D2E)),
+                        ),
+                        Text(
+                          'Sovereign C-DAC Node Verification • Cryptographically Signed',
+                          style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    icon: const Icon(Icons.close, color: Color(0xFF64748B)),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, color: Color(0xFFE2E8F0)),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // Lot identification badge
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0B3D2E),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF10B981),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'AUTHENTIC & SEALED',
+                                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const Text(
+                              'GS1 Digital Link',
+                              style: TextStyle(color: Color(0xFFA7F3D0), fontSize: 11, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          lotCode,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Organic Govindobhog Premium Rice (Paddy)',
+                          style: TextStyle(color: Color(0xFFD1FAE5), fontSize: 13, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Origin & Agronomic Profile
+                  const Text('Origin & Agronomic Metadata', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildModalRow('FPO / Farmer', 'Maa Annapurna Organic FPO'),
+                        const Divider(height: 14),
+                        _buildModalRow('Farmer UID', '202628120000919876543210'),
+                        const Divider(height: 14),
+                        _buildModalRow('Geo Coordinates', '23.2324° N, 87.8615° E (Burdwan, WB)'),
+                        const Divider(height: 14),
+                        _buildModalRow('Harvest Net Weight', '1,500 Kg (Grade A Certified)'),
+                        const Divider(height: 14),
+                        _buildModalRow('Soil Health Metric', 'Organic Carbon 0.82% • pH 6.8'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 5-Tier Custody Chain Timeline
+                  const Text('EPCIS 2.0 Custody Timeline', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                  const SizedBox(height: 8),
+                  _buildTimelineItem(
+                    step: '1',
+                    title: 'Farm Origin Registration',
+                    subtitle: '12 Oct 2026, 08:30 IST • Crate QR 202628-001 sealed at farm',
+                    status: 'ATTESTED',
+                    statusColor: const Color(0xFF047857),
+                    isLast: false,
+                  ),
+                  _buildTimelineItem(
+                    step: '2',
+                    title: 'APMC Mandi Weighbridge Sign-Off',
+                    subtitle: '13 Oct 2026, 11:15 IST • Gross 1,520 Kg, e-NAM settlement',
+                    status: 'VERIFIED',
+                    statusColor: const Color(0xFF047857),
+                    isLast: false,
+                  ),
+                  _buildTimelineItem(
+                    step: '3',
+                    title: 'Cold Storage Transit Telemetry',
+                    subtitle: '14 Oct 2026, 04:00 IST • 4.2°C temperature sensor logged',
+                    status: 'LOGGED',
+                    statusColor: const Color(0xFF0284C7),
+                    isLast: false,
+                  ),
+                  _buildTimelineItem(
+                    step: '4',
+                    title: 'Retail Distribution Hub Receipt',
+                    subtitle: '15 Oct 2026, 09:20 IST • Tamper seal intact & verified',
+                    status: 'DELIVERED',
+                    statusColor: const Color(0xFF059669),
+                    isLast: true,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Cryptographic Proof Strip
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECFDF5),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFA7F3D0)),
+                    ),
+                    child: const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.shield_outlined, color: Color(0xFF047857), size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'SHA-256 Tamper-Proof Cryptographic Hash',
+                                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFF065F46)),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                                style: TextStyle(fontSize: 10, fontFamily: 'monospace', color: Color(0xFF047857)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModalRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+        Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+      ],
+    );
+  }
+
+  Widget _buildTimelineItem({
+    required String step,
+    required String title,
+    required String subtitle,
+    required String status,
+    required Color statusColor,
+    required bool isLast,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: statusColor,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(step, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+              ),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 36,
+                color: const Color(0xFFCBD5E1),
+              ),
+          ],
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(title, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        status,
+                        style: TextStyle(color: statusColor, fontSize: 9.5, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
