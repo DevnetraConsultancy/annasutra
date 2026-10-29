@@ -786,9 +786,13 @@
   function getAuthHeader() {
     const token = localStorage.getItem('annasutra_access_token');
     const phone = localStorage.getItem('annasutra_phone') || '';
+    const email = localStorage.getItem('annasutra_email') || '';
+    const role = (typeof currentRole !== 'undefined' && currentRole) || localStorage.getItem('annasutra_role') || 'PRODUCER';
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = 'Bearer ' + token;
     if (phone) headers['X-Entity-Phone'] = phone;
+    if (email) headers['X-Entity-Email'] = email;
+    if (role) headers['X-Entity-Role'] = role;
     return headers;
   }
 
@@ -1915,13 +1919,22 @@ function renderAdminEntityInspector(ent, t) {
 
   window.computeLiveMentorBatchIdPreview = function (catCode) {
     const p = wizardState.profile || {};
-    const phoneDigits = String(p.phone_e164 || localStorage.getItem('annasutra_phone') || '919876543210').replace(/\D/g, '') || '919876543210';
+    const rawDigits = String(p.phone_e164 || localStorage.getItem('annasutra_phone') || '').replace(/\D/g, '');
+    const idSegment = rawDigits.length >= 10 ? rawDigits.slice(-10) : (p.farmer_uid && String(p.farmer_uid).length >= 26 ? String(p.farmer_uid).slice(-10) : '0000000001');
     const d = new Date();
     const pad2 = n => String(n).padStart(2, '0');
-    const ts = `${d.getFullYear()}${pad2(d.getDate())}${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
-    const cCode = (catCode || 'VG').toUpperCase();
-    const seq = String(((window._producerLots || []).length || 0) + 1).padStart(4, '0');
-    return `${ts}${phoneDigits}${cCode}${seq}`;
+    const ts14 = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+    const cCode = (catCode || 'VG').toUpperCase().slice(0, 2).padEnd(2, 'X');
+    const seq3 = String(((window._producerLots || []).length || 0) + 1).padStart(3, '0').slice(-3);
+    const body31 = `${ts14}91${idSegment}${cCode}${seq3}`;
+    const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ*';
+    let pMod = 0;
+    for (let i = 0; i < body31.length; i++) {
+      const val = alphabet.indexOf(body31[i]);
+      pMod = ((pMod + (val >= 0 ? val : 0)) * 2) % 37;
+    }
+    const checkChar = alphabet[(38 - pMod) % 37] || '0';
+    return `${body31}${checkChar}`;
   };
 
   window.updateInlineBatchIdPreview = function () {
@@ -2946,15 +2959,26 @@ function renderAdminEntityInspector(ent, t) {
           </div>
 
           <form onsubmit="window.submitProducerBasicInfoForm(event)">
-            <!-- Primary Registered Identity -->
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div>
-                <span style="font-size: 11px; color: #64748b; font-weight: 700;">Primary Login Mobile (Account ID)</span>
-                <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; font-family: monospace;">${escapeHtml(p.phone_e164 || '')}</div>
+            <!-- Primary Registered Identity (Gmail Primary Key & Mobile) -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div>
+                  <span style="font-size: 11px; color: #64748b; font-weight: 700;">Primary Login Gmail (Account ID)</span>
+                  <div style="font-size: 13px; font-weight: 800; color: #0f172a; font-family: monospace;">${escapeHtml(p.email || localStorage.getItem('annasutra_email') || 'Google Account')}</div>
+                </div>
+                <span style="font-size: 10.5px; color: #047857; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px; white-space: nowrap;">
+                  ${getIcon('lock', 11, '#047857')} Frozen
+                </span>
               </div>
-              <span style="font-size: 11px; color: #047857; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px;">
-                ${getIcon('lock', 11, '#047857')} Registered Phone
-              </span>
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div>
+                  <span style="font-size: 11px; color: #64748b; font-weight: 700;">Registered Mobile Number</span>
+                  <div style="font-size: 13px; font-weight: 800; color: #0f172a; font-family: monospace;">${escapeHtml(p.phone_e164 || 'Optional (Not Linked)')}</div>
+                </div>
+                <span style="font-size: 10.5px; color: #047857; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px; white-space: nowrap;">
+                  ${getIcon('lock', 11, '#047857')} ${p.phone_e164 ? 'KYC Locked' : 'Optional'}
+                </span>
+              </div>
             </div>
 
             <!-- Self-Editable Fields -->
@@ -2975,8 +2999,8 @@ function renderAdminEntityInspector(ent, t) {
                 <input type="text" class="form-input" id="prof_edit_org_name" value="${escapeHtml(p.organisation_name || '')}" placeholder="e.g. Ramesh Agro Farms" required style="background: #fff;" />
               </div>
               <div class="form-group">
-                <label class="form-label">Contact Email Address</label>
-                <input type="email" class="form-input" id="prof_edit_email" value="${escapeHtml(p.email || '')}" placeholder="kisan@gmail.com" style="background: #fff;" />
+                <label class="form-label">Primary Login Gmail (Immutable)</label>
+                <input type="email" class="form-input" id="prof_edit_email" value="${escapeHtml(p.email || localStorage.getItem('annasutra_email') || '')}" readonly style="background: #f1f5f9; color: #64748b; cursor: not-allowed;" />
               </div>
             </div>
 
@@ -3566,8 +3590,10 @@ function renderAdminEntityInspector(ent, t) {
     const lot = myLots.find(l => (l.public_code === lotCode || l.batch_id === lotCode)) || { public_code: lotCode };
     const cropName = lot.crop || lot.product_category_name || 'Produce';
     const varietyName = lot.variety || '';
-    const farmerName = (wizardState.profile && (wizardState.profile.first_name + ' ' + (wizardState.profile.last_name || ''))) || 'Verified Farmer Node';
+    const farmerName = (wizardState.profile && (wizardState.profile.first_name + ' ' + (wizardState.profile.last_name || ''))) || 'Verified Producer';
     const farmerUid = (wizardState.profile && wizardState.profile.farmer_uid) || '';
+    const handoverPin = lot.handover_pin || '••••••';
+    const barcodeSvg = window.generateBarcode128Svg ? window.generateBarcode128Svg(lotCode) : '';
 
     modal.innerHTML = `
       <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 650px; max-height: 90vh; overflow-y: auto;">
@@ -3575,26 +3601,43 @@ function renderAdminEntityInspector(ent, t) {
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 20px 24px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Cryptographic Label Minting</div>
-            <h3 style="margin: 2px 0 0; font-size: 20px; color: #ffffff; font-weight: 800;">Print Batch QR Sticker Labels</h3>
+            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Batch Label Printing</div>
+            <h3 style="margin: 2px 0 0; font-size: 20px; color: #ffffff; font-weight: 800;">Print Batch QR &amp; Barcode Sticker</h3>
           </div>
         </div>
 
         <div style="padding: 24px;">
+          <!-- LABEL PRESET SELECTOR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+            <span style="font-size: 12px; font-weight: 800; color: #334155;">Label Format Preset:</span>
+            <select id="qrPrintPresetSelect" class="form-select" style="max-width: 260px; font-size: 12px; font-weight: 700; background: #fff;">
+              <option value="thermal_50_25">Thermal Roll 50 &times; 25 mm (1-Up)</option>
+              <option value="thermal_75_50" selected>Thermal Crate 75 &times; 50 mm (1-Up)</option>
+              <option value="a4_24">A4 Sheet (24 Stickers / Page)</option>
+            </select>
+          </div>
+
           <!-- STICKER PREVIEW CONTAINER (PRINTABLE) -->
           <div id="printableStickerArea" style="background: #ffffff; border: 2px solid #0b3d2e; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); text-align: center;">
-            <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 1px;">AnnaSutra &bull; Digital Traceability Seal</div>
+            <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 1px;">AnnaSutra &bull; Batch Traceability Label</div>
             <h4 style="margin: 4px 0 2px; font-size: 20px; font-weight: 900; color: #0f172a;">${escapeHtml(cropName)} ${varietyName ? '(' + escapeHtml(varietyName) + ')' : ''}</h4>
             <div style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Producer: ${escapeHtml(farmerName)} ${farmerUid ? `&bull; ID: ${escapeHtml(farmerUid)}` : ''}</div>
             
-            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
-              <img src="/api/v1/lots/${encodeURIComponent(lotCode)}/qr-image" alt="QR Code" style="width: 160px; height: 160px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; background: #fff;" />
+            <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px;">
+              <img src="/api/v1/lots/${encodeURIComponent(lotCode)}/qr-image" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; background: #fff;" />
+              <div style="text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">6-Digit Handover PIN</div>
+                <div style="font-family: monospace; font-size: 18px; font-weight: 900; color: #0b3d2e; letter-spacing: 2px;">${escapeHtml(String(handoverPin))}</div>
+                <div style="font-size: 11px; color: #475569; margin-top: 4px;">Weight: <strong>${escapeHtml(String(lot.qty_kg || lot.quantity || '-'))} Kg</strong> &bull; Grade: <strong>${escapeHtml(String(lot.grade || 'A'))}</strong></div>
+              </div>
             </div>
 
-            <div style="font-family: monospace; font-size: 15px; font-weight: 900; color: #047857; letter-spacing: 1px; margin-bottom: 4px;">
+            ${barcodeSvg ? `<div style="margin: 8px auto; max-width: 320px;">${barcodeSvg}</div>` : ''}
+
+            <div style="font-family: monospace; font-size: 14px; font-weight: 900; color: #047857; letter-spacing: 0.8px; margin-bottom: 4px; word-break: break-all;">
               ${escapeHtml(lotCode)}
             </div>
-            <div style="font-size: 11px; color: #64748b;">Scan to verify farm origin, seed journey &amp; DPDP compliance</div>
+            <div style="font-size: 11px; color: #64748b;">Scan QR or 1D Barcode to verify origin and custody journey</div>
           </div>
 
           <!-- ACTIONS BAR -->
@@ -4777,7 +4820,7 @@ function renderAdminEntityInspector(ent, t) {
   };
 
   /* --------------------------------------------------------------------------
-     ROLE OPERATIONS (PROCESSOR ₹20 CHIPS PACKET RUN & RETAILER SHELF STAND-EE)
+     ROLE OPERATIONS (SMALL PACKET BATCHES WITH CHILD BATCH QR & RETAILER SHELF)
      -------------------------------------------------------------------------- */
   window.openRoleOperationsModal = function (role) {
     let modal = document.getElementById('downstreamRoleOpsModal');
@@ -4789,106 +4832,95 @@ function renderAdminEntityInspector(ent, t) {
       document.body.appendChild(modal);
     }
 
-    const isProcessor = role === 'PROCESSOR';
-    const isRetailer = role === 'RETAILER';
+    const activeRole = role || (typeof currentRole !== 'undefined' && currentRole) || localStorage.getItem('annasutra_role') || 'AGGREGATOR';
+    const isRetailer = activeRole === 'RETAILER';
+    const custodyLots = (window._downstreamCustody || []).concat(window._producerLots || []);
 
     modal.innerHTML = `
       <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 780px; max-height: 90vh; overflow-y: auto;">
         <button class="modal-close" onclick="window.closeRoleOpsModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
         
-        <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 22px 28px;">
+        <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 20px 26px;">
           <div>
-            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Node Operation Center</div>
-            <h3 style="margin: 2px 0 0; font-size: 21px; color: #ffffff; font-weight: 800;">
-              ${isProcessor ? 'Processor Production Run: Raw Crop to ₹20 Consumer Packets' : (isRetailer ? 'Retailer Shelf Activation &amp; Consumer Standee' : 'Wholesale Lot Sorting &amp; Splitting')}
+            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">${escapeHtml(activeRole)} Operations</div>
+            <h3 style="margin: 2px 0 0; font-size: 20px; color: #ffffff; font-weight: 800;">
+              Create Small Packet Batch &amp; Mint Child Batch QR
             </h3>
           </div>
         </div>
 
-        <div style="padding: 22px 28px;">
-          ${isProcessor ? `
-            <p style="font-size: 13px; color: #64748b; margin-top: 0;">
-              Transform raw farm potato lots into branded ₹20 consumer chips packets. Inherits the original farmer's lineage into the finished consumer QR!
-            </p>
+        <div style="padding: 22px 26px;">
+          <p style="font-size: 13px; color: #64748b; margin-top: 0;">
+            Split or repackage an accepted lot into small consumer packet batches (e.g. 500 g packets). Mint one batch-level Child QR to print across all packets in this batch, preserving full parent farm lineage.
+          </p>
 
-            <form onsubmit="window.submitProcessorRunForm(event)">
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
-                <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Input Raw Crop Lots (In Active Custody)</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                  <div class="form-group">
-                    <label class="form-label">Input Raw Batch</label>
-                    <select class="form-select" id="proc_input_lot" style="background: #fff;">
-                      ${(window._downstreamCustody || []).map(l => `<option value="${l.public_code}">${l.public_code} (${l.crop || 'Potato'}, ${l.qty_kg || 500} Kg)</option>`).join('') || '<option value="">No active raw produce lots available</option>'}
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Peeling &amp; Slicing Waste (%)</label>
-                    <input type="number" step="0.5" class="form-input" id="proc_waste_pct" value="15" oninput="window.calcChipsYieldPreview()" style="background: #fff;" />
-                  </div>
+          <form onsubmit="window.submitProcessorRunForm(event)">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+              <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">1. Select Accepted Parent Lot (In Active Custody)</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                  <label class="form-label">Parent Lot Code <span class="req">*</span></label>
+                  <select class="form-select" id="proc_input_lot" required style="background: #fff;" onchange="window.calcChipsYieldPreview()">
+                    ${custodyLots.map(l => `<option value="${escapeHtml(l.public_code || l.batch_id)}" data-qty="${l.qty_kg || l.quantity || 100}">${escapeHtml(l.public_code || l.batch_id)} (${escapeHtml(l.crop || 'Produce')}, ${l.qty_kg || l.quantity || 100} Kg)</option>`).join('') || '<option value="">No active lots in custody</option>'}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Sorting / Processing Waste (Kg)</label>
+                  <input type="number" step="0.1" min="0" class="form-input" id="proc_waste_pct" value="0" oninput="window.calcChipsYieldPreview()" style="background: #fff;" />
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1.5px solid #047857; border-radius: 12px; padding: 16px 18px; margin-bottom: 18px;">
+              <div style="font-size: 13px; font-weight: 800; color: #0b3d2e; margin-bottom: 10px;">2. Small Packet Batch Configuration</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                  <label class="form-label">Product / Label Name</label>
+                  <input type="text" class="form-input" id="proc_output_name" value="" placeholder="e.g. Graded Retail Pack" style="background: #fff; font-weight: 700;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Weight per Packet (Grams) <span class="req">*</span></label>
+                  <input type="number" min="1" step="1" class="form-input" id="proc_packet_grams" value="500" required oninput="window.calcChipsYieldPreview()" style="background: #fff;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Number of Packets <span class="req">*</span></label>
+                  <input type="number" min="1" step="1" class="form-input" id="proc_packet_count" value="20" required oninput="window.calcChipsYieldPreview()" style="background: #fff; font-weight: 800; color: #047857;" />
                 </div>
               </div>
 
-              <div style="background: #ffffff; border: 1.5px solid #a21caf; border-radius: 12px; padding: 16px 18px; margin-bottom: 18px;">
-                <div style="font-size: 13px; font-weight: 800; color: #a21caf; margin-bottom: 10px;">Consumer Product Output Configuration</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                  <div class="form-group">
-                    <label class="form-label">Product Name</label>
-                    <input type="text" class="form-input" id="proc_output_name" value="" placeholder="e.g. Brand Name / Packaged Product" style="background: #fff; font-weight: 700;" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Packet Size (Grams)</label>
-                    <input type="number" class="form-input" id="proc_packet_grams" value="50" oninput="window.calcChipsYieldPreview()" style="background: #fff;" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Retail MRP (&#8377;)</label>
-                    <input type="number" class="form-input" id="proc_mrp" value="20" style="background: #fff; font-weight: 800; color: #047857;" />
-                  </div>
-                </div>
-
-                <div style="margin-top: 12px; background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 12px; color: #701a75; font-weight: 700;">Calculated Consumer Packet Yield:</span>
-                  <strong style="font-size: 16px; color: #a21caf;" id="proc_chips_count_preview">85,000 Packets</strong>
-                </div>
+              <div style="margin-top: 12px; background: #ecfdf5; border: 1px solid #86efac; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <span style="font-size: 12px; color: #065f46; font-weight: 700;">Total Child Packet Batch Weight:</span>
+                <strong style="font-size: 15px; color: #047857;" id="proc_chips_count_preview">10.00 Kg (20 Packets &times; 500 g)</strong>
               </div>
+            </div>
 
-              <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" class="action-btn-pill" onclick="window.closeRoleOpsModal()">Cancel</button>
-                <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 24px; font-weight: 800; background: #a21caf; border-color: #a21caf;">
-                  + Mint &#8377;20 Packet Retail Batch QRs
-                </button>
-              </div>
-            </form>
-          ` : (isRetailer ? `
-            <p style="font-size: 13px; color: #64748b; margin-top: 0;">
-              Verify products delivered to your retail shelf and print customer QR standees. Scanning a standee logs verified retail check-in on the public trust portal!
-            </p>
+            <div id="childPacketResultBanner" style="display: none; background: #f0fdf4; border: 1.5px solid #10b981; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;"></div>
 
-            <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; text-align: center;">
-              <div style="font-size: 28px; margin-bottom: 6px;">${getIcon('store', 28, '#047857')}</div>
-              <h4 style="margin: 0; font-size: 17px; font-weight: 800; color: #0b3d2e;">Authorized Retail Shelf Standee</h4>
-              <p style="font-size: 12.5px; color: #047857; margin: 4px 0 16px;">Place this QR display on your billing counter so consumers can view farm origin, PHI safety, and transit hops.</p>
-              
-              <div style="display: inline-block; background: #ffffff; padding: 14px; border-radius: 12px; border: 2px dashed #047857; margin-bottom: 14px;">
-                <div style="width: 140px; height: 140px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; margin: 0 auto;">
-                  [STANDEE QR CODE]
-                </div>
-                <div style="font-size: 11px; font-weight: 800; color: #0f172a; margin-top: 8px;">Scan with Camera / AnnaSutra</div>
-              </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" class="action-btn-pill" onclick="window.closeRoleOpsModal()">Close</button>
+              <button type="submit" id="btnMintPacketBatch" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 22px; font-weight: 800;">
+                Mint Child Packet Batch QR &rarr;
+              </button>
+            </div>
+          </form>
 
-              <div>
-                <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 24px; font-weight: 800;" onclick="window.printRetailStandee()">
-                  ${getIcon('printer', 14, '#ffffff')} Print Retail Counter Standee (PDF)
+          ${isRetailer ? `
+            <div style="margin-top: 22px; border-top: 1px solid #e2e8f0; padding-top: 18px;">
+              <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 16px 20px; text-align: center;">
+                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0b3d2e;">Retail Counter QR Standee</h4>
+                <p style="font-size: 12px; color: #047857; margin: 4px 0 12px;">Print a counter standee for loose shelf produce so customers can scan with the AnnaSutra APK.</p>
+                <button type="button" class="action-btn-pill" style="padding: 8px 18px; font-weight: 800;" onclick="window.printRetailStandee()">
+                  ${getIcon('printer', 14, '#047857')} Print Retail Counter Standee
                 </button>
               </div>
             </div>
-          ` : `
-            <p style="font-size: 13px; color: #64748b;">Wholesale lot splitting and grade re-packaging tools.</p>
-          `)}
+          ` : ''}
         </div>
       </div>
     `;
 
     modal.style.display = 'flex';
+    window.calcChipsYieldPreview();
   };
 
   window.closeRoleOpsModal = function () {
@@ -4897,19 +4929,81 @@ function renderAdminEntityInspector(ent, t) {
   };
 
   window.calcChipsYieldPreview = function () {
-    const waste = parseFloat((document.getElementById('proc_waste_pct') || {}).value || 15);
-    const grams = parseFloat((document.getElementById('proc_packet_grams') || {}).value || 50);
-    const rawKg = 5000;
-    const finishedKg = rawKg * (1 - waste / 100);
-    const count = Math.round((finishedKg * 1000) / grams);
+    const grams = parseFloat((document.getElementById('proc_packet_grams') || {}).value || 500);
+    const count = parseInt((document.getElementById('proc_packet_count') || {}).value || 20, 10);
+    const totalKg = ((grams * count) / 1000).toFixed(2);
     const el = document.getElementById('proc_chips_count_preview');
-    if (el) el.textContent = `${count.toLocaleString('en-IN')} Packets`;
+    if (el) el.textContent = `${totalKg} Kg (${count.toLocaleString('en-IN')} Packets × ${grams} g)`;
   };
 
-  window.submitProcessorRunForm = function (e) {
+  window.submitProcessorRunForm = async function (e) {
     e.preventDefault();
-    showToast('Production Run Minted: 85,000 Consumer Chips Packets issued with farmer lineage QR!', 'success');
-    window.closeRoleOpsModal();
+    const parentCode = (document.getElementById('proc_input_lot')?.value || '').trim();
+    const packetGrams = parseFloat(document.getElementById('proc_packet_grams')?.value || '500');
+    const packetCount = parseInt(document.getElementById('proc_packet_count')?.value || '20', 10);
+    const wasteKg = parseFloat(document.getElementById('proc_waste_pct')?.value || '0');
+    const productName = (document.getElementById('proc_output_name')?.value || '').trim();
+    const btn = document.getElementById('btnMintPacketBatch');
+
+    if (!parentCode) {
+      showToast('Please select an accepted parent lot in your custody first.', 'error');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Minting Child Packet Batch...';
+    }
+
+    try {
+      const res = await fetch(`/api/v1/lots/${encodeURIComponent(parentCode)}/packet-batches`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+          packet_weight_g: packetGrams,
+          packet_count: packetCount,
+          waste_qty_kg: wasteKg,
+          product_name: productName
+        })
+      });
+      const data = await res.json();
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Mint Child Packet Batch QR →';
+      }
+      if (!res.ok) {
+        showToast(data.detail || 'Could not create packet batch.', 'error');
+        return;
+      }
+
+      const childCode = data.child_batch_code;
+      showToast(`Child Packet Batch ${childCode} minted (${data.packet_count} × ${data.packet_weight_g}g)!`, 'success');
+      const banner = document.getElementById('childPacketResultBanner');
+      if (banner) {
+        banner.style.display = 'block';
+        banner.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase;">Child Packet Batch Ready</div>
+              <div style="font-family: monospace; font-size: 14px; font-weight: 900; color: #0f172a; margin-top: 2px;">${escapeHtml(childCode)}</div>
+              <div style="font-size: 12px; color: #334155;">${data.packet_count} packets &times; ${data.packet_weight_g}g (${data.total_packet_qty_kg} Kg) &bull; Parent Remaining: ${data.parent_remaining_qty_kg} Kg</div>
+            </div>
+            <button type="button" class="btn-wizard-action btn-wizard-submit" style="padding: 8px 16px; font-size: 12.5px; font-weight: 800;" onclick="window.openUnlimitedQrPrintModal('${escapeHtml(childCode)}')">
+              ${getIcon('printer', 14, '#ffffff')} Print Child Batch QR
+            </button>
+          </div>
+        `;
+      }
+      if (window.renderCurrentWorkspace) {
+        await window.renderCurrentWorkspace();
+      }
+    } catch (err) {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Mint Child Packet Batch QR →';
+      }
+      showToast('Network error while minting child packet batch.', 'error');
+    }
   };
 
   window.printRetailStandee = function () {
@@ -6678,8 +6772,8 @@ function renderAdminEntityInspector(ent, t) {
               </select>
             </div>
             <div>
-              <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">3. Receiver Mobile / Entity ID <span style="color:#dc2626;">*</span></label>
-              <input type="text" class="form-input" id="dispatch_target_phone" placeholder="+91 9876543210" value="" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" />
+              <label style="display: block; font-size: 11.5px; font-weight: 800; color: #334155; margin-bottom: 5px;">3. Receiver Gmail / Role ID / Mobile <span style="color:#dc2626;">*</span></label>
+              <input type="text" class="form-input" id="dispatch_target_phone" placeholder="receiver@gmail.com, 26-digit ID, or +91..." value="" required style="width: 100%; padding: 9px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" />
             </div>
           </div>
 
@@ -6741,12 +6835,16 @@ function renderAdminEntityInspector(ent, t) {
     }
 
     try {
+      const isEmailTarget = targetPhone.includes('@');
+      const isRoleUidTarget = /^\d{24,26}$/.test(targetPhone);
       const res = await fetch(`/api/v1/lots/${encodeURIComponent(lotCode)}/handover-request`, {
         method: 'POST',
         headers: getAuthHeader(),
         body: JSON.stringify({
           target_role: targetRole,
-          target_phone: targetPhone,
+          target_phone: (!isEmailTarget && !isRoleUidTarget) ? targetPhone : '',
+          target_email: isEmailTarget ? targetPhone.toLowerCase() : '',
+          target_role_id: isRoleUidTarget ? targetPhone : '',
           declared_qty_kg: declaredQty,
           vehicle_no: vehicleNo,
           remarks: remarks
@@ -7406,6 +7504,168 @@ function renderAdminEntityInspector(ent, t) {
     }
   };
 
+  /* --------------------------------------------------------------------------
+     LOGIN STATUS PORTAL & MULTI-ROLE REGISTRATION SWITCHER (PHASE 2: C2, C3, C5)
+     -------------------------------------------------------------------------- */
+  window.openLoginRegistrationsPortalModal = async function (prefetchedData) {
+    let modal = document.getElementById('loginRegistrationsPortalModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'loginRegistrationsPortalModal';
+      modal.className = 'modal-overlay';
+      modal.onclick = (e) => { if (e.target === modal) window.closeLoginRegistrationsPortalModal(); };
+      document.body.appendChild(modal);
+    }
+
+    const renderPortalBox = (portalData) => {
+      const email = (portalData && portalData.email) || (portalData && portalData.user && portalData.user.email) || localStorage.getItem('annasutra_email') || 'Signed-In Account';
+      const isAdmin = Boolean((portalData && portalData.is_admin) || (portalData && portalData.user && portalData.user.is_admin) || String(email).toLowerCase() === 'devnetraconsultancy@gmail.com');
+      const regs = (portalData && Array.isArray(portalData.registrations)) ? portalData.registrations : [];
+
+      const roleMeta = {
+        PRODUCER: { label: 'Producer (Farmer / FPO)', desc: 'Register farm plots, record harvests, mint batch QRs, and dispatch lots.' },
+        AGGREGATOR: { label: 'Aggregator (Mandi / Hub)', desc: 'Accept farmer dispatches, verify weight & grade, and create packet batches.' },
+        PROCESSOR: { label: 'Processor (Mill / Packing)', desc: 'Transform raw produce into consumer packet batches with child batch QRs.' },
+        WHOLESALER: { label: 'Wholesaler (Cold Storage)', desc: 'Manage bulk custody, log cold-chain telemetry, and split/repack lots.' },
+        DISTRIBUTOR: { label: 'Distributor (Logistics Fleet)', desc: 'Verify multi-lot gate passes, log transit hops, and hand over to retail.' },
+        RETAILER: { label: 'Retailer (Shop / Outlet)', desc: 'Accept deliveries, place on retail shelf, and unlock consumer QR scans.' }
+      };
+
+      const roleOrder = ['PRODUCER', 'AGGREGATOR', 'PROCESSOR', 'WHOLESALER', 'DISTRIBUTOR', 'RETAILER'];
+      const regMap = {};
+      regs.forEach(r => { if (r && r.role) regMap[r.role] = r; });
+
+      const cardsHtml = roleOrder.map(rCode => {
+        const meta = roleMeta[rCode] || { label: rCode, desc: '' };
+        const reg = regMap[rCode] || { role: rCode, registered: false, status: 'NOT_REGISTERED' };
+        const st = String(reg.status || 'NOT_REGISTERED').toUpperCase();
+
+        let badgeStyle = 'background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;';
+        let statusLabel = 'Not Registered';
+        let actionBtnHtml = `<button type="button" class="action-btn-pill primary" style="width: 100%; justify-content: center; padding: 8px 12px; font-weight: 800;" onclick="window.launchRoleFromLoginPortal('${rCode}', 'REGISTER')">Register as ${escapeHtml(meta.label.split(' ')[0])} &rarr;</button>`;
+
+        if (st === 'APPROVED' || st === 'VERIFIED') {
+          badgeStyle = 'background: #ecfdf5; color: #047857; border: 1px solid #86efac;';
+          statusLabel = 'APPROVED';
+          actionBtnHtml = `<button type="button" class="btn-wizard-action btn-wizard-submit" style="width: 100%; justify-content: center; padding: 8px 12px; font-weight: 800;" onclick="window.launchRoleFromLoginPortal('${rCode}', 'OPEN')">Open Console &rarr;</button>`;
+        } else if (st === 'SUBMITTED' || st === 'UNDER_REVIEW') {
+          badgeStyle = 'background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;';
+          statusLabel = st.replace('_', ' ');
+          actionBtnHtml = `<button type="button" class="action-btn-pill" style="width: 100%; justify-content: center; padding: 8px 12px; font-weight: 800;" onclick="window.launchRoleFromLoginPortal('${rCode}', 'STATUS')">View Application Status</button>`;
+        } else if (st === 'CHANGES_REQUESTED' || st === 'REJECTED') {
+          badgeStyle = 'background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;';
+          statusLabel = st.replace('_', ' ');
+          actionBtnHtml = `<button type="button" class="action-btn-pill" style="width: 100%; justify-content: center; padding: 8px 12px; font-weight: 800; border-color: #f87171; color: #b91c1c;" onclick="window.launchRoleFromLoginPortal('${rCode}', 'FIX')">Fix &amp; Resubmit &rarr;</button>`;
+        } else if (st === 'DRAFT') {
+          badgeStyle = 'background: #fffbeb; color: #b45309; border: 1px solid #fde68a;';
+          statusLabel = 'DRAFT';
+          actionBtnHtml = `<button type="button" class="action-btn-pill" style="width: 100%; justify-content: center; padding: 8px 12px; font-weight: 800;" onclick="window.launchRoleFromLoginPortal('${rCode}', 'REGISTER')">Continue Registration &rarr;</button>`;
+        }
+
+        const idLine = reg.role_uid
+          ? `<div style="font-family: monospace; font-size: 11px; font-weight: 800; color: #047857; margin-top: 4px;">ID: ${escapeHtml(reg.role_uid)}</div>`
+          : (reg.application_ref ? `<div style="font-family: monospace; font-size: 11px; font-weight: 700; color: #475569; margin-top: 4px;">Ref: ${escapeHtml(reg.application_ref)}</div>` : '');
+
+        const remarkLine = reg.admin_remark
+          ? `<div style="font-size: 11px; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 4px 8px; margin-top: 6px;">Admin Note: ${escapeHtml(reg.admin_remark)}</div>`
+          : '';
+
+        return `
+          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <strong style="font-size: 13.5px; color: #0f172a;">${escapeHtml(meta.label)}</strong>
+                <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 12px; ${badgeStyle}">${escapeHtml(statusLabel)}</span>
+              </div>
+              <p style="font-size: 11.5px; color: #64748b; margin: 0;">${escapeHtml(meta.desc)}</p>
+              ${idLine}
+              ${remarkLine}
+            </div>
+            <div>${actionBtnHtml}</div>
+          </div>
+        `;
+      }).join('');
+
+      modal.innerHTML = `
+        <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 880px; max-height: 90vh; overflow-y: auto;">
+          <button class="modal-close" onclick="window.closeLoginRegistrationsPortalModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+          <div class="portal-modal-header" style="background: linear-gradient(135deg, #07271d 0%, #0b3d2e 100%); padding: 20px 26px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Gmail Identity &bull; Multi-Role Registration Portal</div>
+                <h3 style="margin: 2px 0 0; font-size: 20px; color: #ffffff; font-weight: 800;">Select Role Console or Register New Role</h3>
+                <div style="font-size: 12px; color: #cbd5e1; margin-top: 2px;">Signed in as: <strong style="color: #fff; font-family: monospace;">${escapeHtml(email)}</strong></div>
+              </div>
+              ${isAdmin ? `
+                <button type="button" class="btn-wizard-action btn-wizard-submit" style="background: #f59e0b; border-color: #f59e0b; color: #0f172a; font-weight: 900; padding: 9px 16px;" onclick="window.launchRoleFromLoginPortal('ADMIN', 'OPEN')">
+                  Open Governance Admin Console &rarr;
+                </button>
+              ` : ''}
+            </div>
+          </div>
+          <div style="padding: 22px 26px; background: #f8fafc;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px;">
+              ${cardsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    // 0ms pre-hydration from prefetchedData or localStorage
+    let cached = prefetchedData || null;
+    if (!cached) {
+      try {
+        cached = JSON.parse(localStorage.getItem('annasutra_registrations_portal') || 'null');
+      } catch (e) {}
+    }
+    renderPortalBox(cached || {});
+    modal.style.display = 'flex';
+
+    // Live refresh from /api/v1/me/registrations
+    try {
+      const res = await fetch('/api/v1/me/registrations', { headers: getAuthHeader() });
+      if (res.ok) {
+        const fresh = await res.json();
+        localStorage.setItem('annasutra_registrations_portal', JSON.stringify(fresh));
+        if (fresh.email) localStorage.setItem('annasutra_email', fresh.email);
+        if (Array.isArray(fresh.approved_roles)) {
+          localStorage.setItem('annasutra_approved_roles', JSON.stringify(fresh.approved_roles));
+        }
+        renderPortalBox(fresh);
+      }
+    } catch (e) {}
+  };
+
+  window.closeLoginRegistrationsPortalModal = function () {
+    const modal = document.getElementById('loginRegistrationsPortalModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.launchRoleFromLoginPortal = async function (role, mode) {
+    window.closeLoginRegistrationsPortalModal();
+    localStorage.setItem('annasutra_role', role);
+    if (typeof window.currentRole !== 'undefined') window.currentRole = role;
+    try { currentRole = role; } catch (e) {}
+
+    if (role !== 'ADMIN' && mode === 'REGISTER') {
+      try {
+        await fetch('/api/v1/me/registrations', {
+          method: 'POST',
+          headers: getAuthHeader(),
+          body: JSON.stringify({ role: role })
+        });
+      } catch (e) {}
+    }
+
+    const phone = localStorage.getItem('annasutra_phone') || '';
+    if (typeof window.completeOtpLogin === 'function') {
+      window.completeOtpLogin(phone);
+    } else if (window.renderCurrentWorkspace) {
+      await window.renderCurrentWorkspace();
+    }
+  };
+
   // Global Escape key listener to close active modals
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' || e.key === 'Esc') {
@@ -7420,5 +7680,6 @@ function renderAdminEntityInspector(ent, t) {
       if (window.closeDownstreamInboxModal) window.closeDownstreamInboxModal();
       if (window.closeDownstreamAppendModal) window.closeDownstreamAppendModal();
       if (window.closeRoleOpsModal) window.closeRoleOpsModal();
+      if (window.closeLoginRegistrationsPortalModal) window.closeLoginRegistrationsPortalModal();
     }
   });

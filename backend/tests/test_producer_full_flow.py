@@ -36,7 +36,6 @@ class TestProducerFullFlowAndCustody:
 
         # 2. Producer submits profile for review
         submit_resp = client.post("/api/v1/me/profile/submit", {}, credentials="same-origin")
-        # In test mode or draft, submit transitions or marks for review
         profile = EntityProfile.objects.get(phone_e164="+919876543299")
 
         # 3. Admin review queue inspection: Farmer UID is None before approval
@@ -61,7 +60,7 @@ class TestProducerFullFlowAndCustody:
         farmer_uid = approved_data["farmer_uid"]
         assert farmer_uid.isdigit()
         assert farmer_uid.endswith("919876543299")
-        assert len(farmer_uid) == 24
+        assert len(farmer_uid) == 26
 
         # 5. Now verified producer profile endpoint returns the minted Unique Farmer ID
         prof_post = client.get("/api/v1/me/profile")
@@ -122,6 +121,7 @@ class TestProducerFullFlowAndCustody:
         assert batch_resp.status_code == 201
         lot_data = batch_resp.json()
         lot_code = lot_data["public_code"]
+        assert len(lot_code) == 32
         assert "919876543299" in lot_code
         assert lot_data["batch_id"] == lot_code
         assert lot_data["on_hand_kg"] == 750.0
@@ -219,7 +219,6 @@ class TestProducerFullFlowAndCustody:
         assert locked_resp.status_code in (403, 404)
 
         # 16. Admin Consumer Scans endpoint verification (Strict zero fake data)
-        # First check with 0 scans
         admin_scans_resp = admin_client.get("/api/v1/admin/consumer-scans")
         assert admin_scans_resp.status_code == 200
         scans_data = admin_scans_resp.json()

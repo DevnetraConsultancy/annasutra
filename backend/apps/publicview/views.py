@@ -1,19 +1,21 @@
 import base64
-import re
+import json
+import math
 import mimetypes
 from pathlib import Path
-from django.conf import settings
-from django.shortcuts import render
-from django.http import HttpResponse, StreamingHttpResponse, Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import exceptions
-from rest_framework.permissions import AllowAny
+import re
 
-from apps.publicview.models import PublicView
+from django.conf import settings
+from django.http import Http404, HttpResponse, StreamingHttpResponse
+from django.shortcuts import render
+from rest_framework import exceptions, status
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle, ScopedRateThrottle
+from rest_framework.views import APIView
+
 from apps.alerts.models import ScanLog
-from rest_framework.throttling import ScopedRateThrottle, AnonRateThrottle
+from apps.publicview.models import PublicView
 
 
 def serve_static_asset(request, path: str):
@@ -21,7 +23,6 @@ def serve_static_asset(request, path: str):
     if not path:
         raise Http404("Invalid path")
 
-    # Guard against null bytes, traversal sequences, Windows drive letters/streams, and leading slashes
     if "\x00" in path or ".." in path or ":" in path or path.startswith("/") or path.startswith("\\"):
         raise Http404("Invalid path")
 
@@ -154,7 +155,6 @@ class PublicLotDetailView(APIView):
         public_view = PublicView.objects.filter(public_code=code).first()
         result_str = "FOUND" if public_view else "NOT_FOUND"
 
-        # Log public scan
         ScanLog.objects.create(
             serial=code,
             result=result_str,
@@ -165,7 +165,6 @@ class PublicLotDetailView(APIView):
                 {"detail": "Lot record not found.", "code": "NOT_FOUND"}
             )
 
-        # Update scan_count in response payload dynamically
         payload = dict(public_view.payload)
         payload["scan_count"] = ScanLog.objects.filter(serial=code).count()
 
@@ -231,14 +230,8 @@ def landing_page_view(request):
     })
 
 
-
-
 def download_apk_view(request):
-    """Direct download redirect for the single universal AnnaSutra Android Mobile APK.
-
-    Redirects to the official GitHub Release asset named AnnaSutra_latest.apk
-    (avoids Vercel 4.5MB serverless payload limit while ensuring custom naming).
-    """
+    """Direct download redirect for the single universal AnnaSutra Android Mobile APK."""
     from django.http import HttpResponseRedirect
     apk_url = "https://github.com/DevnetraConsultancy/annasutra/releases/download/v1.0.0/AnnaSutra_latest.apk"
     return HttpResponseRedirect(apk_url)
@@ -246,7 +239,7 @@ def download_apk_view(request):
 
 class PublicScanPingView(APIView):
     """POST /api/v1/public/lots/<str:code>/scan-ping
-    Log consumer scan telemetry (district/state, opt-in client GPS, distance from farm origin).
+    Log consumer scan telemetry (district/state, opt-in client GPS, Haversine distance from retail shop / farm origin).
     """
     permission_classes = [AllowAny]
     throttle_classes = [AnonRateThrottle, ScopedRateThrottle]
@@ -266,15 +259,8 @@ class PublicScanPingView(APIView):
             except Exception:
                 pass
 
-        ScanLog.objects.create(
-            serial=code,
-            result="CONSUMER_SCAN",
-            coarse_area=coarse_area,
-        )
-
-        scan_count = ScanLog.objects.filter(serial=code).count()
-
         distance_km = None
+        retail_distance_km = None
         if user_lat is not None and user_lng is not None:
             try:
                 u_lat = float(user_lat)
@@ -283,10 +269,23 @@ class PublicScanPingView(APIView):
                 lot = Lot.objects.select_related("origin_plot").filter(public_code=code).first()
                 farm_lat = 23.23
                 farm_lng = 87.86
+                retail_lat = None
+                retail_lng = None
+
+                pv = PublicView.objects.filter(public_code=code).first()
+                if pv and isinstance(pv.payload, dict):
+                    hops = pv.payload.get("journey_hops") or []
+                    if hops:
+                        if hops[0].get("geo_y") and hops[0].get("geo_x"):
+                            farm_lat = float(hops[0]["geo_y"])
+                            farm_lng = float(hops[0]["geo_x"])
+                        if hops[-1].get("geo_y") and hops[-1].get("geo_x"):
+                            retail_lat = float(hops[-1]["geo_y"])
+                            retail_lng = float(hops[-1]["geo_x"])
+
                 if lot and lot.origin_plot:
                     try:
                         from apps.identity.services.crypto import CryptoService
-                        import json
                         entity_id_str = str(lot.origin_plot.entity_id) if hasattr(lot.origin_plot, "entity_id") else ""
                         if lot.origin_plot.geojson_enc:
                             geo_str = CryptoService.decrypt(bytes(lot.origin_plot.geojson_enc), entity_id=entity_id_str)
@@ -298,19 +297,35 @@ class PublicScanPingView(APIView):
                     except Exception:
                         pass
 
-                import math
-                R = 6371.0
-                dlat = math.radians(u_lat - farm_lat)
-                dlon = math.radians(u_lng - farm_lng)
-                a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(farm_lat)) * math.cos(math.radians(u_lat)) * math.sin(dlon / 2) ** 2
-                c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-                distance_km = round(R * c, 1)
+                def _haversine(lat1, lon1, lat2, lon2):
+                    r = 6371.0
+                    dlat = math.radians(lat2 - lat1)
+                    dlon = math.radians(lon2 - lon1)
+                    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+                    return round(r * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a)), 1)
+
+                distance_km = _haversine(farm_lat, farm_lng, u_lat, u_lng)
+                if retail_lat is not None and retail_lng is not None:
+                    retail_distance_km = _haversine(retail_lat, retail_lng, u_lat, u_lng)
             except Exception:
                 distance_km = None
+
+        stored_coarse = coarse_area
+        if stored_coarse and distance_km is not None:
+            stored_coarse = f"{stored_coarse}|km:{distance_km}"
+
+        ScanLog.objects.create(
+            serial=code,
+            result="CONSUMER_SCAN",
+            coarse_area=stored_coarse,
+        )
+
+        scan_count = ScanLog.objects.filter(serial=code).count()
 
         return Response({
             "status": "ok",
             "code": code,
             "scan_count": scan_count,
             "distance_km": distance_km,
+            "retail_distance_km": retail_distance_km,
         }, status=status.HTTP_200_OK)

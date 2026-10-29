@@ -2226,10 +2226,14 @@
           <span id="activeUserName">Producer (Active)</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </div>
-        <div class="user-dropdown-menu" id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); min-width: 210px; padding: 6px; z-index: 10000;">
+        <div class="user-dropdown-menu" id="userDropdownMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); min-width: 230px; padding: 6px; z-index: 10000;">
           <button type="button" class="user-dropdown-item" onclick="if (window.openProducerOperationalDashboard) window.openProducerOperationalDashboard(); scrollToWorkspace(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 9px 12px; font-size: 13px; font-weight: 700; color: #0b3d2e; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             <span>Operational Console</span>
+          </button>
+          <button type="button" class="user-dropdown-item" onclick="if (window.openLoginRegistrationsPortalModal) window.openLoginRegistrationsPortalModal(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 9px 12px; font-size: 13px; font-weight: 700; color: #0f172a; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            <span>My Registrations / Switch Role</span>
           </button>
           <button type="button" class="user-dropdown-item" onclick="logoutEntity(); closeUserDropdown();" style="width: 100%; text-align: left; padding: 9px 12px; font-size: 13px; font-weight: 700; color: #dc2626; background: transparent; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -6236,17 +6240,38 @@
       }
       const token = data.access_token || data.access;
       if (token) localStorage.setItem('annasutra_access_token', token);
-      const resolvedPhone = (data.user && data.user.phone) || localStorage.getItem('annasutra_phone') || '+919999999999';
-      localStorage.setItem('annasutra_phone', resolvedPhone);
+      const resolvedEmail = (data.user && data.user.email) || localStorage.getItem('annasutra_email') || '';
+      if (resolvedEmail) localStorage.setItem('annasutra_email', resolvedEmail);
+      const resolvedPhone = (data.user && data.user.phone) || localStorage.getItem('annasutra_phone') || '';
+      if (resolvedPhone) localStorage.setItem('annasutra_phone', resolvedPhone);
       if (data.user && data.user.farmer_uid) {
         localStorage.setItem('annasutra_farmer_uid', data.user.farmer_uid);
+      }
+      if (Array.isArray(data.approved_roles)) {
+        localStorage.setItem('annasutra_approved_roles', JSON.stringify(data.approved_roles));
+      }
+      if (Array.isArray(data.registrations)) {
+        localStorage.setItem('annasutra_registrations_portal', JSON.stringify({
+          email: resolvedEmail,
+          is_admin: Boolean(data.user && data.user.is_admin),
+          approved_roles: data.approved_roles || [],
+          registrations: data.registrations
+        }));
       }
       if (role) {
         currentRole = role;
         localStorage.setItem('annasutra_role', role);
       }
-      showToast('Signed in with Google!', 'success');
+      showToast('Signed in with Google (' + (resolvedEmail || 'Verified Account') + ')', 'success');
       completeOtpLogin(resolvedPhone);
+      if (window.openLoginRegistrationsPortalModal) {
+        setTimeout(() => window.openLoginRegistrationsPortalModal({
+          email: resolvedEmail,
+          is_admin: Boolean(data.user && data.user.is_admin),
+          approved_roles: data.approved_roles || [],
+          registrations: data.registrations || []
+        }), 80);
+      }
     }
 
     window.addEventListener('message', function(evt) {
@@ -6677,6 +6702,7 @@
 
       if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    window.completeOtpLogin = completeOtpLogin;
 
         function toggleUserDropdown(evt) {
       if (evt) evt.stopPropagation();
@@ -6707,6 +6733,9 @@ function logoutEntity() {
       localStorage.removeItem('annasutra_access_token');
       localStorage.removeItem('annasutra_role');
       localStorage.removeItem('annasutra_phone');
+      localStorage.removeItem('annasutra_email');
+      localStorage.removeItem('annasutra_approved_roles');
+      localStorage.removeItem('annasutra_registrations_portal');
       localStorage.removeItem('annasutra_cached_profile');
       localStorage.removeItem('annasutra_cached_lots');
       localStorage.removeItem('annasutra_cached_plots');

@@ -38,10 +38,10 @@ class TestEndToEndTraceabilityFlow:
         res = approve_entity_registration(entity=profile, admin_user=admin_user)
         assert res["status"] == "VERIFIED"
         farmer_uid = res["farmer_uid"]
-        # Format: YYYYDDHHMMSS (12 digits) + 919876543210 (12 digits) = 24 digits
+        # Format: YYYYMMDDHHMMSS (14 digits) + 919876543210 (12 digits) = 26 digits
         assert farmer_uid.isdigit()
         assert farmer_uid.endswith("919876543210")
-        assert len(farmer_uid) == 24
+        assert len(farmer_uid) == 26
 
         # Now verified profile endpoint returns the minted deterministic farmer_uid
         prof_resp2 = client.get("/api/v1/me/profile")
@@ -67,7 +67,7 @@ class TestEndToEndTraceabilityFlow:
             HTTP_X_ENTITY_PHONE="+919830011223",
         )
 
-        # Verify all 10 official product category codes mint non-colliding mentor batch IDs
+        # Verify all 10 official product category codes mint non-colliding 32-char Lot IDs
         categories = ["FG", "PU", "OI", "FR", "VG", "SP", "CC", "LS", "SC", "OT"]
         minted_codes = set()
         fr_lot_code = None
@@ -90,8 +90,9 @@ class TestEndToEndTraceabilityFlow:
             code = lot_data["public_code"]
             assert code not in minted_codes
             minted_codes.add(code)
+            assert len(code) == 32
             assert "919830011223" in code
-            assert f"{cat_code}{idx:04d}" in code
+            assert f"{cat_code}{idx:03d}" in code
             assert lot_data["product_category_code"] == cat_code
             if cat_code == "FR":
                 fr_lot_code = code
@@ -208,16 +209,132 @@ class TestEndToEndTraceabilityFlow:
         assert retail_resp.json()["is_retailer_verified"] is True
         assert len(retail_resp.json()["journey_checkpoints"]) == 4
 
-        # Step 6: Consumer scans QR at Retailer shop -> sees unlocked Consumer Trust Passport!
+        # Step 5B: Retailer splits accepted lot into Small Packet Batch (200 x 500g = 100 kg) with Child Batch QR
+        pkt_resp = agg_client.post(
+            f"/api/v1/lots/{fr_lot_code}/packet-batches",
+            {
+                "actor_role": "RETAILER",
+                "actor_name": "Kolkata Fresh Mart Retail",
+                "packet_weight_g": 500,
+                "packet_count": 200,
+                "package_label": "500g Retail Pouch",
+                "location_name": "Kolkata Fresh Mart Pack Counter",
+            },
+            format="json",
+        )
+        assert pkt_resp.status_code == 201
+        pkt_data = pkt_resp.json()["packet_batch"]
+        child_code = pkt_data["public_code"]
+        assert len(child_code) == 32
+        assert pkt_data["parent_lot_code"] == fr_lot_code
+        assert pkt_data["packet_weight_g"] == 500.0
+        assert pkt_data["packet_count"] == 200
+        # Parent balance should now be reduced by 100 kg (from 496.5 to 396.5)
+        assert pkt_resp.json()["parent_lot"]["on_hand_kg"] == pytest.approx(396.5, 0.01)
+
+        # Consumer scans child packet batch QR -> sees full upstream lineage & Retailer unlocked view
+        child_pub = farmer_client.get(f"/api/v1/public/lots/{child_code}")
+        assert child_pub.status_code == 200
+        child_pub_json = child_pub.json()
+        assert child_pub_json["parent_lot_code"] == fr_lot_code
+        assert child_pub_json["packet_weight_g"] == 500.0
+        assert child_pub_json["is_retailer_verified"] is True
+        assert len(child_pub_json["journey_hops"]) >= 5
+
+        # Step 6: Consumer scans parent QR at Retailer shop -> sees unlocked Consumer Trust Passport!
         pub_post = farmer_client.get(f"/api/v1/public/lots/{fr_lot_code}")
         assert pub_post.status_code == 200
         pub_json = pub_post.json()
         assert pub_json["is_retailer_verified"] is True
         assert pub_json["current_stage_role"] == "RETAILER"
-        assert len(pub_json["journey_hops"]) == 4
+        assert len(pub_json["journey_hops"]) >= 4
 
         html_post = farmer_client.get(f"/l/{fr_lot_code}")
         assert html_post.status_code == 200
         html_text = html_post.content.decode("utf-8")
         assert "Retailer Shop Checked-In — Full Consumer Trust Passport Unlocked" in html_text
         assert "Verified Farm-to-Retailer Custody &amp; Condition Ledger" in html_text
+
+        # Step 7: Consumer Scan Ping with Opt-In GPS -> Haversine distance & Admin Analytics
+        ping_resp = farmer_client.post(
+            f"/api/v1/public/lots/{child_code}/scan-ping",
+            {"latitude": 22.5800, "longitude": 88.3700, "device_type": "Android APK"},
+            format="json",
+        )
+        assert ping_resp.status_code == 200
+        ping_data = ping_resp.json()
+        assert ping_data["status"] == "ok"
+        assert ping_data["distance_km"] is not None
+
+    def test_gmail_multi_role_portal_and_single_admin_lock(self):
+        """
+        Verifies Phases 1 & 2:
+        - Gmail primary identity without mobile phone gets 26-digit Role ID using 000000xxxx serial
+        - One Gmail can register multiple roles (PRODUCER + AGGREGATOR) via /api/v1/me/registrations
+        - Single Admin Lock: only devnetraconsultancy@gmail.com can access /api/v1/admin/* (403 otherwise)
+        """
+        from apps.identity.models import AppUser, EntityProfile
+        from apps.identity.services.entity_allocation import approve_entity_registration
+        from apps.organisations.models import Organisation
+
+        org = Organisation.objects.create(
+            name="Kisan MultiRole Org",
+            org_type="FARMER",
+        )
+
+        # 1. Create a Gmail-only user (no phone_e164)
+        gmail_user = AppUser.objects.create(
+            org=org,
+            email="kisan.multirole@gmail.com",
+            phone_e164=None,
+            role="OWNER",
+            status="ACTIVE",
+        )
+        client = APIClient()
+        client.force_authenticate(user=gmail_user)
+
+        # Non-admin Gmail must receive 403 on Admin endpoints
+        forbidden_res = client.get("/api/v1/admin/reviews")
+        assert forbidden_res.status_code == 403
+
+        # 2. Create PRODUCER and AGGREGATOR registrations under the same Gmail via Portal API
+        r1 = client.post("/api/v1/me/registrations", {"role": "PRODUCER"}, format="json")
+        assert r1.status_code in (200, 201)
+        r2 = client.post("/api/v1/me/registrations", {"role": "AGGREGATOR"}, format="json")
+        assert r2.status_code in (200, 201)
+
+        portal_res = client.get("/api/v1/me/registrations")
+        assert portal_res.status_code == 200
+        portal_json = portal_res.json()
+        assert portal_json["email"] == "kisan.multirole@gmail.com"
+        assert portal_json["is_admin"] is False
+        reg_map = {item["role"]: item for item in portal_json["registrations"]}
+        assert reg_map["PRODUCER"]["registered"] is True
+        assert reg_map["AGGREGATOR"]["registered"] is True
+        assert reg_map["RETAILER"]["registered"] is False
+
+        # 3. Approve PRODUCER registration without mobile -> mints 26-digit Role ID with 000000xxxx serial
+        prod_profile = EntityProfile.objects.get(user_id=gmail_user.user_id, role="PRODUCER")
+        admin_user = AppUser.objects.create(
+            org=org,
+            email="devnetraconsultancy@gmail.com",
+            phone_e164="+919000000099",
+            role="OWNER",
+            status="ACTIVE",
+        )
+        approval = approve_entity_registration(
+            entity=prod_profile,
+            admin_user=admin_user,
+            review_notes="Approved Gmail-only",
+        )
+        role_uid = approval["farmer_uid"]
+        assert len(role_uid) == 26
+        assert role_uid[14:16] == "91"
+        assert role_uid[-10:].startswith("000000")
+
+        # 4. Single Admin Lock allows devnetraconsultancy@gmail.com
+        admin_client = APIClient()
+        admin_client.force_authenticate(user=admin_user)
+        admin_res = admin_client.get("/api/v1/admin/reviews")
+        assert admin_res.status_code == 200
+
