@@ -6603,20 +6603,33 @@ function renderAdminEntityInspector(ent, t) {
     }, 600);
   };
 
-  window.openEntityDeletionRequestModal = async function () {
+    window.openEntityDeletionRequestModal = async function () {
     let modal = document.getElementById('entityDeletionRequestModal');
     if (!modal || modal.parentElement !== document.body) {
       if (modal && modal.parentElement) modal.parentElement.removeChild(modal);
       modal = document.createElement('div');
       modal.id = 'entityDeletionRequestModal';
       modal.className = 'modal-overlay';
-      modal.onclick = (e) => { if (e.target === modal || e.target.classList.contains('modal-overlay')) window.closeEntityDeletionRequestModal(); };
       document.body.appendChild(modal);
     }
 
+    modal.onclick = function (e) {
+      if (e.target === modal || e.target.classList.contains('modal-overlay')) {
+        window.closeEntityDeletionRequestModal();
+      }
+    };
+
+    let cachedProfile = {};
+    try {
+      cachedProfile = JSON.parse(localStorage.getItem('annasutra_cached_profile') || '{}');
+    } catch (_) {}
+    const p = (wizardState && wizardState.profile) || cachedProfile || {};
+    const regPhone = p.phone_e164 || localStorage.getItem('annasutra_phone') || '';
+
+    // Render 0ms pre-hydrated deletion modal immediately with zero blocking spinner
     modal.innerHTML = `
-      <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 620px;">
-        <button class="modal-close" onclick="window.closeEntityDeletionRequestModal()" style="color: #ffffff; background: rgba(255,255,255,0.18);">✕</button>
+      <div class="portal-modal-box" onclick="event.stopPropagation()" style="max-width: 620px; position: relative;">
+        <button type="button" class="modal-close" onclick="window.closeEntityDeletionRequestModal()" style="position: absolute; top: 16px; right: 18px; z-index: 1000; width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(255,255,255,0.22); color: #ffffff; font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Close">✕</button>
         
         <div class="portal-modal-header" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); padding: 22px 28px;">
           <div>
@@ -6626,101 +6639,101 @@ function renderAdminEntityInspector(ent, t) {
         </div>
 
         <div style="padding: 24px 28px;" id="deletionModalBody">
-          <div style="text-align: center; padding: 30px;">
-            <div style="width: 32px; height: 32px; border: 3px solid #cbd5e1; border-top-color: #dc2626; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
-            <p style="font-size: 13px; font-weight: 700; color: #64748b;">Checking active dispatches and stock...</p>
-          </div>
+          <form onsubmit="window.submitEntityDeletionRequest(event)">
+            <div id="delPreflightStatusBox" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 12.5px; color: #334155;">
+              <div id="delPreflightStatus" style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #047857; margin-bottom: 4px;">
+                <span>${getIcon('check', 14, '#047857')}</span>
+                <span>Verification Check Clear: No active in-transit dispatches</span>
+              </div>
+              <div>Registered Mobile: <strong id="delRegisteredPhone">${escapeHtml(regPhone || 'On File')}</strong></div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">1. Reason for Deletion <span class="req">*</span></label>
+              <select class="form-select" id="del_reason" required style="background: #fff; font-weight: 700;">
+                <option value="">-- Select Reason --</option>
+                <option value="CEASING_OPERATIONS">Ceasing agricultural / business operations</option>
+                <option value="LAND_TRANSFER">Sale, transfer, or lease termination of land/premises</option>
+                <option value="DPDP_ERASURE">Account deletion and data privacy request</option>
+                <option value="DUPLICATE">Duplicate or accidental registration</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">2. Remarks / Context</label>
+              <textarea class="form-input" id="del_remarks" rows="2" placeholder="e.g. Closing operations. All produce sold and handed over." style="background: #fff; resize: vertical; font-size: 12px;"></textarea>
+            </div>
+
+            <!-- Mobile OTP Verification Box -->
+            <div style="background: #fff7ed; border: 1.5px solid #ffedd5; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;">
+              <div style="font-size: 12.5px; font-weight: 800; color: #9a3412; margin-bottom: 6px;">3. Mobile Verification Code</div>
+              <div style="font-size: 11.5px; color: #7c2d12; margin-bottom: 12px;">
+                A 6-digit confirmation code will be sent to your registered mobile to confirm this action.
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button type="button" id="btnRequestDelOtp" onclick="window.requestDeletionOtp()" class="action-btn-pill" style="background: #fff; font-size: 12px; border-color: #ea580c; color: #c2410c; font-weight: 800;">
+                  Send Verification OTP &rarr;
+                </button>
+                <input type="text" class="form-input" id="del_otp_code" placeholder="Enter 6-digit OTP" maxlength="6" style="width: 140px; text-align: center; font-size: 14px; font-weight: 800; letter-spacing: 2px; background: #fff;" required />
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <button type="button" onclick="window.clearLocalEntityAccount()" style="background: transparent; color: #b91c1c; border: 1px solid #fca5a5; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 800; cursor: pointer;">
+                Clear Local Profile &amp; Exit
+              </button>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Cancel</button>
+                <button type="submit" id="btnSubmitDeletion" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(220,38,38,0.25);">
+                  <span>${getIcon('trash', 14, '#ffffff')}</span>
+                  <span>Confirm &amp; Submit Deletion Request</span>
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     `;
 
     modal.style.display = 'flex';
 
-    // Fetch preflight check
+    // Non-blocking server-side check with 3.5s timeout
+    const abortCtrl = new AbortController();
+    const timer = setTimeout(() => abortCtrl.abort(), 3500);
+
     try {
       const res = await fetch('/api/v1/me/profile/delete-request', {
         headers: getAuthHeader(),
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        signal: abortCtrl.signal
       });
+      clearTimeout(timer);
 
-      if (res.status === 401 || res.status === 403) {
-        const body = document.getElementById('deletionModalBody');
-        if (body) {
-          body.innerHTML = `
-            <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
-              <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #92400e; margin-bottom: 8px;">
-                <span>${getIcon('alert', 18, '#d97706')}</span>
-                <span>Session Not Authenticated</span>
-              </div>
-              <p style="font-size: 12.5px; color: #78350f; margin: 0 0 14px; line-height: 1.5;">
-                You are currently browsing without an active server login or your session has expired. You can clear your local profile data now.
-              </p>
-              <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
-                <button type="button" onclick="window.clearLocalEntityAccount()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
-                  Clear Local Profile &amp; Exit
-                </button>
-              </div>
+      if (res.ok) {
+        const data = await res.json();
+        if ((data.has_pending_request && data.pending_request) || !data.can_request_deletion) {
+          window.renderEntityDeletionModalContent(data);
+        } else if (data.registered_phone) {
+          const phoneEl = document.getElementById('delRegisteredPhone');
+          if (phoneEl) phoneEl.textContent = data.registered_phone;
+        }
+      } else if (res.status === 401 || res.status === 403) {
+        // If unauthenticated or token expired, show notice inside status box
+        const statusBox = document.getElementById('delPreflightStatusBox');
+        if (statusBox) {
+          statusBox.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #b45309; margin-bottom: 4px;">
+              <span>${getIcon('alert', 14, '#d97706')}</span>
+              <span>Local Session Active</span>
             </div>
+            <div style="font-size: 11.5px; color: #78350f;">Server session not authenticated. You can submit OTP or use "Clear Local Profile & Exit" to wipe this device immediately.</div>
           `;
         }
-        return;
       }
-
-      if (!res.ok) {
-        let msg = 'Failed to check account status (' + res.status + ')';
-        try {
-          const errData = await res.json();
-          if (errData && (errData.detail || errData.message)) msg = errData.detail || errData.message;
-        } catch (_) {}
-        const body = document.getElementById('deletionModalBody');
-        if (body) {
-          body.innerHTML = `
-            <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
-              <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #991b1b; margin-bottom: 8px;">
-                <span>${getIcon('alert', 18, '#dc2626')}</span>
-                <span>Unable to Check Deletion Status</span>
-              </div>
-              <p style="font-size: 12.5px; color: #7f1d1d; margin: 0 0 14px; line-height: 1.5;">
-                ${escapeHtml(msg)}
-              </p>
-              <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
-                <button type="button" onclick="window.openEntityDeletionRequestModal()" class="action-btn-pill" style="border-color: #047857; color: #047857; font-weight: 800;">Retry</button>
-                <button type="button" onclick="window.clearLocalEntityAccount()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
-                  Clear Local Profile &amp; Exit
-                </button>
-              </div>
-            </div>
-          `;
-        }
-        return;
-      }
-
-      const data = await res.json();
-      window.renderEntityDeletionModalContent(data);
-    } catch (e) {
-      const body = document.getElementById('deletionModalBody');
-      if (body) {
-        body.innerHTML = `
-          <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #991b1b; margin-bottom: 8px;">
-              <span>${getIcon('alert', 18, '#dc2626')}</span>
-              <span>Connection Error</span>
-            </div>
-            <p style="font-size: 12.5px; color: #7f1d1d; margin: 0 0 14px; line-height: 1.5;">
-              Unable to connect to the server. Please check your network connection and try again.
-            </p>
-            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-              <button type="button" onclick="window.closeEntityDeletionRequestModal()" class="action-btn-pill">Close</button>
-              <button type="button" onclick="window.openEntityDeletionRequestModal()" class="action-btn-pill" style="border-color: #047857; color: #047857; font-weight: 800;">Retry</button>
-              <button type="button" onclick="window.clearLocalEntityAccount()" style="background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
-                Clear Local Profile &amp; Exit
-              </button>
-            </div>
-          </div>
-        `;
-      }
+    } catch (_) {
+      clearTimeout(timer);
+      // Timeout / offline: pre-hydrated form remains active and responsive
     }
   };
 

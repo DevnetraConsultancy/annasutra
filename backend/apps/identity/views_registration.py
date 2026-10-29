@@ -1366,7 +1366,7 @@ class MyProfileDeleteRequestView(APIView):
 
         user_role = getattr(request.user, "role", "OWNER")
 
-        if user_role not in ("OWNER",):
+        if user_role not in ("OWNER", "PRODUCER", "AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER", ""):
 
             raise exceptions.PermissionDenied({"detail": "Only the registered account owner can request account deletion.", "code": "OWNER_ONLY"})
 
