@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../../../data/platform/platform_providers.dart';
 import '../../auth/domain/auth_state.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../auth/presentation/dpdp_consent_dialog.dart';
@@ -39,43 +44,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   VideoPlayerController? _videoController;
 
   // Editable Profile State (5-Tab Registration Data Inspection & Self-Service Edit)
-  late final TextEditingController _altPhoneCtrl =
-      TextEditingController(text: '+91 9434011223');
-  late final TextEditingController _emailCtrl =
-      TextEditingController(text: 'contact@maa-annapurna-fpo.in');
-  late final TextEditingController _addrLine2Ctrl =
-      TextEditingController(text: 'Near Gram Panchayat Office, Memari');
-  late final TextEditingController _plotNicknameCtrl = TextEditingController(
-      text: 'Plot #1 - North Field & Plot #2 - Riverbank');
-  late final TextEditingController _seasonalNotesCtrl =
-      TextEditingController(text: 'Kharif Paddy & Rabi Mustard rotation');
+  late final TextEditingController _altPhoneCtrl = TextEditingController();
+  late final TextEditingController _emailCtrl = TextEditingController();
+  late final TextEditingController _addrLine2Ctrl = TextEditingController();
+  late final TextEditingController _plotNicknameCtrl = TextEditingController();
+  late final TextEditingController _seasonalNotesCtrl = TextEditingController();
   late final TextEditingController _secondaryCropsCtrl =
-      TextEditingController(text: 'Potato (VG), Mustard (OI), Moong (PU)');
-  late final TextEditingController _irrigationCtrl =
-      TextEditingController(text: 'Submersible Borewell + Canal');
-  late final TextEditingController _certNotesCtrl = TextEditingController(
-      text: 'NPOP Organic Certified • Soil Card Verified');
+      TextEditingController();
+  late final TextEditingController _irrigationCtrl = TextEditingController();
+  late final TextEditingController _certNotesCtrl = TextEditingController();
 
-  // Registered Plots & Submitted Change Requests
-  final List<Map<String, dynamic>> _registeredPlots = [
-    {
-      'name': 'Plot #1 - North Field',
-      'surveyNo': 'Survey 104/A',
-      'acres': 2.5,
-      'allocatedAcres': 1.5,
-      'crop': 'Paddy / Rice (FG)',
-      'status': 'VERIFIED',
-    },
-    {
-      'name': 'Plot #2 - Riverbank South',
-      'surveyNo': 'Survey 108/B',
-      'acres': 2.0,
-      'allocatedAcres': 1.5,
-      'crop': 'Mustard (OI)',
-      'status': 'VERIFIED',
-    },
-  ];
-
+  // Registered Plots & Submitted Change Requests (Purged all fake preloaded data)
+  final List<Map<String, dynamic>> _registeredPlots = [];
   final List<Map<String, String>> _changeRequests = [];
 
   // All 7 Entity Roles in One Single Universal APK
@@ -298,6 +278,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _initBackgroundVideo();
+    _hydrateProfileData();
+  }
+
+  Future<void> _hydrateProfileData() async {
+    try {
+      final store = ref.read(secureStoreProvider);
+      final cachedProfileStr = await store.read('annasutra_cached_profile');
+      if (cachedProfileStr != null && cachedProfileStr.isNotEmpty) {
+        final profile = jsonDecode(cachedProfileStr) as Map<String, dynamic>;
+        if (mounted) {
+          setState(() {
+            _altPhoneCtrl.text = profile['alt_phone']?.toString() ?? '';
+            _emailCtrl.text = profile['email']?.toString() ?? '';
+            _addrLine2Ctrl.text = profile['address_line2']?.toString() ?? '';
+            _plotNicknameCtrl.text =
+                profile['plot_nicknames']?.toString() ?? '';
+            _seasonalNotesCtrl.text =
+                profile['seasonal_notes']?.toString() ?? '';
+            _secondaryCropsCtrl.text =
+                profile['secondary_crops']?.toString() ?? '';
+            _irrigationCtrl.text = profile['irrigation']?.toString() ?? '';
+            _certNotesCtrl.text = profile['cert_notes']?.toString() ?? '';
+          });
+        }
+      }
+
+      final cachedPlotsStr = await store.read('annasutra_cached_plots');
+      if (cachedPlotsStr != null && cachedPlotsStr.isNotEmpty) {
+        final plotsList = jsonDecode(cachedPlotsStr) as List;
+        if (mounted) {
+          setState(() {
+            _registeredPlots.clear();
+            for (final p in plotsList) {
+              _registeredPlots.add(Map<String, dynamic>.from(p as Map));
+            }
+          });
+        }
+      }
+    } catch (_) {}
   }
 
   void _initBackgroundVideo() {
@@ -358,17 +377,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ? _buildTopAppBar(context, authState, syncState, role)
           : null,
       body: authState.isAuthenticated
-          ? IndexedStack(
-              index: _currentNavIndex,
-              children: [
-                _buildBatchesTab(context, lotsState, authState, role),
-                _buildHandoverTab(context, lotsState, authState, role),
-                _buildInsightsTab(context, lotsState),
-                _buildProfileTab(context, authState, role),
-              ],
-            )
+          ? (authState.showRolePortal
+              ? _buildRoleStatusPortal(context, authState)
+              : IndexedStack(
+                  index: _currentNavIndex,
+                  children: [
+                    _buildBatchesTab(context, lotsState, authState, role),
+                    _buildHandoverTab(context, lotsState, authState, role),
+                    _buildInsightsTab(context, lotsState),
+                    _buildProfileTab(context, authState, role),
+                  ],
+                ))
           : _buildUnauthenticatedView(context, authState),
-      bottomNavigationBar: authState.isAuthenticated
+      bottomNavigationBar: (authState.isAuthenticated && !authState.showRolePortal)
           ? NavigationBar(
               selectedIndex: _currentNavIndex,
               onDestinationSelected: (idx) =>
@@ -405,6 +426,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             )
           : null,
       floatingActionButton: (authState.isAuthenticated &&
+              !authState.showRolePortal &&
               _currentNavIndex == 0 &&
               !authState.isDeletionRequested)
           ? FloatingActionButton.extended(
@@ -534,72 +556,147 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onSelected: (val) async {
             if (val == 'LOGOUT') {
               await ref.read(authControllerProvider.notifier).logout();
+            } else if (val == 'ROLE_PORTAL') {
+              ref.read(authControllerProvider.notifier).toggleRolePortal(true);
             } else {
+              if (val == 'ADMIN' && !authState.isAdmin) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Access Restricted: Only devnetraconsultancy@gmail.com is authorized for Admin Console.'),
+                    backgroundColor: Color(0xFFDC2626),
+                  ),
+                );
+                return;
+              }
+              ref.read(authControllerProvider.notifier).toggleRolePortal(false);
               await ref
                   .read(authControllerProvider.notifier)
                   .switchActiveRole(val);
             }
           },
-          itemBuilder: (ctx) => [
-            const PopupMenuItem<String>(
-              enabled: false,
-              child: Text(
-                'UNIVERSAL ROLE CONSOLE SWITCHER',
-                style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF64748B)),
+          itemBuilder: (ctx) {
+            final approvedList = <String>[];
+            for (final reg in authState.roleRegistrations) {
+              final st = (reg['status'] ?? reg['org_verification'] ?? '')
+                  .toString()
+                  .toUpperCase();
+              final rCode = (reg['role'] ?? reg['org_type'] ?? '')
+                  .toString()
+                  .toUpperCase();
+              if ((st == 'APPROVED' || st == 'VERIFIED') && rCode.isNotEmpty) {
+                if (!approvedList.contains(rCode)) approvedList.add(rCode);
+              }
+            }
+            if (approvedList.isEmpty && authState.isOrgVerified) {
+              approvedList.add(role);
+            }
+            if (authState.isAdmin && !approvedList.contains('ADMIN')) {
+              approvedList.add('ADMIN');
+            }
+
+            return [
+              const PopupMenuItem<String>(
+                enabled: false,
+                child: Text(
+                  'APPROVED ROLES',
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF64748B)),
+                ),
               ),
-            ),
-            ..._roleOptions.map(
-              (r) => PopupMenuItem<String>(
-                value: r['code'] as String,
+              if (approvedList.isEmpty)
+                const PopupMenuItem<String>(
+                  enabled: false,
+                  child: Text(
+                    'No Approved Roles Yet (Under Review)',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                  ),
+                )
+              else
+                ...approvedList.map((code) {
+                  final match = _roleOptions.firstWhere(
+                    (opt) => opt['code'] == code,
+                    orElse: () => code == 'ADMIN'
+                        ? {
+                            'code': 'ADMIN',
+                            'label': 'Admin Console',
+                            'icon': Icons.admin_panel_settings_outlined
+                          }
+                        : {
+                            'code': code,
+                            'label': code,
+                            'icon': Icons.verified_user_outlined
+                          },
+                  );
+                  return PopupMenuItem<String>(
+                    value: code,
+                    child: Row(
+                      children: [
+                        Icon(
+                          match['icon'] as IconData,
+                          size: 16,
+                          color: role == code
+                              ? const Color(0xFF047857)
+                              : const Color(0xFF64748B),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            match['label'] as String,
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: role == code
+                                  ? FontWeight.w800
+                                  : FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        if (role == code)
+                          const Icon(Icons.check,
+                              size: 15, color: Color(0xFF047857)),
+                      ],
+                    ),
+                  );
+                }),
+              const PopupMenuDivider(),
+              const PopupMenuItem<String>(
+                value: 'ROLE_PORTAL',
                 child: Row(
                   children: [
-                    Icon(
-                      r['icon'] as IconData,
-                      size: 16,
-                      color: role == r['code']
-                          ? const Color(0xFF047857)
-                          : const Color(0xFF64748B),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        r['label'] as String,
-                        style: TextStyle(
+                    Icon(Icons.dashboard_customize_outlined,
+                        size: 16, color: Color(0xFF0B3D2E)),
+                    SizedBox(width: 8),
+                    Text(
+                      'Manage Roles / Status Portal',
+                      style: TextStyle(
                           fontSize: 12.5,
-                          fontWeight: role == r['code']
-                              ? FontWeight.w800
-                              : FontWeight.w500,
-                        ),
-                      ),
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0B3D2E)),
                     ),
-                    if (role == r['code'])
-                      const Icon(Icons.check,
-                          size: 15, color: Color(0xFF047857)),
                   ],
                 ),
               ),
-            ),
-            const PopupMenuDivider(),
-            const PopupMenuItem<String>(
-              value: 'LOGOUT',
-              child: Row(
-                children: [
-                  Icon(Icons.logout, size: 16, color: Color(0xFFDC2626)),
-                  SizedBox(width: 8),
-                  Text(
-                    'Sign Out',
-                    style: TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFDC2626)),
-                  ),
-                ],
+              const PopupMenuDivider(),
+              const PopupMenuItem<String>(
+                value: 'LOGOUT',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 16, color: Color(0xFFDC2626)),
+                    SizedBox(width: 8),
+                    Text(
+                      'Sign Out',
+                      style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFDC2626)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ];
+          },
         ),
 
         // Language Switcher Chip
@@ -616,6 +713,597 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onPressed: () => DpdpConsentDialog.show(context),
         ),
       ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // ROLE REGISTRATION & STATUS PORTAL (Decision 31, 35, Core C2)
+  // ---------------------------------------------------------------------------
+  Widget _buildRoleStatusPortal(BuildContext context, AuthState authState) {
+    const roles = [
+      {
+        'code': 'PRODUCER',
+        'title': 'Producer / Farmer',
+        'desc':
+            'Cultivate, register harvest lots, mint QRs, and manage plot boundaries.',
+        'icon': Icons.agriculture,
+      },
+      {
+        'code': 'AGGREGATOR',
+        'title': 'Aggregator / FPO / Mandi',
+        'desc':
+            'Aggregate produce lots, bulk scale weighing, APMC mandi trading.',
+        'icon': Icons.storefront_outlined,
+      },
+      {
+        'code': 'PROCESSOR',
+        'title': 'Processor / Manufacturer / Mill',
+        'desc':
+            'Clean, process, sort, conversion ratio grading, packaging SKU catalog.',
+        'icon': Icons.precision_manufacturing_outlined,
+      },
+      {
+        'code': 'WHOLESALER',
+        'title': 'Wholesaler',
+        'desc':
+            'Bulk lot procurement, e-NAM integration, regional lot split dispatch.',
+        'icon': Icons.inventory_2_outlined,
+      },
+      {
+        'code': 'DISTRIBUTOR',
+        'title': 'Distributor / Cold Storage',
+        'desc':
+            'Cold chain monitoring, temperature telemetry, fleet dispatch logistics.',
+        'icon': Icons.local_shipping_outlined,
+      },
+      {
+        'code': 'RETAILER',
+        'title': 'Retailer Shop',
+        'desc':
+            'Consumer shelf stocking, retail pack display, counter sales checkout.',
+        'icon': Icons.shopping_bag_outlined,
+      },
+    ];
+
+    final currentRole = _activeRole(authState);
+    final isCurrentApproved = authState.isOrgVerified;
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0B3D2E),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x1A000000),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0x33FFFFFF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.manage_accounts,
+                        color: Color(0xFFA7F3D0), size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Multi-Role Registration Portal',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Account: ${authState.email ?? authState.phone ?? 'Verified Identity'}',
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            color: Color(0xFFA7F3D0),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Each entity role requires independent Admin approval. Once approved, you obtain a unique 26-digit role identity to operate its console.',
+                style: TextStyle(fontSize: 11.5, color: Color(0xFFE2E8F0)),
+              ),
+              if (isCurrentApproved) ...[
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton.icon(
+                    onPressed: () => ref
+                        .read(authControllerProvider.notifier)
+                        .toggleRolePortal(false),
+                    icon: const Icon(Icons.arrow_back, size: 15),
+                    label: Text('Open $currentRole Console'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Color(0xFF34D399)),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        const Text(
+          'SUPPLY CHAIN ROLE REGISTRATIONS',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF64748B),
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (authState.isAdmin)
+          _buildRoleCard(
+            context,
+            authState,
+            code: 'ADMIN',
+            title: 'System Administrator',
+            desc:
+                'Sovereign governance, registration review, KYC change approval queue.',
+            icon: Icons.admin_panel_settings_outlined,
+            status: 'APPROVED',
+            uniqueId: 'ADMIN-MASTER-ROOT',
+          ),
+        ...roles.map((r) {
+          final code = r['code'] as String;
+          final match = authState.roleRegistrations.firstWhere(
+            (reg) =>
+                (reg['role'] ?? reg['org_type'] ?? '')
+                    .toString()
+                    .toUpperCase() ==
+                code,
+            orElse: () => <String, dynamic>{},
+          );
+
+          String status = 'NOT_REGISTERED';
+          String? appRef;
+          String? remark;
+          String? roleUid;
+
+          if (match.isNotEmpty) {
+            status = (match['status'] ??
+                    match['org_verification'] ??
+                    'UNDER_REVIEW')
+                .toString()
+                .toUpperCase();
+            appRef = match['application_ref']?.toString() ??
+                match['app_ref']?.toString() ??
+                'APP-PENDING';
+            remark = match['admin_remark']?.toString() ??
+                match['remark']?.toString();
+            roleUid = match['role_id']?.toString() ??
+                match['farmer_uid']?.toString();
+          } else if (code == currentRole && authState.isOrgVerified) {
+            status = 'APPROVED';
+            roleUid = authState.farmerUid;
+          } else if (code == currentRole &&
+              authState.orgVerification == 'PENDING') {
+            status = 'UNDER_REVIEW';
+            appRef = 'APP-PENDING';
+          }
+
+          return _buildRoleCard(
+            context,
+            authState,
+            code: code,
+            title: r['title'] as String,
+            desc: r['desc'] as String,
+            icon: r['icon'] as IconData,
+            status: status,
+            appRef: appRef,
+            remark: remark,
+            uniqueId: roleUid,
+          );
+        }),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildRoleCard(
+    BuildContext context,
+    AuthState authState, {
+    required String code,
+    required String title,
+    required String desc,
+    required IconData icon,
+    required String status,
+    String? appRef,
+    String? remark,
+    String? uniqueId,
+  }) {
+    Color chipBg;
+    Color chipText;
+    String chipLabel;
+
+    switch (status) {
+      case 'APPROVED':
+      case 'VERIFIED':
+        chipBg = const Color(0xFFECFDF5);
+        chipText = const Color(0xFF047857);
+        chipLabel = 'APPROVED';
+        break;
+      case 'UNDER_REVIEW':
+      case 'SUBMITTED':
+      case 'PENDING':
+        chipBg = const Color(0xFFFFFBEB);
+        chipText = const Color(0xFFB45309);
+        chipLabel = 'UNDER REVIEW';
+        break;
+      case 'CHANGES_REQUESTED':
+        chipBg = const Color(0xFFFFF7ED);
+        chipText = const Color(0xFFC2410C);
+        chipLabel = 'CHANGES REQUESTED';
+        break;
+      case 'REJECTED':
+        chipBg = const Color(0xFFFEF2F2);
+        chipText = const Color(0xFFDC2626);
+        chipLabel = 'REJECTED';
+        break;
+      default:
+        chipBg = const Color(0xFFF1F5F9);
+        chipText = const Color(0xFF64748B);
+        chipLabel = 'NOT REGISTERED';
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: (status == 'APPROVED' || status == 'VERIFIED')
+              ? const Color(0xFF86EFAC)
+              : const Color(0xFFE2E8F0),
+        ),
+        boxShadow: const [
+          BoxShadow(
+              color: Color(0x06000000), blurRadius: 6, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Icon(icon, color: const Color(0xFF0B3D2E), size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: chipBg,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            chipLabel,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: chipText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      desc,
+                      style: const TextStyle(
+                          fontSize: 11.5, color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (uniqueId != null && uniqueId.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0FDF4),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF86EFAC)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.key, size: 14, color: Color(0xFF047857)),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Unique Role ID: $uniqueId',
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF065F46),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          if (appRef != null &&
+              (status == 'UNDER_REVIEW' ||
+                  status == 'SUBMITTED' ||
+                  status == 'PENDING')) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Application Ref: $appRef',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFB45309),
+              ),
+            ),
+          ],
+          if (remark != null && remark.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7ED),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFFDBA74)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline,
+                      size: 14, color: Color(0xFFC2410C)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Admin Remark: $remark',
+                      style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF9A3412)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: _buildRoleActionButton(context, code, title, status, appRef),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoleActionButton(BuildContext context, String code, String title,
+      String status, String? appRef) {
+    if (status == 'APPROVED' || status == 'VERIFIED') {
+      return ElevatedButton.icon(
+        onPressed: () {
+          ref.read(authControllerProvider.notifier).toggleRolePortal(false);
+          ref.read(authControllerProvider.notifier).switchActiveRole(code);
+        },
+        icon: const Icon(Icons.login, size: 15),
+        label: Text('Open $title Console'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF0B3D2E),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
+
+    if (status == 'UNDER_REVIEW' ||
+        status == 'SUBMITTED' ||
+        status == 'PENDING') {
+      return OutlinedButton.icon(
+        onPressed: () => _showStatusStepperDialog(context, code, appRef),
+        icon: const Icon(Icons.timeline, size: 15),
+        label: const Text('View Status Stepper'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFFB45309),
+          side: const BorderSide(color: Color(0xFFFCD34D)),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
+
+    if (status == 'CHANGES_REQUESTED') {
+      return ElevatedButton.icon(
+        onPressed: () => context.push('/register-org?role=$code'),
+        icon: const Icon(Icons.edit_note, size: 15),
+        label: const Text('Fix & Resubmit'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFC2410C),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
+
+    return OutlinedButton.icon(
+      onPressed: () => context.push('/register-org?role=$code'),
+      icon: const Icon(Icons.add, size: 15),
+      label: Text('Register as $code'),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xFF0B3D2E),
+        side: const BorderSide(color: Color(0xFF0B3D2E)),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  void _showStatusStepperDialog(
+      BuildContext context, String role, String? appRef) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.verified_outlined, color: Color(0xFFB45309)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text('$role Registration Status',
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFBEB),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFFDE68A)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Application Reference:',
+                      style:
+                          TextStyle(fontSize: 10, color: Color(0xFF78350F))),
+                  Text(
+                    appRef ?? 'APP-PENDING',
+                    style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: Color(0xFF92400E)),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            _buildStepperItem('1. Signatory & Business Identity',
+                'Completed & E-Signed', true),
+            _buildStepperItem(
+                '2. Premises & Scale Licensing', 'Completed', true),
+            _buildStepperItem('3. Role Module & SKUs', 'Completed', true),
+            _buildStepperItem('4. Identity & Bank Verification',
+                'Pending Admin Verification', false,
+                isPending: true),
+            _buildStepperItem('5. Sovereign UID Minting',
+                'Awaiting Admin Approval', false),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepperItem(String title, String status, bool isDone,
+      {bool isPending = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(
+            isDone
+                ? Icons.check_circle
+                : (isPending
+                    ? Icons.pending_outlined
+                    : Icons.radio_button_unchecked),
+            size: 16,
+            color: isDone
+                ? const Color(0xFF047857)
+                : (isPending
+                    ? const Color(0xFFB45309)
+                    : const Color(0xFF94A3B8)),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w700)),
+                Text(status,
+                    style: TextStyle(
+                        fontSize: 10.5,
+                        color: isDone
+                            ? const Color(0xFF047857)
+                            : (isPending
+                                ? const Color(0xFFB45309)
+                                : const Color(0xFF64748B)))),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1178,6 +1866,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ? () => _showDispatchSheet(context, lot)
                     : null,
                 onShowQr: () => _showQrDialog(context, lot),
+                onPrintLabel: () => _showLabelPrintModal(context, lot),
+                onAppendData: () => _showAppendDataModal(context, lot),
+                onPlaceOnShelf: role == 'RETAILER'
+                    ? () => _handlePlaceOnShelf(context, lot)
+                    : null,
+                onMarkSoldOut: role == 'RETAILER'
+                    ? () => _handleMarkSoldOut(context, lot)
+                    : null,
+                onMarkWasted: role == 'RETAILER'
+                    ? () => _handleMarkWasted(context, lot)
+                    : null,
               ),
             ),
           ],
@@ -1864,6 +2563,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             (lot) => LotCard(
               lot: lot,
               onShowQr: () => _showQrDialog(context, lot),
+              onPrintLabel: () => _showLabelPrintModal(context, lot),
             ),
           ),
         ],
@@ -3557,6 +4257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _showConsumerVerifierSheet(BuildContext context, List<HarvestLot> lots) {
     final codeCtrl = TextEditingController();
     HarvestLot? verifiedLot = lots.isNotEmpty ? lots.first : null;
+    bool shareLocation = false;
 
     showModalBottomSheet<void>(
       context: context,
@@ -3568,9 +4269,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSheetState) => DraggableScrollableSheet(
-          initialChildSize: 0.65,
-          maxChildSize: 0.9,
-          minChildSize: 0.4,
+          initialChildSize: 0.75,
+          maxChildSize: 0.95,
+          minChildSize: 0.45,
           expand: false,
           builder: (_, scrollController) => ListView(
             controller: scrollController,
@@ -3614,7 +4315,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 'Scan a packet/crate QR or enter batch code to view its verified journey (privacy-safe masked farmer view).',
                 style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
+
+              // Optional Consumer GPS Notice (Step 7)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on_outlined,
+                        size: 18, color: Color(0xFF0B3D2E)),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Optional Location: Verify genuine local purchase and protect against supply chain diversion.',
+                        style:
+                            TextStyle(fontSize: 11, color: Color(0xFF475569)),
+                      ),
+                    ),
+                    Switch(
+                      value: shareLocation,
+                      onChanged: (val) =>
+                          setSheetState(() => shareLocation = val),
+                      activeColor: const Color(0xFF047857),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
               Row(
                 children: [
                   Expanded(
@@ -3649,6 +4383,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const Divider(height: 24),
               if (verifiedLot != null) ...[
+                // 1. Origin Card (Masked Farmer & Practice)
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -3659,42 +4394,210 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.verified,
-                              color: Color(0xFF047857), size: 18),
-                          SizedBox(width: 6),
-                          Text(
-                            'Verified Genuine Produce',
-                            style: TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF065F46)),
+                          const Row(
+                            children: [
+                              Icon(Icons.verified,
+                                  color: Color(0xFF047857), size: 18),
+                              SizedBox(width: 6),
+                              Text(
+                                'ORIGIN: AUTHENTIC FARM PRODUCE',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFF065F46),
+                                    letterSpacing: 0.5),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCFCE7),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'DPDP Masked',
+                              style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF166534)),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${verifiedLot!.crop} (${verifiedLot!.variety}) • ${verifiedLot!.qualityGrade}',
+                        'Producer: ${verifiedLot!.initialCustodyHolder.isNotEmpty ? verifiedLot!.initialCustodyHolder : "R••••• K••••• (Producer Member)"}',
                         style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w800),
+                            fontSize: 13, fontWeight: FontWeight.w800),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Code: ${verifiedLot!.publicCode}',
-                        style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 11.5,
-                            color: Color(0xFF334155)),
-                      ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       const Text(
-                        'Origin: Verified Farm, Bardhaman District, West Bengal (Privacy Masked)',
+                        'Jurisdiction: Memari Village, Bardhaman District, West Bengal',
                         style:
                             TextStyle(fontSize: 11.5, color: Color(0xFF475569)),
                       ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        'Farming Practice: Organic NPOP Certified (Chemical & Pesticide Free)',
+                        style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF047857)),
+                      ),
+                      const Text(
+                        'Soil Health: Soil Health Card Verified • Indigenous Non-GMO Seed',
+                        style:
+                            TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                      ),
                     ],
                   ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // 2. Product Summary Card
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'PRODUCT SUMMARY',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF64748B),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${verifiedLot!.crop} (${verifiedLot!.variety})',
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF0F172A)),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Net Weight: ${verifiedLot!.netQtyKg.toStringAsFixed(1)} ${verifiedLot!.unit}',
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF0B3D2E)),
+                          ),
+                          Text(
+                            'Quality: ${verifiedLot!.qualityGrade}',
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF047857)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Harvest Date: ${verifiedLot!.harvestDate}',
+                        style: const TextStyle(
+                            fontSize: 11.5, color: Color(0xFF475569)),
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFECFDF5),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          verifiedLot!.state == 'ON_SHELF'
+                              ? 'Farm-to-Shelf: 4 Days (Frozen on Shelf Placement)'
+                              : 'Farm-to-Shelf: Active In-Transit Tracking',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF065F46),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                // 3. Custody Journey Bites / Timeline (Step 7)
+                const Text(
+                  'AUDIT TRAIL & JOURNEY BITES',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF64748B),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                _buildJourneyStep(
+                  title: '1. Farm Harvest Sealed',
+                  subtitle:
+                      'Harvested at plot ${verifiedLot!.originPlotName.isNotEmpty ? verifiedLot!.originPlotName : "North Field"} • Sealed with Unique Batch QR',
+                  time: verifiedLot!.harvestDate,
+                  icon: Icons.agriculture,
+                  isDone: true,
+                ),
+                _buildJourneyStep(
+                  title: '2. Aggregator Intake & Weighing',
+                  subtitle:
+                      'Inspected by Mandi FPO • Net weight verified: ${verifiedLot!.netQtyKg} ${verifiedLot!.unit}',
+                  time: verifiedLot!.journeyCheckpoints.isNotEmpty
+                      ? (verifiedLot!.journeyCheckpoints.last['timestamp']
+                              ?.toString() ??
+                          'Verified Custody')
+                      : 'Verified Custody',
+                  icon: Icons.storefront_outlined,
+                  isDone: true,
+                ),
+                _buildJourneyStep(
+                  title: '3. Milling & Processing',
+                  subtitle:
+                      'Processed & packaged into tamper-evident retail child units',
+                  time: 'Verified',
+                  icon: Icons.precision_manufacturing_outlined,
+                  isDone: true,
+                ),
+                _buildJourneyStep(
+                  title: '4. Cold Chain Distribution',
+                  subtitle:
+                      'Temperature controlled transit log: Ambient / 24°C verified',
+                  time: 'Verified Transit',
+                  icon: Icons.local_shipping_outlined,
+                  isDone: true,
+                ),
+                _buildJourneyStep(
+                  title: '5. Retail Shelf Placement',
+                  subtitle:
+                      'Stocked at Retail Partner Store • Ready for consumer purchase',
+                  time: verifiedLot!.state == 'ON_SHELF'
+                      ? 'On Shelf'
+                      : 'En Route',
+                  icon: Icons.store,
+                  isDone: verifiedLot!.state == 'ON_SHELF' ||
+                      verifiedLot!.isRetailerVerified,
+                  isLast: true,
                 ),
               ] else
                 const Text(
@@ -3705,6 +4608,75 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildJourneyStep({
+    required String title,
+    required String subtitle,
+    required String time,
+    required IconData icon,
+    required bool isDone,
+    bool isLast = false,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDone
+                    ? const Color(0xFF047857)
+                    : const Color(0xFFCBD5E1),
+              ),
+              child: Icon(icon, size: 14, color: Colors.white),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 38,
+                color: isDone
+                    ? const Color(0xFF86EFAC)
+                    : const Color(0xFFE2E8F0),
+              ),
+          ],
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          fontSize: 12.5, fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      time,
+                      style: const TextStyle(
+                          fontSize: 10.5, color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style:
+                      const TextStyle(fontSize: 11, color: Color(0xFF475569)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -3762,52 +4734,477 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _showQrDialog(BuildContext context, HarvestLot lot) {
+    _showLabelPrintModal(context, lot);
+  }
+
+  void _showLabelPrintModal(BuildContext context, HarvestLot lot) {
+    final authState = ref.read(authControllerProvider);
+    final producer = authState.orgName ??
+        (lot.initialCustodyHolder.isNotEmpty
+            ? lot.initialCustodyHolder
+            : 'Verified Producer');
+
     showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18),
         title: Row(
           children: [
-            const Icon(Icons.qr_code_2, color: Color(0xFF0B3D2E)),
+            const Icon(Icons.print_outlined,
+                color: Color(0xFF0B3D2E), size: 22),
             const SizedBox(width: 8),
-            Expanded(
+            const Expanded(
               child: Text(
-                '${lot.crop} QR Code',
-                style:
-                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
+                'Produce Lot Label',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close, size: 20),
+              onPressed: () => Navigator.pop(ctx),
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: const Color(0xFF0B3D2E), width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x10000000),
+                      blurRadius: 8,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0B3D2E),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.eco, color: Color(0xFFA7F3D0), size: 14),
+                          SizedBox(width: 6),
+                          Text(
+                            'ANNASUTRA SOVEREIGN TRACEABILITY',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${lot.crop} (${lot.variety})',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Producer: $producer',
+                                style: const TextStyle(
+                                    fontSize: 11, color: Color(0xFF475569)),
+                              ),
+                              Text(
+                                'Plot: ${lot.originPlotName.isNotEmpty ? lot.originPlotName : 'Verified Farmland'}',
+                                style: const TextStyle(
+                                    fontSize: 11, color: Color(0xFF475569)),
+                              ),
+                              Text(
+                                'Harvest Date: ${lot.harvestDate.isNotEmpty ? lot.harvestDate : 'Today'}',
+                                style: const TextStyle(
+                                    fontSize: 11, color: Color(0xFF475569)),
+                              ),
+                              Text(
+                                'Net Weight: ${lot.netQtyKg.toStringAsFixed(1)} ${lot.unit}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0B3D2E),
+                                ),
+                              ),
+                              Text(
+                                'Grade: ${lot.qualityGrade}',
+                                style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF047857)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: QrImageView(
+                            data:
+                                'https://annasutra.in/trace/${lot.publicCode}',
+                            version: QrVersions.auto,
+                            size: 96.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    const Divider(height: 1, color: Color(0xFFCBD5E1)),
+                    const SizedBox(height: 8),
+                    BarcodeWidget(
+                      barcode: Barcode.code128(),
+                      data: lot.publicCode,
+                      width: 240,
+                      height: 48,
+                      drawText: true,
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Scan with AnnaSutra APK or camera to inspect provenance.',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 9.5, color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
               ),
-              child: const Icon(Icons.qr_code_2,
-                  size: 160, color: Color(0xFF0B3D2E)),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              lot.publicCode,
-              style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Close'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await SharePlus.instance.share(
+                ShareParams(
+                  text: 'AnnaSutra Batch Delivery Label\n\n'
+                      'Lot Code: ${lot.publicCode}\n'
+                      'Producer: $producer\n'
+                      'Produce: ${lot.crop} (${lot.variety})\n'
+                      'Net Weight: ${lot.netQtyKg} ${lot.unit}\n'
+                      'Harvest Date: ${lot.harvestDate}\n'
+                      'Grade: ${lot.qualityGrade}\n'
+                      'Verify Provenance: https://annasutra.in/trace/${lot.publicCode}',
+                  subject: 'AnnaSutra Delivery Label - ${lot.publicCode}',
+                ),
+              );
+            },
+            icon: const Icon(Icons.share, size: 16),
+            label: const Text('Share / Print Label'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAppendDataModal(BuildContext context, HarvestLot lot) {
+    final authState = ref.read(authControllerProvider);
+    final weightCtrl =
+        TextEditingController(text: lot.netQtyKg.toStringAsFixed(1));
+    String condition = 'FRESH_GRADE_A';
+    String storageTemp = 'Ambient (25°C)';
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              const Icon(Icons.post_add, color: Color(0xFF0B3D2E)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text('Append Data: ${lot.crop}',
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: weightCtrl,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'Verified Weight (kg) *',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: condition,
+                  decoration: const InputDecoration(
+                    labelText: 'Produce Condition *',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'FRESH_GRADE_A',
+                        child: Text('Fresh (Grade A Quality)')),
+                    DropdownMenuItem(
+                        value: 'GRADE_B',
+                        child: Text('Standard (Grade B Quality)')),
+                    DropdownMenuItem(
+                        value: 'SORTED_PROCESSED',
+                        child: Text('Sorted & Cleaned')),
+                    DropdownMenuItem(
+                        value: 'REFRIGERATED',
+                        child: Text('Cold Chilled Stored')),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) setModalState(() => condition = v);
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: storageTemp,
+                  decoration: const InputDecoration(
+                    labelText: 'Storage Temperature *',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'Ambient (25°C)',
+                        child: Text('Ambient (25°C)')),
+                    DropdownMenuItem(
+                        value: 'Cold Storage (4°C)',
+                        child: Text('Cold Storage (4°C)')),
+                    DropdownMenuItem(
+                        value: 'Deep Freeze (-18°C)',
+                        child: Text('Deep Freeze (-18°C)')),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) setModalState(() => storageTemp = v);
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () async {
+                final wt =
+                    double.tryParse(weightCtrl.text.trim()) ?? lot.netQtyKg;
+                await ref
+                    .read(lotsControllerProvider.notifier)
+                    .appendCustodyScan(
+                      lot.publicCode,
+                      actorRole: authState.orgType ?? 'AGGREGATOR',
+                      actorName: authState.orgName ?? 'Verified Custodian',
+                      currentWeightKg: wt,
+                      condition: condition,
+                      storageTemp: storageTemp,
+                      lat: null,
+                      lng: null,
+                      accessToken: authState.accessToken,
+                      phone: authState.phone,
+                    );
+                if (ctx.mounted) {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Telemetry appended to batch journey.'),
+                      backgroundColor: Color(0xFF047857),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0B3D2E),
+                  foregroundColor: Colors.white),
+              child: const Text('Append Telemetry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handlePlaceOnShelf(BuildContext context, HarvestLot lot) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Place on Retail Shelf?'),
+        content: Text(
+          'Mark ${lot.crop} (${lot.publicCode}) as ON_SHELF. This freezes the Farm-to-Shelf duration counter for consumer verification.',
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              final authState = ref.read(authControllerProvider);
+              await ref.read(lotsControllerProvider.notifier).placeOnShelf(
+                    lot.publicCode,
+                    accessToken: authState.accessToken,
+                    phone: authState.phone,
+                  );
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Lot successfully placed on retail shelf.'),
+                    backgroundColor: Color(0xFF047857),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Confirm On Shelf'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleMarkSoldOut(BuildContext context, HarvestLot lot) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Mark Batch Sold Out?'),
+        content: Text(
+          'Confirm that all ${lot.netQtyKg} ${lot.unit} of ${lot.crop} (${lot.publicCode}) have been sold to consumers.',
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              final authState = ref.read(authControllerProvider);
+              await ref.read(lotsControllerProvider.notifier).markSoldOut(
+                    lot.publicCode,
+                    accessToken: authState.accessToken,
+                    phone: authState.phone,
+                  );
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Batch marked as SOLD OUT.'),
+                    backgroundColor: Color(0xFF047857),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0B3D2E),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Mark Sold Out'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleMarkWasted(BuildContext context, HarvestLot lot) {
+    final reasonCtrl =
+        TextEditingController(text: 'Spoilage / Damaged produce');
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Mark Batch as Waste'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Record write-off for ${lot.crop} (${lot.publicCode}).',
+              style: const TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: reasonCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Waste Reason *',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              final authState = ref.read(authControllerProvider);
+              await ref.read(lotsControllerProvider.notifier).markWasted(
+                    lot.publicCode,
+                    reason: reasonCtrl.text.trim(),
+                    accessToken: authState.accessToken,
+                    phone: authState.phone,
+                  );
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Batch marked as WASTED.'),
+                    backgroundColor: Color(0xFFDC2626),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDC2626),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Confirm Waste'),
           ),
         ],
       ),

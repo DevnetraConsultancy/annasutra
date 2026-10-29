@@ -33,7 +33,10 @@ GoRouter createRouter({void Function(Locale)? onLocaleChanged}) {
       GoRoute(
         path: '/register-org',
         name: 'register-org',
-        builder: (context, state) => const OrgRegistrationScreen(),
+        builder: (context, state) {
+          final role = state.uri.queryParameters['role'] ?? 'PRODUCER';
+          return OrgRegistrationScreen(initialRole: role);
+        },
       ),
       GoRoute(
         path: '/create-batch',

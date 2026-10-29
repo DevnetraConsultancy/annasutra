@@ -52,7 +52,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
     if (success) {
       final auth = ref.read(authControllerProvider);
-      if (auth.orgVerification == 'PENDING') {
+      if (auth.orgVerification == 'PENDING' ||
+          auth.orgVerification == 'UNDER_REVIEW') {
         context.go('/register-org');
       } else {
         context.go('/');
@@ -67,7 +68,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     ref.listen<AuthState>(authControllerProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        if (next.orgVerification == 'PENDING') {
+        if (next.orgVerification == 'PENDING' ||
+            next.orgVerification == 'UNDER_REVIEW') {
           context.go('/register-org');
         } else {
           context.go('/');
@@ -175,6 +177,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
 
+                    // Primary Note: Gmail Identity
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFECFDF5),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFA7F3D0)),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.mark_email_read_outlined,
+                              size: 16, color: Color(0xFF047857)),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Primary Identity: Sign in with Google (Gmail). Mobile number is optional.',
+                              style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF065F46)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     // Mode Switcher: Mobile OTP vs Google Sign-In
                     Row(
                       children: [
@@ -230,6 +259,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 20),
 
                     if (!_isGoogleMode) ...[
+                      // Secondary Option Notice (Decision 30)
+                      const Text(
+                        'Only for mobile numbers already verified and linked to your Gmail account',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xFF64748B),
+                          fontStyle: FontStyle.italic,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+
                       // Phone Input Field
                       TextFormField(
                         controller: _phoneController,
@@ -309,6 +350,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       authNotifier.verifyOtp(
                                         _phoneController.text.trim(),
                                         _otpController.text.trim(),
+                                        role: _selectedRole,
                                       );
                                     }
                                   },
@@ -381,7 +423,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               isLoading ? null : () => _continueWithGoogle(),
                           icon: const Icon(Icons.account_circle_outlined),
                           label: const Text(
-                            'Continue with Google',
+                            'Continue with Google (Gmail)',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),

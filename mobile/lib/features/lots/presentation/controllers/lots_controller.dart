@@ -416,8 +416,8 @@ class LotsController extends StateNotifier<LotsState> {
             'weight_kg': receivedQtyKg,
             'condition': condition,
             'storage_temp': storageTemp,
-            'lat': lat ?? 22.5726,
-            'lng': lng ?? 88.3639,
+            'lat': lat,
+            'lng': lng,
             'timestamp': DateTime.now().toIso8601String(),
           },
         ];
@@ -492,8 +492,8 @@ class LotsController extends StateNotifier<LotsState> {
             'weight_kg': currentWeightKg,
             'condition': condition,
             'storage_temp': storageTemp,
-            'lat': lat ?? 22.5726,
-            'lng': lng ?? 88.3639,
+            'lat': lat,
+            'lng': lng,
             'timestamp': DateTime.now().toIso8601String(),
           },
         ];
@@ -517,6 +517,85 @@ class LotsController extends StateNotifier<LotsState> {
       targetPhone: driverContact,
       vehicleNo: vehicleNo,
     );
+  }
+
+  Future<void> placeOnShelf(String publicCode,
+      {String? accessToken, String? phone}) async {
+    final nowIso = DateTime.now().toIso8601String();
+    final list = state.lots.map((l) {
+      if (l.publicCode == publicCode) {
+        final checkpoints = [
+          ...l.journeyCheckpoints,
+          {
+            'step': l.journeyCheckpoints.length + 1,
+            'event_type': 'ON_SHELF',
+            'role': 'RETAILER',
+            'actor_name': 'Retailer Store',
+            'timestamp': nowIso,
+            'notes': 'Placed on retail shelf for consumer purchase.',
+          },
+        ];
+        return l.copyWith(
+          state: 'ON_SHELF',
+          isRetailerVerified: true,
+          journeyCheckpoints: checkpoints,
+        );
+      }
+      return l;
+    }).toList();
+    state = state.copyWith(lots: list);
+  }
+
+  Future<void> markSoldOut(String publicCode,
+      {String? accessToken, String? phone}) async {
+    final nowIso = DateTime.now().toIso8601String();
+    final list = state.lots.map((l) {
+      if (l.publicCode == publicCode) {
+        final checkpoints = [
+          ...l.journeyCheckpoints,
+          {
+            'step': l.journeyCheckpoints.length + 1,
+            'event_type': 'SOLD_OUT',
+            'role': 'RETAILER',
+            'actor_name': 'Retailer Store',
+            'timestamp': nowIso,
+            'notes': 'Produce batch sold out.',
+          },
+        ];
+        return l.copyWith(
+          state: 'SOLD_OUT',
+          journeyCheckpoints: checkpoints,
+        );
+      }
+      return l;
+    }).toList();
+    state = state.copyWith(lots: list);
+  }
+
+  Future<void> markWasted(String publicCode,
+      {String? accessToken, String? phone, String reason = 'Spoiled / Discarded'}) async {
+    final nowIso = DateTime.now().toIso8601String();
+    final list = state.lots.map((l) {
+      if (l.publicCode == publicCode) {
+        final checkpoints = [
+          ...l.journeyCheckpoints,
+          {
+            'step': l.journeyCheckpoints.length + 1,
+            'event_type': 'WASTED',
+            'role': 'RETAILER',
+            'actor_name': 'Retailer Store',
+            'timestamp': nowIso,
+            'notes': 'Produce batch marked as waste: $reason',
+          },
+        ];
+        return l.copyWith(
+          state: 'WASTED',
+          journeyCheckpoints: checkpoints,
+        );
+      }
+      return l;
+    }).toList();
+    state = state.copyWith(lots: list);
   }
 
   void setSearchQuery(String query) {

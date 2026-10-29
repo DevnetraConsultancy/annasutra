@@ -35,6 +35,8 @@ class SplitScreen extends ConsumerStatefulWidget {
 class _SplitScreenState extends ConsumerState<SplitScreen> {
   final _formKey = GlobalKey<FormState>();
   final List<ChildLotInput> _children = [];
+  final TextEditingController _packSizeController = TextEditingController();
+  final TextEditingController _packCountController = TextEditingController();
   bool _isSubmitting = false;
 
   @override
@@ -57,6 +59,40 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
     }
   }
 
+  void _generatePackets() {
+    final size = double.tryParse(_packSizeController.text.trim()) ?? 0.0;
+    final count = int.tryParse(_packCountController.text.trim()) ?? 0;
+    if (size <= 0 || count <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please enter valid packet size and count.')),
+      );
+      return;
+    }
+    final total = size * count;
+    if (total > widget.onHandKg) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Total ($total kg) exceeds on-hand stock (${widget.onHandKg} kg).')),
+      );
+      return;
+    }
+    setState(() {
+      for (final c in _children) {
+        c.dispose();
+      }
+      _children.clear();
+      for (int i = 0; i < count; i++) {
+        final child = ChildLotInput();
+        final seq = (i + 1).toString().padLeft(3, '0');
+        child.serialController.text = '${widget.lotCode}-PKT-$seq';
+        child.qtyController.text = size.toString();
+        _children.add(child);
+      }
+    });
+  }
+
   double get _totalChildQty {
     double total = 0.0;
     for (final child in _children) {
@@ -68,6 +104,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
   @override
   void dispose() {
+    _packSizeController.dispose();
+    _packCountController.dispose();
     for (final child in _children) {
       child.dispose();
     }
@@ -149,7 +187,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Split Batch'),
+        title: const Text('Split Batch (Child Packets)'),
+        backgroundColor: const Color(0xFF0B3D2E),
+        foregroundColor: Colors.white,
       ),
       body: SafeArea(
         child: Form(
@@ -158,7 +198,10 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
             padding: const EdgeInsets.all(16.0),
             children: [
               Card(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                color: const Color(0xFFF8FAFC),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: Color(0xFFE2E8F0))),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -166,26 +209,117 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                     children: [
                       Text(
                         'Lot: ${widget.lotCode}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0F172A)),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
-                          'Initial On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg'),
+                        'Initial On-Hand: ${widget.onHandKg.toStringAsFixed(1)} kg',
+                        style: const TextStyle(
+                            fontSize: 13, color: Color(0xFF475569)),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         'Remaining: ${remaining.toStringAsFixed(1)} kg',
                         style: TextStyle(
-                          color: remaining < 0 ? Colors.red : Colors.green[800],
-                          fontWeight: FontWeight.bold,
+                          color: remaining < 0
+                              ? const Color(0xFFDC2626)
+                              : const Color(0xFF047857),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+              const SizedBox(height: 14),
+
+              // Small Packet Batch Creator (Locked Core C12)
+              Card(
+                color: const Color(0xFFECFDF5),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: Color(0xFF86EFAC))),
+                child: Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.inventory_outlined,
+                              size: 18, color: Color(0xFF047857)),
+                          SizedBox(width: 8),
+                          Text(
+                            'Small Packet Batch Generator',
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF065F46),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Auto-generate standard retail packet batches with child QR identifiers.',
+                        style: TextStyle(fontSize: 11.5, color: Color(0xFF047857)),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _packSizeController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              decoration: const InputDecoration(
+                                labelText: 'Pack Size (kg)',
+                                hintText: 'e.g. 1.0',
+                                isDense: true,
+                                border: OutlineInputBorder(),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: _packCountController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                labelText: 'Pack Count',
+                                hintText: 'e.g. 50',
+                                isDense: true,
+                                border: OutlineInputBorder(),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      OutlinedButton.icon(
+                        onPressed: _generatePackets,
+                        icon: const Icon(Icons.auto_awesome, size: 16),
+                        label: const Text('Generate Packet Batches'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF047857),
+                          side: const BorderSide(color: Color(0xFF047857)),
+                          minimumSize: const Size(double.infinity, 38),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 16),
               ..._children.asMap().entries.map((entry) {
                 final idx = entry.key;
@@ -250,20 +384,24 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
               }),
               OutlinedButton.icon(
                 icon: const Icon(Icons.add),
-                label: const Text('Add Child Lot'),
+                label: const Text('Add Child Lot Manually'),
                 onPressed: _addChild,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: const Color(0xFF0B3D2E),
                   foregroundColor: Colors.white,
                 ),
                 onPressed: _isSubmitting ? null : _submitSplit,
                 child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Split Lot'),
+                    : const Text(
+                        'Split Lot',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
               ),
             ],
           ),

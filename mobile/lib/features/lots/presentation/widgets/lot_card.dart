@@ -8,6 +8,12 @@ class LotCard extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDispatch;
   final VoidCallback? onShowQr;
+  final VoidCallback? onPrintLabel;
+  final VoidCallback? onAppendData;
+  final VoidCallback? onPlaceOnShelf;
+  final VoidCallback? onMarkSoldOut;
+  final VoidCallback? onMarkWasted;
+  final VoidCallback? onSplitPacket;
 
   const LotCard({
     super.key,
@@ -15,6 +21,12 @@ class LotCard extends StatelessWidget {
     this.onEdit,
     this.onDispatch,
     this.onShowQr,
+    this.onPrintLabel,
+    this.onAppendData,
+    this.onPlaceOnShelf,
+    this.onMarkSoldOut,
+    this.onMarkWasted,
+    this.onSplitPacket,
   });
 
   @override
@@ -27,7 +39,6 @@ class LotCard extends StatelessWidget {
       harvestFormatted = DateFormat('dd MMM yyyy').format(dt);
     } catch (_) {}
 
-    // Extract 2-letter category code from publicCode or default to VG
     String categoryCode = 'VG';
     if (lot.publicCode.length >= 26) {
       categoryCode = lot.publicCode.substring(22, 24);
@@ -54,7 +65,7 @@ class LotCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. TOP HEADER: Category Badge, Crop Name, Status Pill & Edit Icon
+          // 1. TOP HEADER: Category Badge, Crop Name, Status Pill & Lock
           Row(
             children: [
               // Category Code Pill (e.g., [VG])
@@ -112,12 +123,16 @@ class LotCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isEditable
                       ? const Color(0xFFECFDF5)
-                      : const Color(0xFFFFF7ED),
+                      : (lot.state == 'ON_SHELF'
+                          ? const Color(0xFFF0FDF4)
+                          : const Color(0xFFFFF7ED)),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isEditable
                         ? const Color(0xFF86EFAC)
-                        : const Color(0xFFFDBA74),
+                        : (lot.state == 'ON_SHELF'
+                            ? const Color(0xFF4ADE80)
+                            : const Color(0xFFFDBA74)),
                   ),
                 ),
                 child: Row(
@@ -126,25 +141,35 @@ class LotCard extends StatelessWidget {
                     Icon(
                       isEditable
                           ? Icons.check_circle_outline
-                          : Icons.local_shipping_outlined,
+                          : (lot.state == 'ON_SHELF'
+                              ? Icons.storefront
+                              : (lot.state == 'IN_TRANSIT'
+                                  ? Icons.local_shipping_outlined
+                                  : Icons.lock)),
                       size: 11.5,
                       color: isEditable
                           ? const Color(0xFF059669)
-                          : const Color(0xFFC2410C),
+                          : (lot.state == 'ON_SHELF'
+                              ? const Color(0xFF15803D)
+                              : const Color(0xFFC2410C)),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       isEditable
                           ? 'Farm Custody'
-                          : (lot.state == 'IN_TRANSIT'
-                              ? 'In Transit'
-                              : 'Accepted'),
+                          : (lot.state == 'ON_SHELF'
+                              ? 'On Shelf'
+                              : (lot.state == 'IN_TRANSIT'
+                                  ? 'In Transit'
+                                  : 'Accepted')),
                       style: TextStyle(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w700,
                         color: isEditable
                             ? const Color(0xFF065F46)
-                            : const Color(0xFF9A3412),
+                            : (lot.state == 'ON_SHELF'
+                                ? const Color(0xFF166534)
+                                : const Color(0xFF9A3412)),
                       ),
                     ),
                   ],
@@ -317,7 +342,39 @@ class LotCard extends StatelessWidget {
                 ),
               ),
 
-              // Edit icon
+              // C11: If not editable (custody accepted), permanently show Lock Custody Locked
+              if (!isEditable) ...[
+                Tooltip(
+                  message: 'Custody Locked (C11): Produces in transit / accepted by next party',
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFFFCA5A5)),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.lock, size: 12, color: Color(0xFFDC2626)),
+                        SizedBox(width: 3),
+                        Text(
+                          'Custody Locked',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFFDC2626),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
+
+              // Edit icon (Farmer editable state only)
               if (isEditable && onEdit != null) ...[
                 IconButton(
                   icon: const Icon(Icons.edit_outlined,
@@ -331,15 +388,15 @@ class LotCard extends StatelessWidget {
                 const SizedBox(width: 6),
               ],
 
-              // QR Labels Button (Compact 32dp height)
+              // C9: Print QR / Barcode Label Button
               OutlinedButton.icon(
-                onPressed: onShowQr,
-                icon: const Icon(Icons.qr_code,
+                onPressed: onPrintLabel ?? onShowQr,
+                icon: const Icon(Icons.print_outlined,
                     size: 13, color: Color(0xFF047857)),
                 label: const Text(
-                  'QR',
+                  'Print Label',
                   style: TextStyle(
-                    fontSize: 11.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF047857),
                   ),
@@ -347,7 +404,7 @@ class LotCard extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(60, 32),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   side: const BorderSide(color: Color(0xFFA7F3D0), width: 1.2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -356,7 +413,7 @@ class LotCard extends StatelessWidget {
               ),
 
               // Dispatch Button
-              if (isEditable) ...[
+              if (isEditable && onDispatch != null) ...[
                 const SizedBox(width: 6),
                 ElevatedButton.icon(
                   onPressed: onDispatch,
@@ -364,16 +421,69 @@ class LotCard extends StatelessWidget {
                   label: const Text(
                     'Dispatch',
                     style: TextStyle(
-                      fontSize: 11.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0B3D2E),
                     foregroundColor: Colors.white,
-                    minimumSize: const Size(76, 32),
+                    minimumSize: const Size(72, 32),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+
+              // Append Data Button for downstream custodian
+              if (onAppendData != null) ...[
+                const SizedBox(width: 6),
+                OutlinedButton.icon(
+                  onPressed: onAppendData,
+                  icon: const Icon(Icons.playlist_add,
+                      size: 13, color: Color(0xFF1E40AF)),
+                  label: const Text(
+                    'Append',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1E40AF),
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(60, 32),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                    side: const BorderSide(color: Color(0xFF93C5FD), width: 1.2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+
+              // Retailer: Place on Shelf Button
+              if (onPlaceOnShelf != null && lot.state != 'ON_SHELF') ...[
+                const SizedBox(width: 6),
+                ElevatedButton.icon(
+                  onPressed: onPlaceOnShelf,
+                  icon: const Icon(Icons.storefront, size: 13),
+                  label: const Text(
+                    'On Shelf',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF047857),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(68, 32),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
