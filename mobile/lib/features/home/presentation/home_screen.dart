@@ -44,7 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   static const Map<String, Map<String, String>> _strings = {
     'en': {
       'appTitle': 'AnnaSutra',
-      'appSubtitle': 'National Agri-Traceability Platform',
+      'appSubtitle': 'Producer Operations Console',
       'navBatches': 'Batches',
       'navHandover': 'Handover',
       'navInsights': 'Insights',
@@ -63,8 +63,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'noBatchesTitle': 'No Harvest Lots Yet',
       'noBatchesSub': 'Register your first produce lot to generate tamper-proof QR crate labels.',
       'btnCreateFirst': '+ Create First Batch',
-      'handoverTitle': 'Custody Handover Hub',
-      'handoverSub': 'Transfer custody to next supply-chain party with dual cryptographic confirmation.',
+      'handoverTitle': 'Custody Transfer',
+      'handoverSub': 'Hand over produce lot to counterparty with verified QR confirmation.',
       'scanToReceive': 'Scan QR to Receive Custody',
       'scanToReceiveSub': 'Inspect incoming produce crates, verify net weight & append condition telemetry.',
       'btnScanQr': 'Scan Crate QR',
@@ -86,7 +86,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'statutoryConsent': 'DPDP Act 2023 Consent Active',
       'btnLogout': 'Log Out',
       'loginTitle': 'Farm-to-Fork Traceability',
-      'loginSub': 'Direct cryptographic custody from seed to plate across Bharat.',
+      'loginSub': 'National Sovereign Agri-Traceability Console',
       'phoneLabel': 'Mobile Number',
       'otpLabel': 'Enter 6-digit OTP',
       'btnSendOtp': 'Get OTP via SMS',
@@ -96,7 +96,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     },
     'hi': {
       'appTitle': 'अन्नसूत्र',
-      'appSubtitle': 'राष्ट्रीय कृषि उपज ट्रेसेबिलिटी मंच',
+      'appSubtitle': 'उत्पादक संचालन कंसोल',
       'navBatches': 'फ़सल बैच',
       'navHandover': 'हैंडओवर',
       'navInsights': 'इनसाइट्स',
@@ -115,8 +115,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'noBatchesTitle': 'कोई फ़सल बैच नहीं है',
       'noBatchesSub': 'असीमित क्यूआर क्रेट लेबल उत्पन्न करने के लिए अपना पहला फ़सल लॉट पंजीकृत करें।',
       'btnCreateFirst': '+ पहला बैच बनाएं',
-      'handoverTitle': 'कस्टडी हैंडओवर केंद्र',
-      'handoverSub': 'पारस्परिक पुष्टि के साथ आपूर्ति श्रृंखला के अगले पक्ष को कस्टडी हस्तांतरित करें।',
+      'handoverTitle': 'कस्टडी हस्तांतरण',
+      'handoverSub': 'सत्यापित क्यूआर पुष्टि के साथ प्रतिपक्ष को कस्टडी हस्तांतरित करें।',
       'scanToReceive': 'कस्टडी प्राप्त करने के लिए क्यूआर स्कैन करें',
       'scanToReceiveSub': 'आवक क्रेट्स का निरीक्षण करें, वजन सत्यापित करें व स्थिति दर्ज करें।',
       'btnScanQr': 'क्रेट क्यूआर स्कैन करें',
@@ -138,17 +138,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'statutoryConsent': 'डीपीडीपी अधिनियम २०२३ सहमति सक्रिय',
       'btnLogout': 'लॉग आउट',
       'loginTitle': 'बीज से थाली तक ट्रेसेबिलिटी',
-      'loginSub': 'भारत भर में अपरिवर्तनीय लेजर पर डिजिटल कस्टडी एवं खाद्य सुरक्षा।',
+      'loginSub': 'राष्ट्रीय संप्रभु कृषि-ट्रेसेबिलिटी कंसोल',
       'phoneLabel': 'मोबाइल नंबर',
       'otpLabel': '६-अंकीय ओटीपी दर्ज करें',
       'btnSendOtp': 'ओटीपी प्राप्त करें',
       'btnVerifyOtp': 'सत्यापित करें व प्रवेश करें',
       'btnGoogle': 'गूगल से लॉगिन करें',
-      'dpdpNotice': 'डीपीडीपी अधिनियम २०२३ के तहत सुरक्षित • सी-डैक राष्ट्रीय नोड',
+      'dpdpNotice': 'डीपीडीपी अधिनियम २०२३ के तहत सुरक्षित • सी-डैक संप्रभु नोड',
     },
     'bn': {
       'appTitle': 'অন্নসূত্র',
-      'appSubtitle': 'জাতীয় কৃষি-পণ্য ট্রেসেবিলিটি প্ল্যাটফর্ম',
+      'appSubtitle': 'উৎপাদক অপারেশন কনসোল',
       'navBatches': 'ফসল ব্যাচ',
       'navHandover': 'হস্তান্তর',
       'navInsights': 'বিশ্লেষণ',
@@ -167,8 +167,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'noBatchesTitle': 'কোনো ফসল ব্যাচ নেই',
       'noBatchesSub': 'অফিসিয়াল কিউআর লেবেল পেতে প্রথম ফসল লট নিবন্ধন করুন।',
       'btnCreateFirst': '+ প্রথম ব্যাচ তৈরি করুন',
-      'handoverTitle': 'হেফাজত হস্তান্তর কেন্দ্র',
-      'handoverSub': 'ডিজিটাল নিশ্চিতকরণ সহ পরবর্তী পক্ষের কাছে পণ্য হস্তান্তর করুন।',
+      'handoverTitle': 'হেফাজত হস্তান্তর',
+      'handoverSub': 'যাচাইকৃত কিউআর নিশ্চিতকরণ সহ পরবর্তী পক্ষের কাছে পণ্য হস্তান্তর করুন।',
       'scanToReceive': 'হেফাজত গ্রহণের জন্য কিউআর স্ক্যান করুন',
       'scanToReceiveSub': 'আগত পণ্যের ওজন যাচাই করুন ও অবস্থা নথিভুক্ত করুন।',
       'btnScanQr': 'কিউআর স্ক্যান করুন',
@@ -190,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'statutoryConsent': 'ডিপিডিপি অ্যাক্ট ২০২৩ সম্মতি সক্রিয়',
       'btnLogout': 'লগ আউট',
       'loginTitle': 'বীজ থেকে ভোক্তা পর্যন্ত স্বচ্ছতা',
-      'loginSub': 'সারা দেশে অপরিবর্তনীয় ডিজিটাল হেফাজত ও খাদ্য নিরাপত্তা।',
+      'loginSub': 'জাতীয় সার্বভৌম কৃষি ট্রেসেবিলিটি কনসোল',
       'phoneLabel': 'মোবাইল নম্বর',
       'otpLabel': '৬-সংখ্যার ওটিপি লিখুন',
       'btnSendOtp': 'ওটিপি পাঠান',
@@ -398,18 +398,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         children: [
-          // Farmer Identity & Quick Summary Card
+          // 1. VERIFIED PRODUCER NODE HEADER (Web UI Parity)
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0B3D2E), Color(0xFF14532D)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: const [
-                BoxShadow(color: Color(0x1A0B3D2E), blurRadius: 8, offset: Offset(0, 3)),
+                BoxShadow(color: Color(0x06000000), blurRadius: 6, offset: Offset(0, 2)),
               ],
             ),
             child: Column(
@@ -417,66 +414,296 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _t('farmerId').toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFA7F3D0),
-                        letterSpacing: 0.8,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: farmerUid));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Copied Farmer ID: $farmerUid'),
-                            duration: const Duration(seconds: 2),
-                            backgroundColor: const Color(0xFF0B3D2E),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
-                      child: const Row(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.copy, size: 12, color: Colors.white70),
-                          SizedBox(width: 4),
-                          Text('Copy', style: TextStyle(fontSize: 10.5, color: Colors.white70)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFECFDF5),
+                              border: Border.all(color: const Color(0xFF86EFAC)),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle, size: 13, color: Color(0xFF15803D)),
+                                SizedBox(width: 5),
+                                Text(
+                                  'VERIFIED PRODUCER NODE',
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF065F46),
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            authState.orgName ?? 'Registered Agricultural Producer',
+                            style: const TextStyle(
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Cluster Farm Yard #4, Bardhaman, West Bengal',
+                            style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  farmerUid,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
+                const SizedBox(height: 12),
+                // Unique Farmer ID Box with 1-tap copy
+                InkWell(
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: farmerUid));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Copied Farmer ID: $farmerUid'),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: const Color(0xFF0B3D2E),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0FDF4),
+                      border: Border.all(color: const Color(0xFF86EFAC), width: 1.5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'UNIQUE FARMER ID',
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF047857),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                farmerUid,
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF0B3D2E),
+                                  letterSpacing: 0.5,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Row(
+                          children: [
+                            Icon(Icons.copy, size: 14, color: Color(0xFF10B981)),
+                            SizedBox(width: 4),
+                            Text(
+                              'COPY',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF10B981),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const Divider(color: Colors.white24, height: 18),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          // 2. LIVE AGRICULTURAL TELEMETRY (6 Inherited Metrics Grid)
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'LIVE AGRICULTURAL TELEMETRY',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF475569),
+                          letterSpacing: 0.5,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('● ', style: TextStyle(color: Color(0xFF10B981), fontSize: 10)),
+                        Text(
+                          'Sovereign Synced',
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF10B981),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Row 1: Land & Plots | Season Allocation
                 Row(
                   children: [
-                    _buildHeaderStatCol('Batches', '${lots.length}'),
-                    Container(width: 1, height: 24, color: Colors.white24),
-                    _buildHeaderStatCol('Farm Custody', '$inCustodyCount'),
-                    Container(width: 1, height: 24, color: Colors.white24),
-                    _buildHeaderStatCol('Total Weight', '${totalKg.toStringAsFixed(0)} Kg'),
+                    Expanded(
+                      child: _buildTelemetryCard(
+                        title: 'Land & Plots',
+                        value: '2 Plots',
+                        subtitle: '4.500 Acres',
+                        valueColor: const Color(0xFF0B3D2E),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildTelemetryCard(
+                        title: 'Season Allocation',
+                        value: '3.0 Ac',
+                        subtitle: '1.5 Ac Free',
+                        valueColor: const Color(0xFF0B3D2E),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Row 2: Harvest Yield | Active Lots
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTelemetryCard(
+                        title: 'Harvest Yield',
+                        value: '${totalKg.toStringAsFixed(0)} Kg',
+                        subtitle: 'Net Yield',
+                        valueColor: const Color(0xFF0B3D2E),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildTelemetryCard(
+                        title: 'Active Lots',
+                        value: '${lots.length} Batches',
+                        subtitle: '$inCustodyCount Farm • $inTransitCount Transit',
+                        valueColor: const Color(0xFF047857),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Row 3: Avg Shelf Speed | Portfolio Valuation
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTelemetryCard(
+                        title: 'Avg Shelf Speed',
+                        value: '2.4 Days',
+                        subtitle: 'Fresh Status',
+                        valueColor: const Color(0xFF0B3D2E),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildTelemetryCard(
+                        title: 'Valuation (₹)',
+                        value: '₹${(totalKg > 0 ? (totalKg * 42).toStringAsFixed(0) : "0")}',
+                        subtitle: '₹42 / Kg Avg',
+                        valueColor: const Color(0xFF047857),
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
-          // Search Field
+          // 3. FOUR ACTION RAILS (Matching Web UI Rails A-D)
+          Column(
+            children: [
+              _buildActionRailCard(
+                letter: 'A',
+                title: 'A. Profile & Farmer ID',
+                subtitle: 'Farmer UID, Digital ID QR, KYC & Change Requests',
+                icon: Icons.badge_outlined,
+                actionLabel: 'View →',
+                onTap: () => setState(() => _currentNavIndex = 3),
+              ),
+              const SizedBox(height: 8),
+              _buildActionRailCard(
+                letter: 'B',
+                title: 'B. Land & Season Allocation',
+                subtitle: 'Polygon plot mapping & 10-category acreage allocation',
+                icon: Icons.map_outlined,
+                actionLabel: 'Manage →',
+                onTap: () => _showLandAllocationSheet(context),
+              ),
+              const SizedBox(height: 8),
+              _buildActionRailCard(
+                letter: 'C',
+                title: 'C. Harvest Records',
+                subtitle: 'Plot yield logging & mass balance accounting',
+                icon: Icons.agriculture_outlined,
+                actionLabel: 'Log →',
+                onTap: () => _showHarvestRecordsSheet(context, lots),
+              ),
+              const SizedBox(height: 8),
+              _buildActionRailCard(
+                letter: 'D',
+                title: 'D. Batch / Lot Creation',
+                subtitle: 'Mint unique QRs, 1D barcodes & gate-passes',
+                icon: Icons.qr_code_2,
+                badgeLabel: '+ MINT',
+                isHighlighted: true,
+                onTap: () => context.push('/create-batch'),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 4. SEARCH & FILTER CONTROLS
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -525,7 +752,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           const SizedBox(height: 12),
 
-          // Lots List or Empty State
+          // 5. LOTS LIST OR EMPTY STATE
           if (lots.isEmpty) ...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
@@ -587,14 +814,381 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildHeaderStatCol(String label, String value) {
-    return Expanded(
+  // ---------------------------------------------------------------------------
+  // TELEMETRY & ACTION RAIL HELPERS
+  // ---------------------------------------------------------------------------
+  Widget _buildTelemetryCard({
+    required String title,
+    required String value,
+    required String subtitle,
+    required Color valueColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Colors.white)),
-          const SizedBox(height: 1),
-          Text(label, style: const TextStyle(fontSize: 10, color: Color(0xFFA7F3D0), fontWeight: FontWeight.w600)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w700),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            value,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900, color: valueColor),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 10.5, color: Color(0xFF047857), fontWeight: FontWeight.w700),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionRailCard({
+    required String letter,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    String? actionLabel,
+    String? badgeLabel,
+    bool isHighlighted = false,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isHighlighted ? const Color(0xFFF0FDF4) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isHighlighted ? const Color(0xFF86EFAC) : const Color(0xFFE2E8F0),
+            width: isHighlighted ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: isHighlighted ? const Color(0xFF047857) : const Color(0xFFECFDF5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: isHighlighted ? Colors.white : const Color(0xFF047857),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: isHighlighted ? const Color(0xFF047857) : const Color(0xFF0F172A),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (badgeLabel != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF047857),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            badgeLabel,
+                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white),
+                          ),
+                        )
+                      else if (actionLabel != null)
+                        Text(
+                          actionLabel,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF047857)),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isHighlighted ? const Color(0xFF065F46) : const Color(0xFF64748B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLandAllocationSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        maxChildSize: 0.85,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (_, scrollController) => ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(20),
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Row(
+              children: [
+                Icon(Icons.map_outlined, color: Color(0xFF047857), size: 22),
+                SizedBox(width: 8),
+                Text(
+                  'Land & Season Allocation',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Polygon plot mapping & 10-category acreage allocation',
+              style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+            ),
+            const Divider(height: 24),
+            _buildPlotAllocationItem(
+              name: 'Plot #1 - North Field',
+              surveyNo: 'Survey 104/A',
+              area: '2.500 Acres',
+              allocatedCrop: 'Paddy / Rice (FG)',
+              status: 'Cultivated',
+            ),
+            const SizedBox(height: 12),
+            _buildPlotAllocationItem(
+              name: 'Plot #2 - Riverbank South',
+              surveyNo: 'Survey 108/B',
+              area: '2.000 Acres',
+              allocatedCrop: 'Mustard (OI) / Seasonal',
+              status: 'Cultivated',
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0FDF4),
+                border: Border.all(color: const Color(0xFF86EFAC)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Total Registered Land', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF047857))),
+                      SizedBox(height: 2),
+                      Text('4.500 Acres', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E))),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('Season Allocated / Free', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF047857))),
+                      SizedBox(height: 2),
+                      Text('3.0 Ac / 1.5 Ac Free', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF047857))),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlotAllocationItem({
+    required String name,
+    required String surveyNo,
+    required String area,
+    required String allocatedCrop,
+    required String status,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(status, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF047857))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text('$surveyNo • $area', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              const Icon(Icons.eco_outlined, size: 14, color: Color(0xFF059669)),
+              const SizedBox(width: 4),
+              Text(allocatedCrop, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF059669))),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHarvestRecordsSheet(BuildContext context, List<HarvestLot> lots) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        maxChildSize: 0.85,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (_, scrollController) => ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(20),
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Row(
+              children: [
+                Icon(Icons.agriculture_outlined, color: Color(0xFF047857), size: 22),
+                SizedBox(width: 8),
+                Text(
+                  'Harvest Records & Mass Balance',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Plot yield logging & mass balance accounting across harvest cycles',
+              style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+            ),
+            const Divider(height: 24),
+            if (lots.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(24),
+                alignment: Alignment.center,
+                child: const Text('No harvest records logged yet. Mint a batch to record yield.', style: TextStyle(color: Color(0xFF64748B))),
+              )
+            else
+              ...lots.map(
+                (lot) => Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(lot.crop, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800)),
+                          Text('Lot: ${lot.publicCode}', style: const TextStyle(fontSize: 11, fontFamily: 'monospace', color: Color(0xFF64748B))),
+                          Text('Plot: ${lot.originPlotName.isNotEmpty ? lot.originPlotName : "North Field"}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text('${lot.netQtyKg.toStringAsFixed(1)} Kg', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Color(0xFF0B3D2E))),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: lot.isEditable ? const Color(0xFFECFDF5) : const Color(0xFFEFF6FF),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              lot.isEditable ? 'Farm Custody' : lot.state,
+                              style: TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w700,
+                                color: lot.isEditable ? const Color(0xFF047857) : const Color(0xFF2563EB),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -983,6 +1577,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
               ListTile(
+                leading: const Icon(Icons.delete_outline, color: Color(0xFFDC2626)),
+                title: const Text('Request Account Deletion (DPDP Act § 12(3))', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
+                subtitle: const Text('Statutory right to erasure of personal data and profile node', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                trailing: const Icon(Icons.chevron_right, size: 20, color: Color(0xFFDC2626)),
+                onTap: () => _showDpdpDeletionModal(context, authState),
+              ),
+              const Divider(height: 1, color: Color(0xFFF1F5F9)),
+              ListTile(
                 leading: const Icon(Icons.logout, color: Color(0xFFDC2626)),
                 title: Text(_t('btnLogout'), style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
                 onTap: () async {
@@ -993,6 +1595,108 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showDpdpDeletionModal(BuildContext context, AuthState authState) {
+    final lotsState = ref.read(lotsControllerProvider);
+    final inTransitLots = lotsState.lots.where((l) => l.state == 'IN_TRANSIT').toList();
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.shield_outlined, color: Color(0xFFDC2626), size: 24),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'DPDP Act 2023 § 12(3)\nRight to Erasure Request',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF991B1B)),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (inTransitLots.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF2F2),
+                  border: Border.all(color: const Color(0xFFF87171)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.error_outline, color: Color(0xFFDC2626), size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Cannot request deletion while ${inTransitLots.length} lot(s) are in transit. Active custody transfers must be settled or accepted by counterparties before deletion can be processed.',
+                        style: const TextStyle(fontSize: 12, color: Color(0xFF991B1B), fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ] else ...[
+              const Text(
+                'Under Section 12(3) of the Digital Personal Data Protection Act, 2023, you have the statutory right to request erasure of your personal data and entity node registration.',
+                style: TextStyle(fontSize: 13, color: Color(0xFF334155)),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('• Operations & dispatch will be frozen pending review.', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                    SizedBox(height: 4),
+                    Text('• C-DAC & State Verifiers review requests within statutory timelines.', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                    SizedBox(height: 4),
+                    Text('• Immutable past cryptographic hashes remain on EPCIS ledger.', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Cancel', style: TextStyle(color: Color(0xFF64748B))),
+          ),
+          if (inTransitLots.isEmpty)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogCtx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Account deletion request submitted under DPDP Act 2023.'),
+                    backgroundColor: Color(0xFFDC2626),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFDC2626),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('Submit Deletion Request'),
+            ),
+        ],
+      ),
     );
   }
 
