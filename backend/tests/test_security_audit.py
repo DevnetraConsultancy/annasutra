@@ -289,6 +289,10 @@ def test_otp_verify_database_failure_returns_503(api_client, monkeypatch):
     from django.db import DatabaseError
 
     phone = "+919999988888"
+    from apps.organisations.models import Organisation
+    from apps.identity.models import AppUser
+    org = Organisation.objects.create(name="DB Fail Test Org", org_type="FARMER", verification="VERIFIED")
+    AppUser.objects.create(org=org, email="dbfail@gmail.com", phone_e164=phone, role="OWNER")
     monkeypatch.setattr(OtpService, "verify_otp", lambda *args, **kwargs: True)
 
     def mock_issue(*args, **kwargs):

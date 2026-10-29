@@ -1,13 +1,71 @@
-# AnnaSutra: handover package
+# AnnaSutra: Farm-to-Consumer Agri-Traceability Platform
 
-A complete design package for building AnnaSutra, a farm-to-consumer traceability app (one Flutter codebase for Android and Web, iOS later) with a Django backend, ready to hand to Google Antigravity.
+A complete design and implementation package for AnnaSutra, a farm-to-consumer traceability platform featuring a Django backend, unified web console, and Flutter mobile client.
 
-**Start here:** `HANDOVER_GUIDE.md` (for you, the human), then `docs/Core/annasutra_entity_console_architecture.md` (the locked Gold Standard blueprint, for every agent).
+---
+
+## Quickstart: Run Locally in 1 Minute
+
+Anyone who clones this repository from GitHub can run it immediately on localhost with zero external services required (uses local SQLite out of the box).
+
+### Option A: One-Click Runner (Recommended)
+
+* **Windows:** Double-click `run_local.bat` or run in terminal:
+  ```cmd
+  run_local.bat
+  ```
+* **macOS / Linux:** Run in terminal:
+  ```bash
+  chmod +x run_local.sh
+  ./run_local.sh
+  ```
+
+This automatically configures the Python virtual environment, installs dependencies, applies database migrations, seeds verified demo data, opens your browser, and starts the local server.
+
+---
+
+### Option B: Manual CLI Setup
+
+```bash
+# 1. Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate    # On Windows: .venv\Scripts\activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Apply migrations & seed initial demo data
+python manage.py migrate
+python manage.py seed_demo_data
+
+# 4. Start the development server
+python manage.py runserver 127.0.0.1:8000
+```
+
+---
+
+### Local Access Points & Credentials
+
+| Service / Interface | Local URL | Default Credentials / Context |
+|---|---|---|
+| **Web Portal & Entity Console** | [http://localhost:8000/](http://localhost:8000/) | Live 5-tier operational simulator & role registration |
+| **Traceable Lot Provenance Story** | [http://localhost:8000/q/DEMO-LOT-001](http://localhost:8000/q/DEMO-LOT-001) | Verified consumer timeline, GI tag, quality certificates |
+| **System Health Check** | [http://localhost:8000/health](http://localhost:8000/health) | Probe returning `{"status": "healthy", "database": "connected"}` |
+| **Django Admin Portal** | [http://localhost:8000/admin/](http://localhost:8000/admin/) | `admin` / `admin123` |
+| **Admin Console Identity** | [http://localhost:8000/](http://localhost:8000/) | `devnetraconsultancy@gmail.com` |
+| **Android APK Download** | [http://localhost:8000/download/apk](http://localhost:8000/download/apk) | Direct APK download route |
+
+> **Database Configuration**: By default, local execution uses SQLite (`backend/annasutra.sqlite3`). To connect to an external Aiven Cloud MySQL 8.0+ or Docker instance, create a `.env` file or export `DATABASE_URL="mysql://user:password@host:port/dbname"` as detailed in `.env.example`.
+
+---
 
 ## Contents
 
 ```
 README.md                  this file
+manage.py                  root CLI wrapper for Django commands
+run_local.bat              one-click runner for Windows
+run_local.sh               one-click runner for macOS/Linux
 HANDOVER_GUIDE.md          how to give this to Antigravity, settings, prompts, review loop
 AGENTS.md                  rules the agent must follow (copy in .agent/rules/)
 .agent/rules/              workspace rules
