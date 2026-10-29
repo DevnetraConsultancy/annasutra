@@ -1,7 +1,7 @@
 # AnnaSutra: Core Entity Console Architecture (Gold Standard — Locked)
 
 > [!IMPORTANT]
-> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 26 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
+> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 27 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
 
 ---
 
@@ -28,6 +28,7 @@ AnnaSutra is a farm-to-fork trust ledger. A farmer logs in, sends one registrati
 | 11 | Truthful telemetry & zero mock data | All scan metrics, telemetry, distances, and quantities reflect genuine database records. No hardcoded or synthetic data. |
 | 12 | Instant responsiveness & root modals | All modals pre-hydrate in 0ms from local cache, mount to root body/viewport level, and dismiss reliably via backdrop tap or Back/Escape key. |
 | 13 | Web-First Master & Android Platform Parity | Web UI/UX is built and verified first as the master design benchmark. Android mirrors every Web feature, button, and function 100% in its own native, idiomatic mobile UX (e.g. Bottom Sheets, native CameraX ML Kit scanning, Material 3, swipe actions). Android continuously follows and stays strictly synchronized with Web capabilities. |
+| 14 | 100% Pure Native Flutter/Dart (Zero-WebView) & Universal APK | The Android application is 100% written in native Flutter/Dart widgets (Material 3). It must NEVER be an Android WebView wrapper or hybrid iframe shell. A single universal fat APK (`AnnaSutra_latest.apk`) serves all 7 entity roles dynamically with multi-ABI binary support for Indian smartphones. |
 
 ---
 
@@ -832,6 +833,28 @@ All user interfaces (Web UI, Android APK, SMS templates, and exports) must adher
   * *Data & Cache:* Instant 0ms pre-hydration uses Android Room / SharedPreferences (`annasutra_cached_profile`), followed by silent background network refresh.
 - **Zero Feature Drift:** Android must never omit a feature that exists in Web, nor invent unaligned divergence. If a button exists on Web (e.g., Request Account Deletion, Cancel Deletion, Batch Creation, Handover), it MUST exist in the Android APK with matching backend API endpoints, payload contracts, and error handling. Android always follows and stays synchronized with the Web version.
 
+### 11.4 Universal Single APK Architecture & Pure Native Flutter/Dart Mandate
+
+- **100% Pure Native Flutter/Dart (Zero-WebView Mandate):**
+  * The AnnaSutra Android application must be compiled entirely from native Flutter/Dart code (`MaterialApp`, `ConsumerStatefulWidget`, Material 3 design system).
+  * **Strict Prohibition of WebView Wrappers:** The production APK must NEVER wrap the web application (`https://annasutra.vercel.app/` or local webviews) as its primary UI. Every screen, form, chart, bottom sheet, and action button must be rendered as native Flutter widgets.
+  * **Native Hardware Integrations:**
+    - Camera & QR: Direct integration via `mobile_scanner` (CameraX + Google ML Kit) with continuous scan loops, torch toggle, and haptic feedback.
+    - Security & Auth: Encrypted on-device credential storage via `flutter_secure_storage` (Android Keystore / EncryptedSharedPreferences) and biometric unlock via `local_auth`.
+    - Networking & Resiliency: High-performance HTTP client via `dio` with automated token refresh interceptors and offline sync queuing via `connectivity_plus`.
+- **Universal Single APK (One App for All 7 Roles):**
+  * **Single Unified Binary:** Rather than publishing fragmented individual apps for farmers, mandis, processors, and retailers, AnnaSutra delivers **One Single Universal APK** (`AnnaSutra_latest.apk`).
+  * **Dynamic Role Adaptation:** Upon authentication (via Phone OTP or Google Sign-In), the app inspects the active entity profile from the JWT payload and dynamically renders the corresponding native console:
+    1. Producer / Farmer Console (Land allocation, harvest batches, crate QR minting, dispatch).
+    2. Aggregator / Mandi Console (Inward receiving, grading, weighing, lot aggregation).
+    3. Processor / Mill Console (Transformation, input-to-output conversion, production runs).
+    4. Wholesaler Console (Bulk warehousing, split/merge lots, distribution).
+    5. Distributor Console (Multi-lot logistics dispatch and custody transfer).
+    6. Retailer Console (Shop receipt, shelf display, end-consumer sale).
+    7. Verifier / Public Consumer Mode (Unauthenticated camera QR verification and traceability journey).
+  * **Universal ABI Packaging:** Built as a standalone universal fat APK (`armeabi-v7a`, `arm64-v8a`, `x86_64`) that installs effortlessly on any Android device (Android 8.0 Oreo / API 26 through Android 15+) without ABI mismatch errors.
+  * **Release Packaging & Distribution:** Compiled directly via `flutter build apk --release` to `build_artifacts/AnnaSutra_latest.apk` and distributed through GitHub Releases, direct in-app download (`get_latest_apk.bat`), and Google Play Store track.
+
 ---
 
 ## 12. Notifications
@@ -895,3 +918,4 @@ In-app + SMS (+ WhatsApp later), plain text only. Triggers: registration status,
 | 24 | Root Modal Lifecycle, 0ms Cache Hydration & Universal Dismissal | All modals mount directly to the window root (`document.body`), pre-hydrate from local cached state in 0ms, and dismiss predictably on outside backdrop tap or Back/Escape key. | **Approved** |
 | 25 | Unified Navigation & Single Logout Architecture | Console headers must not contain duplicate in-card logout buttons. Authentication and session logout are strictly unified in the primary top navigation bar user profile menu across all roles. | **Approved** |
 | 26 | Web-First Master & Android Platform Parity Architecture | Web UI/UX is the primary design benchmark. Android continuously synchronizes and mirrors 100% of Web features, buttons, and workflows, implemented via idiomatic native mobile UX (Bottom Sheets, Material 3, CameraX, Haptics). Android always follows what the Web version has. | **Approved** |
+| 27 | 100% Pure Native Flutter/Dart & Universal Single APK Architecture | The Android mobile application is strictly implemented in 100% pure native Flutter/Dart (Zero-WebView wrapper). A single universal APK serves all 7 entity roles with dynamic role-based rendering and universal multi-ABI support. | **Approved** |
