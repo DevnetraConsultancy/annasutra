@@ -66,47 +66,6 @@ def _ensure_production_database_schema():
                     except Exception:
                         pass
 
-                    # Purge any legacy non-admin entity data in cloud MySQL
-                    try:
-                        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-                    except Exception:
-                        pass
-
-                    purge_tables = [
-                        "farmer_profile", "plot", "partner_link",
-                        "entity_plot", "entity_sensitive", "entity_role_details",
-                        "verification_review", "profile_change_log", "sensitive_access_log",
-                        "entity_deletion_request", "entity_consent_record", "entity_document",
-                        "consent_record", "device", "passkey_credential",
-                        "lot_edge", "lot_balance", "handover", "inspection", "evidence",
-                        "lab_certificate", "scan_log", "alert", "recall", "public_view",
-                        "trace_event", "hash_anchor", "lot", "product", "qr_label", "qr_block"
-                    ]
-                    for tbl in purge_tables:
-                        try:
-                            cursor.execute(f"DELETE FROM `{tbl}`;")
-                        except Exception:
-                            pass
-
-                    try:
-                        cursor.execute("DELETE FROM entity_profile WHERE email IS NULL OR email != 'devnetraconsultancy@gmail.com' OR phone_e164 LIKE '%8444997803%' OR organisation_name LIKE '%Biswas%';")
-                    except Exception:
-                        pass
-
-                    try:
-                        cursor.execute("DELETE FROM app_user WHERE email IS NULL OR email != 'devnetraconsultancy@gmail.com' OR phone LIKE '%8444997803%';")
-                    except Exception:
-                        pass
-
-                    try:
-                        cursor.execute("DELETE FROM organisation WHERE org_type != 'OPERATOR';")
-                    except Exception:
-                        pass
-
-                    try:
-                        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-                    except Exception:
-                        pass
 
         except Exception as ddl_err:
             import logging

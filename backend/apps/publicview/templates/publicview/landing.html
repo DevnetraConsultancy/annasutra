@@ -7,14 +7,14 @@
   <script>
     (function() {
       try {
-        var currentBuild = '20261030_v16';
-        var savedBuild = localStorage.getItem('annasutra_build_v');
         var cached = localStorage.getItem('annasutra_cached_profile') || '';
         var phone = localStorage.getItem('annasutra_phone') || '';
-        if (savedBuild !== currentBuild || cached.indexOf('Biswas') !== -1 || phone.indexOf('8444997803') !== -1) {
-          localStorage.clear();
-          sessionStorage.clear();
-          localStorage.setItem('annasutra_build_v', currentBuild);
+        if (cached.indexOf('Biswas') !== -1 || phone.indexOf('8444997803') !== -1) {
+          localStorage.removeItem('annasutra_cached_profile');
+          localStorage.removeItem('annasutra_farmer_uid');
+          localStorage.removeItem('annasutra_cached_plots');
+          localStorage.removeItem('annasutra_cached_lots');
+          localStorage.removeItem('annasutra_phone');
         }
       } catch (e) {}
     })();

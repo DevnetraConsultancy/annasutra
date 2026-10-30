@@ -45,9 +45,21 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
         user_id = payload.get("sub")
         try:
-            user = AppUser.objects.select_related("org").get(user_id=user_id)
+            user = AppUser.objects.get(user_id=user_id)
         except AppUser.DoesNotExist:
             raise exceptions.AuthenticationFailed("User not found.")
+
+        try:
+            _ = user.org.pk
+        except Exception:
+            from apps.organisations.models import Organisation
+            org = Organisation.objects.create(
+                name=f"Account ({str(user.email or user.phone_e164 or 'User').split('@')[0]})",
+                org_type="FARMER",
+                verification="PENDING",
+            )
+            user.org = org
+            user.save(update_fields=["org"])
 
         if user.status != "ACTIVE":
             raise exceptions.AuthenticationFailed("User account is not active.")
