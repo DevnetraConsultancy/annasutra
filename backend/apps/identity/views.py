@@ -4,7 +4,7 @@ import base64
 import re
 import uuid
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 import jwt
 from rest_framework import exceptions, status
@@ -495,50 +495,74 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
 
     _ensure_identity_mysql_schema()
 
+    org_type_map = {
+        "PRODUCER": "FARMER",
+        "AGGREGATOR": "AGGREGATOR",
+        "PROCESSOR": "PROCESSOR",
+        "WHOLESALER": "WHOLESALER",
+        "DISTRIBUTOR": "DISTRIBUTOR",
+        "RETAILER": "RETAILER",
+    }
+    is_single_admin = email == SINGLE_ADMIN_EMAIL
+
     with transaction.atomic():
         try:
-            user = AppUser.objects.select_related("org").filter(email__iexact=email).first()
+            user = AppUser.objects.filter(email__iexact=email).first()
         except Exception as e:
             if "Unknown column 'app_user.email'" in str(e) or "1054" in str(e):
                 _ensure_identity_mysql_schema()
-                user = AppUser.objects.select_related("org").filter(email__iexact=email).first()
+                user = AppUser.objects.filter(email__iexact=email).first()
             else:
                 raise
+
         existing_profile_by_email = EntityProfile.objects.filter(email__iexact=email).first()
 
         if not user and existing_profile_by_email:
-            user = AppUser.objects.select_related("org").filter(user_id=existing_profile_by_email.user_id).first()
+            user = AppUser.objects.filter(user_id=existing_profile_by_email.user_id).first()
 
         if not user and phone_e164:
-            user = AppUser.objects.select_related("org").filter(phone_e164=phone_e164).first()
+            user = AppUser.objects.filter(phone_e164=phone_e164).first()
 
         if existing_profile_by_email and not phone_e164 and existing_profile_by_email.phone_e164:
             phone_e164 = existing_profile_by_email.phone_e164
 
         if not user:
-            org_type_map = {
-                "PRODUCER": "FARMER",
-                "AGGREGATOR": "AGGREGATOR",
-                "PROCESSOR": "PROCESSOR",
-                "WHOLESALER": "WHOLESALER",
-                "DISTRIBUTOR": "DISTRIBUTOR",
-                "RETAILER": "RETAILER",
-            }
-            is_single_admin = email == SINGLE_ADMIN_EMAIL
             org = Organisation.objects.create(
                 name=name or f"Account ({email.split('@')[0]})",
                 org_type="OPERATOR" if is_single_admin else org_type_map.get(requested_role, "FARMER"),
                 verification="VERIFIED" if is_single_admin else "PENDING",
             )
-            user = AppUser.objects.create(
-                user_id=uuid.uuid4(),
-                org=org,
-                email=email,
-                phone_e164=phone_e164,
-                role="OWNER",
-                status="ACTIVE",
-            )
+            try:
+                user = AppUser.objects.create(
+                    user_id=uuid.uuid4(),
+                    org=org,
+                    email=email,
+                    phone_e164=phone_e164,
+                    role="OWNER",
+                    status="ACTIVE",
+                )
+            except IntegrityError:
+                user = AppUser.objects.filter(email__iexact=email).first()
+                if not user and phone_e164:
+                    user = AppUser.objects.filter(phone_e164=phone_e164).first()
+                if user:
+                    user.org = org
+                    if not user.email:
+                        user.email = email
+                    user.save(update_fields=["org", "email"])
         else:
+            # Repair orphaned organisation pointer if previous purge deleted the org row
+            try:
+                _ = user.org.pk
+            except Exception:
+                org = Organisation.objects.create(
+                    name=name or f"Account ({email.split('@')[0]})",
+                    org_type="OPERATOR" if is_single_admin else org_type_map.get(requested_role, "FARMER"),
+                    verification="VERIFIED" if is_single_admin else "PENDING",
+                )
+                user.org = org
+                user.save(update_fields=["org"])
+
             user_updates = []
             if not user.email:
                 user.email = email
@@ -553,33 +577,36 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
         # Look up the profile for the requested role under this Gmail user
         profile = EntityProfile.objects.filter(user_id=user.user_id, role=requested_role).first()
         if not profile and phone_e164:
-            legacy_prof = EntityProfile.objects.filter(phone_e164=phone_e164, role=requested_role).first()
-            if legacy_prof:
-                profile = legacy_prof
+            profile = EntityProfile.objects.filter(phone_e164=phone_e164, role=requested_role).first()
+        if not profile and email:
+            profile = EntityProfile.objects.filter(email__iexact=email, role=requested_role).first()
 
         parts = name.split(None, 1) if name else []
         first_name = parts[0] if parts else ""
         last_name = parts[1] if len(parts) > 1 else ""
 
         if not profile and create_draft:
-            profile = EntityProfile.objects.create(
-                entity_id=uuid.uuid4(),
-                user_id=user.user_id,
-                role=requested_role,
-                phone_e164=phone_e164,
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-                organisation_name=name or "",
-                village_town="",
-                district="",
-                state="",
-                address_line1="",
-                pincode="000000",
-                photo_object_key="",
-                status="DRAFT",
-                version=1,
-            )
+            try:
+                profile = EntityProfile.objects.create(
+                    entity_id=uuid.uuid4(),
+                    user_id=user.user_id,
+                    role=requested_role,
+                    phone_e164=phone_e164,
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    organisation_name=name or "",
+                    village_town="",
+                    district="",
+                    state="",
+                    address_line1="",
+                    pincode="000000",
+                    photo_object_key="",
+                    status="DRAFT",
+                    version=1,
+                )
+            except IntegrityError:
+                profile = EntityProfile.objects.filter(user_id=user.user_id, role=requested_role).first()
         elif profile:
             updated_fields = []
             if profile.email != email:
