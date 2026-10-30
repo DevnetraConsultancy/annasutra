@@ -100,7 +100,10 @@ def serve_static_asset(request, path: str):
         resp["Content-Range"] = f"bytes {first_byte}-{last_byte}/{file_size}"
         resp["Accept-Ranges"] = "bytes"
         resp["Content-Length"] = str(length)
-        resp["Cache-Control"] = "public, max-age=86400"
+        if clean_path.endswith((".js", ".css")):
+            resp["Cache-Control"] = "public, max-age=0, must-revalidate"
+        else:
+            resp["Cache-Control"] = "public, max-age=86400"
         return resp
 
     def file_iterator(chunk_size=65536):
@@ -118,7 +121,10 @@ def serve_static_asset(request, path: str):
     )
     resp["Accept-Ranges"] = "bytes"
     resp["Content-Length"] = str(file_size)
-    resp["Cache-Control"] = "public, max-age=86400"
+    if clean_path.endswith((".js", ".css")):
+        resp["Cache-Control"] = "public, max-age=0, must-revalidate"
+    else:
+        resp["Cache-Control"] = "public, max-age=86400"
     return resp
 
 
@@ -221,13 +227,17 @@ def landing_page_view(request):
     user_lang = request.COOKIES.get("annasutra_lang", "en")
     if user_lang not in SUPPORTED_LANGS:
         user_lang = "en"
-    return render(request, "publicview/landing.html", {
+    response = render(request, "publicview/landing.html", {
         "user_lang": user_lang,
         "brand_logo": ANNASUTRA_LOGO_URI,
         "cdac_logo": CDAC_LOGO_URI,
         "app_icon": APP_ICON_URI,
         "hero_video_url": "/static/publicview/videos/annasutra-bg-optimized.mp4",
     })
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+    return response
 
 
 def download_apk_view(request):
