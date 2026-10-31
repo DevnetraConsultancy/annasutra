@@ -90,7 +90,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Database defaults: SQLite for seamless local zero-config runs, or MySQL/PostgreSQL if DATABASE_URL is set
+# Database defaults: SQLite for seamless local zero-config runs, or Cloud MySQL if DATABASE_URL is set
 DEFAULT_SQLITE_URL = f"sqlite:///{BASE_DIR / 'annasutra.sqlite3'}"
 DATABASES = {
     "default": env.db(
