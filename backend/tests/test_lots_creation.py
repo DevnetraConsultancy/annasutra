@@ -174,3 +174,22 @@ def test_cross_org_access_denied(api_client):
     get_resp = api_client.get(f"/v1/lots/{serial}")
     assert get_resp.status_code == 403
     assert get_resp.data["code"] == "CROSS_ORG_FORBIDDEN"
+
+
+@pytest.mark.django_db
+def test_lot_qr_image_and_sticker_pdf_public_access(api_client):
+    """Verify that lot QR image and sticker PDF are accessible publicly for label printing and physical scanning."""
+    lot_code = "20261031015724918444997803VG001C"
+
+    # 1. Unauthenticated request to /qr-image
+    api_client.credentials()
+    qr_resp = api_client.get(f"/api/v1/lots/{lot_code}/qr-image")
+    assert qr_resp.status_code == 200
+    assert qr_resp.get("Content-Type") == "image/png"
+    assert qr_resp.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+    # 2. Unauthenticated request to /sticker-pdf
+    pdf_resp = api_client.get(f"/api/v1/lots/{lot_code}/sticker-pdf")
+    assert pdf_resp.status_code == 200
+    assert pdf_resp.get("Content-Type") == "application/pdf"
+    assert pdf_resp.content.startswith(b"%PDF-")

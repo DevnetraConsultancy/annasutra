@@ -3760,7 +3760,7 @@ function renderAdminEntityInspector(ent, t) {
             <div style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Producer: ${escapeHtml(farmerName)} ${farmerUid ? `&bull; ID: ${escapeHtml(farmerUid)}` : ''}</div>
             
             <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px;">
-              <img src="/api/v1/lots/${encodeURIComponent(lotCode)}/qr-image" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; background: #fff;" />
+              <img src="/api/v1/lots/${encodeURIComponent(lotCode)}/qr-image?t=${Date.now()}" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; background: #fff;" />
               <div style="text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px;">
                 <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">6-Digit Handover PIN</div>
                 <div style="font-family: monospace; font-size: 18px; font-weight: 900; color: #0b3d2e; letter-spacing: 2px;">${escapeHtml(String(handoverPin))}</div>

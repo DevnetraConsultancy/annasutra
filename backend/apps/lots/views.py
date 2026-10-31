@@ -9,7 +9,7 @@ import uuid
 
 from django.db import models, transaction
 from django.utils import timezone
-from rest_framework import exceptions, status
+from rest_framework import exceptions, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -1600,37 +1600,44 @@ class LotLabelReissueView(APIView):
 class LotQrImageView(APIView):
     """Return crisp PNG image bytes of QR code pointing to public lot URL."""
 
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request, code):
         from apps.identity.services.pdf_sheet import generate_qr_image_bytes
         from django.http import HttpResponse
 
-        url = f"https://annasutra.in/l/{code}"
+        host = request.get_host()
+        scheme = "https" if request.is_secure() or (host and "vercel.app" in host) else "http"
+        url = f"{scheme}://{host}/l/{code}" if host else f"https://annasutra.in/l/{code}"
         buf = generate_qr_image_bytes(url)
-        return HttpResponse(buf.getvalue(), content_type="image/png")
+        response = HttpResponse(buf.getvalue(), content_type="image/png")
+        response["Cache-Control"] = "public, max-age=86400"
+        return response
 
 
 class LotStickerPdfView(APIView):
     """Return printable A4 sticker sheet PDF for a lot."""
 
-    permission_classes = [IsVerifiedOrg]
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, code):
         from apps.identity.services.pdf_sheet import render_a4_sticker_sheet
         from django.http import HttpResponse
 
         lot = Lot.objects.select_related("created_by_org").filter(public_code=code).first()
-        if not lot:
-            raise exceptions.NotFound({"detail": "Lot not found.", "code": "NOT_FOUND"})
-
-        org_name = lot.created_by_org.name if lot.created_by_org else "AnnaSutra"
+        org_name = (lot.created_by_org.name if lot and lot.created_by_org else None) or "AnnaSutra"
         count = int(request.query_params.get("count", 24))
         count = max(1, min(count, 96))
         serials = [code] * count
 
+        domain = request.get_host() or "annasutra.in"
         pdf_bytes = render_a4_sticker_sheet(
             serials=serials,
             entity_code=code,
             org_name=org_name,
+            domain=domain,
         )
         response = HttpResponse(pdf_bytes, content_type="application/pdf")
         response["Content-Disposition"] = f'inline; filename="lot_stickers_{code}.pdf"'
