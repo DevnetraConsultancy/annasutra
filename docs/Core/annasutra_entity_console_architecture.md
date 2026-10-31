@@ -1,7 +1,7 @@
 # AnnaSutra: Core Entity Console Architecture (Gold Standard — Locked)
 
 > [!IMPORTANT]
-> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 36 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
+> **Core Architecture Specification:** This is the locked source-of-truth blueprint from which all AnnaSutra entity consoles (Farmer, Aggregator, Processor/Manufacturer, Wholesaler, Distributor, Retailer, Consumer Scan, and Admin) and the Android application are built. All 45 architectural decisions in Section 15 are finalized and synchronized between Web UI/UX and Android APK.
 >
 > This file is the **only** document under `/docs`. Every other spec has been retired into it.
 
@@ -165,18 +165,23 @@ flowchart LR
 - The console **role switcher** in the top bar lists **only APPROVED roles**. Roles that are pending, changes-requested or rejected are shown in the login portal, not in the switcher.
 - A Gmail can hold only one registration per role. A second Producer registration from the same Gmail is blocked, and the portal points to the existing one.
 
-**Login portal (shown after Google Sign-In, before any registration form)**
+**Login portal (always shown first after Google Sign-In, before any registration form or role console)**
 
 | Role | Status chip | Action |
 |---|---|---|
-| Producer / Farmer | `BadgeCheck` Approved (ID shown) | Open Console |
+| Producer / Farmer | `BadgeCheck` Approved (ID shown + Instagram-style Green Tick) | Open Console |
 | Aggregator | `Clock` Under Review (Application Ref `APP-XXXXXXXX`) | View Status |
-| Retailer | `TriangleAlert` Changes Requested | Fix and Resubmit |
+| Retailer | `TriangleAlert` Changes Requested (On Hold) | Fix and Resubmit |
 | Processor | `XCircle` Rejected (Admin remark) | View Remark |
 | Wholesaler / Distributor | Not registered | Register |
 
-- The portal always lists **every role**, with the current status of this Gmail for each one: `Not registered`, `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES_REQUESTED`, `APPROVED`, `REJECTED`, `SUSPENDED`, `DELETION_REQUESTED`, `DEACTIVATED`.
-- Starting a new registration from any "Register as..." button first shows this summary, so the user always knows what their Gmail has already filed.
+- **Always-First Multi-Role Portal (`C1` → `C2`):** Immediately upon completing Google Sign-In (regardless of which Login button or Role card was clicked on the landing page), the user is **always** presented with the **Multi-Role Login Portal** first.
+- The portal always lists **all 6 entity roles** (`Producer`, `Aggregator`, `Processor`, `Wholesaler`, `Distributor`, `Retailer`), with the current registration status of this Gmail for each one: `Not registered`, `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES_REQUESTED`, `APPROVED`, `REJECTED`, `SUSPENDED`, `DELETION_REQUESTED`, `DEACTIVATED`.
+- From this portal, the user clicks into their desired role:
+  - If `Not registered` or `DRAFT`: opens the Role Registration Form (strictly locked to the form; operational console is hidden).
+  - If `SUBMITTED` / `UNDER_REVIEW`: opens the Approval Status Screen showing `Application Ref` and section review status (operational console is hidden).
+  - If `CHANGES_REQUESTED` (`NEEDS_CHANGES` / On Hold): opens the Registration Form pre-filled with their existing data and Admin's hold remarks so they can **Fix and Resubmit** to Admin for another review.
+  - If `APPROVED` (`VERIFIED`): opens their full operational console, displaying a **dismissible green Congratulatory Banner** at the top of the console on their post-approval login and the **Instagram-style green verified tickmark** beside their organization name.
 - Android shows the same portal as a native Material 3 list of role cards (Rule 13).
 
 ---
@@ -288,7 +293,12 @@ flowchart LR
 
 **Registration statuses:** `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES_REQUESTED`, `APPROVED`, `REJECTED`, `SUSPENDED`
 
-**Status page:** a vertical stepper with a badge for each form section (Approved / Needs fix / Pending), the admin's remark on each rejected field, a "Fix and Resubmit" button and a support contact. Nothing else is visible.
+- **Strict Pre-Approval Console Gate (No Console Before Approval):** Until Admin approves the registration, the entity **only** sees the **Registration Request Form** (when `DRAFT` or `CHANGES_REQUESTED`) or the **Approval Status Screen** (when `SUBMITTED`, `UNDER_REVIEW`, or `REJECTED`). The operational console, KPI telemetry tiles, action rail buttons, and lot ledger are strictly hidden until `APPROVED`.
+- **Status page:** a vertical stepper with a badge for each form section (Approved / Needs fix / Pending), the admin's remark on each rejected/held field, a **"Fix and Resubmit"** button (when `CHANGES_REQUESTED` / On Hold) that re-opens the form with existing data so the entity can correct and resend to Admin, and a support contact. Nothing else is visible.
+- **Post-Approval Unlock & Congratulatory Banner (`C4` → `C5`):** Once Admin approves the registration:
+  1. The 26-digit Unique Role ID is minted (Section 3.1 & 4.2.1).
+  2. The entity's organization/trade name receives the **Instagram-style green verified tickmark** directly beside it.
+  3. On their next login into the unlocked console, a **dismissible green Congratulatory Banner** is displayed at the top of their full-fledged operational console confirming Admin approval and displaying their newly minted Unique ID.
 
 > [!IMPORTANT]
 > The admin approves **section by section and field by field**, not as all-or-nothing. A farmer with one blurry document fixes just that document instead of filling the whole form again.
@@ -448,6 +458,8 @@ Crop Class Allocation is consolidated directly into Step 2 (`Farm Plots & Land H
 ```
 +----------------------------------------------------------------------------------+
 | [Logo]  Ramesh Kumar [Green Verified Tickmark]  ID 20261028-...-98XXXXX210 [Lang] [Bell] |
++----------------------------------------------------------------------------------+
+| [Dismissible Green Congratulatory Banner: You're Approved by Admin! UID Minted]  |
 +--------------------------------------------------------------+-------------------+
 | STATS (compact KPI tiles, left)                              | ACTION RAIL       |
 | Total Land 5.0 ac | Allocated 4.5 ac | Active Crops 3        | [UserRound]       |
@@ -463,6 +475,7 @@ Crop Class Allocation is consolidated directly into Step 2 (`Farm Plots & Land H
 ```
 
 - Three **action rail buttons** on the right (A. Profile & Farmer ID, B. Harvest Records, C. Batch / Lot Creation), each opening an interactive modal.
+- **Dismissible Green Congratulatory Banner:** Displayed at the top of the unlocked console when a newly approved entity enters their console, celebrating Admin verification and showing their minted 26-digit Unique ID with a clean dismiss button (`×`).
 - **Instagram-Style Verified Tickmark:** Admin-verified entities display a green circular verified tickmark directly beside their name, eliminating redundant text pills (`[✓] VERIFIED PRODUCER`) and status boxes (`STATUS: VERIFIED`).
 - **Edge-to-Edge Layout:** Viewport utilizes full-width edge-to-edge layout with tight whitespace, removing unnecessary container cards and border boxes.
 - **Instant Modal Hydration & Dismissal:** All modals pre-hydrate in 0ms from local storage (`annasutra_cached_profile`), mount directly to `document.body` root level, and dismiss cleanly on backdrop click or Back/Escape key.
@@ -629,6 +642,11 @@ flowchart LR
 ```
 
 **Role ID:** the same format as farmers, `YYYYMMDDHHMMSS + CC + IdentitySegment(10)` (the signatory's verified mobile if present at approval, otherwise a system serial, Section 3.1). It is minted only at Admin approval and is **frozen forever**, even if the owner or the mobile changes later.
+
+**Strict Pre-Approval Gate, Hold/Resubmit & Post-Approval Congratulatory Banner (All 5 Business Roles):**
+- **No Console Until Admin Approval:** Just like Producers, an Aggregator, Processor, Wholesaler, Distributor, or Retailer in `DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, or `CHANGES_REQUESTED` (`NEEDS_CHANGES` / On Hold) **only** sees the Registration Form or Approval Status Screen (never the operational custody console, KPI tiles, or lot ledger).
+- **Admin Hold (`CHANGES_REQUESTED`) → Fix & Resubmit:** If Admin places a registration on hold (`CHANGES_REQUESTED`), the entity sees Admin's remarks on the status screen, edits their registration details, and resubmits to Admin for another verification pass.
+- **Post-Approval Unlock & Congratulatory Banner (`C4` → `C5`):** Once Admin approves the role registration, the 26-digit Unique Role ID is minted, the **Instagram-style green verified tickmark** appears beside their organization/trade name, and the next time the entity logs in and opens their unlocked role console, a **dismissible green Congratulatory Banner** is displayed at the top of their full operational console.
 
 **Multi-role (approved, updated by Decision 31):** one Gmail account can register several roles (for example an FPO that is both Aggregator and Processor). Each role registration is filled, reviewed and approved separately, and each approved role gets its own Role ID. The console **role switcher** in the top bar shows **only approved roles**. Approved roles of the same Gmail share one team and one set of premises.
 
@@ -1102,3 +1120,4 @@ In-app + email to the account Gmail (always) + SMS only if a verified mobile exi
 | 42 | Instagram-Style Verified Tickmark & Edge-to-Edge Compact Layout Standard | Admin-verified entities display an authentic green circular verified tickmark badge directly beside their trade name across console headers and modals. Redundant status boxes and text badges (`STATUS: VERIFIED`, `[✓] VERIFIED PRODUCER`) are abolished. Console viewports utilize edge-to-edge compact layout without nested container borders or wasted screen space. | **Approved** |
 | 43 | Consolidated Plot-Level Crop Class Allocation & Clean Harvest Logging | Producer action rail button `B. Land & Season Allocation` is retired. Crop class allocation is unified directly into the Farm Plots & Land Holdings table in Profile Step 2. Harvest logging interface is simplified by removing buzzwords like `Mass Balance Anti-Laundering Check` and aligning gross yield payload validation. | **Approved** |
 | 44 | Strict Zero Non-Admin Test Entity State (Clean Registration Pipeline) | Database initialization, migrations, and cold boots strictly purge any residual non-admin test entities, ensuring 100% fresh self-registration workflows for all incoming real-world participants across every role. | **Approved** |
+| 45 | Always-First Multi-Role Login Portal, Strict Pre-Approval Console Gate, Hold/Resubmit Loop & Post-Approval Congratulatory Banner | Every Google Sign-In always opens the Multi-Role Login Portal first (`C1` → `C2`) showing all 6 roles and their statuses for that Gmail. Unapproved entities (`DRAFT`, `SUBMITTED`, `UNDER_REVIEW`, `CHANGES_REQUESTED`/`NEEDS_CHANGES`) across all 6 roles only see the Registration Form or Approval Status Screen (never the operational console, telemetry tiles, or lot ledger). When on hold (`CHANGES_REQUESTED`), entities can fix and resubmit their registration to Admin. Upon Admin approval (`C4` → `C5`), the 26-digit Unique ID is minted, the Instagram-style green tickmark appears beside the organization name, and a dismissible green Congratulatory Banner is shown at the top of their unlocked full console. | **Approved** |

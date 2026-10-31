@@ -1093,8 +1093,12 @@ class LotHandoverAcceptView(APIView):
                 pass
 
         with transaction.atomic():
-            acceptor_org = user_org if (user_org and getattr(user_org, 'verification', None) == 'VERIFIED') else (lot.pending_receiver_org or user_org)
-            if acceptor_org.org_id == lot.created_by_org_id:
+            acceptor_org = (
+                user_org
+                if (user_org and getattr(user_org, 'verification', None) == 'VERIFIED' and user_org.org_id != lot.custodian_org_id)
+                else (lot.pending_receiver_org or user_org)
+            )
+            if not acceptor_org or acceptor_org.org_id == lot.created_by_org_id or acceptor_org.org_id == lot.custodian_org_id:
                 org_type_map = {
                     "AGGREGATOR": "AGGREGATOR",
                     "PROCESSOR": "PROCESSOR",
@@ -1107,6 +1111,9 @@ class LotHandoverAcceptView(APIView):
                     org_type=org_type_map.get(actor_role, "AGGREGATOR"),
                     verification="VERIFIED",
                 )
+            if request.user and request.user.is_authenticated and not request.user.org:
+                request.user.org = acceptor_org
+                request.user.save(update_fields=["org"])
 
             open_ho = Handover.objects.filter(lot=lot, state="PENDING").order_by("-opened_at").first()
             if open_ho:

@@ -1,3 +1,37 @@
+  window.dismissApprovalBanner = function (orgId) {
+    try {
+      localStorage.setItem('annasutra_approval_banner_dismissed_' + orgId, 'true');
+    } catch (e) {}
+    const banner = document.getElementById('approvalCongratulatoryBanner');
+    if (banner) banner.style.display = 'none';
+  };
+
+  async function getCurrentGeoCoordinates() {
+    return new Promise((resolve) => {
+      if (typeof navigator !== 'undefined' && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            resolve({
+              lat: Number(pos.coords.latitude.toFixed(6)),
+              lng: Number(pos.coords.longitude.toFixed(6))
+            });
+          },
+          (err) => {
+            const p = wizardState.profile || {};
+            const lat = parseFloat(p.lat || (p.address && p.address.lat) || 0) || null;
+            const lng = parseFloat(p.lng || (p.address && p.address.lng) || 0) || null;
+            resolve({ lat, lng });
+          },
+          { timeout: 3500, enableHighAccuracy: true, maximumAge: 60000 }
+        );
+      } else {
+        const p = wizardState.profile || {};
+        const lat = parseFloat(p.lat || (p.address && p.address.lat) || 0) || null;
+        const lng = parseFloat(p.lng || (p.address && p.address.lng) || 0) || null;
+        resolve({ lat, lng });
+      }
+    });
+  }
 /**
  * AnnaSutra Producer Registration Wizard & Admin Verification Console
  * Full 5-stage onboarding, Leaflet polygon mapping, encrypted identity, statutory DPDP consent,
@@ -915,11 +949,20 @@
     wizardState.forceConsoleView = true;
     const contentArea = document.getElementById('workspaceDynamicContent');
     if (contentArea) {
-      renderVerifiedOperationalConsole(contentArea);
-      updateLotMetrics();
-      applyLotFilters();
-      if (initialTab) {
-        setTimeout(() => window.switchProducerConsoleTab(initialTab), 60);
+      const pStatus = wizardState.profile ? wizardState.profile.status : null;
+      if (pStatus && pStatus !== 'VERIFIED') {
+        if (pStatus === 'SUBMITTED' || pStatus === 'UNDER_REVIEW') {
+          renderUnderReviewCard(contentArea);
+        } else {
+          renderWizardInterface(contentArea);
+        }
+      } else {
+        renderVerifiedOperationalConsole(contentArea);
+        updateLotMetrics();
+        applyLotFilters();
+        if (initialTab) {
+          setTimeout(() => window.switchProducerConsoleTab(initialTab), 60);
+        }
       }
     }
     const ws = document.getElementById('confinedWorkspace');
@@ -1026,13 +1069,20 @@
 
       updateRegisteredHeaderBanner(wizardState.profile);
 
-      if (wizardState.forceWizardView && cachedProfile.status !== 'VERIFIED') {
-        renderWizardInterface(contentArea);
+      if (cachedProfile.status === 'VERIFIED') {
+        if (wizardState.forceWizardView) {
+          renderWizardInterface(contentArea);
+        } else {
+          renderVerifiedOperationalConsole(contentArea);
+          updateLotMetrics();
+          applyLotFilters();
+        }
         hasRenderedCached = true;
-      } else {
-        renderVerifiedOperationalConsole(contentArea);
-        updateLotMetrics();
-        applyLotFilters();
+      } else if (cachedProfile.status === 'SUBMITTED' || cachedProfile.status === 'UNDER_REVIEW') {
+        renderUnderReviewCard(contentArea);
+        hasRenderedCached = true;
+      } else if (cachedProfile.status === 'DRAFT' || cachedProfile.status === 'NEEDS_CHANGES' || wizardState.forceWizardView) {
+        renderWizardInterface(contentArea);
         hasRenderedCached = true;
       }
     }
@@ -1108,21 +1158,34 @@
 
       updateRegisteredHeaderBanner(wizardState.profile);
 
-      const pStatus = wizardState.profile.status;
-      if (wizardState.forceWizardView && pStatus !== 'VERIFIED') {
-        renderWizardInterface(contentArea);
-      } else {
-        renderVerifiedOperationalConsole(contentArea);
-        updateLotMetrics();
-        applyLotFilters();
-        if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
-          renderProducerAnalytics();
+      const pStatus = (wizardState.profile && wizardState.profile.status) || 'DRAFT';
+      if (pStatus === 'VERIFIED') {
+        if (wizardState.forceWizardView) {
+          renderWizardInterface(contentArea);
+        } else {
+          renderVerifiedOperationalConsole(contentArea);
+          updateLotMetrics();
+          applyLotFilters();
+          if (document.getElementById('consoleTabContentAnalytics')?.style.display !== 'none') {
+            renderProducerAnalytics();
+          }
         }
+      } else if (pStatus === 'SUBMITTED' || pStatus === 'UNDER_REVIEW') {
+        renderUnderReviewCard(contentArea);
+      } else {
+        renderWizardInterface(contentArea);
       }
     } catch (err) {
       if (!hasRenderedCached) {
         updateRegisteredHeaderBanner(wizardState.profile);
-        renderVerifiedOperationalConsole(contentArea);
+        const pStatus = wizardState.profile ? wizardState.profile.status : null;
+        if (pStatus === 'VERIFIED') {
+          renderVerifiedOperationalConsole(contentArea);
+        } else if (pStatus === 'SUBMITTED' || pStatus === 'UNDER_REVIEW') {
+          renderUnderReviewCard(contentArea);
+        } else {
+          renderWizardInterface(contentArea);
+        }
       }
     }
   };
@@ -2082,7 +2145,27 @@ function renderAdminEntityInspector(ent, t) {
     window.activateEntityConsoleView();
     const t = getI18n();
     const p = wizardState.profile || {};
-    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || window.computeLiveMentorBatchIdPreview('').slice(0, 22);
+    const farmerUid = p.farmer_uid || p.org_uid || localStorage.getItem('annasutra_farmer_uid') || '';
+    const activeOrgId = p.entity_id || p.farmer_uid || 'default';
+    let isBannerDismissed = false;
+    try {
+      isBannerDismissed = localStorage.getItem('annasutra_approval_banner_dismissed_' + activeOrgId) === 'true';
+    } catch (e) {}
+
+    const congratulatoryBannerHtml = (!isBannerDismissed && p.status === 'VERIFIED') ? `
+      <div id="approvalCongratulatoryBanner" style="background: #ecfdf5; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 1px 3px rgba(16, 185, 129, 0.08);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #d1fae5; display: flex; align-items: center; justify-content: center; color: #047857; flex-shrink: 0;">
+            ${getIcon('check', 20, '#047857', 2.8)}
+          </div>
+          <div>
+            <div style="font-size: 13.5px; font-weight: 800; color: #064e3b; margin-bottom: 2px;">Congratulations! Your entity registration has been officially verified and approved.</div>
+            <div style="font-size: 12px; color: #047857; font-weight: 600;">Accredited Unique ID: <span style="font-family: monospace; font-weight: 800; background: #fff; padding: 2px 8px; border-radius: 6px; border: 1px solid #a7f3d0; color: #065f46;">${escapeHtml(farmerUid || 'VERIFIED')}</span> &bull; Full operational access is now unlocked.</div>
+          </div>
+        </div>
+        <button type="button" onclick="window.dismissApprovalBanner('${escapeHtml(activeOrgId)}')" style="background: transparent; border: none; font-size: 20px; font-weight: 700; color: #047857; cursor: pointer; padding: 4px 8px; line-height: 1; border-radius: 6px;" title="Dismiss">&times;</button>
+      </div>
+    ` : '';
     const orgDisplayName = p.organisation_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || 'Individual Farm';
     const locationStr = [p.village_town, p.district, getStateLabel(p.state)].filter(Boolean).join(', ') || 'Registered Agricultural Producer';
 
@@ -2150,6 +2233,9 @@ function renderAdminEntityInspector(ent, t) {
     container.innerHTML = `
       <div style="width: 100%; box-sizing: border-box; padding: 0; margin: 0;">
         
+        <!-- CONGRATULATORY APPROVAL BANNER (DECISION 45) -->
+        ${congratulatoryBannerHtml}
+
         <!-- REGISTRATION STATUS NOTICE (IF NOT YET FULLY VERIFIED) -->
         ${statusBannerHtml}
 
@@ -2404,7 +2490,7 @@ function renderAdminEntityInspector(ent, t) {
                 <option value="IN_CUSTODY">In Farm Custody (Editable)</option>
                 <option value="IN_TRANSIT">In Transit (Locked)</option>
               </select>
-              <button type="button" class="action-btn-pill" onclick="window.refreshProducerLotsLedger()" title="Refresh ledger from blockchain">
+              <button type="button" class="action-btn-pill" onclick="window.refreshProducerLotsLedger()" title="Refresh cryptographic ledger">
                 <span>${getIcon('refresh', 13, '#047857')} Refresh</span>
               </button>
             </div>
@@ -4334,6 +4420,13 @@ function renderAdminEntityInspector(ent, t) {
   window.renderDownstreamCustodyConsole = async function (container, role) {
     window.activateEntityConsoleView();
     const activeRole = String(role || currentRole || 'AGGREGATOR').toUpperCase();
+
+    // Check verification status for downstream role
+    const p = wizardState.profile || {};
+    if (p && (p.status === 'SUBMITTED' || p.status === 'UNDER_REVIEW')) {
+      renderUnderReviewCard(container);
+      return;
+    }
     
     // Fetch live incoming dispatches and active custody lots
     try {
@@ -4720,8 +4813,7 @@ function renderAdminEntityInspector(ent, t) {
           received_qty_kg: receivedKg,
           condition: condition,
           storage_temp: temp,
-          lat: 22.57,
-          lng: 88.36
+          ...(await getCurrentGeoCoordinates())
         })
       });
 
@@ -4811,7 +4903,7 @@ function renderAdminEntityInspector(ent, t) {
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
               <button type="button" class="action-btn-pill" onclick="window.closeDownstreamAppendModal()">Cancel</button>
               <button type="submit" class="btn-wizard-action btn-wizard-submit" style="padding: 9px 24px; font-weight: 800;">
-                + Append Checkpoint to Blockchain
+                + Append Checkpoint to Immutable Ledger
               </button>
             </div>
           </form>
@@ -4846,13 +4938,12 @@ function renderAdminEntityInspector(ent, t) {
           condition: condition,
           location_name: loc,
           remarks: remarks,
-          lat: 22.57,
-          lng: 88.36
+          ...(await getCurrentGeoCoordinates())
         })
       });
 
       if (res.ok) {
-        showToast('Appended telemetry checkpoint to blockchain ledger.', 'success');
+        showToast('Appended telemetry checkpoint to immutable ledger.', 'success');
         window.closeDownstreamAppendModal();
         await window.renderDownstreamCustodyConsole(document.getElementById('workspaceDynamicContent'), currentRole);
       } else {
@@ -5072,7 +5163,27 @@ function renderAdminEntityInspector(ent, t) {
     const p = wizardState.profile || {};
     const sens = wizardState.sensitive || {};
     const step = wizardState.currentStep;
-    const farmerUid = p.farmer_uid || localStorage.getItem('annasutra_farmer_uid') || window.computeLiveMentorBatchIdPreview('').slice(0, 22);
+    const farmerUid = p.farmer_uid || p.org_uid || localStorage.getItem('annasutra_farmer_uid') || '';
+    const activeOrgId = p.entity_id || p.farmer_uid || 'default';
+    let isBannerDismissed = false;
+    try {
+      isBannerDismissed = localStorage.getItem('annasutra_approval_banner_dismissed_' + activeOrgId) === 'true';
+    } catch (e) {}
+
+    const congratulatoryBannerHtml = (!isBannerDismissed && p.status === 'VERIFIED') ? `
+      <div id="approvalCongratulatoryBanner" style="background: #ecfdf5; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 1px 3px rgba(16, 185, 129, 0.08);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #d1fae5; display: flex; align-items: center; justify-content: center; color: #047857; flex-shrink: 0;">
+            ${getIcon('check', 20, '#047857', 2.8)}
+          </div>
+          <div>
+            <div style="font-size: 13.5px; font-weight: 800; color: #064e3b; margin-bottom: 2px;">Congratulations! Your entity registration has been officially verified and approved.</div>
+            <div style="font-size: 12px; color: #047857; font-weight: 600;">Accredited Unique ID: <span style="font-family: monospace; font-weight: 800; background: #fff; padding: 2px 8px; border-radius: 6px; border: 1px solid #a7f3d0; color: #065f46;">${escapeHtml(farmerUid || 'VERIFIED')}</span> &bull; Full operational access is now unlocked.</div>
+          </div>
+        </div>
+        <button type="button" onclick="window.dismissApprovalBanner('${escapeHtml(activeOrgId)}')" style="background: transparent; border: none; font-size: 20px; font-weight: 700; color: #047857; cursor: pointer; padding: 4px 8px; line-height: 1; border-radius: 6px;" title="Dismiss">&times;</button>
+      </div>
+    ` : '';
 
     container.innerHTML = `
       <div class="wizard-card">
