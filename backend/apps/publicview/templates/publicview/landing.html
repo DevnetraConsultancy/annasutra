@@ -6319,19 +6319,32 @@
           registrations: data.registrations
         }));
       }
+      const isAdmin = Boolean((data.user && data.user.is_admin) || data.is_admin || String(resolvedEmail).toLowerCase() === 'devnetraconsultancy@gmail.com');
+      if (isAdmin) {
+        currentRole = 'ADMIN';
+        localStorage.setItem('annasutra_role', 'ADMIN');
+        showToast('Signed in as Sovereign Admin (' + (resolvedEmail || 'Verified') + ')', 'success');
+        completeOtpLogin(resolvedPhone);
+        return;
+      }
+
       if (role) {
         currentRole = role;
         localStorage.setItem('annasutra_role', role);
       }
       showToast('Signed in with Google (' + (resolvedEmail || 'Verified Account') + ')', 'success');
-      completeOtpLogin(resolvedPhone);
+
+      // DECISION 45: Always-First Multi-Role Login Portal (C1 -> C2)
       if (window.openLoginRegistrationsPortalModal) {
-        setTimeout(() => window.openLoginRegistrationsPortalModal({
+        closeLoginModal();
+        window.openLoginRegistrationsPortalModal({
           email: resolvedEmail,
-          is_admin: Boolean(data.user && data.user.is_admin),
+          is_admin: false,
           approved_roles: data.approved_roles || [],
           registrations: data.registrations || []
-        }), 80);
+        });
+      } else {
+        completeOtpLogin(resolvedPhone);
       }
     }
 
@@ -7339,12 +7352,18 @@ function logoutEntity() {
       const savedToken = localStorage.getItem('annasutra_access_token');
       const savedRole = localStorage.getItem('annasutra_role');
       const savedPhone = localStorage.getItem('annasutra_phone');
+      const savedEmail = (localStorage.getItem('annasutra_email') || '').trim().toLowerCase();
       const urlParams = new URLSearchParams(window.location.search);
       const roleParam = urlParams.get('login') || urlParams.get('role');
 
       if (savedToken) {
-        if (roleParam) currentRole = roleParam.toUpperCase();
-        else if (savedRole) currentRole = savedRole.toUpperCase();
+        if (savedEmail === 'devnetraconsultancy@gmail.com') {
+          currentRole = 'ADMIN';
+        } else if (roleParam) {
+          currentRole = roleParam.toUpperCase();
+        } else if (savedRole) {
+          currentRole = savedRole.toUpperCase();
+        }
         localStorage.setItem('annasutra_role', currentRole);
         completeOtpLogin(savedPhone || null);
       } else if (roleParam) {

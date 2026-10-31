@@ -64,6 +64,9 @@ def _resolve_requested_role(request, fallback=None):
 
 def _get_entity_profile_for_user(user, auto_create=False, initial_role=None, request=None):
     """Fetch EntityProfile bound to user (and optional specific role), optionally creating a DRAFT."""
+    user_email = str(getattr(user, "email", None) or "").strip().lower()
+    if user_email == SINGLE_ADMIN_EMAIL:
+        return None
     target_role = _resolve_requested_role(request, fallback=initial_role)
 
     if target_role:
@@ -239,13 +242,34 @@ class MyProfileView(APIView):
         portal = build_portal_registrations_for_user(request.user)
         if not profile:
             email_val = (request.user.email or "").strip().lower() or None
+            if email_val == SINGLE_ADMIN_EMAIL:
+                return Response(
+                    {
+                        "status": "VERIFIED",
+                        "role": "ADMIN",
+                        "phone_e164": request.user.phone_e164,
+                        "email": email_val,
+                        "is_admin": True,
+                        "farmer_uid": "ADMIN-AUTHORITY",
+                        "profile": {
+                            "role": "ADMIN",
+                            "status": "VERIFIED",
+                            "organisation_name": "AnnaSutra Sovereign Secretariat",
+                            "is_admin": True,
+                            "email": email_val,
+                        },
+                        "registrations": portal["registrations"],
+                        "approved_roles": ["ADMIN"],
+                    },
+                    status=status.HTTP_200_OK,
+                )
             return Response(
                 {
                     "status": "NEW",
                     "role": _resolve_requested_role(request, fallback=getattr(request.user, "role", "PRODUCER")) or "PRODUCER",
                     "phone_e164": request.user.phone_e164,
                     "email": email_val,
-                    "is_admin": email_val == SINGLE_ADMIN_EMAIL,
+                    "is_admin": False,
                     "farmer_uid": get_or_mint_farmer_uid(request.user),
                     "profile": None,
                     "registrations": portal["registrations"],

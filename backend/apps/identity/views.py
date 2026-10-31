@@ -90,6 +90,9 @@ def build_portal_registrations_for_user(user) -> dict:
             "action": action,
         })
 
+    if str(getattr(user, "email", None) or "").strip().lower() == SINGLE_ADMIN_EMAIL:
+        if "ADMIN" not in approved_roles:
+            approved_roles.append("ADMIN")
     return {
         "registrations": registrations,
         "approved_roles": approved_roles,
@@ -481,8 +484,11 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
             {"detail": "A valid Google email address is required.", "code": "INVALID_EMAIL"}
         )
 
-    valid_roles = {"PRODUCER", "AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER"}
-    if requested_role not in valid_roles:
+    valid_roles = {"PRODUCER", "AGGREGATOR", "PROCESSOR", "WHOLESALER", "DISTRIBUTOR", "RETAILER", "ADMIN"}
+    is_single_admin = email == SINGLE_ADMIN_EMAIL
+    if is_single_admin:
+        requested_role = "ADMIN"
+    elif requested_role not in valid_roles:
         requested_role = "PRODUCER"
 
     phone_e164 = None
@@ -502,8 +508,8 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
         "WHOLESALER": "WHOLESALER",
         "DISTRIBUTOR": "DISTRIBUTOR",
         "RETAILER": "RETAILER",
+        "ADMIN": "OPERATOR",
     }
-    is_single_admin = email == SINGLE_ADMIN_EMAIL
 
     with transaction.atomic():
         try:
@@ -574,61 +580,68 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
             if user_updates:
                 user.save(update_fields=user_updates)
 
-        # Look up the profile for the requested role under this Gmail user
-        profile = EntityProfile.objects.filter(user_id=user.user_id, role=requested_role).first()
-        if not profile and phone_e164:
-            profile = EntityProfile.objects.filter(phone_e164=phone_e164, role=requested_role).first()
-        if not profile and email:
-            profile = EntityProfile.objects.filter(email__iexact=email, role=requested_role).first()
+        if is_single_admin:
+            # Sovereign Admin is the regulatory reviewer, not an applicant.
+            EntityProfile.objects.filter(email__iexact=email).delete()
+            profile = None
+            active_profile = None
+        else:
+            # Look up the profile for the requested role under this Gmail user
+            profile = EntityProfile.objects.filter(user_id=user.user_id, role=requested_role).first()
+            if not profile and phone_e164:
+                profile = EntityProfile.objects.filter(phone_e164=phone_e164, role=requested_role).first()
+            if not profile and email:
+                profile = EntityProfile.objects.filter(email__iexact=email, role=requested_role).first()
 
-        parts = name.split(None, 1) if name else []
-        first_name = parts[0] if parts else ""
-        last_name = parts[1] if len(parts) > 1 else ""
+            parts = name.split(None, 1) if name else []
+            first_name = parts[0] if parts else ""
+            last_name = parts[1] if len(parts) > 1 else ""
 
-        if not profile and create_draft:
-            try:
-                profile = EntityProfile.objects.create(
-                    entity_id=uuid.uuid4(),
-                    user_id=user.user_id,
-                    role=requested_role,
-                    phone_e164=phone_e164,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name,
-                    organisation_name=name or "",
-                    village_town="",
-                    district="",
-                    state="",
-                    address_line1="",
-                    pincode="000000",
-                    photo_object_key="",
-                    status="DRAFT",
-                    version=1,
-                )
-            except IntegrityError:
-                profile = EntityProfile.objects.filter(user_id=user.user_id, role=requested_role).first()
-        elif profile:
-            updated_fields = []
-            if profile.email != email:
-                profile.email = email
-                updated_fields.append("email")
-            if phone_e164 and not profile.phone_e164:
-                profile.phone_e164 = phone_e164
-                updated_fields.append("phone_e164")
-            if first_name and not profile.first_name:
-                profile.first_name = first_name
-                updated_fields.append("first_name")
-            if last_name and not profile.last_name:
-                profile.last_name = last_name
-                updated_fields.append("last_name")
-            if profile.user_id != user.user_id:
-                profile.user_id = user.user_id
-                updated_fields.append("user_id")
-            if updated_fields:
-                profile.save(update_fields=updated_fields)
+            if not profile and create_draft:
+                try:
+                    profile = EntityProfile.objects.create(
+                        entity_id=uuid.uuid4(),
+                        user_id=user.user_id,
+                        role=requested_role,
+                        phone_e164=phone_e164,
+                        email=email,
+                        first_name=first_name,
+                        last_name=last_name,
+                        organisation_name=name or "",
+                        village_town="",
+                        district="",
+                        state="",
+                        address_line1="",
+                        pincode="000000",
+                        photo_object_key="",
+                        status="DRAFT",
+                        version=1,
+                    )
+                except IntegrityError:
+                    profile = EntityProfile.objects.filter(user_id=user.user_id, role=requested_role).first()
+            elif profile:
+                updated_fields = []
+                if profile.email != email:
+                    profile.email = email
+                    updated_fields.append("email")
+                if phone_e164 and not profile.phone_e164:
+                    profile.phone_e164 = phone_e164
+                    updated_fields.append("phone_e164")
+                if first_name and not profile.first_name:
+                    profile.first_name = first_name
+                    updated_fields.append("first_name")
+                if last_name and not profile.last_name:
+                    profile.last_name = last_name
+                    updated_fields.append("last_name")
+                if profile.user_id != user.user_id:
+                    profile.user_id = user.user_id
+                    updated_fields.append("user_id")
+                if updated_fields:
+                    profile.save(update_fields=updated_fields)
 
-        active_profile = profile or EntityProfile.objects.filter(user_id=user.user_id).order_by("-verified_at", "-updated_at").first()
-        farmer_uid = get_or_mint_farmer_uid(active_profile) if active_profile else None
+            active_profile = profile or EntityProfile.objects.filter(user_id=user.user_id).order_by("-verified_at", "-updated_at").first()
+
+        farmer_uid = get_or_mint_farmer_uid(active_profile) if active_profile else ("ADMIN-AUTHORITY" if is_single_admin else None)
         portal_info = build_portal_registrations_for_user(user)
         is_admin = email == SINGLE_ADMIN_EMAIL
 
@@ -638,16 +651,16 @@ def _complete_google_user_session(email: str, name: str, raw_phone: str = "", re
         token_pair["farmer_uid"] = farmer_uid
         token_pair["is_admin"] = is_admin
         token_pair["registrations"] = portal_info["registrations"]
-        token_pair["approved_roles"] = portal_info["approved_roles"]
+        token_pair["approved_roles"] = ["ADMIN"] if is_single_admin else portal_info["approved_roles"]
         token_pair["access"] = token_pair["access_token"]
         token_pair["refresh"] = token_pair["refresh_token"]
         token_pair["user"] = {
             "user_id": str(user.user_id),
             "phone": user.phone_e164 or (active_profile.phone_e164 if active_profile else None),
             "email": email,
-            "name": (f"{active_profile.first_name} {active_profile.last_name}".strip() if active_profile else "") or name or email,
-            "role": user.role,
-            "entity_role": active_profile.role if active_profile else requested_role,
+            "name": "AnnaSutra Sovereign Secretariat" if is_single_admin else (((f"{active_profile.first_name} {active_profile.last_name}".strip() if active_profile else "") or name or email)),
+            "role": "ADMIN" if is_single_admin else user.role,
+            "entity_role": "ADMIN" if is_single_admin else (active_profile.role if active_profile else requested_role),
             "farmer_uid": farmer_uid,
             "status": user.status,
             "auth_provider": "google",

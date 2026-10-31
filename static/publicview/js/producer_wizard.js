@@ -1039,7 +1039,14 @@
     }
     contentArea.style.display = 'block';
 
-    if (typeof currentRole !== 'undefined' && currentRole !== 'PRODUCER' && currentRole !== 'ADMIN') {
+    if (typeof currentRole !== 'undefined' && currentRole === 'ADMIN') {
+      const t = getI18n();
+      updateRegisteredHeaderBanner({ organisation_name: t.workspaceTitleAdmin });
+      await loadAdminQueueAndRender(contentArea);
+      return;
+    }
+
+    if (typeof currentRole !== 'undefined' && currentRole !== 'PRODUCER') {
       await renderDownstreamCustodyConsole(contentArea, currentRole);
       return;
     }
