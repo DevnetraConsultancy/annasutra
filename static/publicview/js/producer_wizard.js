@@ -47,24 +47,6 @@
   }
   window.getVerifiedInstagramTickHtml = getVerifiedInstagramTickHtml;
 
-  // Client-side purge of stale test profiles (e.g. MS Biswas Agro Ltd.)
-  (function purgeStaleTestProfiles() {
-    try {
-      const raw = localStorage.getItem('annasutra_cached_profile') || '';
-      const phone = localStorage.getItem('annasutra_phone') || '';
-      if (raw.includes('Biswas') || raw.includes('8444997803') || phone.includes('8444997803')) {
-        localStorage.removeItem('annasutra_cached_profile');
-        localStorage.removeItem('annasutra_farmer_uid');
-        localStorage.removeItem('annasutra_cached_plots');
-        localStorage.removeItem('annasutra_cached_lots');
-        localStorage.removeItem('annasutra_access_token');
-        localStorage.removeItem('annasutra_phone');
-        localStorage.removeItem('annasutra_email');
-        localStorage.removeItem('annasutra_role');
-      }
-    } catch(e) {}
-  })();
-
   const LOCAL_ICON_SVG_MAP = {
     'check': '<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="{stroke}" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
     'user': '<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="{stroke}" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',

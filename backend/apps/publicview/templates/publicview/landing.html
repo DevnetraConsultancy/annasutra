@@ -4,21 +4,6 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <script>
-    (function() {
-      try {
-        var cached = localStorage.getItem('annasutra_cached_profile') || '';
-        var phone = localStorage.getItem('annasutra_phone') || '';
-        if (cached.indexOf('Biswas') !== -1 || phone.indexOf('8444997803') !== -1) {
-          localStorage.removeItem('annasutra_cached_profile');
-          localStorage.removeItem('annasutra_farmer_uid');
-          localStorage.removeItem('annasutra_cached_plots');
-          localStorage.removeItem('annasutra_cached_lots');
-          localStorage.removeItem('annasutra_phone');
-        }
-      } catch (e) {}
-    })();
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AnnaSutra - National Agri-Produce Traceability Platform</title>
@@ -7357,12 +7342,12 @@ function logoutEntity() {
       const roleParam = urlParams.get('login') || urlParams.get('role');
 
       if (savedToken) {
-        if (savedEmail === 'devnetraconsultancy@gmail.com') {
-          currentRole = 'ADMIN';
-        } else if (roleParam) {
+        if (roleParam) {
           currentRole = roleParam.toUpperCase();
         } else if (savedRole) {
           currentRole = savedRole.toUpperCase();
+        } else if (savedEmail === 'devnetraconsultancy@gmail.com') {
+          currentRole = 'ADMIN';
         }
         localStorage.setItem('annasutra_role', currentRole);
         completeOtpLogin(savedPhone || null);
